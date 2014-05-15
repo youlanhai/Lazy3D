@@ -8,9 +8,12 @@ namespace Lazy
     {
         HWND        m_hWnd;
         dx::Device *m_device;
-        EffectPtr   m_uiEffect;
-        EffectPtr   m_fontEffect;
+        EffectPtr   m_textureShader;
+        EffectPtr   m_colorShader;
+        EffectPtr   m_fontShader;
         Math::Matrix4x4 m_matWorldViewProj;
+        bool        m_bClip;
+        CRect       m_rcClip;
 
         MAKE_UNCOPY(GUIRender)
 
@@ -27,15 +30,13 @@ namespace Lazy
         virtual void drawRect(const CRect & rc, uint32 color, TexturePtr texture);
         virtual void drawRect(const CRect & rc, const UVRect & srcRc, uint32 color, TexturePtr texture);
         virtual void drawRectFrame(const CRect & rc, int edgeSize, uint32 color);
-
-        virtual bool textRenderBegin() override;
-        virtual void textRenderEnd() override;
         virtual void drawWord(const CRect & dest, const UVRect & src, uint32 color, dx::Texture *texture);
 
         virtual void renderBegin() override;
         virtual void renderEnd() override;
 
-        void setUIShader(const tstring & file);
+        void setTextureShader(const tstring & file);
+        void setColorShader(const tstring & file);
         void setFontShader(const tstring & file);
 
     private:

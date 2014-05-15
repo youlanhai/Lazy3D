@@ -14,6 +14,8 @@ namespace Lazy
         DWORD srcBlend;
         DWORD destBlend;
         DWORD shadeMode;
+        DWORD clip;
+        CRect clipRect;
         DWORD magFilter;
         DWORD minFilter;
         DWORD op0Color;
@@ -32,10 +34,116 @@ namespace Lazy
     };
     static RSCache s_rsCache;
 
+    class SpiritBatcher : public Singoton<SpiritBatcher>
+    {
+        TexturePtr  m_tex;
+        EffectPtr   m_shader;
+        std::vector<UIVertex> m_vertices;
+        dx::Device  *m_device;
+        Matrix      m_matWorldViewProj;
+
+    public:
+        SpiritBatcher()
+            : m_device(nullptr)
+        {}
+
+        ~SpiritBatcher()
+        {}
+
+        void setDevice(dx::Device * pDevice)
+        {
+            m_device = pDevice;
+        }
+
+        void setMatrix(const Matrix & mat)
+        {
+            m_matWorldViewProj = mat;
+        }
+
+        void draw(const UVRect & dstRect, const UVRect & srcRect, uint32 color, TexturePtr tex, EffectPtr shader)
+        {
+            assert(shader);
+
+            if(tex != m_tex || shader != m_shader)
+            {
+                realDraw();
+            }
+
+            m_tex = tex;
+            m_shader = shader;
+            addVertex(dstRect, srcRect, color);
+        }
+
+        void realDraw()
+        {
+            if(m_vertices.empty()) return;
+            assert(m_device);
+
+            if (texture)
+                m_shader->setTexture("g_texture", texture->getTexture());
+
+            m_shader->setMatrix("g_worldViewProjection", m_matWorldViewProj);
+
+            UINT nPass;
+            if (m_shader->begin(nPass))
+            {
+                for (UINT i = 0; i < nPass; ++i)
+                {
+                    if (m_shader->beginPass(i))
+                    {
+                        m_device->SetFVF(UIVertex::FVF);
+                        m_device->DrawPrimitiveUP(D3DPT_TRIANGLES, m_vertices.size() / 3, (void*) &m_vertices[0], UIVertex::SIZE);
+
+                        m_shader->endPass();
+                    }
+                }
+                m_shader->end();
+            }
+
+            m_vertices.clear();
+            m_tex = nullptr;
+            m_shader = nullptr;
+        }
+
+    private:
+
+        void addVertex(const UVRect & dstRect, const UVRect & srcRect, uint32 color)
+        {
+            UIVertex vertex;
+            float z = 1.0f;
+
+            vertex.position.set(dstRect.left, dstRect.top, z);
+            vertex.color = node.color;
+            vertex.uv.set(srcRect.left, srcRect.top);
+            m_vertices.push_back（vertex);
+
+            vertex.position.set(dstRect.right, dstRect.top, z);
+            vertex.color = node.color;
+            vertex.uv.set(srcRect.right, srcRect.top);
+            m_vertices.push_back（vertex);
+
+            vertex.position.set(dstRect.left, dstRect.bottom, z);
+            vertex.color = node.color;
+            vertex.uv.set(srcRect.left, srcRect.bottom);
+            m_vertices.push_back（vertex);
+
+            m_vertices.push_back(m_vertices.size() - 1);
+            m_vertices.push_back(m_vertices.size() - 3);
+
+            vertex.position.set(dstRect.right, dstRect.bottom, z);
+            vertex.color = node.color;
+            vertex.uv.set(srcRect.right, srcRect.bottom);
+            m_vertices.push_back（vertex);
+        }
+    };
+
+
+
 
     GUIRender::GUIRender(dx::Device * m_device, HWND hWnd)
         : m_device(m_device)
         , m_hWnd(hWnd)
+        , m_bClip(false)
     {
         if (m_device) m_device->AddRef();
 
@@ -51,34 +159,43 @@ namespace Lazy
 
     bool GUIRender::isClipEnable()
     {
-        DWORD clipEnabled = FALSE;
-        m_device->GetRenderState(D3DRS_SCISSORTESTENABLE, &clipEnabled);
-        return clipEnabled != FALSE;
+        return m_bClip;
     }
 
     void GUIRender::setClipEnalbe(bool enalbe)
     {
+        if(m_bClip == enalbe) return;
+
+        m_bClip = enalbe;
         m_device->SetRenderState(D3DRS_SCISSORTESTENABLE, enalbe);
+        SpiritBatcher::instance()->realDraw();
     }
 
     void GUIRender::getClipRect(CRect & rect)
     {
-        m_device->GetScissorRect(&rect);
+        rect = m_rcClip;
     }
 
     void GUIRender::setClipRect(const CRect & rect)
     {
+        m_rcClip = rect;
         m_device->SetScissorRect(&rect);
+        SpiritBatcher::instance()->realDraw();
     }
 
-    void GUIRender::setUIShader(const tstring & file)
+    void GUIRender::setTextureShader(const tstring & file)
     {
-        m_uiEffect = EffectMgr::instance()->get(file);
+        m_textureShader = EffectMgr::instance()->get(file);
+    }
+
+    void GUIRender::setColorShader(const tstring & file)
+    {
+        m_colorShader = EffectMgr::instance()->get(file);
     }
 
     void GUIRender::setFontShader(const tstring & file)
     {
-        m_fontEffect = EffectMgr::instance()->get(file);
+        m_fontShader = EffectMgr::instance()->get(file);
     }
 
     void GUIRender::drawRect(const CRect & rc, uint32 color, TexturePtr texture)
@@ -88,88 +205,13 @@ namespace Lazy
 
     void GUIRender::drawRect(const CRect & rc, const UVRect & srcRc, uint32 color, TexturePtr texture)
     {
-        UIVertex vertex [] = {
-            { float(rc.left), float(rc.top), 1, color, srcRc.left, srcRc.top},
-            { float(rc.right), float(rc.top), 1, color, srcRc.right, srcRc.top },
-            { float(rc.left), float(rc.bottom), 1, color, srcRc.left, srcRc.bottom },
-            { float(rc.right), float(rc.bottom), 1, color, srcRc.right, srcRc.bottom }
-        };
-
-        if (!m_uiEffect)
-        {
-            if (texture) m_device->SetTexture(0, texture->getTexture());
-            else m_device->SetTexture(0, NULL);
-
-            m_device->SetFVF(UIVertex::FVF);
-            m_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, (void*) vertex, UIVertex::SIZE);
-
-            return;
-        }
-
-        m_uiEffect->setMatrix("g_worldViewProjection", m_matWorldViewProj);
-        m_uiEffect->setTechnique("RenderWithTexture");
-
-        if (texture)
-            m_uiEffect->setTexture("g_texture", texture->getTexture());
-        else
-            m_uiEffect->setTexture("g_texture", NULL);
-
-        UINT nPass;
-        if (m_uiEffect->begin(nPass))
-        {
-            for (UINT i = 0; i < nPass; ++i)
-            {
-                if (m_uiEffect->beginPass(i))
-                {
-                    m_device->SetFVF(UIVertex::FVF);
-                    m_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, (void*) vertex, UIVertex::SIZE);
-
-                    m_uiEffect->endPass();
-                }
-            }
-            m_uiEffect->end();
-        }
+        SpiritBatcher::instance()->draw(UVRect(rc), srcRc, color, texture, m_textureShader);
     }
 
     void GUIRender::drawRect(const CRect & rc, uint32 color)
     {
-        UIVertex_UNTEX vertex [] = {
-            {float(rc.left), float(rc.top), 1, color},
-            { float(rc.right), float(rc.top), 1, color },
-            { float(rc.left), float(rc.bottom), 1, color },
-            { float(rc.right), float(rc.bottom), 1, color }
-        };
-
-        if (!m_uiEffect)
-        {
-            m_device->SetTexture(0, NULL);
-            m_device->SetFVF(UIVertex::FVF);
-            m_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, (void*) vertex, UIVertex::SIZE);
-
-            return;
-        }
-
-        m_uiEffect->setMatrix("g_worldViewProjection", m_matWorldViewProj);
-        m_uiEffect->setTechnique("RenderNoTexture");
-        m_uiEffect->setTexture("g_texture", NULL);
-
-        UINT nPass;
-        if (m_uiEffect->begin(nPass))
-        {
-            for (UINT i = 0; i < nPass; ++i)
-            {
-                if (m_uiEffect->beginPass(i))
-                {
-                    m_device->SetFVF(UIVertex_UNTEX::FVF);
-                    m_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, (void*) vertex, UIVertex_UNTEX::SIZE);
-
-                    m_uiEffect->endPass();
-                }
-            }
-            m_uiEffect->end();
-        }
+        SpiritBatcher::instance()->draw(UVRect(rc), srcRc, color, nullptr, m_colorShader);
     }
-
 
     void GUIRender::drawRectFrame(const CRect & rc, int edgeSize, uint32 color)
     {
@@ -192,44 +234,11 @@ namespace Lazy
         drawRect(line, color);
     }
 
-    bool GUIRender::textRenderBegin()
-    {
-        if (!m_fontEffect) return false;
-
-        m_fontEffect->setMatrix("g_worldViewProjection", m_matWorldViewProj);
-
-        if (!m_fontEffect->setTechnique("fontTech"))
-            return false;
-
-        UINT nPass;
-        m_fontEffect->begin(nPass);
-        m_fontEffect->beginPass(0);
-
-        return true;
-    }
-
-    void GUIRender::textRenderEnd()
-    {
-        if (!m_fontEffect) return;
-
-        m_fontEffect->endPass();
-        m_fontEffect->end();
-    }
-
     void GUIRender::drawWord(const CRect & dest, const UVRect & src, uint32 color, dx::Texture * texture)
     {
         if (!texture) return;
 
-        UIVertex vertex[] = {
-            { float(dest.left), float(dest.top), 1, color, src.left, src.top },
-            { float(dest.right), float(dest.top), 1, color, src.right, src.top },
-            { float(dest.left), float(dest.bottom), 1, color, src.left, src.bottom },
-            { float(dest.right), float(dest.bottom), 1, color, src.right, src.bottom }
-        };
-
-        m_device->SetTexture(0, texture);
-        m_device->SetFVF(UIVertex::FVF);
-        m_device->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, (void*) vertex, UIVertex::SIZE);
+        SpiritBatcher::instance()->draw(UVRect(dest), src, color, texture, m_fontShader);
     }
 
     void GUIRender::renderBegin()
@@ -246,6 +255,8 @@ namespace Lazy
         m_device->SetTransform(D3DTS_PROJECTION, &matrix);
 
         m_matWorldViewProj = matrix;
+        SpiritBatcher::instance()->setDevice(m_device);
+        SpiritBatcher::instance()->setMatrix(matrix);
 
         saveRenderState();
         setCommonRenderState();
@@ -253,6 +264,7 @@ namespace Lazy
 
     void GUIRender::renderEnd()
     {
+        SpiritBatcher::instance()->realDraw();
         restoreRenderState();
     }
 
@@ -286,6 +298,13 @@ namespace Lazy
         m_device->GetTransform(D3DTS_PROJECTION, &s_rsCache.projection);
         m_device->GetPixelShader(&s_rsCache.pixelShader);
         m_device->GetVertexShader(&s_rsCache.vertexShader);
+
+
+        m_device->GetRenderState(D3DRS_SCISSORTESTENABLE, &s_rsCache.clip);
+        m_device->GetScissorRect(&s_rsCache.clipRect);
+
+        m_bClip = s_rsCache.clip != FALSE;
+        m_rcClip = s_rsCache.clipRect;
     }
 
     void GUIRender::restoreRenderState()
@@ -317,6 +336,9 @@ namespace Lazy
 
         m_device->SetTransform(D3DTS_VIEW, &s_rsCache.view);
         m_device->SetTransform(D3DTS_PROJECTION, &s_rsCache.projection);
+
+        m_device->SetRenderState(D3DRS_SCISSORTESTENABLE, s_rsCache.clip);
+        m_device->SetScissorRect(&s_rsCache.clipRect);
     }
 
     void GUIRender::setCommonRenderState()
@@ -342,6 +364,8 @@ namespace Lazy
         m_device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
         m_device->SetTextureStageState(1, D3DTSS_COLOROP, D3DTOP_DISABLE);
         m_device->SetTextureStageState(1, D3DTSS_ALPHAOP, D3DTOP_DISABLE);
+
+        setClipEnalbe(false);
     }
 
 
