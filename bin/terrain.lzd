@@ -1,0 +1,32 @@
+#coding = utf-8
+
+sky = gui/sky/01/%d.jpg
+map = map/test/map.lzd
+
+use_new_style = true
+upgrade = false #是否升级到新版
+
+maps
+{
+    name = map/test/map.lzd
+#    name = map/kunqu/map.lzd
+#    name = map/baiyunebo/map.lzd
+#    name = map/daerhan/map.lzd
+#    name = map/donghe/map.lzd
+#    name = map/guyang/map.lzd
+#    name = map/jiuyuan/map.lzd
+#    name = map/shiguai/map.lzd
+#    name = map/tumote/map.lzd
+#    name = map/qingshan/map.lzd
+}
+
+camera
+{
+	pos
+	{
+		x = 100.0f
+		y = 2000.0f
+		z = -500.0f
+	}
+	speed = 500
+}

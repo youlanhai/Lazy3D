@@ -1,0 +1,12 @@
+vrows       = 257
+vcols       = 257
+squareSize  = 100
+heightScale = 10.0f
+mapName     = res/map/test/height.raw
+object      = res/map/test/obj.dat
+resource    = res/map/res.dat
+texture     = res/map/f.jpg
+useOneTex   = true
+searchData  = waypoint/test
+onGround    = false
+

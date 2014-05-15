@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.20623.1 VSUPREVIEW
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Test", "Test.vcxproj", "{314AE84E-74E6-47FA-B845-7BC4F1A364F5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{05A30C55-A7E9-45CB-A40A-46CABAD6A77E} = {05A30C55-A7E9-45CB-A40A-46CABAD6A77E}
+		{88DE6072-BE2C-43FF-BBCE-35B197CE66EA} = {88DE6072-BE2C-43FF-BBCE-35B197CE66EA}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Physics", "..\..\src\Physics\Physics.vcxproj", "{05A30C55-A7E9-45CB-A40A-46CABAD6A77E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "utility", "..\..\src\utility\utility.vcxproj", "{88DE6072-BE2C-43FF-BBCE-35B197CE66EA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Math", "..\..\src\Math\Math.vcxproj", "{6E1D431E-CA1A-4BAC-AAF5-2F2829806A94}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{314AE84E-74E6-47FA-B845-7BC4F1A364F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{314AE84E-74E6-47FA-B845-7BC4F1A364F5}.Debug|Win32.Build.0 = Debug|Win32
+		{314AE84E-74E6-47FA-B845-7BC4F1A364F5}.Release|Win32.ActiveCfg = Release|Win32
+		{314AE84E-74E6-47FA-B845-7BC4F1A364F5}.Release|Win32.Build.0 = Release|Win32
+		{05A30C55-A7E9-45CB-A40A-46CABAD6A77E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{05A30C55-A7E9-45CB-A40A-46CABAD6A77E}.Debug|Win32.Build.0 = Debug|Win32
+		{05A30C55-A7E9-45CB-A40A-46CABAD6A77E}.Release|Win32.ActiveCfg = Release|Win32
+		{05A30C55-A7E9-45CB-A40A-46CABAD6A77E}.Release|Win32.Build.0 = Release|Win32
+		{88DE6072-BE2C-43FF-BBCE-35B197CE66EA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{88DE6072-BE2C-43FF-BBCE-35B197CE66EA}.Debug|Win32.Build.0 = Debug|Win32
+		{88DE6072-BE2C-43FF-BBCE-35B197CE66EA}.Release|Win32.ActiveCfg = Release|Win32
+		{88DE6072-BE2C-43FF-BBCE-35B197CE66EA}.Release|Win32.Build.0 = Release|Win32
+		{6E1D431E-CA1A-4BAC-AAF5-2F2829806A94}.Debug|Win32.ActiveCfg = Debug|Win32
+		{6E1D431E-CA1A-4BAC-AAF5-2F2829806A94}.Debug|Win32.Build.0 = Debug|Win32
+		{6E1D431E-CA1A-4BAC-AAF5-2F2829806A94}.Release|Win32.ActiveCfg = Release|Win32
+		{6E1D431E-CA1A-4BAC-AAF5-2F2829806A94}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

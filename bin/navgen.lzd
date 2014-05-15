@@ -1,0 +1,26 @@
+#coding = utf-8
+
+#路点生成工具配置文件
+
+
+#默认地图文件路径。
+#此方式不会立即开始计算。需要Ctrl+G开始计算，Ctrl+S保存路点数据。
+#如果此项存在，则忽略掉workgroup配置。
+workmap = map/test/map.lzd
+
+#工作内容，可以有多项。 
+#每项必须是：name = mappath.
+#注意：此模式下，程序启动就立即进行路点计算，并自动保存。可按esc退出。
+workgroup
+{
+    name = map/test/map.lzd
+    name = map/kunqu/map.lzd
+    name = map/baiyunebo/map.lzd
+    name = map/daerhan/map.lzd
+    name = map/donghe/map.lzd
+    name = map/guyang/map.lzd
+    name = map/jiuyuan/map.lzd
+    name = map/shiguai/map.lzd
+    name = map/tumote/map.lzd
+    name = map/qingshan/map.lzd
+}

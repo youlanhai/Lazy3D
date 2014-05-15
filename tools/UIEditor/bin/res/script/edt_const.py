@@ -1,0 +1,5 @@
+# -*- coding: utf-8 -*-
+
+
+TP_TREE_ITEM_CONFIG = 1000
+TP_TREE_ITEM_SCRIPT = 1001

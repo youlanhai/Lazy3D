@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="DataSection">
+      <UniqueIdentifier>{5e2f0f2b-b517-4f3c-b897-9ebe8eaff99b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="FileFind.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FileTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Log.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Misc.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StringConvTool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tools2d.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ZLock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ZThread.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryCheck.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FPS.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskMgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingMgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MemoryPool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DataStream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\lzd.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\LZDataBase.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\LZDataFactory.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\lzdParser.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\xml.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\xmlParser.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="DataSection\StrStream.cpp">
+      <Filter>DataSection</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingThread.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="FontInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Event.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SmartPtr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="FileFind.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FileTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Misc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPtr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StringConvTool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tools2d.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="UtilConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="VisitPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ZLock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ZThread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryCheck.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FPS.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskMgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingMgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MemoryPool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DataStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\DataSection.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\DataSectionConfig.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\lzd.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\LZDataBase.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\LZDataFactory.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\lzdParser.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\xml.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\xmlParser.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="DataSection\StrStream.h">
+      <Filter>DataSection</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingInterface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingThread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="FontInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

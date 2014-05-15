@@ -1,0 +1,150 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{88DE6072-BE2C-43FF-BBCE-35B197CE66EA}</ProjectGuid>
+    <RootNamespace>utility</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="DataSection\lzd.cpp" />
+    <ClCompile Include="DataSection\LZDataBase.cpp" />
+    <ClCompile Include="DataSection\LZDataFactory.cpp" />
+    <ClCompile Include="DataSection\lzdParser.cpp" />
+    <ClCompile Include="DataSection\StrStream.cpp" />
+    <ClCompile Include="DataSection\xml.cpp" />
+    <ClCompile Include="DataSection\xmlParser.cpp" />
+    <ClCompile Include="DataStream.cpp" />
+    <ClCompile Include="Event.cpp" />
+    <ClCompile Include="FileFind.cpp" />
+    <ClCompile Include="FileTool.cpp" />
+    <ClCompile Include="FontInfo.cpp" />
+    <ClCompile Include="FPS.cpp" />
+    <ClCompile Include="LoadingMgr.cpp" />
+    <ClCompile Include="LoadingThread.cpp" />
+    <ClCompile Include="Log.cpp" />
+    <ClCompile Include="MemoryCheck.cpp" />
+    <ClCompile Include="MemoryPool.cpp" />
+    <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="SmartPtr.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="StringConvTool.cpp" />
+    <ClCompile Include="TaskMgr.cpp" />
+    <ClCompile Include="Tools2d.cpp" />
+    <ClCompile Include="Utility.cpp" />
+    <ClCompile Include="ZLock.cpp" />
+    <ClCompile Include="ZThread.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DataSection\DataSection.h" />
+    <ClInclude Include="DataSection\DataSectionConfig.h" />
+    <ClInclude Include="DataSection\lzd.h" />
+    <ClInclude Include="DataSection\LZDataBase.h" />
+    <ClInclude Include="DataSection\LZDataFactory.h" />
+    <ClInclude Include="DataSection\lzdParser.h" />
+    <ClInclude Include="DataSection\StrStream.h" />
+    <ClInclude Include="DataSection\xml.h" />
+    <ClInclude Include="DataSection\xmlParser.h" />
+    <ClInclude Include="DataStream.h" />
+    <ClInclude Include="Event.h" />
+    <ClInclude Include="FileFind.h" />
+    <ClInclude Include="FileTool.h" />
+    <ClInclude Include="FontInfo.h" />
+    <ClInclude Include="FPS.h" />
+    <ClInclude Include="LoadingInterface.h" />
+    <ClInclude Include="LoadingMgr.h" />
+    <ClInclude Include="LoadingThread.h" />
+    <ClInclude Include="Log.h" />
+    <ClInclude Include="MemoryCheck.h" />
+    <ClInclude Include="MemoryPool.h" />
+    <ClInclude Include="Misc.h" />
+    <ClInclude Include="SmartPtr.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StringConvTool.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="TaskMgr.h" />
+    <ClInclude Include="Tools2d.h" />
+    <ClInclude Include="UtilConfig.h" />
+    <ClInclude Include="Utility.h" />
+    <ClInclude Include="VisitPool.h" />
+    <ClInclude Include="ZLock.h" />
+    <ClInclude Include="ZThread.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

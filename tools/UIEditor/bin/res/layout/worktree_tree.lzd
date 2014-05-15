@@ -1,0 +1,45 @@
+#coding = utf-8
+
+root
+{
+	type = 3
+	id = 0
+	font = def|17
+	color = ffffffff
+	bgcolor = 7fffffff
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = false
+	clickTop = true
+	limitInRect = true
+	changeChildOrder = true
+	drawSelf = true
+	position = 1 31
+	size = 249 250
+	children
+	{
+		slidebar
+		{
+			type = 9
+			id = 0
+			font = def|17
+			color = ffff0000
+			bgcolor = ff0000ff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 229 0
+			size = 20 250
+			children = ""
+		}
+	}
+	script = gui.ITree
+	itemConfig = layout/worktree_tree_item.lzd
+	itemClass = uieditor.editor.WorkTreeItem
+}

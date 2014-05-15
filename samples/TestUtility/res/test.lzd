@@ -1,0 +1,11 @@
+﻿#coding = utf-8
+
+title = test utility
+path = res/map
+
+position
+{
+    x = 1
+    y = 2
+    z = 3
+}
