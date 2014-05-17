@@ -15,14 +15,12 @@ mainview
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 309 68
+	position = 0 114
 	size = 200 300
 	children
 	{
 		title
 		{
-			align = 00000000
-			mutiLine = false
 			type = 5
 			id = 0
 			text = 工作区
@@ -40,6 +38,9 @@ mainview
 			position = 55 3
 			size = 100 30
 			children = ""
+			align = 00000000
+			mutiline = false
 		}
 	}
+	script = uieditor.WorkTreeBar
 }

@@ -575,6 +575,8 @@ namespace Lazy
 
     bool IControl::loadFromFile(const tstring & file)
     {
+        setEditable(false);
+
         LZDataPtr root = openSection(file);
         if (!root || root->countChildren() == 0)
         {
@@ -616,8 +618,6 @@ namespace Lazy
             setRelativeAlign(config->readUint(L"relativeAlign"));
         }
 
-        setEditable(true);
-
         clearChildren();
 
         //加载子控件
@@ -628,17 +628,18 @@ namespace Lazy
             {
                 int type = childPtr->readInt(L"type");
 
-                PControl child = createEditorUI(type);
+                PControl child = createEditorUI(childPtr);
                 if (!child)
                 {
                     LOG_ERROR(L"createChildUI '%d' failed!", type);
                     continue;
                 }
 
-                child->setName(childPtr->tag());
-                addChild(child);
-
                 child->loadFromStream(childPtr);
+
+                child->setName(childPtr->tag());
+                child->setEditable(true);
+                addChild(child);
             }
         }
 
@@ -737,6 +738,10 @@ namespace Lazy
                 if (child->getRelative()) child->applyRelative2Real();
             }
         }
+
+#ifdef ENABLE_SCRIPT
+        if (m_pSelf) Lzpy::object(m_pSelf).call_method_quiet("onSizeChange");
+#endif
     }
 
 
@@ -865,19 +870,21 @@ namespace Lazy
         return NULL;
     }
 
-    IControl* IControl::createEditorUI(int type)
+    IControl* IControl::createEditorUI(LZDataPtr config)
     {
         if (g_pUICreateFun)
         {
-            return g_pUICreateFun(this, type);
+            return g_pUICreateFun(this, config);
         }
+
+        int type = config->readInt(L"type", -1);
+        if (type < 0) return nullptr;
 
         IControl *p = uiFactory()->create(type);
         if (p) setManaged(true);
 
         return p;
     }
-
 
     void IControl::update(float elapse)
     {

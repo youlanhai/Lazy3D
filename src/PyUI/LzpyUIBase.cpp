@@ -18,6 +18,7 @@ namespace Lzpy
         LZPY_GETSET(id);
         LZPY_GETSET(size);
         LZPY_GETSET(position);
+        LZPY_GETSET(zorder);
         LZPY_GETSET(name);
         LZPY_GETSET(text);
         LZPY_GETSET(font);

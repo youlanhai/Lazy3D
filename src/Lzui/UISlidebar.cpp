@@ -202,7 +202,7 @@ namespace Lazy
         setVertical(config->readBool(L"vertical", false));
         setSlideStep(config->readFloat(L"slideStep", 0.05f));
 
-        CSize size;
+        CSize size(20, 20);
         misc::readSize(size, config, L"sliderSize");
         setSliderSize(size.cx, size.cy);
     }

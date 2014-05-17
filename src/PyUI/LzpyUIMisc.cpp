@@ -185,11 +185,11 @@ namespace Lzpy
         Py_RETURN_NONE;
     }
 
-    object createPythonUI(int type)
+    object createPythonUI(LZDataPtr config)
     {
         assert(s_uiFactoryMethod && "The factory method must not be null!");
 
-        return s_uiFactoryMethod.call(type);
+        return s_uiFactoryMethod.call(make_object(config));
     }
 
     LZPY_DEF_FUN(param2Position)
@@ -246,12 +246,12 @@ namespace Lzpy
     LZPY_MODULE_END();
 
 
-    static IControl* pyEditorUICreateFun(IControl *pParent, int type)
+    static IControl* pyEditorUICreateFun(IControl *pParent, LZDataPtr config)
     {
         object pyParent(pParent->getSelf());
         if (!pyParent) return nullptr;
 
-        object pyChild = createPythonUI(type);
+        object pyChild = createPythonUI(config);
         if (!pyChild) return nullptr;
 
         //加入缓存池，用于保持引用计数。防止子控件析构。

@@ -269,7 +269,7 @@ namespace Lazy
         /** 拖拽消息*/
         virtual void onDrag(const CPoint & delta, const CPoint & point);
 
-        virtual IControl* createEditorUI(int type);
+        virtual IControl* createEditorUI(LZDataPtr config);
 
     protected:
         int				m_id;			///< 编号。

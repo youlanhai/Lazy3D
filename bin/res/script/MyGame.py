@@ -13,8 +13,8 @@ def init() :
 	print("lui:", dir(lui))
 	
 	try :
-		import ui_factory
-		lui.regUIFactory(ui_factory.createUI)
+		import gui
+		lui.regUIFactory(gui.createUIFromStream)
 
 		import guimgr
 		share.gui = guimgr.guimgr()
@@ -40,7 +40,7 @@ def fini() :
 def onSize(w, h):
 	print("python onSize", w, h)
 	ui.onSize(w, h)
-	share.gui.editor.resize(w, h)
+	share.gui.editor.setSize(w, h)
 
 def onClientSize(w, h):
 	ui.onClientSize(w, h)

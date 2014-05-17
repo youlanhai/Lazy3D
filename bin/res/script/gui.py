@@ -13,13 +13,15 @@ import edt_const
 def loadScript(script):
 	mods = script.split('.')
 	
+	mod = mods.pop(0)
+	if len(mod) == 0: return None
+
 	try:
-		cls = __import__(mods[0])
+		cls = __import__(mod)
 	except ImportError:
-		print("loadScript '%s' failed, module '%s' doesn't exist!" % (script, mods[0]))
+		print("loadScript '%s' failed, module '%s' doesn't exist!" % (script, mod))
 		return None
 
-	mods.pop(0)
 	for mod in mods:
 		try:
 			cls = getattr(cls, mod)
@@ -32,6 +34,7 @@ def loadScript(script):
 
 def loadUIScript(script, config):
 	obj = loadScript(script)
+	if obj is None: return None
 	
 	if not obj.loadFromFile(config):
 		obj.destroy()
@@ -40,27 +43,36 @@ def loadUIScript(script, config):
 	return obj
 
 
-def loadFromFile(configFile):
+def createUIFromStream(stream):
+	assert(stream is not None)
+
+	obj = None
+	script = stream.readString("script")
+	if len(script) > 0:
+		obj = loadScript(script)
+	
+	if obj is None:
+		type = stream.readInt("type")
+		obj = ui_factory.createUI(type)
+	
+	return obj
+
+
+def loadUIFromFile(configFile, parent=None):
 	root = lzd.openLzd(configFile)
 	if root is None: return None
 
 	config = root.getFirstChild()
 	if config is None: return None
 
-	obj = None
-	script = config.readString("script")
-	if len(script) > 0:
-		obj = loadScript(script)
-	
-	if obj is None:
-		type = config.readInt("type")
-		obj = ui_factory.createUI(type)
-		if obj is None: return None
+	obj = createUIFromStream(config)
+	if obj is None: return None
 
 	if not obj.loadFromFile(configFile):
 		obj.destroy()
 		return None
 
+	if parent: parent.addChild(obj)
 	return obj
 
 ##################################################
@@ -175,6 +187,8 @@ class ListPanel(lui.IControl):
 class ListControl(lui.Form):
 
 	def __init__(self, parent):
+		self.slidebar = None
+
 		super(ListControl, self).__init__(parent)
 		
 		self.enableDrag = False
@@ -191,11 +205,10 @@ class ListControl(lui.Form):
 	def _createList(self):
 		self.list = ListPanel(self)
 
-	def resize(self, w, h):
-		self.size = (w, h)
-		print("ListControl.resize", self.size)
-		self.clipRect = (0, 0, w, h)
+	def onSizeChange(self):
+		if self.slidebar is None: return
 
+		w, h = self.size
 		self.slidebar.position = (w - 20, 0)
 		self.slidebar.size = (20, h)
 
@@ -326,6 +339,90 @@ class IListView(lui.IControl):
 ##################################################
 ###
 ##################################################
+class ListView(lui.Form):
+
+	UI_EDITOR_PROPERTY = (
+		edt_const.TP_TREE_ITEM_CONFIG,
+	)
+
+	def getItemConfig(self): return self.itemConfigFile
+	def setItemConfig(self, value): self.itemConfigFile = value
+
+	def __init__(self, parent=None):
+		self.slidebar = None
+
+		super(ITree, self).__init__(parent)
+		self.enableClip = True
+		self.enableDrag = False
+
+		self.root = None
+		self.itemCreateMethod = None
+
+		self.itemConfigFile = ""
+
+	def onLoadLayout(self, config):
+		self.itemConfigFile = config.readString("itemConfig")
+
+		self.root = IListView(self)
+		self.root.setItemCreateMethod(MethodProxy(self, "_createItem"))
+
+		self.slidebar = self.getChildByName("slidebar")
+		if self.slidebar: self.slidebar.onSlide = MethodProxy(self, "onSlide")
+
+	def onSaveLayout(self, config):
+		if len(self.itemConfigFile) > 0:
+			config.writeString("itemConfig", self.itemConfigFile)
+
+	def _createItem(self):
+		if self.itemCreateMethod:
+			item = self.itemCreateMethod()
+		else:
+			item = loadUIFromFile(self.itemConfigFile)
+		
+		return item
+
+	def setItemCreateMethod(self, method):
+		self.itemCreateMethod = method
+
+	def clear(self):
+		self.setInfo(None)
+
+	def setInfo(self, info):
+		self.root.setInfo(info)
+		self.layout()
+
+	def layout(self):
+		self.root.layout()
+		self.layoutPosition()
+
+	def onSizeChange(self):
+		if self.slidebar is None: return
+
+		w, h = self.size
+		self.slidebar.position = (w - 20, 0)
+		self.slidebar.size = (20, h)
+
+		self.layoutPosition()
+
+	def layoutPosition(self):
+		height = self.root.getHeight()
+
+		w, h = self.size
+		if height <= h:
+			self.slidebar.visible = False
+			self.root.position = (0, 0)
+		else:
+			self.slidebar.visible = True
+			y = -(height - h) * self.slidebar.rate
+			self.root.position = (0, int(y))
+
+	def onSlide(self, pos):
+		self.layoutPosition()
+
+
+##################################################
+###
+##################################################
 class ITreeItem(IListItem):
 	def __init__(self):
 		super(ITreeItem, self).__init__()
@@ -424,7 +521,11 @@ class ITree(lui.Form):
 	def root(self): return self.getRoot()
 
 	def __init__(self, parent=None):
+
+		self.slidebar = None
+
 		super(ITree, self).__init__(parent)
+
 		self.enableClip = True
 		self.enableDrag = False
 
@@ -482,11 +583,11 @@ class ITree(lui.Form):
 		self.root.layout()
 		self.layoutPosition()
 
-	def resize(self, w, h):
-		self.size = (w, h)
+	def onSizeChange(self):
+		if self.slidebar is None: return
 
-		self.clipRect = (0, 0, w, h)
-
+		w, h = self.size
+		
 		self.slidebar.position = (w - 20, 0)
 		self.slidebar.size = (20, h)
 

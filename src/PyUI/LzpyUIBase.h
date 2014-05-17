@@ -51,6 +51,9 @@ namespace Lzpy
         LZPY_DEF_GET(name, m_control->getName);
         LZPY_DEF_SET(name, m_control->setName, tstring);
 
+        LZPY_DEF_GET(zorder, m_control->getPositionZ);
+        LZPY_DEF_SET(zorder, m_control->setPositionZ, int);
+
         LZPY_DEF_GET(text, m_control->getText);
         LZPY_DEF_SET(text, m_control->setText, tstring);
 

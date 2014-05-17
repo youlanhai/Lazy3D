@@ -27,7 +27,7 @@ namespace Lazy
     const tstring & getDefaultFont();
     FontPtr getDefaultFontPtr();
 
-    typedef IControl * (*EditorUICreateFun) (IControl * parent, int type);
+    typedef IControl * (*EditorUICreateFun) (IControl * parent, LZDataPtr config);
     void setEditorUICreateFun(EditorUICreateFun fun);
 
     /** 按钮状态*/

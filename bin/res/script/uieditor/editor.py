@@ -116,7 +116,7 @@ class Editor(lui.IControl):
 		self.floatBar.relativePos = (1.0, 0.5)
 		self.floatBar.relative = True
 
-		self.workTree = WorkTreeBar(self)
+		self.workTree = gui.loadUIFromFile("layout/editor/worktree.lzd", self)
 
 		self.resculySearch = True
 		self.workStack = []
@@ -162,7 +162,7 @@ class Editor(lui.IControl):
 		x, y = self.reference.globalToLocal(x, y)
 		return self.reference.findChildByPos(x, y, self.resculySearch)
 	
-	def resize(self, w, h):
+	def setSize(self, w, h):
 		self.size = (w, h)
 	
 	def onMouseEvent(self, msg, x, y):
@@ -410,7 +410,7 @@ class PropertyList(gui.ListControl):
 		self.control = None
 
 		self.position = (x, y)
-		self.resize(w, h)
+		self.size = (w, h)
 	
 	def applyCtl(self, ctl):
 		if ctl != self.control:
@@ -465,7 +465,7 @@ class MenuBar(lui.IControl):
 		self.layoutFile = path
 
 
-		host = gui.loadFromFile(self.layoutFile)
+		host = gui.loadUIFromFile(self.layoutFile)
 		if not host:
 			print("Failed to load layout ", self.layoutFile)
 			return
@@ -502,11 +502,10 @@ class WorkTreeBar(lui.Form):
 	def __init__(self, parent=None):
 		super(WorkTreeBar, self).__init__(parent)
 
-		self.loadFromFile("layout/worktree.lzd")
-
-		self.tree = gui.ITree(self)
-		self.tree.loadFromFile("layout/worktree_tree.lzd")
-		self.tree.resize(200, 250)
+	def onLoadLayout(self, config):
+		#self.tree = gui.ITree(self)
+		#self.tree.loadFromFile("layout/worktree_tree.lzd")
+		self.tree = self.getChildByName("root")
 
 	def applyCtl(self, ctl):
 		infos = self.getControlInfo(ctl) if ctl else None
@@ -520,6 +519,9 @@ class WorkTreeBar(lui.Form):
 			childInfo.append(self.getControlInfo(child))
 
 		return (ctl, childInfo)
+
+class WorkTree(gui.ITree):
+	pass
 
 class WorkTreeItem(gui.ITreeItem):
 

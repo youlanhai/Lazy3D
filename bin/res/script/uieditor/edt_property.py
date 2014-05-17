@@ -310,6 +310,12 @@ class MutilineItem(_boolItem):
 	def getCtlValue(self): return self.control.mutiline
 	def setCtlValue(self, v): self.control.mutiline = v
 
+
+class EditableItem(_boolItem):
+	def getName(self): return "可编辑"
+	def getCtlValue(self): return self.control.editable
+	def setCtlValue(self, v): self.control.editable = v
+
 ##################################################
 ### 选项类型
 ##################################################
@@ -335,7 +341,7 @@ TP_RELATIVE_POS = 20
 TP_RELATIVE_ALIGN = 21
 TP_MUTILINE = 22
 TP_SCRIPT = 23
-
+TP_EDITABLE = 24
 
 #用户自定义格式的编号，从TP_CUSTOM往后排
 TP_CUSTOM = 10000
@@ -365,12 +371,13 @@ TP_CLASS_MAP = {
 	TP_RELATIVE_ALIGN: RelativeAlignItem,
 	TP_MUTILINE : MutilineItem,
 	TP_SCRIPT 	: ScriptKeyItem,
+	TP_EDITABLE : EditableItem,
 }
 
 COMMON_TYPES = (
 	TP_NAME, TP_CLASS, 
 	TP_PARENT, TP_ID,
-	TP_SCRIPT,
+	TP_SCRIPT, TP_EDITABLE,
 	TP_POSITION, TP_SIZE,
 	TP_TEXT, TP_IMAGE, TP_FONT,
 	TP_SHOW, TP_ENABLE, TP_CLICKTOP, TP_HANDEL_MSG, TP_DRAG,

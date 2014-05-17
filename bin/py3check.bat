@@ -7,7 +7,7 @@ set PYFLAKES=D:\Python33\Scripts\pyflakes
 cls
 echo python syntax check start...
 
-%PYTHON_EXE% %PYFLAKES% script/
+%PYTHON_EXE% %PYFLAKES% res/script/
 
 choice /M "check finish continue\exit"
 if errorlevel 2 goto end
