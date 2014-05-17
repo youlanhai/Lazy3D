@@ -82,7 +82,6 @@ namespace Lazy
         : m_ch(0)
         , m_color(0xff000000)
         , m_grouped(grouped)
-        , m_pTexture(nullptr)
     {}
 
     WordSprite::~WordSprite()
@@ -96,11 +95,11 @@ namespace Lazy
         WordInfo info;
         if (!font->getWord(ch, info))
         {
-            m_pTexture = nullptr;
+            m_texture = nullptr;
         }
         else
         {
-            m_pTexture = info.pTexture;
+            m_texture = info.pTexture;
             m_uvRect.set(info.x1, info.y1, info.x2, info.y2);
 
             m_size.set(info.ax, info.ay);
@@ -112,15 +111,11 @@ namespace Lazy
     void WordSprite::render(IUIRender * pDevice, const CPoint & world)
     {
         if (m_ch == '\n') return;
-        if (!m_pTexture) return;
-
-        if (!m_grouped && !pDevice->textRenderBegin()) return;
+        if (!m_texture) return;
 
         CPoint pt = m_position + world + m_offsetPos;
 
-        pDevice->drawWord(CRect(pt, m_offsetSize), m_uvRect, m_color, m_pTexture);
-
-        if (!m_grouped) pDevice->textRenderEnd();
+        pDevice->drawWord(CRect(pt, m_offsetSize), m_uvRect, m_color, m_texture);
     }
 
 
@@ -298,8 +293,6 @@ namespace Lazy
 
     void TextLineSprite::render(IUIRender * pDevice, const CPoint & world)
     {
-        if (!m_grouped && !pDevice->textRenderBegin()) return;
-
         CPoint pt = m_position + world;
 
         for (std::vector<WordSpritePtr>::iterator it = m_sprites.begin();
@@ -307,8 +300,6 @@ namespace Lazy
         {
             (*it)->render(pDevice, pt);
         }
-
-        if(!m_grouped) pDevice->textRenderEnd();
     }
 
     bool TextLineSprite::getCursorByPos(size_t & cursor, int x, int)
@@ -525,8 +516,6 @@ namespace Lazy
 
     void TextViewSprite::render(IUIRender * pDevice, const CPoint & world)
     {
-        if (!pDevice->textRenderBegin()) return;
-
         CPoint pt = m_position + world;
 
         for (std::vector<TextLineSpritePtr>::iterator it = m_lineSprites.begin(); 
@@ -534,8 +523,6 @@ namespace Lazy
         {
             (*it)->render(pDevice, pt);
         }
-
-        pDevice->textRenderEnd();
     }
 
     bool TextViewSprite::getCursorByPos(size_t & cursor, int x, int y)

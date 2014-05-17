@@ -77,7 +77,7 @@ namespace Lazy
         uint32  m_color;
         CPoint  m_offsetPos;
         CSize   m_offsetSize;
-        dx::Texture *m_pTexture;
+        TexturePtr m_texture;
         UVRect  m_uvRect;
     };
     typedef RefPtr<WordSprite> WordSpritePtr;

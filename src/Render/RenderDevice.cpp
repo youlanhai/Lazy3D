@@ -13,12 +13,12 @@ namespace Lazy
 {
 
 
-    DWORD UIVertex::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
-    int UIVertex::SIZE = sizeof(UIVertex);
+    DWORD VertexXYZColorUV::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
+    int VertexXYZColorUV::SIZE = sizeof(VertexXYZColorUV);
 
 
-    DWORD UIVertex_UNTEX::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
-    int UIVertex_UNTEX::SIZE = sizeof(UIVertex_UNTEX);
+    DWORD VertexXYZColor::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
+    int VertexXYZColor::SIZE = sizeof(VertexXYZColor);
 
     ///////////////////////////////////////////////////////////////////
     static RenderDevice * s_oneInstance = NULL;

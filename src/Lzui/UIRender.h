@@ -3,6 +3,18 @@
 
 namespace Lazy
 {
+
+    /** 带纹理颜色顶点*/
+    struct UIVertex
+    {
+        Math::Vector3 position;
+        uint32 color;
+        Math::Vector2 uv;
+
+        const static DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX0;
+        static int SIZE;
+    };
+
     ///ui渲染器
     class GUIRender : public IUIRender
     {
@@ -30,7 +42,7 @@ namespace Lazy
         virtual void drawRect(const CRect & rc, uint32 color, TexturePtr texture);
         virtual void drawRect(const CRect & rc, const UVRect & srcRc, uint32 color, TexturePtr texture);
         virtual void drawRectFrame(const CRect & rc, int edgeSize, uint32 color);
-        virtual void drawWord(const CRect & dest, const UVRect & src, uint32 color, dx::Texture *texture);
+        virtual void drawWord(const CRect & dest, const UVRect & src, uint32 color, TexturePtr texture);
 
         virtual void renderBegin() override;
         virtual void renderEnd() override;

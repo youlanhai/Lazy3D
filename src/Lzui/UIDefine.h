@@ -100,12 +100,9 @@ namespace Lazy
         virtual void drawRect(const CRect & rc, uint32 color) = 0;
         virtual void drawRect(const CRect & rc, uint32 color, TexturePtr texture) = 0;
         virtual void drawRect(const CRect & rc, const UVRect & srcRc, uint32 color, TexturePtr texture) = 0;
+        virtual void drawWord(const CRect & dest, const UVRect & src, uint32 color, TexturePtr texture) = 0;
         
         virtual void drawRectFrame(const CRect & rc, int edgeSize, uint32 color) = 0;
-
-        virtual bool textRenderBegin() = 0;
-        virtual void textRenderEnd() = 0;
-        virtual void drawWord(const CRect & dest, const UVRect & src, uint32 color, dx::Texture *texture) = 0;
     };
 
 

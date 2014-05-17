@@ -12,7 +12,10 @@
 *.la
 *.a
 
+*.log
 *.opensdf
 *.sdf
-[D]debug
-[R]release
+[Dd]ebug
+[Rr]elease
+Debug_Script
+Release_Script

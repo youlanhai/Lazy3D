@@ -129,6 +129,7 @@
     <ClInclude Include="MemoryCheck.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="Misc.h" />
+    <ClInclude Include="Singleton.h" />
     <ClInclude Include="SmartPtr.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StringConvTool.h" />

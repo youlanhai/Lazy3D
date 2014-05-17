@@ -34,13 +34,15 @@ namespace Lazy
     };
     static RSCache s_rsCache;
 
-    class SpiritBatcher : public Singoton<SpiritBatcher>
+    int UIVertex::SIZE = sizeof(UIVertex);
+
+    class SpiritBatcher : public SimpleSingleton<SpiritBatcher>
     {
-        TexturePtr  m_tex;
+        TexturePtr  m_texture;
         EffectPtr   m_shader;
         std::vector<UIVertex> m_vertices;
         dx::Device  *m_device;
-        Matrix      m_matWorldViewProj;
+        Math::Matrix4x4   m_matWorldViewProj;
 
     public:
         SpiritBatcher()
@@ -55,7 +57,7 @@ namespace Lazy
             m_device = pDevice;
         }
 
-        void setMatrix(const Matrix & mat)
+        void setMatrix(const Math::Matrix4x4 & mat)
         {
             m_matWorldViewProj = mat;
         }
@@ -64,12 +66,12 @@ namespace Lazy
         {
             assert(shader);
 
-            if(tex != m_tex || shader != m_shader)
+            if (tex != m_texture || shader != m_shader)
             {
                 realDraw();
             }
 
-            m_tex = tex;
+            m_texture = tex;
             m_shader = shader;
             addVertex(dstRect, srcRect, color);
         }
@@ -79,8 +81,8 @@ namespace Lazy
             if(m_vertices.empty()) return;
             assert(m_device);
 
-            if (texture)
-                m_shader->setTexture("g_texture", texture->getTexture());
+            if (m_texture)
+                m_shader->setTexture("g_texture", m_texture->getTexture());
 
             m_shader->setMatrix("g_worldViewProjection", m_matWorldViewProj);
 
@@ -92,7 +94,8 @@ namespace Lazy
                     if (m_shader->beginPass(i))
                     {
                         m_device->SetFVF(UIVertex::FVF);
-                        m_device->DrawPrimitiveUP(D3DPT_TRIANGLES, m_vertices.size() / 3, (void*) &m_vertices[0], UIVertex::SIZE);
+                        m_device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 
+                            m_vertices.size() / 3, &m_vertices[0], UIVertex::SIZE);
 
                         m_shader->endPass();
                     }
@@ -101,7 +104,7 @@ namespace Lazy
             }
 
             m_vertices.clear();
-            m_tex = nullptr;
+            m_texture = nullptr;
             m_shader = nullptr;
         }
 
@@ -113,27 +116,25 @@ namespace Lazy
             float z = 1.0f;
 
             vertex.position.set(dstRect.left, dstRect.top, z);
-            vertex.color = node.color;
+            vertex.color = color;
             vertex.uv.set(srcRect.left, srcRect.top);
-            m_vertices.push_back（vertex);
+            m_vertices.push_back(vertex);
 
             vertex.position.set(dstRect.right, dstRect.top, z);
-            vertex.color = node.color;
             vertex.uv.set(srcRect.right, srcRect.top);
-            m_vertices.push_back（vertex);
+            m_vertices.push_back(vertex);
 
+            size_t i = m_vertices.size();
             vertex.position.set(dstRect.left, dstRect.bottom, z);
-            vertex.color = node.color;
             vertex.uv.set(srcRect.left, srcRect.bottom);
-            m_vertices.push_back（vertex);
+            m_vertices.push_back(vertex);
 
-            m_vertices.push_back(m_vertices.size() - 1);
-            m_vertices.push_back(m_vertices.size() - 3);
+            m_vertices.push_back(m_vertices[i]);
+            m_vertices.push_back(m_vertices[i - 1]);
 
             vertex.position.set(dstRect.right, dstRect.bottom, z);
-            vertex.color = node.color;
             vertex.uv.set(srcRect.right, srcRect.bottom);
-            m_vertices.push_back（vertex);
+            m_vertices.push_back(vertex);
         }
     };
 
@@ -210,7 +211,7 @@ namespace Lazy
 
     void GUIRender::drawRect(const CRect & rc, uint32 color)
     {
-        SpiritBatcher::instance()->draw(UVRect(rc), srcRc, color, nullptr, m_colorShader);
+        SpiritBatcher::instance()->draw(UVRect(rc), CRect(), color, nullptr, m_colorShader);
     }
 
     void GUIRender::drawRectFrame(const CRect & rc, int edgeSize, uint32 color)
@@ -234,7 +235,7 @@ namespace Lazy
         drawRect(line, color);
     }
 
-    void GUIRender::drawWord(const CRect & dest, const UVRect & src, uint32 color, dx::Texture * texture)
+    void GUIRender::drawWord(const CRect & dest, const UVRect & src, uint32 color, TexturePtr texture)
     {
         if (!texture) return;
 

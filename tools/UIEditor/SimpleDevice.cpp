@@ -188,8 +188,6 @@ bool SimpleDevice::onInit()
 
     m_guiMgr = new Lazy::CGUIManager(Lazy::rcDevice()->getDevice(), m_hWnd, m_hInstance);
     m_guiMgr->setSize(Editor::client::width, Editor::client::height);
-    m_guiMgr->getUIRender()->setUIShader(L"shader/ui.fx");
-    m_guiMgr->getUIRender()->setFontShader(L"shader/font.fx");
 
     m_fpsLabel = new Lazy::CLabel();
     m_guiMgr->addChild(m_fpsLabel.get());

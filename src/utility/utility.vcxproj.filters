@@ -200,6 +200,9 @@
     <ClInclude Include="Event.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

@@ -86,7 +86,7 @@ namespace Lazy
 
 
     /** 带纹理颜色顶点*/
-    struct UIVertex
+    struct VertexXYZColorUV
     {
         float x, y, z;
         D3DCOLOR color;
@@ -98,7 +98,7 @@ namespace Lazy
 
 
     /** 带颜色顶点*/
-    struct UIVertex_UNTEX
+    struct VertexXYZColor
     {
         float x, y, z;
         D3DCOLOR color;

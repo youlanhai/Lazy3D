@@ -27,4 +27,6 @@
 
 #include "VisitPool.h"
 
+#include "Singleton.h"
+
 #endif
