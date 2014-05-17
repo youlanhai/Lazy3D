@@ -33,9 +33,10 @@ namespace Lazy
         GUIRender(dx::Device *pDevice, HWND hWnd);
         ~GUIRender();
 
-        virtual bool isClipEnable();
+        virtual bool isClipEnable() const;
         virtual void setClipEnalbe(bool enalbe);
-        virtual void getClipRect(CRect & rect);
+
+        virtual void getClipRect(CRect & rect) const;
         virtual void setClipRect(const CRect & rect);
 
         virtual void drawRect(const CRect & rc, uint32 color);

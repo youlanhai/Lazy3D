@@ -89,9 +89,10 @@ namespace Lazy
     class IUIRender
     {
     public:
-        virtual bool isClipEnable() = 0;
+        virtual bool isClipEnable() const = 0;
         virtual void setClipEnalbe(bool enalbe) = 0;
-        virtual void getClipRect(CRect & rect) = 0;
+
+        virtual void getClipRect(CRect & rect) const = 0;
         virtual void setClipRect(const CRect & rect) = 0;
 
         virtual void renderBegin() = 0;

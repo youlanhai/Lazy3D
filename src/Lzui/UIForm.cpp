@@ -52,23 +52,24 @@ namespace Lazy
 
         bool oldClipEnabled = pDevice->isClipEnable();
         CRect oldClipRect;
+        pDevice->getClipRect(oldClipRect);
+
         if (oldClipEnabled)
         {
-            pDevice->getClipRect(oldClipRect);
-
             clipRect.getIntersectRect(clipRect, oldClipRect);
-            if (clipRect.isEmpty()) return;//没有交集
-        }
-        else pDevice->setClipEnalbe(true);
 
+            if (clipRect.isEmpty())
+                return;//没有交集
+        }
+        
+        pDevice->setClipEnalbe(true);
         pDevice->setClipRect(clipRect);
+
         m_children.render(pDevice);
 
-        if (oldClipEnabled) pDevice->setClipRect(oldClipRect);
-        else pDevice->setClipEnalbe(oldClipEnabled);
+        pDevice->setClipRect(oldClipRect);
+        pDevice->setClipEnalbe(oldClipEnabled);
     }
-
-
 
     void CForm::setImage(const tstring & image)
     {

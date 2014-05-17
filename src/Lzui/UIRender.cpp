@@ -161,7 +161,7 @@ namespace Lazy
         if (m_device) m_device->Release();
     }
 
-    bool GUIRender::isClipEnable()
+    bool GUIRender::isClipEnable() const
     {
         return m_bClip;
     }
@@ -175,7 +175,7 @@ namespace Lazy
         SpiritBatcher::instance()->realDraw();
     }
 
-    void GUIRender::getClipRect(CRect & rect)
+    void GUIRender::getClipRect(CRect & rect) const
     {
         rect = m_rcClip;
     }
