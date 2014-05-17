@@ -107,7 +107,7 @@ bool initPython()
     }
     catch(Lzpy::python_error & e)
     {
-        XWRITE_LOGA("ERROR: init python failed! %s", e.what());
+        LOG_ERROR(L"Python Error in initPython: %S", e.what());
 
         if (PyErr_Occurred())
             PyErr_Print();
@@ -131,8 +131,10 @@ bool finiPython()
 
         Lzpy::LzpyResInterface::finiAll();
     }
-    catch(...)
+    catch(Lzpy::python_error & e)
     {
+        LOG_ERROR(L"Python Error in finiPython : %S", e.what());
+
         if (PyErr_Occurred())
             PyErr_Print();
         return false;
@@ -165,7 +167,6 @@ void SimpleDevice::clear()
 {
     finiPython();
 
-    m_guiMgr->destroy();
     m_guiMgr = NULL;
 
 
@@ -243,19 +244,24 @@ void SimpleDevice::onRender()
 
 bool SimpleDevice::onEvent(const Lazy::SEvent & event)
 {
-    try
+    //try
     {
-
         if (m_guiMgr && m_guiMgr->processEvent(event))
         {
             return true;
         }
     }
-    catch (Lzpy::python_error e)
+
+#if 0
+    catch (Lzpy::python_error & e)
     {
-        LOG_ERROR(L"Exception in onEvent:%S", e.what());
-        updateScriptError();
+        LOG_ERROR(L"Python Error in SimpleDevice::onEvent: %S", e.what());
+        abort();
+
     }
+#endif
+
+    updateScriptError();
 
     return SimpleFrame::onEvent(event);
 }

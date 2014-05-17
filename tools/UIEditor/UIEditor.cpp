@@ -80,10 +80,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
             {
                 g_simpleDev.updateAndRender();  //渲染图形
             }
-            catch (std::exception & e)
+            catch (Lzpy::python_error & e)
             {
-                LOG_ERROR(L"Excption in WndProc : '%S'", e.what());
-                abort();
+                LOG_ERROR(L"Excption in MainLoop : '%S'", e.what());
             }
         }
     }
@@ -176,16 +175,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    try
-    {
-        if (Lazy::processWindowMsg(&g_simpleDev, hWnd, message, wParam, lParam))
-            return 0;
-    }
-    catch (std::exception & e)
-    {
-        LOG_ERROR(L"Excption in WndProc : '%S'", e.what());
-        abort();
-    }
+    if (Lazy::processWindowMsg(&g_simpleDev, hWnd, message, wParam, lParam))
+        return 0;
 
 	switch (message)
 	{

@@ -23,7 +23,7 @@ class Selector(lui.EditorCtl):
 
 		self.visible = False
 		
-		self.edgeSize = 8
+		self.edgeSize = 5
 		self.activeCtl = None
 	
 	def setRect(self, left, top, right, bottom):
@@ -126,28 +126,19 @@ class Editor(lui.IControl):
 		self.setReference(None)
 		self.workStack = []
 
-		self.selector.applyCtl(None)
+		self.setTarget(None)
 		self.focus.applyCtl(None)
-		self.refreshProperty()
 		
 
 	def enableResculySearch(self, enable):
 		self.resculySearch = enable
 
 	def pushReference(self):
-		if self.selector.activeCtl == self.reference: return
-
-		reference = self.selector.activeCtl
-
-		if not isinstance(reference, lui.Form):
-			raise RuntimeError("Please select one lui Form")
-
-		if not reference.parent:
-			raise RuntimeError("This ui control can't be set to reference!")
+		if self.target == self.reference: return
 
 		self.workStack.append( self.reference )
-
-		self.setReference(reference)
+		self.setReference(self.target)
+		self.setTarget(self.target)
 
 	def popReference(self):
 		if len(self.workStack) == 0:
@@ -155,6 +146,7 @@ class Editor(lui.IControl):
 
 		reference = self.workStack.pop(-1)
 		self.setReference(reference)
+		self.refreshProperty()
 
 	def searchChild(self, x, y):
 		if self.reference is None: return None
@@ -178,18 +170,14 @@ class Editor(lui.IControl):
 	
 	def onMouseMove(self, x, y):
 		ctl = self.searchChild(x, y)
-		if ctl == self.selector.activeCtl:
+		if ctl == self.target:
 			ctl = None
 		
 		self.focus.applyCtl(ctl)
 	
 	def onMouseDown(self, x, y):
 		ctl = self.searchChild(x, y)
-
-		print("onMouseDown", ctl)
-
-		self.selector.applyCtl(ctl)
-		self.refreshProperty()
+		self.setTarget(ctl)
 	
 	def onKeyEvent(self, isDown, key):
 		#print("onKeyMessage", isDown, key)
@@ -234,11 +222,12 @@ class Editor(lui.IControl):
 		self.floatBar.setReference(self.reference)
 
 	def setTarget(self, target):
+		self.target = target
 		self.selector.applyCtl(target)
 		self.refreshProperty()
 
 	def refreshProperty(self):
-		self.floatBar.applyCtl(self.selector.activeCtl)
+		self.floatBar.applyCtl(self.target)
 
 	def onNewItem(self, kind):
 		item = edt_creator.create_ui(kind)
@@ -246,14 +235,23 @@ class Editor(lui.IControl):
 
 		if not item: return
 
-		if not self.host:
-			self.host = item
-			self.reference.addChild(item)
+		if self.target:
+			self.target.addEditorChild(item)
+		elif self.reference:
+			self.reference.addEditorChild(item)
 		else:
-			self.host.addEditorChild(item)
+			ui.uiRoot.addChild(item)
+			self.setHost(item)
 
 		self.refreshReference()
 		self.setTarget(item)
+
+	def removeTarget(self):
+		if self.target == self.host: return
+
+		if self.target and self.target.parent:
+			self.target.parent.delEditorChild(self.target)
+			self.setTarget(None)
 
 ##################################################
 ### 浮动工具条
@@ -379,29 +377,36 @@ class PropertyBar(lui.IControl):
 		self.btnSearchResculy = self.getChildByName("searchResculy")
 		self.btnSearchResculy.onButtonCheck = gui.MethodProxy(self, "onBtnResculy")
 
+		self.btnRemove = self.getChildByName("btnRemove")
+		self.btnRemove.onButtonCheck = gui.MethodProxy(self, "onBtnRemove")
+
 		self.propList = PropertyList(self, 0, 45, w, 300)
 		
 	def applyCtl(self, control):
 		self.propList.applyCtl(control)
 
-		isPanel = isinstance(control, lui.Form)
-		self.btnPushTarget.visible = isPanel
-		self.btnPopTarget.visible = not isPanel
+		canPush = control and control != share.gui.editor.reference
+		self.btnPushTarget.visible = canPush
+		self.btnPopTarget.visible = not canPush
+		self.btnRemove.visible = bool(control)
 
 	def onBtnPush(self):
 		try:
 			share.gui.editor.pushReference()
 		except RuntimeError as e:
-			print("pop target failed!", e)
+			print("push target failed!", e)
 
 	def onBtnPop(self):
 		try:
 			share.gui.editor.popReference()
 		except RuntimeError as e:
-			print("push target failed!", e)
+			print("pop target failed!", e)
 
 	def onBtnResculy(self, isCheck):
 		share.gui.editor.enableResculySearch(isCheck)
+
+	def onBtnRemove(self):
+		share.gui.editor.removeTarget()
 
 class PropertyList(gui.ListControl):
 	def __init__(self, parent, x, y, w=300, h=300):
@@ -411,6 +416,7 @@ class PropertyList(gui.ListControl):
 
 		self.position = (x, y)
 		self.size = (w, h)
+		self.bgColor = 0xaf000000
 	
 	def applyCtl(self, ctl):
 		if ctl != self.control:

@@ -157,7 +157,7 @@ namespace Lazy
         , m_bEnable(true)
         , m_bDrag(false)
         , m_bEnableSelfMsg(true)
-        , m_bClickTop(true)
+        , m_bClickTop(false)
         , m_parent(nullptr)
         , m_font(getDefaultFont())
         , m_bRelative(false)
@@ -606,7 +606,7 @@ namespace Lazy
         enable(config->readBool(L"enable", true));
         enableSelfMsg(config->readBool(L"enableSelfMsg", true));
         enableDrag(config->readBool(L"enalbeDrag", false));
-        enableClickTop(config->readBool(L"clickTop", true));
+        enableClickTop(config->readBool(L"clickTop", false));
         enableChangeChildOrder(config->readBool(L"limitInRect", true));
         enableChangeChildOrder(config->readBool(L"changeChildOrder", true));
         enableDrawSelf(config->readBool(L"drawSelf", true));
@@ -833,12 +833,12 @@ namespace Lazy
             (*it)->destroy();
         }
 
-        clearChildren();
-        removeFromParent();
-        
 #ifdef ENABLE_SCRIPT
         Lzpy::object(m_pSelf).call_method_quiet("onDestroy");
 #endif
+
+        clearChildren();
+        removeFromParent();
     }
 
     ///根据坐标查找控件。
@@ -848,7 +848,7 @@ namespace Lazy
             it != m_children.end();  ++it)
         {
             PControl ptr = *it;
-            if (!ptr) continue;
+            if (!ptr || !ptr->isVisible()) continue;
 
             CPoint pt = pos;
             ptr->parentToLocal(pt);
@@ -900,9 +900,12 @@ namespace Lazy
     {
         if (m_bManaged == managed) return;
 
+        if (managed)
+            this->addRef();
+        else
+            this->delRef();
+
         m_bManaged = managed;
-        if (m_bManaged) this->addRef();
-        else this->delRef();
     }
 
     ////////////////////////////////////////////////////////////////////

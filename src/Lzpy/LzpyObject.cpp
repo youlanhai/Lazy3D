@@ -350,15 +350,12 @@ namespace Lzpy
 
     object object::call_python()
     {
-        return call_python(tuple());
+        return call_python(tuple(), null_object);
     }
 
     object object::call_python(tuple arg)
     {
-        if (!callable())
-            throw(python_error("This object doesn't callable!"));
-
-        return new_reference(PyObject_Call(m_ptr, arg.get(), nullptr));
+        return call_python(arg, null_object);
     }
 
     object object::call_python(tuple arg, dict kwd)
@@ -366,7 +363,16 @@ namespace Lzpy
         if (!callable())
             throw(python_error("This object doesn't callable!"));
 
-        return new_reference(PyObject_Call(m_ptr, arg.get(), kwd.get()));
+        PyObject * ret = PyObject_Call(m_ptr, arg.get(), kwd.get());
+        if (ret == nullptr)
+        {
+            //throw(python_error("Function call failed!"));
+            //LOG_ERROR(L"Python call failed!");
+            //PyErr_SetString(PyExc_RuntimeError, "function call failed!");
+            PyErr_Print();
+        }
+
+        return new_reference(ret);
     }
 
 

@@ -24,6 +24,7 @@ namespace Lazy
         enableDrag(false);
         enableColor(true);
         enablePosMove(true);
+        enableClickTop(true);
         setSize(80, 30);
 
         m_fontPtr = getDefaultFontPtr();

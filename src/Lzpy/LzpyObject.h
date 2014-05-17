@@ -281,17 +281,10 @@ namespace Lzpy
         template<typename... Args>
         object call(Args... args)
         {
-            if (!callable())
-                throw(python_error("This object doesn't callable!"));
-
             tuple tp;
             tp.build_tuple(args...);
 
-            PyObject *ret = PyObject_Call(m_ptr, tp.get(), nullptr);
-            if (ret == nullptr)
-                throw(python_error("Function call failed!"));
-
-            return new_reference(ret);
+            return call_python(tp);
         }
 
         template<typename... Args>

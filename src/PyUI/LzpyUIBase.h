@@ -138,8 +138,6 @@ namespace Lzpy
 
         bool createUI(int type, PyObject *arg = nullptr);
         bool addChild(object child);
-        bool addToManage(object obj);
-        void removeFromManage(object obj);
 
         PyObject    *m_pyDict;
         PyObject    *m_pyWeakreflist;

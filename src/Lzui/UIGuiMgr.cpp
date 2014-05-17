@@ -35,6 +35,10 @@ namespace Lazy
     {
         g_ptrGUIMgr = NULL;
         delete m_render;
+
+#ifdef ENABLE_SCRIPT
+        destroy();
+#endif
     }
 
     void CGUIManager::addChildManage(RefPtr<IControl> child)

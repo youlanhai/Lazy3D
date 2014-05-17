@@ -35,7 +35,7 @@ def loadScript(script):
 def loadUIScript(script, config):
 	obj = loadScript(script)
 	if obj is None: return None
-	
+
 	if not obj.loadFromFile(config):
 		obj.destroy()
 		return None
@@ -257,6 +257,8 @@ class IListItem(lui.IControl):
 	
 	def setInfo(self, info): pass
 
+	def layout(self): pass
+
 
 class IListView(lui.IControl):
 	def __init__(self, parent=None):
@@ -268,6 +270,9 @@ class IListView(lui.IControl):
 		self.maxItemCache = 4
 		self.lineSpace = 0
 		self.itemCreateMethod = None
+
+	def setItemCreateMethod(self, method):
+		self.itemCreateMethod = method
 
 	##############################################
 	### internal method
@@ -342,16 +347,18 @@ class IListView(lui.IControl):
 class ListView(lui.Form):
 
 	UI_EDITOR_PROPERTY = (
-		edt_const.TP_TREE_ITEM_CONFIG,
+		edt_const.TP_EXTERNAL_LAYOUT,
+		edt_const.TP_NUM_TESTCASE,
 	)
 
-	def getItemConfig(self): return self.itemConfigFile
-	def setItemConfig(self, value): self.itemConfigFile = value
+	def getExternalLayout(self): return self.itemConfigFile
+	def setExternalLayout(self, value): self.itemConfigFile = value
+
 
 	def __init__(self, parent=None):
 		self.slidebar = None
 
-		super(ITree, self).__init__(parent)
+		super(ListView, self).__init__(parent)
 		self.enableClip = True
 		self.enableDrag = False
 
@@ -419,6 +426,29 @@ class ListView(lui.Form):
 	def onSlide(self, pos):
 		self.layoutPosition()
 
+	@classmethod
+	def createUI(cls):
+		e = cls()
+
+		e.slidebar = lui.Slidebar(e)
+		e.slidebar.vertical = True
+		e.slidebar.onSlide = MethodProxy(e, "onSlide")
+		e.slidebar.name = "slidebar"
+		e.slidebar.editable = True
+
+		e.root = IListView(e)
+		e.root.setItemCreateMethod(MethodProxy(e, "_createItem"))
+		e.root.name = "item_root"
+
+		#e.setItemCreateMethod(IListItem)
+		e.size = (200, 300)
+
+		e.script = "gui.ListView"
+		return e
+
+	def setNumTestcase(self, n):
+		info = [("list %d" % x, None) for x in range(n)]
+		self.setInfo( info )
 
 ##################################################
 ###
@@ -507,15 +537,20 @@ class ITreeItem(IListItem):
 class ITree(lui.Form):
 
 	UI_EDITOR_PROPERTY = (
-		edt_const.TP_TREE_ITEM_CONFIG,
-		edt_const.TP_TREE_ITEM_SCRIPT,
+		edt_const.TP_EXTERNAL_LAYOUT,
+		edt_const.TP_EXTERNAL_SCRIPT,
+		edt_const.TP_NUM_TESTCASE,
 	)
 
-	def getItemScript(self): return self.itemClassFile
-	def setItemScript(self, value): self.itemClassFile = value
+	def getExternalScript(self): return self.itemClassFile
+	def setExternalScript(self, value): self.itemClassFile = value
 
-	def getItemConfig(self): return self.itemConfigFile
-	def setItemConfig(self, value): self.itemConfigFile = value
+	def getExternalLayout(self): return self.itemConfigFile
+	def setExternalLayout(self, value): self.itemConfigFile = value
+
+	def setNumTestcase(self, n):
+		info = [("tree %d" % x, None) for x in range(n)]
+		self.setInfo( ("root", info) )
 
 	@property
 	def root(self): return self.getRoot()

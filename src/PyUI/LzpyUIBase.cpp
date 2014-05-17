@@ -8,8 +8,6 @@
 
 namespace Lzpy
 {
-    object createPythonUI(int type);
-
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyControl)
         LZPY_GETSET(editorPool);
@@ -105,19 +103,6 @@ namespace Lzpy
         m_control->addChild(p->m_control.get());
 
         return true;
-    }
-    
-    bool LzpyControl::addToManage(object obj)
-    {
-        if (!helper::has_instance<LzpyControl>(obj.get(), true)) return false;
-
-        m_editorPool.append(obj);
-        return true;
-    }
-
-    void LzpyControl::removeFromManage(object obj)
-    {
-        m_editorPool.remove(obj);
     }
 
     bool LzpyControl::createUI(int type, PyObject *arg)
@@ -293,7 +278,9 @@ namespace Lzpy
             return null_object;
         }
 
-        if (m_control &&p->m_control)
+        if (p == Py_None) return none_object;
+
+        if (m_control && p->m_control)
         {
             m_control->addChild(p->m_control.get());
         }
@@ -350,12 +337,14 @@ namespace Lzpy
     }
     LZPY_IMP_METHOD(LzpyControl, delEditorChild)
     {
-        LzpyControl *p;
-        if (!PyArg_ParseTuple(arg.get(), "O", &p)) return null_object;
-        if (!helper::has_instance<LzpyControl>(p, true)) return null_object;
+        object child;
+        if (!arg.parse_tuple(&child)) return null_object;
 
-        m_control->delChild(p->m_control.get());
-        m_editorPool.remove(object(borrow_reference(p)));
+        if (!helper::has_instance<LzpyControl>(child.get(), true)) return null_object;
+
+        m_control->delChild(child.cast<LzpyControl>()->m_control.get());
+        m_editorPool.remove(child);
+
         return none_object;
     }
 
@@ -409,7 +398,9 @@ namespace Lzpy
                 children[i].call_method("destroy");
             }
 
-            m_control->destroy();
+            //m_control->destroy();
+            m_control->removeFromParent();
+            m_control->clearChildren();
             m_control = nullptr;
         }
         

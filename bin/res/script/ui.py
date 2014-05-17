@@ -69,7 +69,6 @@ Button      = 4
 Label       = 5
 Image       = 6
 Edit        = 7
-Check       = 8
 Slidebar    = 9
 CheckBox    = 10
 SelectGroup = 11
@@ -77,6 +76,7 @@ Slider     = 12
 GuiMgr      = 13
 EditorCtl   = 14
 UIProxy     = 15
+ListView    = 16
 
 def isContainerType(type):
 	return True

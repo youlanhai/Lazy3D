@@ -1,27 +1,57 @@
 # -*- coding: utf-8
 
+import ui
+import gui
+
 import edt_const
-from uieditor import edt_property
+from uieditor import edt_property, edt_creator
+
+##################################################
+###
+##################################################
+
+class ExternalScriptItem(edt_property._stringItem):
+	def getName(self): return "引用脚本"
+	def getCtlValue(self): return self.control.getExternalScript()
+	def setCtlValue(self, v): return self.control.setExternalScript(v)
+
+class ExternalLayoutItem(edt_property._stringItem):
+	def getName(self): return "引用配置"
+	def getCtlValue(self): return self.control.getExternalLayout()
+	def setCtlValue(self, v): return self.control.setExternalLayout(v)
+
+class NumTestcaseItem(edt_property._intItem):
+	def __init__(self):
+		super(NumTestcaseItem, self).__init__()
+		self.numTestcase = 0
+
+	def getName(self): return "用例数量"
+	def getCtlValue(self): return self.numTestcase
+	def setCtlValue(self, v): return self.control.setNumTestcase(v)
 
 
-class TreeItemConfig(edt_property._stringItem):
-	def getName(self): return "item config"
-	def getCtlValue(self): return self.control.getItemConfig()
-	def setCtlValue(self, v): return self.control.setItemConfig(v)
-
-class TreeItemScript(edt_property._stringItem):
-	def getName(self): return "item script"
-	def getCtlValue(self): return self.control.getItemScript()
-	def setCtlValue(self, v): return self.control.setItemScript(v)
-
-
+##################################################
+###
+##################################################
 CUSTEOM_TP_MAP = {
-	edt_const.TP_TREE_ITEM_SCRIPT: TreeItemScript,
-	edt_const.TP_TREE_ITEM_CONFIG: TreeItemConfig,
+	edt_const.TP_EXTERNAL_SCRIPT: ExternalScriptItem,
+	edt_const.TP_EXTERNAL_LAYOUT : ExternalLayoutItem,
+	edt_const.TP_NUM_TESTCASE : NumTestcaseItem,
 }
 
+
+CUSTOM_UI_MAP = {
+	ui.ListView : ("列表", gui.ListView.createUI),
+}
+
+##################################################
+###
+##################################################
 
 def boot():
 	for k, v in CUSTEOM_TP_MAP.items():
 		edt_property.registerTpMethod(k, v)
+
+	for k, (name, method) in CUSTOM_UI_MAP.items():
+		edt_creator.regist_ui(k, name, method)
 

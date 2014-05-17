@@ -10,6 +10,7 @@ namespace Lazy
         enableDrag(true);
         enableDrawSelf(true);
         enableLimitInRect(true);
+        enableClickTop(true);
         setSize(200, 100);
         setBgColor(0x7fffffff);
     }
