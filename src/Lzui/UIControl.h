@@ -50,12 +50,11 @@ namespace Lazy
         ///打开配置文件
         virtual bool loadFromFile(const tstring & file);
 
-        virtual bool loadFromStream(LZDataPtr root);
-
         ///保存布局到文件
         virtual bool saveToFile(const tstring & file);
 
-        virtual bool saveToStream(LZDataPtr root);
+        virtual void loadFromStream(LZDataPtr root);
+        virtual void saveToStream(LZDataPtr root);
 
         void setName(const tstring & key){ m_name = key; }
         const tstring & getName() const { return m_name; }

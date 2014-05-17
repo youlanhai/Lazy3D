@@ -4,8 +4,6 @@
 
 namespace Lazy
 {
-
-    //CPanel
     CForm::CForm(void)
         : m_bClip(false)
     {
@@ -15,7 +13,6 @@ namespace Lazy
         setSize(200, 100);
         setBgColor(0x7fffffff);
     }
-
 
     CForm::~CForm()
     {
@@ -39,7 +36,7 @@ namespace Lazy
         if (m_bDrawSelf)
             pDevice->drawRect(rect, getBgColor(), m_texture);
 
-        if (!m_bClip || m_rcClip.isEmpty())
+        if (!m_bClip)
         {
             IControl::render(pDevice);
             return;
@@ -47,8 +44,7 @@ namespace Lazy
 
         //处理裁剪区域
         
-        CRect clipRect = m_rcClip;
-        clipRect.offset(rect.left, rect.top);
+        CRect clipRect = rect;
 
         bool oldClipEnabled = pDevice->isClipEnable();
         CRect oldClipRect;
@@ -79,17 +75,24 @@ namespace Lazy
         if (m_texture) setBgColor(0xffffffff);
     }
 
-    void CForm::setClipRect(const CRect & rc)
-    {
-        m_rcClip = rc;
-    }
-
     void CForm::ajustToImageSize()
     {
         if (m_texture) setSize(m_texture->getWidth(), m_texture->getHeight());
         else setSize(0, 0);
     }
 
+    void CForm::loadFromStream(LZDataPtr root)
+    {
+        IControl::loadFromStream(root);
 
+        root->writeBool(L"clip", m_bClip);
+    }
+
+    void CForm::saveToStream(LZDataPtr root)
+    {
+        IControl::saveToStream(root);
+
+        enableClip(root->readBool(L"clip", false));
+    }
 
 }//namespace Lazy

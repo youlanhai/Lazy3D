@@ -582,10 +582,11 @@ namespace Lazy
             return false;
         }
 
-        return loadFromStream(root->getChild(0));
+        loadFromStream(root->getChild(0));
+        return true;
     }
 
-    bool IControl::loadFromStream(LZDataPtr config)
+    void IControl::loadFromStream(LZDataPtr config)
     {
         assert(config);
 
@@ -637,10 +638,7 @@ namespace Lazy
                 child->setName(childPtr->tag());
                 addChild(child);
 
-                if (!child->loadFromStream(childPtr))
-                {
-                    LOG_ERROR(L"Load child '%s' from stream failed!", childPtr->tag().c_str());
-                }
+                child->loadFromStream(childPtr);
             }
         }
 
@@ -648,7 +646,6 @@ namespace Lazy
         setScript(config->readString(L"script"));
         if(m_pSelf) Lzpy::object(m_pSelf).call_method_quiet("onLoadLayout", Lzpy::make_object(config));
 #endif
-        return true;
     }
 
 
@@ -666,16 +663,11 @@ namespace Lazy
         LZDataPtr config = root->newOne(m_name, EmptyStr);
         root->addChild(config);
 
-        if (!saveToStream(config))
-        {
-            LOG_ERROR(L"Save layout(key='%s') failed!", m_name.c_str());
-            return false;
-        }
-
+        saveToStream(config);
         return saveSection(root, file);
     }
 
-    bool IControl::saveToStream(LZDataPtr config)
+    void IControl::saveToStream(LZDataPtr config)
     {
         assert(config);
 
@@ -724,11 +716,7 @@ namespace Lazy
 
             LZDataPtr ptr = childrenPtr->newOne(child->getName(), EmptyStr);
             childrenPtr->addChild(ptr);
-
-            if (!child->saveToStream(ptr))
-            {
-                LOG_ERROR(L"Save child '%s' to stream failed!", child->getName());
-            }
+            child->saveToStream(ptr);
         }
         unlockChildren();
 
@@ -736,10 +724,7 @@ namespace Lazy
         if (!m_script.empty()) config->writeString(L"script", m_script);
         if (m_pSelf) Lzpy::object(m_pSelf).call_method_quiet("onSaveLayout", Lzpy::make_object(config));
 #endif
-        return true;
     }
-
-
 
     void IControl::setSize(int w, int h)
     {
@@ -930,9 +915,7 @@ namespace Lazy
         int type = config->readInt(L"type");
 
         ControlPtr child = uiFactory()->create(type);
-        if (!child->loadFromStream(config)) return nullptr;
-
-        child->setName(config->tag());
+        child->loadFromStream(config);
         return child;
     }
 

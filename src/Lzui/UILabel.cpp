@@ -149,21 +149,21 @@ void CLabel::setColor(uint32 color)
 }
 
 ///加载布局。
-bool CLabel::loadFromStream(LZDataPtr config)
+void CLabel::loadFromStream(LZDataPtr config)
 {
-    setAlign(config->readHex(L"align"));
-    enableMutiLine(config->readBool(L"mutiLine"));
+    IControl::loadFromStream(config);
 
-    return IControl::loadFromStream(config);
+    setAlign(config->readHex(L"align"));
+    enableMutiLine(config->readBool(L"mutiline"));
 }
 
 ///保存布局
-bool CLabel::saveToStream(LZDataPtr config)
+void CLabel::saveToStream(LZDataPtr config)
 {
-    config->writeHex(L"align", m_align);
-    config->writeBool(L"mutiLine", m_bMutiLine);
+    IControl::saveToStream(config);
 
-    return IControl::saveToStream(config);
+    config->writeHex(L"align", m_align);
+    config->writeBool(L"mutiline", m_bMutiLine);
 }
 
 }//namespace Lazy

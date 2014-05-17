@@ -282,4 +282,18 @@ namespace Lazy
         m_textSprite->setColor(color);
     }
 
+    void CEdit::loadFromStream(LZDataPtr root)
+    {
+        IControl::loadFromStream(root);
+
+        setMutiLine(root->readBool(L"mutiline", false));
+    }
+
+    void CEdit::saveToStream(LZDataPtr root)
+    {
+        IControl::saveToStream(root);
+
+        root->writeBool(L"mutiline", m_bMutiLine);
+    }
+
 }//namespace Lazy

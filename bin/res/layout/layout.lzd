@@ -16,52 +16,10 @@ root
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 355 50
+	position = 2 1
 	size = 212 304
 	children
 	{
-		btn_ok
-		{
-			type = 4
-			id = 2
-			text = 确定
-			font = def|17
-			color = ffffffff
-			bgcolor = af808080
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 52 263
-			size = 100 30
-			children = ""
-		}
-		lbl_title
-		{
-			align = 00000040
-			mutiLine = true
-			type = 5
-			id = 0
-			text = 你好哈\naaaaaaaaaa
-			font = def|17
-			color = ff00ff00
-			bgcolor = 7fffffff
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 15 15
-			size = 177 54
-			children = ""
-		}
 		edt_msg
 		{
 			type = 7
@@ -80,6 +38,49 @@ root
 			drawSelf = true
 			position = 50 100
 			size = 129 133
+			children = ""
+			mutiline = true
+		}
+		lbl_title
+		{
+			type = 5
+			id = 0
+			text = 你好哈\naaaaaaaaaa
+			font = def|17
+			color = ff00ff00
+			bgcolor = 7fffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 15 16
+			size = 177 54
+			children = ""
+			align = 00000040
+			mutiline = false
+		}
+		btn_ok
+		{
+			type = 4
+			id = 2
+			text = 确定
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 52 263
+			size = 100 30
 			children = ""
 		}
 	}

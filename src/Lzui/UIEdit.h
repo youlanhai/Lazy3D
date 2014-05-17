@@ -21,6 +21,9 @@ namespace Lazy
         virtual void setFont(const tstring & name) override;
         virtual void setColor(uint32 color) override;
 
+        virtual void loadFromStream(LZDataPtr root);
+        virtual void saveToStream(LZDataPtr root);
+
     protected:
 
         virtual bool onEvent(const SEvent & event) override;

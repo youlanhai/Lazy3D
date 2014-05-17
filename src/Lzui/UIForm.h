@@ -27,15 +27,14 @@ namespace Lazy
 
         virtual void setImage(const tstring & image) override;
 
-        void setClipRect(const CRect & rc);
-        const CRect & getClipRect() const { return m_rcClip; }
-
         void ajustToImageSize();
+
+        virtual void loadFromStream(LZDataPtr root) override;
+        virtual void saveToStream(LZDataPtr root) override;
 
     protected:
         TexturePtr      m_texture;
         bool            m_bClip;///<启用裁减
-        CRect           m_rcClip;///<裁剪区域
     };
 
 }//namespace Lazy

@@ -195,4 +195,25 @@ namespace Lazy
     }
 
 
+    void CSlidebar::loadFromStream(LZDataPtr config)
+    {
+        CForm::loadFromStream(config);
+
+        setVertical(config->readBool(L"vertical", false));
+        setSlideStep(config->readFloat(L"slideStep", 0.05f));
+
+        CSize size;
+        misc::readSize(size, config, L"sliderSize");
+        setSliderSize(size.cx, size.cy);
+    }
+
+    void CSlidebar::saveToStream(LZDataPtr config)
+    {
+        CForm::saveToStream(config);
+
+        config->writeBool(L"vertical", m_bVertical);
+        config->writeFloat(L"slideStep", m_slideStep);
+        misc::writeSize(getSliderSize(), config, L"sliderSize");
+    }
+
 }//namespace Lazy

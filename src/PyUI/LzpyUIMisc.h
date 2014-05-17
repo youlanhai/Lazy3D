@@ -42,11 +42,6 @@ namespace Lzpy
 
         LZPY_DEF_GET(enableClip, getUI()->canClip);
         LZPY_DEF_SET(enableClip, getUI()->enableClip, bool);
-        LZPY_DEF_GET(clipRect, getClipRect);
-        LZPY_DEF_SET(clipRect, setClipRect, tuple);
-
-        tuple getClipRect();
-        void setClipRect(tuple v);
     };
 
 

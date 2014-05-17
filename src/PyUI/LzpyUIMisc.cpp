@@ -31,7 +31,6 @@ namespace Lzpy
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyForm)
         LZPY_GETSET(enableClip);
-        LZPY_GETSET(clipRect);
     LZPY_CLASS_END();
 
     LzpyForm::LzpyForm()
@@ -40,22 +39,6 @@ namespace Lzpy
     }
 
     LZPY_IMP_INIT_LUI(LzpyForm, Form);
-
-    tuple LzpyForm::getClipRect()
-    {
-        const CRect & rc = getUI()->getClipRect();
-        return build_tuple(rc.left, rc.top, rc.right, rc.bottom);
-    }
-
-    void LzpyForm::setClipRect(tuple v)
-    {
-        if (v.size() != 4)
-            throw(python_error("clipRect: tuple 4 needed!"));
-
-        CRect rc;
-        v.parse_tuple(&rc.left, &rc.top, &rc.right, &rc.bottom);
-        getUI()->setClipRect(rc);
-    }
 
 
     ///////////////////////////////////////////////////////////////////

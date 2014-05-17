@@ -70,6 +70,9 @@ namespace Lazy
 
         void layoutSlider();
 
+        virtual void loadFromStream(LZDataPtr config) override;
+        virtual void saveToStream(LZDataPtr config) override;
+
     protected:
 
         virtual bool onEvent(const SEvent & event) override;

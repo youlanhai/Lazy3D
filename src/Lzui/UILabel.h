@@ -35,10 +35,10 @@ public:
     virtual void render(IUIRender * pDevice);
 
     ///加载布局。
-    virtual bool loadFromStream(LZDataPtr config) override;
+    virtual void loadFromStream(LZDataPtr config) override;
 
     ///保存布局
-    virtual bool saveToStream(LZDataPtr config) override;
+    virtual void saveToStream(LZDataPtr config) override;
 
 protected:
 
