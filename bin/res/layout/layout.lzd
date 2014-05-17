@@ -1,86 +1,87 @@
 #coding = utf-8
 
-MainView
+root
 {
 	type = 3
-	id = 2
-	image = gui/login.png
+	id = 1
+	image = gui/goods.bmp
 	font = def|17
 	color = ffffffff
 	bgcolor = ffffffff
 	visible = true
 	enable = true
+	enableSelfMsg = true
 	enalbeDrag = true
-	enableMsg = true
 	clickTop = true
-	position = 100 100
-	size = 300 200
 	limitInRect = true
-	handleSelfMsg = true
 	changeChildOrder = true
 	drawSelf = true
+	position = 355 50
+	size = 212 304
 	children
 	{
-		noname
+		btn_ok
 		{
 			type = 4
-			id = 1
-			text = OK
+			id = 2
+			text = 确定
 			font = def|17
 			color = ffffffff
 			bgcolor = af808080
 			visible = true
 			enable = true
+			enableSelfMsg = true
 			enalbeDrag = false
-			enableMsg = true
 			clickTop = true
-			position = 0 0
-			size = 100 40
-			limitInRect = true
-			handleSelfMsg = true
+			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
+			position = 52 263
+			size = 100 30
 			children = ""
 		}
-		noname
+		lbl_title
 		{
-			type = 9
-			id = 2
+			align = 00000040
+			mutiLine = true
+			type = 5
+			id = 0
+			text = 你好哈\naaaaaaaaaa
 			font = def|17
-			color = ffffffff
-			bgcolor = 7f000000
-			visible = true
-			enable = true
-			enalbeDrag = false
-			enableMsg = true
-			clickTop = true
-			position = 0 50
-			size = 100 20
-			limitInRect = true
-			handleSelfMsg = true
-			changeChildOrder = true
-			drawSelf = true
-			children = ""
-		}
-		noname
-		{
-			type = 7
-			id = 3
-			font = def|17
-			color = ffffffff
+			color = ff00ff00
 			bgcolor = 7fffffff
 			visible = true
 			enable = true
+			enableSelfMsg = true
 			enalbeDrag = false
-			enableMsg = true
 			clickTop = true
-			position = 120 20
-			size = 100 50
-			limitInRect = true
-			handleSelfMsg = true
+			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
+			position = 15 15
+			size = 177 54
+			children = ""
+		}
+		edt_msg
+		{
+			type = 7
+			id = 0
+			text = edit\nfdsf
+			font = def|30
+			color = ffffffff
+			bgcolor = ffffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 50 100
+			size = 129 133
 			children = ""
 		}
 	}
+	script = guimgr.TestForm
 }
