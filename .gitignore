@@ -15,6 +15,10 @@
 *.log
 *.opensdf
 *.sdf
+*.user
+*.suo
+*.pyc
+ipch
 [Dd]ebug
 [Rr]elease
 Debug_Script
