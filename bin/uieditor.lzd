@@ -1,0 +1,27 @@
+#coding = utf-8
+
+app
+{
+    font = font/stsong.ttf
+    paths
+    {
+        path = res
+    }
+}
+
+client
+{
+    width = 800
+    height = 600
+    color = 7f000000
+    image = ""
+}
+
+python
+{
+    home = ../src/third_part/python33
+    paths
+    {
+        path = res/script
+    }
+}

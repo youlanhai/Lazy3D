@@ -64,8 +64,8 @@ namespace Lazy
 
         //默认渲染器
         m_render = new GUIRender(pDevice, hWnd);
-        m_render->setTextureShader(L"shader/ui.fx");
-        m_render->setColorShader(L"shader/ui.fx");
+        m_render->setTextureShader(L"shader/texture.fx");
+        m_render->setColorShader(L"shader/color.fx");
         m_render->setFontShader(L"shader/font.fx");
 
         //注册默认ui工厂
