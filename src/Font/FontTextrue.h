@@ -34,7 +34,7 @@ namespace Lazy
         int width() const { return m_width; }
         int height() const { return m_height; }
 
-        LPDIRECT3DTEXTURE9 texture(){ return m_texture; }
+        TexturePtr texture(){ return m_texture; }
 
         bool lockOne(int & x, int & y);
 
@@ -54,7 +54,7 @@ namespace Lazy
         int m_cols;
         int m_index;
 
-        LPDIRECT3DTEXTURE9 m_texture;
+        TexturePtr m_texture;
     };
 
     typedef std::shared_ptr<FontTextureNode> FontTextureNodePtr;

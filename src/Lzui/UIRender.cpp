@@ -35,6 +35,7 @@ namespace Lazy
     static RSCache s_rsCache;
 
     int UIVertex::SIZE = sizeof(UIVertex);
+    DWORD UIVertex::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
     class SpiritBatcher : public SimpleSingleton<SpiritBatcher>
     {
@@ -82,7 +83,9 @@ namespace Lazy
             assert(m_device);
 
             if (m_texture)
+            {
                 m_shader->setTexture("g_texture", m_texture->getTexture());
+            }
 
             m_shader->setMatrix("g_worldViewProjection", m_matWorldViewProj);
 
@@ -206,7 +209,10 @@ namespace Lazy
 
     void GUIRender::drawRect(const CRect & rc, const UVRect & srcRc, uint32 color, TexturePtr texture)
     {
-        SpiritBatcher::instance()->draw(UVRect(rc), srcRc, color, texture, m_textureShader);
+        if (texture && texture->getTexture())
+            SpiritBatcher::instance()->draw(UVRect(rc), srcRc, color, texture, m_textureShader);
+        else
+            SpiritBatcher::instance()->draw(UVRect(rc), srcRc, color, nullptr, m_colorShader);
     }
 
     void GUIRender::drawRect(const CRect & rc, uint32 color)
@@ -237,7 +243,7 @@ namespace Lazy
 
     void GUIRender::drawWord(const CRect & dest, const UVRect & src, uint32 color, TexturePtr texture)
     {
-        if (!texture) return;
+        if (!texture || !texture->getTexture()) return;
 
         SpiritBatcher::instance()->draw(UVRect(dest), src, color, texture, m_fontShader);
     }

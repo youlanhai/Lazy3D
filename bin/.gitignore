@@ -1,0 +1,6 @@
+*.exe
+*.exp
+*.ilk
+*.pdb
+*.lib
+dump.font.png

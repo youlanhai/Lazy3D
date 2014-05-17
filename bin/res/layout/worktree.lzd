@@ -6,7 +6,7 @@ mainview
 	id = 1
 	font = def|17
 	color = ffffffff
-	bgcolor = afffffff
+	bgcolor = af000000
 	visible = true
 	enable = true
 	enableSelfMsg = true

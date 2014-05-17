@@ -6,7 +6,7 @@ root
 	id = 0
 	font = def|17
 	color = ffffffff
-	bgcolor = 7fffffff
+	bgcolor = 7f000000
 	visible = true
 	enable = true
 	enableSelfMsg = true

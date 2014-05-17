@@ -22,15 +22,14 @@ namespace Lazy
 
     FontTextureNode::~FontTextureNode()
     {
-        if(m_texture)
+        if(m_texture && m_texture->getTexture())
         {
             static bool saved = false;
             if(!saved)
             {
                 saved = true;
-                D3DXSaveTextureToFile(_T("font/node.png"), D3DXIFF_PNG, m_texture, NULL);
+                D3DXSaveTextureToFile(_T("dump.font.png"), D3DXIFF_PNG, m_texture->getTexture(), NULL);
             }
-            m_texture->Release();
         }
     }
 
@@ -51,18 +50,21 @@ namespace Lazy
 
     bool FontTextureNode::create()
     {
-        if (m_texture)  m_texture->Release();
+        m_texture = nullptr;
 
-        LPDIRECT3DDEVICE9 pDevice = rcDevice()->getDevice();
+        dx::Device *pDevice = rcDevice()->getDevice();
+        dx::Texture * pTexture;
 
-        if(FAILED(D3DXCreateTexture(pDevice, m_width, m_height, 1, 0, D3DFMT_A8, D3DPOOL_MANAGED, &m_texture)))
+        if (FAILED(D3DXCreateTexture(pDevice, m_width, m_height, 1, 0, D3DFMT_A8, D3DPOOL_MANAGED, &pTexture)))
         {
-            debugMessage(_T("create texture faild!"));
-            m_texture = NULL;
+            LOG_ERROR(_T("create texture faild!"));
             return false;
         }
 
-        debugMessage(_T("FontTextureNode::create : new texture w=%d, h=%d, dw=%d, dh=%d"), m_width, m_height, m_dw, m_dh);
+        m_texture = new Texture(pTexture, D3DFMT_A8, m_width, m_height);
+        pTexture->Release();
+
+        LOG_INFO(_T("FontTextureNode::create : new texture w=%d, h=%d, dw=%d, dh=%d"), m_width, m_height, m_dw, m_dh);
         return true;
     }
     //////////////////////////////////////////////////////////////////////////

@@ -12,6 +12,7 @@ namespace Lazy
     public:
         explicit Texture(const tstring & source);
         explicit Texture(dx::Texture * pTex);
+        Texture(dx::Texture * pTex, D3DFORMAT fmt, uint32 width, uint32 height);
 
         ~Texture();
 

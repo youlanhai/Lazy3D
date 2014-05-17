@@ -105,7 +105,7 @@ bool initPython()
         mygame.call_method("init");
         mygame.call_method("onClientSize", Editor::client::width, Editor::client::height);
     }
-    catch(std::exception e)
+    catch(Lzpy::python_error & e)
     {
         XWRITE_LOGA("ERROR: init python failed! %s", e.what());
 

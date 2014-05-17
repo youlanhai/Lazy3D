@@ -19,3 +19,4 @@
 
 #include "../Render/Config.h"
 #include "../Render/RenderDevice.h"
+#include "../Render/Texture.h"

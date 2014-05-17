@@ -2,8 +2,7 @@
 float4x4 g_worldViewProjection;
 texture g_texture;
 
-sampler textureSampler = 
-sampler_state
+sampler textureSampler = sampler_state
 {
     Texture = <g_texture>;
     MipFilter = LINEAR;
@@ -13,34 +12,32 @@ sampler_state
 
 struct VS_OUTPUT
 {
-    float4 position;
-    float4 color;
-    float2 uv;
+    float4 position : POSITION;
+    float4 color  : COLOR0;
+    float2 uv    : TEXCOORD0;
 };
 
-VS_OUTPUT vsMain(float4 vPos : POSITION, 
-                 float4 Diffuse : COLOR0,
-                 float2 vTexCoord0 : TEXCOORD0)
+VS_OUTPUT vsMain(float4 pos : POSITION, float4 color : COLOR0, float2 tex : TEXCOORD0)
 {
     VS_OUTPUT output;
+    output.position = mul(pos, g_worldViewProjection);
+    output.color = color;
+    output.uv = tex;
     
-    output.position = mul(vPos, g_worldViewProjection);
-    output.color = Diffuse;
-    output.uv = vTexCoord0; 
-    return output;    
+    return output;
 }
 
 
-float4 RenderScenePS( VS_OUTPUT input) : COLOR0
+float4 psMain(VS_OUTPUT In) : COLOR0
 { 
-    return input.color * tex2D(textureSampler, input.uv);
+    return tex2D(textureSampler, In.uv) * In.color;
 }
 
 technique
 {
-    pass P0
+    pass p0
     {
         VertexShader = compile vs_2_0 vsMain();
-        PixelShader  = compile ps_2_0 psMain();
+        PixelShader = compile ps_2_0 psMain();
     }
 }

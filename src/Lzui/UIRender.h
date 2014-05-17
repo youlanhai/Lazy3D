@@ -11,7 +11,7 @@ namespace Lazy
         uint32 color;
         Math::Vector2 uv;
 
-        const static DWORD FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX0;
+        static DWORD FVF;
         static int SIZE;
     };
 

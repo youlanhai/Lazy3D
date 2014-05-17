@@ -99,7 +99,7 @@ namespace Lazy
         }
         else
         {
-            m_texture = info.pTexture;
+            m_texture = info.texture;
             m_uvRect.set(info.x1, info.y1, info.x2, info.y2);
 
             m_size.set(info.ax, info.ay);

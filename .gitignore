@@ -18,6 +18,7 @@
 *.user
 *.suo
 *.pyc
+*.sublime*
 ipch
 [Dd]ebug
 [Rr]elease

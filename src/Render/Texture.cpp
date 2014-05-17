@@ -28,6 +28,17 @@ namespace Lazy
         udpateInfo();
     }
 
+    Texture::Texture(dx::Texture * pTex, D3DFORMAT fmt, uint32 width, uint32 height)
+        : IResource(_T(""))
+        , m_texture(pTex)
+        , m_width(width)
+        , m_height(height)
+        , m_format(fmt)
+    {
+        if (m_texture)
+            m_texture->AddRef();
+    }
+
     Texture::~Texture()
     {
         SAFE_RELEASE(m_texture);
