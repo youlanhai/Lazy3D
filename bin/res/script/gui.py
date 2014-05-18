@@ -11,23 +11,25 @@ import ui_factory
 import edt_const
 
 def loadScript(script):
-	mods = script.split('.')
-	
-	mod = mods.pop(0)
-	if len(mod) == 0: return None
-
-	try:
-		cls = __import__(mod)
-	except ImportError:
-		print("loadScript '%s' failed, module '%s' doesn't exist!" % (script, mod))
+	split = script.rfind('.')
+	if split < 0 :
+		print("Invalid script name '%s'" % script)
 		return None
 
-	for mod in mods:
-		try:
-			cls = getattr(cls, mod)
-		except AttributeError:
-			print("loadScript '%s' failed, attr '%s' doesn't exist!" % (script, mod))
-			return None
+	modName = script[ : split]
+	clsName = script[split+1 : ]
+
+	try:
+		mod = __import__(modName, fromlist=(clsName, ))
+	except ImportError:
+		print("Failed loadScript '%s', module '%s' doesn't exist!" % (script, modName))
+		return None
+
+	try:
+		cls = getattr(mod, clsName)
+	except AttributeError:
+		print("Failed loadScript '%s', attr '%s' doesn't exist!" % (script, clsName))
+		return None
 
 	return cls()
 
@@ -257,7 +259,7 @@ class IListItem(lui.IControl):
 	
 	def setInfo(self, info): pass
 
-	def layout(self): pass
+	def layout(self): self.layoutHeight = self.size[1]
 
 
 class IListView(lui.IControl):

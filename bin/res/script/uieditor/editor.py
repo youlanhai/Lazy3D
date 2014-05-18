@@ -117,6 +117,8 @@ class Editor(lui.IControl):
 		self.floatBar.relative = True
 
 		self.workTree = gui.loadUIFromFile("layout/editor/worktree.lzd", self)
+		self.fileExplorer = gui.loadUIFromFile("layout/editor/explorer.lzd", self)
+		self.fileExplorer.listdir("layout")
 
 		self.resculySearch = True
 		self.workStack = []
@@ -236,14 +238,14 @@ class Editor(lui.IControl):
 
 		if self.target:
 			self.target.addChild(item)
-			item.managed = True
 		elif self.reference:
 			self.reference.addChild(item)
-			item.managed = True
 		else:
 			ui.uiRoot.addChild(item)
 			self.setHost(item)
 
+		item.managed = True
+		item.editable = True
 		self.refreshReference()
 		self.setTarget(item)
 

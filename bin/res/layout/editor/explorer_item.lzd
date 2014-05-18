@@ -1,0 +1,44 @@
+#coding = utf-8
+
+noname
+{
+	type = 3
+	id = 0
+	font = def|17
+	color = ffffffff
+	bgcolor = ffffffff
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = true
+	clickTop = true
+	limitInRect = true
+	changeChildOrder = true
+	drawSelf = true
+	position = 0 0
+	size = 232 51
+	children
+	{
+		btn
+		{
+			type = 4
+			id = 0
+			text = button
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 8 7
+			size = 220 36
+			children = ""
+		}
+	}
+	script = uieditor.edt_explorer.ListItem
+}
