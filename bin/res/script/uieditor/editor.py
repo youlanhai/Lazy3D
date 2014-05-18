@@ -118,7 +118,7 @@ class Editor(lui.IControl):
 
 		self.workTree = gui.loadUIFromFile("layout/editor/worktree.lzd", self)
 		self.fileExplorer = gui.loadUIFromFile("layout/editor/explorer.lzd", self)
-		self.fileExplorer.listdir("layout")
+		self.fileExplorer.visible = False
 
 		self.resculySearch = True
 		self.workStack = []
@@ -252,8 +252,8 @@ class Editor(lui.IControl):
 	def removeTarget(self):
 		if self.target == self.host: return
 
-		if self.target and self.target.parent:
-			self.target.parent.delEditorChild(self.target)
+		if self.target:
+			self.target.destroy()
 			self.setTarget(None)
 
 ##################################################
@@ -461,8 +461,11 @@ class MenuBar(lui.IControl):
 		self.btnSave = self.getChildByName("btn_save")
 		self.btnSave.onButtonClick = gui.MethodProxy(self, "onBtnSave")
 
-		self.btnClose = self.getChildByName("btn_close")
-		self.btnClose.onButtonClick = gui.MethodProxy(self, "onBtnClose")
+		btn = self.getChildByName("btn_close")
+		if btn: btn.onButtonClick = gui.MethodProxy(self, "onBtnClose")
+
+		btn = self.getChildByName("btn_scan")
+		if btn: btn.onButtonClick = gui.MethodProxy(self, "onBtnScan")
 
 	def onBtnOpen(self):
 		path = self.edtFile.text
@@ -501,6 +504,14 @@ class MenuBar(lui.IControl):
 	def onBtnClose(self):
 		share.gui.editor.setHost(None)
 		self.layoutFile = ""
+
+	def onBtnScan(self):
+		share.gui.editor.fileExplorer.listdir("layout/", self.onSelectFile, ("lzd", ))
+
+	def onSelectFile(self, code, path):
+		if not code: return
+
+		self.edtFile.text = path
 
 ##################################################
 ### 

@@ -15,8 +15,11 @@ root
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 22 37
+	position = 494 139
 	size = 379 429
+	relative = true
+	relativeAlign = 34
+	relativePos = 0.500000 0.500000
 	children
 	{
 		lbl_path

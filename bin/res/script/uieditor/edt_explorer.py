@@ -56,6 +56,7 @@ class FileExplorer(lui.Form):
 		self.onCloseCallback = callback
 		self.filters = filters
 		self._listdir(path)
+		self.visible = True
 
 	def _listdir(self, path):
 		path = format_path_name(path)
@@ -66,7 +67,7 @@ class FileExplorer(lui.Form):
 		self.selectedPath = normal_path(path)
 
 		if is_dir(self.selectedPath):
-			self.listdir(self.selectedPath)
+			self._listdir(self.selectedPath)
 			self.selectedPath += '/'
 
 		lbl = self.getChildByName("lbl_path")
@@ -82,8 +83,6 @@ class FileExplorer(lui.Form):
 		if self.onCloseCallback:
 			self.onCloseCallback(code, self.selectedPath)
 
-		self.onCloseCallback = None
-		self.selectedPath = ""
 		self.visible = False
 
 	@staticmethod

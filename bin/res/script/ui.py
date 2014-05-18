@@ -38,6 +38,7 @@ editorRoot.name = "EditorRoot"
 def onSize(w, h):
 	#lui.root().size = (w, h)
 	root.size = (w, h)
+	uiRoot.size = (w, h)
 	editorRoot.size = (w, h)
 
 def onClientSize(w, h):
