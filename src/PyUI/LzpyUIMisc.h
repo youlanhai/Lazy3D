@@ -65,6 +65,10 @@ namespace Lzpy
         LZPY_DEF_GET(sliderSize, getSliderSize);
         LZPY_DEF_SET(sliderSize, setSliderSize, tuple);
 
+        LZPY_DEF_METHOD_0(slideForward);
+        LZPY_DEF_METHOD_0(slideBackward);
+        LZPY_DEF_METHOD_1(slideByWheel);
+
         void setSliderSize(tuple size);
         tuple getSliderSize();
     };

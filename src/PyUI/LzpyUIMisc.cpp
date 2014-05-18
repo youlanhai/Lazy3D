@@ -49,6 +49,9 @@ namespace Lzpy
         LZPY_GETSET(rate);
         LZPY_GETSET(sliderSize);
         LZPY_GETSET(slideStep);
+        LZPY_METHOD_0(slideForward);
+        LZPY_METHOD_0(slideBackward);
+        LZPY_METHOD_1(slideByWheel);
     LZPY_CLASS_END();
 
     LzpySlidebar::LzpySlidebar()
@@ -74,7 +77,34 @@ namespace Lzpy
         return build_tuple(size.cx, size.cy);
     }
 
+    LZPY_IMP_METHOD_0(LzpySlidebar, slideForward)
+    {
+        getUI()->slideForward();
+        return none_object;
+    }
 
+    LZPY_IMP_METHOD_0(LzpySlidebar, slideBackward)
+    {
+        getUI()->slideBackward();
+        return none_object;
+    }
+
+    LZPY_IMP_METHOD_1(LzpySlidebar, slideByWheel)
+    {
+        float v;
+        if (!parse_object(v, value)) return null_object;
+
+        if (v < 0.0f)
+        {
+            getUI()->slideForward();
+        }
+        else
+        {
+            getUI()->slideBackward();
+        }
+
+        return none_object;
+    }
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyButton);

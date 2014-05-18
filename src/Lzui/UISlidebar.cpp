@@ -21,8 +21,6 @@ namespace Lazy
 
     bool CSlider::onEvent(const SEvent & event)
     {
-        if (event.isMouseEvent() && event.mouseEvent.event == EME_MOUSE_WHEEL) return false;
-
         return CButton::onEvent(event);
     }
 
@@ -95,7 +93,7 @@ namespace Lazy
         if (event.isMouseEvent() && event.mouseEvent.event == EME_MOUSE_WHEEL)
         {
             onMouseWheel(event.mouseEvent.wheel, CPoint(event.mouseEvent.x, event.mouseEvent.y));
-            return IControl::onEvent(event);
+            return true;
         }
 
         return CForm::onEvent(event);

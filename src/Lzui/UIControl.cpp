@@ -91,9 +91,17 @@ namespace Lazy
 
         static bool onMouseEvent(Lzpy::object pyScript, const SEvent::SMouseEvent & event)
         {
-            if (!pyScript.hasattr("onMouseEvent")) return false;
+            if (event.event == EME_MOUSE_WHEEL)
+                return onMouseWheel(pyScript, event);
 
+            if (!pyScript.hasattr("onMouseEvent")) return false;
             return pyScript.call_method("onMouseEvent", (int) event.event, event.x, event.y);
+        }
+
+        static bool onMouseWheel(Lzpy::object pyScript, const SEvent::SMouseEvent & event)
+        {
+            if (!pyScript.hasattr("onMouseWheel")) return false;
+            return pyScript.call_method("onMouseWheel", event.x, event.y, event.wheel);
         }
 
         static bool onSysEvent(Lzpy::object pyScript, const SEvent::SSysEvent & event)
@@ -258,6 +266,8 @@ namespace Lazy
         bool processed = false;
         if (event.eventType == EET_MOUSE_EVENT)
         {
+            processed = true; //鼠标消息将不在继续向后传递。故返回true。
+
             if (event.mouseEvent.event == EME_MOUSE_MOVE)
             {
                 setFocus(this);
@@ -272,8 +282,10 @@ namespace Lazy
                 setActived(this);
                 setSeleced(NULL);
             }
-
-            processed = true; //鼠标消息将不在继续向后传递。故返回true。
+            else if (event.mouseEvent.event == EME_MOUSE_WHEEL)
+            {
+                processed = false;
+            }
         }
         else if (event.eventType == EET_GUI_EVENT)
         {

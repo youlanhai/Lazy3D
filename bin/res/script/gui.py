@@ -247,6 +247,10 @@ class ListControl(lui.Form):
 
 		self.layoutPosition()
 
+	def onMouseWheel(self, x, y, z):
+		if self.slidebar is None: return False
+		self.slidebar.slideByWheel(z)
+
 ##################################################
 ### 只用于item类型相同的结构
 ##################################################
@@ -427,6 +431,10 @@ class ListView(lui.Form):
 
 	def onSlide(self, pos):
 		self.layoutPosition()
+
+	def onMouseWheel(self, x, y, z):
+		if self.slidebar is None: return False
+		self.slidebar.slideByWheel(z)
 
 	@classmethod
 	def createUI(cls):
