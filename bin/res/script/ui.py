@@ -77,6 +77,7 @@ GuiMgr      = 13
 EditorCtl   = 14
 UIProxy     = 15
 ListView    = 16
+Menu		= 17
 
 def isContainerType(type):
 	return True

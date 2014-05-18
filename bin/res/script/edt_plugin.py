@@ -29,6 +29,15 @@ class NumTestcaseItem(edt_property._intItem):
 	def getCtlValue(self): return self.numTestcase
 	def setCtlValue(self, v): return self.control.setNumTestcase(v)
 
+class MaxHeightItem(edt_property._intItem):
+	def getName(self): return "最大高度"
+	def getCtlValue(self): return self.control.getMaxHeight()
+	def setCtlValue(self, v): return self.control.setMaxHeight(v)
+
+class MaxWidthItem(edt_property._intItem):
+	def getName(self): return "最大宽度"
+	def getCtlValue(self): return self.control.getMaxWidth()
+	def setCtlValue(self, v): return self.control.setMaxWidth(v)
 
 ##################################################
 ###
@@ -37,11 +46,14 @@ CUSTEOM_TP_MAP = {
 	edt_const.TP_EXTERNAL_SCRIPT: ExternalScriptItem,
 	edt_const.TP_EXTERNAL_LAYOUT : ExternalLayoutItem,
 	edt_const.TP_NUM_TESTCASE : NumTestcaseItem,
+	edt_const.TP_MAX_HEIGHT : MaxHeightItem,
+	edt_const.TP_MAX_WIDTH : MaxWidthItem,
 }
 
 
 CUSTOM_UI_MAP = {
-	ui.ListView : ("列表", gui.ListView.createUI),
+	ui.ListView : ("列表", gui.ListView.createUI, ),
+	ui.Menu : ("菜单", gui.Menu.createUI, ),
 }
 
 ##################################################

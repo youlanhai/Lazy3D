@@ -453,6 +453,50 @@ class ListView(lui.Form):
 ##################################################
 ###
 ##################################################
+class Menu(ListView):
+
+	UI_EDITOR_PROPERTY = (edt_const.TP_MAX_HEIGHT, )
+
+	def getMaxHeight(self): return self.maxHeight
+	def setMaxHeight(self, h): self.maxHeight = h
+
+	def __init__(self, parent=None):
+		super(Menu, self).__init__(parent)
+
+		self.maxHeight = 200
+
+	def onLoadLayout(self, config):
+		super(Menu, self).onLoadLayout(config)
+		self.maxHeight = config.readInt("maxHeight", 200)
+
+	def onSaveLayout(self, config):
+		super(Menu, self).onSaveLayout(config)
+		config.writeInt("maxHeight", self.maxHeight)
+
+	def onSizeChange(self):
+		if self.slidebar is None: return
+
+		w, h = self.size
+		self.slidebar.position = (w - 20, 0)
+		self.slidebar.size = (20, h)
+
+	def layoutPosition(self):
+		height = self.root.getHeight()
+		w, h = self.size
+		h = min(self.maxHeight, height)
+		self.size = (w, h)
+
+		if height <= h:
+			self.slidebar.visible = False
+			self.root.position = (0, 0)
+		else:
+			self.slidebar.visible = True
+			y = -(height - h) * self.slidebar.rate
+			self.root.position = (0, int(y))
+
+##################################################
+###
+##################################################
 class ITreeItem(IListItem):
 	def __init__(self):
 		super(ITreeItem, self).__init__()
