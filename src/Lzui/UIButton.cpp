@@ -14,6 +14,7 @@ namespace Lazy
         : m_colorEnable(true)
         , m_posMoveEnable(true)
         , m_textSprite(new TextLineSprite())
+        , m_textAlign(AlignType::Center)
     {
         memcpy(m_stateColor, buttonColor, sizeof(buttonColor));
 
@@ -94,15 +95,29 @@ namespace Lazy
 
     void CButton::renderText(IUIRender * pDevice, CRect rc)
     {
-        if (!m_text.empty() && m_fontPtr)
+        if (m_text.empty() || !m_fontPtr) return;
+
+        CPoint pt(rc.left, rc.top);
+
+        if (m_textAlign & AlignType::HCenter)
         {
-            CPoint pt(rc.left, rc.top);
-
-            pt.x += (rc.width() - m_textSprite->getSize().cx) / 2;
-            pt.y += (rc.height() - m_textSprite->getSize().cy) / 2;
-
-            m_textSprite->render(pDevice, pt);
+            pt.x += (m_size.cx - m_textSprite->getSize().cx) / 2;
         }
+        else if (m_textAlign & AlignType::Right)
+        {
+            pt.x += m_size.cx - m_textSprite->getSize().cx;
+        }
+
+        if (m_textAlign & AlignType::VCenter)
+        {
+            pt.y += (m_size.cy - m_textSprite->getSize().cy) / 2;
+        }
+        else if (m_textAlign & AlignType::Bottom)
+        {
+            pt.y += m_size.cy - m_textSprite->getSize().cy;
+        }
+
+        m_textSprite->render(pDevice, pt);
     }
 
     bool CButton::onEvent(const SEvent & event)
@@ -198,4 +213,19 @@ namespace Lazy
         m_textSprite->setColor(color);
     }
 
+    ///加载布局。
+    void CButton::loadFromStream(LZDataPtr config)
+    {
+        IControl::loadFromStream(config);
+
+        setTextAlign(config->readHex(L"textAlign", AlignType::Center));
+    }
+
+    ///保存布局
+    void CButton::saveToStream(LZDataPtr config)
+    {
+        IControl::saveToStream(config);
+
+        config->writeHex(L"textAlign", m_textAlign);
+    }
 }//namespace Lazy

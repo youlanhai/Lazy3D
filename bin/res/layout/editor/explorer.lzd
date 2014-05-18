@@ -6,7 +6,7 @@ root
 	id = 0
 	font = def|17
 	color = ffffffff
-	bgcolor = 7fffffff
+	bgcolor = 7f000000
 	visible = true
 	enable = true
 	enableSelfMsg = true
@@ -15,10 +15,96 @@ root
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 60 24
-	size = 248 378
+	position = 22 37
+	size = 379 429
 	children
 	{
+		lbl_path
+		{
+			type = 5
+			id = 0
+			text = label
+			font = def|17
+			color = ffffffff
+			bgcolor = 7fffffff
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 20 28
+			size = 349 24
+			children = ""
+			textAlign = 00000009
+			mutiline = false
+		}
+		btn_cancel
+		{
+			type = 4
+			id = 0
+			text = 取消
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 254 387
+			size = 80 30
+			children = ""
+			textAlign = 00000022
+		}
+		noname
+		{
+			type = 5
+			id = 0
+			text = 文件浏览器
+			font = def|17
+			color = ff00ff00
+			bgcolor = 7fffffff
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 134 6
+			size = 100 20
+			children = ""
+			textAlign = 00000009
+			mutiline = false
+		}
+		btn_ok
+		{
+			type = 4
+			id = 0
+			text = 确定
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 40 391
+			size = 80 30
+			children = ""
+			textAlign = 00000022
+		}
 		list
 		{
 			type = 3
@@ -34,8 +120,8 @@ root
 			limitInRect = true
 			changeChildOrder = true
 			drawSelf = true
-			position = 21 66
-			size = 200 300
+			position = 21 73
+			size = 339 307
 			children
 			{
 				slidebar
@@ -53,8 +139,8 @@ root
 					limitInRect = false
 					changeChildOrder = true
 					drawSelf = true
-					position = 180 0
-					size = 20 300
+					position = 319 0
+					size = 20 307
 					children = ""
 					vertical = true
 					slideStep = 0.050000

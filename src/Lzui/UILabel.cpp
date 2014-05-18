@@ -153,7 +153,7 @@ void CLabel::loadFromStream(LZDataPtr config)
 {
     IControl::loadFromStream(config);
 
-    setAlign(config->readHex(L"align"));
+    setAlign(config->readHex(L"textAlign"));
     enableMutiLine(config->readBool(L"mutiline"));
 }
 
@@ -162,7 +162,7 @@ void CLabel::saveToStream(LZDataPtr config)
 {
     IControl::saveToStream(config);
 
-    config->writeHex(L"align", m_align);
+    config->writeHex(L"textAlign", m_align);
     config->writeBool(L"mutiline", m_bMutiLine);
 }
 

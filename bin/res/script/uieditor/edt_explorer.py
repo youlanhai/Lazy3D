@@ -2,9 +2,22 @@
 
 import lui
 import gui
-import os
+import weakref
 
 DEFAULT_PATH = "res/"
+
+def list_dir(path):
+	import os
+	return os.listdir(DEFAULT_PATH + path)
+
+def is_dir(path):
+	import os
+	return os.path.isdir(DEFAULT_PATH + path)
+
+def normal_path(path):
+	import os
+	path = os.path.normpath(path)
+	return path.replace('\\', '/')
 
 def get_file_ext(filename):
 	ret = filename.split('.')
@@ -23,30 +36,74 @@ def format_path_name(path):
 ##################################################
 class FileExplorer(lui.Form):
 
+	def __init__(self):
+		super(FileExplorer, self).__init__()
+		self.onCloseCallback = None
+		self.filters = None
+		self.selectedPath = ""
+
 	def onLoadLayout(self, config):
 		self.listView = self.getChildByName("list")
+		self.listView.setMsgHandler( weakref.proxy(self) )
+
+		btn = self.getChildByName("btn_ok")
+		if btn: btn.onButtonClick = gui.MethodProxy(self, "onBtnOK")
+
+		btn = self.getChildByName("btn_cancel")
+		if btn: btn.onButtonClick = gui.MethodProxy(self, "onBtnCacnel")
 	
-	def _listdir(self, path, filters):
+	def listdir(self, path, callback=None, filters=None):
+		self.onCloseCallback = callback
+		self.filters = filters
+		self._listdir(path)
 
-		infos = []
-		files = os.listdir(path)
+	def _listdir(self, path):
+		path = format_path_name(path)
+		infos = self._collectDirInfo(path, self.filters)
+		self.listView.setInfo(infos)
 
-		for name in files:
-			fullname = path + name
-			if os.path.isdir(fullname):
-				fullname += '/'
-				name += '/'
+	def onPathSeleted(self, path):
+		self.selectedPath = normal_path(path)
+
+		if is_dir(self.selectedPath):
+			self.listdir(self.selectedPath)
+			self.selectedPath += '/'
+
+		lbl = self.getChildByName("lbl_path")
+		if lbl: lbl.text = self.selectedPath
+
+	def onBtnCacnel(self):
+		self.closeWithCode(False)
+
+	def onBtnOK(self):
+		self.closeWithCode(True)
+
+	def closeWithCode(self, code):
+		if self.onCloseCallback:
+			self.onCloseCallback(code, self.selectedPath)
+
+		self.onCloseCallback = None
+		self.selectedPath = ""
+		self.visible = False
+
+	@staticmethod
+	def _collectDirInfo(path, filters):
+		dirFiles = list_dir(path)
+
+		paths = ["../"]
+		files = []
+		for name in dirFiles:
+			if is_dir(path + name):
+				paths.append(name + '/')
 			else:
-				if filters and get_file_ext(name) not in filters: continue
-			infos.append((name, fullname))
+				if filters and get_file_ext(name) not in filters:
+					continue
+				files.append(name)
 
-		infos.insert(0, ("../", path + "../"))
+		paths.extend(files)
+		infos = [(x, path + x) for x in paths]
 		return infos
 
-	def listdir(self, path, filters=None):
-		path = format_path_name(path)
-		infos = self._listdir(DEFAULT_PATH + path, filters)
-		self.listView.setInfo(infos)
 
 
 class ListItem(gui.IListItem):
@@ -65,9 +122,5 @@ class ListItem(gui.IListItem):
 
 	def onBtnOpen(self):
 		if len(self.path) == 0: return
-		print("onBtnOpen", self.path)
 
-		if os.path.isdir(self.path):
-			pass
-		else:
-			pass
+		self.msgHandler.onPathSeleted(self.path)

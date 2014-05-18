@@ -255,10 +255,13 @@ class ListControl(lui.Form):
 ### 只用于item类型相同的结构
 ##################################################
 class IListItem(lui.IControl):
-	def __init__(self):
-		super(IListItem, self).__init__()
+	def __init__(self, parent=None):
+		super(IListItem, self).__init__(parent)
 		self.layoutHeight = 20
+		self.msgHandler = None
 	
+	def setMsgHandler(self, msgHandler): self.msgHandler = msgHandler
+
 	def getHeight(self): return self.layoutHeight
 	
 	def setInfo(self, info): pass
@@ -266,7 +269,7 @@ class IListItem(lui.IControl):
 	def layout(self): self.layoutHeight = self.size[1]
 
 
-class IListView(lui.IControl):
+class IListView(IListItem):
 	def __init__(self, parent=None):
 		super(IListView, self).__init__(parent)
 
@@ -279,6 +282,11 @@ class IListView(lui.IControl):
 
 	def setItemCreateMethod(self, method):
 		self.itemCreateMethod = method
+
+	def setMsgHandler(self, msgHandler):
+		self.msgHandler = msgHandler
+		for item in self.items:
+			item.setMsgHandler(msgHandler)
 
 	##############################################
 	### internal method
@@ -294,6 +302,7 @@ class IListView(lui.IControl):
 			self.addChild(item)
 
 		item.visible = True
+		item.setMsgHandler(self.msgHandler)
 		self.items.append(item)
 		return item
 
@@ -396,6 +405,9 @@ class ListView(lui.Form):
 
 	def setItemCreateMethod(self, method):
 		self.itemCreateMethod = method
+
+	def setMsgHandler(self, msgHandler):
+		self.root.setMsgHandler(msgHandler)
 
 	def clear(self):
 		self.setInfo(None)

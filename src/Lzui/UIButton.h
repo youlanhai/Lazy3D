@@ -46,6 +46,12 @@ namespace Lazy
         virtual void setFont(const tstring & font) override;
         virtual void setColor(uint32 color) override;
 
+        void setTextAlign(uint32 align){ m_textAlign = align; }
+        uint32 getTextAlign() const { return m_textAlign; }
+
+        virtual void loadFromStream(LZDataPtr config) override;
+        virtual void saveToStream(LZDataPtr config) override;
+
     protected:
         virtual bool onEvent(const SEvent & event) override;
 
@@ -56,6 +62,7 @@ namespace Lazy
         virtual tstring getRealImage(void);
 
     protected:
+        uint32          m_textAlign;
         CColorFade      m_crFade;
         bool            m_colorEnable;
         bool            m_posMoveEnable;

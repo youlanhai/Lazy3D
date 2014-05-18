@@ -285,7 +285,7 @@ class RelativePosItem(_vector2fItem):
 	def getCtlValue(self): return self.control.relativePos
 	def setCtlValue(self, v): self.control.relativePos = v
 
-class RelativeAlignItem(_intItem):
+class RelativeAlignItem(_hexItem):
 	def getName(self): return "相对排版"
 	def getCtlValue(self): return self.control.relativeAlign
 	def setCtlValue(self, v): self.control.relativeAlign = v
@@ -316,6 +316,11 @@ class EditableItem(_boolItem):
 	def getCtlValue(self): return self.control.editable
 	def setCtlValue(self, v): self.control.editable = v
 
+class TextAlignItem(_hexItem):
+	def getName(self): return "文字排版"
+	def getCtlValue(self): return self.control.textAlign
+	def setCtlValue(self, v): self.control.textAlign = v
+
 ##################################################
 ### 选项类型
 ##################################################
@@ -342,6 +347,7 @@ TP_RELATIVE_ALIGN = 21
 TP_MUTILINE = 22
 TP_SCRIPT = 23
 TP_EDITABLE = 24
+TP_TEXT_ALIGN = 25
 
 #用户自定义格式的编号，从TP_CUSTOM往后排
 TP_CUSTOM = 10000
@@ -372,6 +378,7 @@ TP_CLASS_MAP = {
 	TP_MUTILINE : MutilineItem,
 	TP_SCRIPT 	: ScriptKeyItem,
 	TP_EDITABLE : EditableItem,
+	TP_TEXT_ALIGN : TextAlignItem,
 }
 
 COMMON_TYPES = (
@@ -386,7 +393,8 @@ COMMON_TYPES = (
 
 #内建ui的属性列表写在这里，非内建类型，写在类属性UI_EDITOR_PROPERTY中
 GUI_TYPES_MAP = {
-	lui.Label : (TP_MUTILINE, ),
+	lui.Label : (TP_TEXT_ALIGN, TP_MUTILINE, ),
+	lui.Button : (TP_TEXT_ALIGN, ),
 	lui.Edit : (TP_MUTILINE, ),
 }
 

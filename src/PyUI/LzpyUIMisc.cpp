@@ -9,7 +9,7 @@ namespace Lzpy
     LZPY_CLASS_BEG(LzpyLabel);
         LZPY_GETSET(lineSpace);
         LZPY_GETSET(maxWidth);
-        LZPY_GETSET(align);
+        LZPY_GETSET(textAlign);
         LZPY_GETSET(mutiline);
         LZPY_GET(textLines);
         LZPY_GET(textSize);
@@ -108,6 +108,7 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyButton);
+        LZPY_GETSET(textAlign);
     LZPY_CLASS_END();
 
     LzpyButton::LzpyButton()

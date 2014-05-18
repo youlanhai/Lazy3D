@@ -2,7 +2,7 @@
 
 noname
 {
-	type = 3
+	type = 1
 	id = 0
 	font = def|17
 	color = ffffffff
@@ -12,11 +12,11 @@ noname
 	enableSelfMsg = true
 	enalbeDrag = true
 	clickTop = true
-	limitInRect = true
+	limitInRect = false
 	changeChildOrder = true
 	drawSelf = true
 	position = 0 0
-	size = 232 51
+	size = 232 34
 	children
 	{
 		btn
@@ -36,8 +36,9 @@ noname
 			changeChildOrder = true
 			drawSelf = true
 			position = 8 7
-			size = 220 36
+			size = 220 22
 			children = ""
+			textAlign = 00000000
 		}
 	}
 	script = uieditor.edt_explorer.ListItem

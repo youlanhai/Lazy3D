@@ -13,8 +13,8 @@ namespace Lzpy
 
         CLabel * getUI() { return m_control.cast<CLabel>(); }
 
-        LZPY_DEF_GET(align, getUI()->getAlign);
-        LZPY_DEF_SET(align, getUI()->setAlign, uint32);
+        LZPY_DEF_GET(textAlign, getUI()->getAlign);
+        LZPY_DEF_SET(textAlign, getUI()->setAlign, uint32);
 
         LZPY_DEF_GET(mutiline, getUI()->canMutiLine);
         LZPY_DEF_SET(mutiline, getUI()->enableMutiLine, bool);
@@ -82,6 +82,10 @@ namespace Lzpy
     public:
         LzpyButton();
 
+        CButton * getUI(){ return m_control.cast<CButton>(); }
+
+        LZPY_DEF_GET(textAlign, getUI()->getTextAlign);
+        LZPY_DEF_SET(textAlign, getUI()->setTextAlign, uint32);
     };
 
     class LzpySelect : public LzpyButton
