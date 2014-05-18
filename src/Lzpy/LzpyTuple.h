@@ -10,49 +10,21 @@ namespace Lzpy
     public:
         PY_OBJECT_DECLARE(tuple, object);
 
-        tuple()
-        {
-            m_ptr = PyTuple_New(0);
-        }
+        tuple();
 
-        explicit tuple(size_t n)
-        {
-            m_ptr = PyTuple_New(n);
-        }
+        explicit tuple(size_t n);
 
-        size_t size() const
-        {
-            return PyTuple_Size(m_ptr);
-        }
+        size_t size() const;
 
-        bool resize(size_t n)
-        {
-            return 0 == _PyTuple_Resize(&m_ptr, n);
-        }
+        object operator [](size_t i) const;
 
-        object operator [](size_t i) const
-        {
-            return getitem(i);
-        }
+        bool check() const;
+
+        object getitem(size_t i) const;
+
+        bool setitem(size_t i, const object & v);
 
     public:
-
-        bool check() const
-        {
-            return is_tuple();
-        }
-
-        object getitem(size_t i) const
-        {
-            //borrow reference
-            return object(PyTuple_GetItem(m_ptr, i));
-        }
-
-        bool setitem(size_t i, const object & v)
-        {
-            //steal reference
-            return 0 == PyTuple_SetItem(m_ptr, i, xincref(v.get()));
-        }
 
         template<typename T>
         bool setitem(size_t i, const T & v)

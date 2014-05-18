@@ -11,28 +11,19 @@ namespace Lzpy
     public:
         PY_OBJECT_DECLARE(dict, object);
 
-        dict()
-        {
-            m_ptr = PyDict_New();
-        }
+        dict();
+
+        bool check() const;
+
+        size_t size() const;
+
+        object getitem(object k) const;
+        bool setitem(const object & k, const object & v);
+
+        list keys();
+        list values();
 
     public:
-
-        bool check() const
-        {
-            return m_ptr && PyDict_Check(m_ptr);
-        }
-
-        size_t size() const
-        {
-            return PyDict_Size(m_ptr);
-        }
-
-        object getitem(object k) const
-        {
-            //borrow reference
-            return object(PyDict_GetItem(m_ptr, k.get()));
-        }
 
         template<typename K>
         object getitem(const K & k) const
@@ -40,20 +31,11 @@ namespace Lzpy
             return getitem(build_object(k));
         }
 
-        bool setitem(const object & k, const object & v)
-        {
-            return 0 == PyDict_SetItem(m_ptr, k.get(), v.get());
-        }
-
         template<typename K, typename V>
         bool setitem(const K & k, const V & v)
         {
             return setitem(build_object(k), build_object(v));
         }
-
-        list keys();
-        list values();
-        
     };
 
 }
