@@ -10,9 +10,10 @@ namespace Lzpy
 {
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyControl)
-        LZPY_GETSET(editorPool);
         LZPY_GET(parent);
         LZPY_GET(type);
+        LZPY_GET(__dict__);
+        LZPY_GETSET(managed);
         LZPY_GETSET(id);
         LZPY_GETSET(size);
         LZPY_GETSET(position);
@@ -34,7 +35,6 @@ namespace Lzpy
         LZPY_GETSET(enableChangeChildOrder);
         LZPY_GETSET(editable);
         LZPY_GETSET(script);
-        LZPY_GET(__dict__);
 
         LZPY_GETSET(globalRect);
 
@@ -42,8 +42,7 @@ namespace Lzpy
         LZPY_METHOD(getChild);
         LZPY_METHOD(delChild);
         LZPY_METHOD(getChildByName);
-        LZPY_METHOD(addEditorChild);
-        LZPY_METHOD(delEditorChild);
+       
         LZPY_METHOD(clearChildren);
         LZPY_METHOD(getChildren);
         LZPY_METHOD(findChildByPos);
@@ -66,26 +65,29 @@ namespace Lzpy
     LzpyControl::LzpyControl()
         : m_pyDict(nullptr)
         , m_pyWeakreflist(nullptr)
+        , m_managed(false)
     {
         m_pyDict = PyDict_New();
     }
 
     LzpyControl::~LzpyControl()
     {
+#ifdef _DEBUG
+        {
+            PyObject * pStr = PyObject_Repr(this);
+
+            wchar_t *p = PyUnicode_AsUnicodeAndSize(pStr, NULL);
+            LOG_DEBUG(L"%s deleted.", p);
+            Py_DECREF(pStr);
+        }
+#endif
+
         if (m_control)
         {
-#ifdef _DEBUG
-            if (m_control->getSelf())
-            {
-                PyObject * pStr = PyObject_Repr(this);
+            clearChildren();
 
-                wchar_t *p = PyUnicode_AsUnicodeAndSize(pStr, NULL);
-                LOG_DEBUG(L"%s deleted.", p);
-                Py_DECREF(pStr);
-            }
-#endif
             m_control->removeFromParent();
-            m_control->setSelf(nullptr);
+            m_control->setSelf(null_object);
             m_control = nullptr;
         }
 
@@ -95,12 +97,46 @@ namespace Lzpy
         Py_DECREF(m_pyDict);
     }
 
-    bool LzpyControl::addChild(object child)
+    void LzpyControl::setManaged(bool managed)
+    {
+        if (m_managed == managed) return;
+
+        m_managed = managed;
+        if (managed)
+            Py_IncRef(this);
+        else
+            Py_DecRef(this);
+    }
+
+    void LzpyControl::clearChildren()
+    {
+        list children = py_getChildren(null_object);
+
+        size_t n = children.size();
+        for (size_t i = 0; i < n; ++i)
+        {
+            children[i].cast<LzpyControl>()->setManaged(false);
+        }
+
+        m_control->clearChildren();
+    }
+
+    bool LzpyControl::addChild(object_base child)
     {
         if (!helper::has_instance<LzpyControl>(child.get(), true)) return false;
 
         LzpyControl *p = child.cast<LzpyControl>();
         m_control->addChild(p->m_control.get());
+
+        return true;
+    }
+
+    bool LzpyControl::delChild(object_base child)
+    {
+        if (!helper::has_instance<LzpyControl>(child.get(), true)) return false;
+
+        LzpyControl *p = child.cast<LzpyControl>();
+        m_control->delChild(p->m_control.get());
 
         return true;
     }
@@ -122,7 +158,7 @@ namespace Lzpy
         m_control = uiFactory()->create(type);
         if (m_control)
         {
-            m_control->setSelf(this);
+            m_control->setSelf(object_base(this));
 
             if (parent) parent->addChild(object(this));
         }
@@ -131,16 +167,15 @@ namespace Lzpy
     }
 
 
-    object LzpyControl::getParent()
+    object_base LzpyControl::getParent()
     {
-        PyObject *py = nullptr;
         if (m_control && m_control->getParent())
         {
             ControlPtr parent = m_control->getParent();
-            py = parent->getSelf();
+            return parent->getSelf();
         }
         
-        return object(py);
+        return object_base();
     }
 
     object LzpyControl::getSize()
@@ -272,18 +307,12 @@ namespace Lzpy
 
     LZPY_IMP_METHOD(LzpyControl, addChild)
     {
-        LzpyControl *p;
-        if (!PyArg_ParseTuple(arg.get(), "O", &p))
-        {
+        object_base child;
+        if (!arg.parse_tuple(&child))
             return null_object;
-        }
 
-        if (p == Py_None) return none_object;
-
-        if (m_control && p->m_control)
-        {
-            m_control->addChild(p->m_control.get());
-        }
+        if (!addChild(child))
+            return null_object;
 
         return none_object;
     }
@@ -295,7 +324,7 @@ namespace Lzpy
 
         PControl child = m_control->getChild(id);
         if (child && child->getSelf())
-            return object(child->getSelf());
+            return child->getSelf();
 
         return none_object;
     }
@@ -307,52 +336,26 @@ namespace Lzpy
 
         PControl child = m_control->getChildDeep(name);
         if(child && child->getSelf())
-            return object(child->getSelf());
+            return child->getSelf();
 
         return none_object;
     }
 
     LZPY_IMP_METHOD(LzpyControl, delChild)
     {
-        LzpyControl *p = nullptr;
-        if (!PyArg_ParseTuple(arg.get(), "O", &p) || !p)
-        {
+        object_base child;
+        if (!arg.parse_tuple(&child))
             return null_object;
-        }
 
-        m_control->delChild(p->m_control.get());
-        return none_object;
-    }
-
-    LZPY_IMP_METHOD(LzpyControl, addEditorChild)
-    {
-        LzpyControl *p;
-        if (!PyArg_ParseTuple(arg.get(), "O", &p)) return null_object;
-        if (!helper::has_instance<LzpyControl>(p, true)) return null_object;
-
-        p->m_control->setEditable(true);
-        m_editorPool.append(object(p));
-        m_control->addChild(p->m_control.get());
-        return none_object;
-    }
-    LZPY_IMP_METHOD(LzpyControl, delEditorChild)
-    {
-        object child;
-        if (!arg.parse_tuple(&child)) return null_object;
-
-        if (!helper::has_instance<LzpyControl>(child.get(), true)) return null_object;
-
-        m_control->delChild(child.cast<LzpyControl>()->m_control.get());
-        m_editorPool.remove(child);
+        if (!delChild(child))
+            return null_object;
 
         return none_object;
     }
 
     LZPY_IMP_METHOD(LzpyControl, clearChildren)
     {
-        m_control->clearChildren();
-        m_editorPool = list();
-
+        clearChildren();
         return none_object;
     }
 
@@ -360,17 +363,15 @@ namespace Lzpy
     {
         list lst;
 
-        m_control->lockChildren();
         for (VisitControl::iterator it = m_control->childBegin();
             it != m_control->childEnd(); ++it)
         {
-            ControlPtr pctl = *it;
+            IControl *pctl = *it;
             if (pctl && pctl->getSelf())
             {
-                lst.append(object(pctl->getSelf()));
+                lst.append(pctl->getSelf());
             }
         }
-        m_control->unlockChildren();
 
         return lst;
     }
@@ -389,22 +390,23 @@ namespace Lzpy
 
     LZPY_IMP_METHOD(LzpyControl, destroy)
     {
-        if (m_control)
-        {
-            list children = this->py_getChildren(null_object);
-            size_t n = children.size();
-            for (size_t i = 0; i < n; ++i)
-            {
-                children[i].call_method("destroy");
-            }
+        object_base(this).call_method_quiet("onDestroy");
 
-            //m_control->destroy();
-            m_control->removeFromParent();
-            m_control->clearChildren();
-            m_control = nullptr;
+        list children = this->py_getChildren(null_object);
+        size_t n = children.size();
+        for (size_t i = 0; i < n; ++i)
+        {
+            object child = children[i];
+            child.cast<LzpyControl>()->py_destroy(null_object);
         }
-        
+
+        m_control->clearChildren();
+        m_control->removeFromParent();
+        m_control->setSelf(null_object);
+        m_control = nullptr;
+
         PyDict_Clear(m_pyDict);
+        setManaged(false);
         return none_object;
     }
 

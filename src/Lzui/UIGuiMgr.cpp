@@ -33,12 +33,14 @@ namespace Lazy
 
     CGUIManager::~CGUIManager(void)
     {
-        g_ptrGUIMgr = NULL;
-        delete m_render;
-
 #ifdef ENABLE_SCRIPT
+        m_self.call_method_quiet("destroy");
+#else
         destroy();
 #endif
+
+        g_ptrGUIMgr = NULL;
+        delete m_render;
     }
 
     void CGUIManager::addChildManage(RefPtr<IControl> child)

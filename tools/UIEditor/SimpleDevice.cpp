@@ -165,10 +165,9 @@ void SimpleDevice::updateScriptError()
 
 void SimpleDevice::clear()
 {
-    finiPython();
-
     m_guiMgr = NULL;
 
+    finiPython();
 
     Lazy::FontMgr::instance()->fini();
 }

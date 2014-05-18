@@ -157,16 +157,16 @@ namespace Lazy
 #ifdef ENABLE_SCRIPT
 
         /** borrw reference */
-        PyObject * getSelf(){ return m_pSelf; }
-        void setSelf(PyObject * self){ m_pSelf = self; }
+        Lzpy::object_base getSelf(){ return m_self; }
+        void setSelf(Lzpy::object_base self){ m_self = self; }
 
         const tstring & getScript() const { return m_script; }
         void setScript(const tstring & script){ m_script = script; }
 
     protected:
         /** python端脚本，ui类不持有python引用计数。*/
-        PyObject    *m_pSelf;
-        tstring     m_script;
+        Lzpy::object_base   m_self;
+        tstring             m_script;
 
 #endif
 

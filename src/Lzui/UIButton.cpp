@@ -133,7 +133,7 @@ namespace Lazy
                 setBtnState(ButtonState::active);
 
 #ifdef ENABLE_SCRIPT
-                Lzpy::object(m_pSelf).call_method_quiet("onButtonClick");
+                m_self.call_method_quiet("onButtonClick");
 #endif
             }
         }

@@ -248,14 +248,11 @@ namespace Lzpy
 
     static IControl* pyEditorUICreateFun(IControl *pParent, LZDataPtr config)
     {
-        object pyParent(pParent->getSelf());
-        if (!pyParent) return nullptr;
-
         object pyChild = createPythonUI(config);
         if (!pyChild) return nullptr;
 
         //加入缓存池，用于保持引用计数。防止子控件析构。
-        (pyParent.cast<LzpyControl>())->m_editorPool.append(pyChild);
+        (pyChild.cast<LzpyControl>())->setManaged(true);
 
         //加载控件数据，并加入到panel中。
         return (pyChild.cast<LzpyControl>())->m_control.get();
@@ -273,7 +270,7 @@ namespace Lzpy
                 s_root = helper::new_instance_ex<LzpyControl>();
 
                 s_root->m_control = getGUIMgr();
-                s_root->m_control->setSelf(s_root);
+                s_root->m_control->setSelf(object_base(s_root));
 
                 setEditorUICreateFun(pyEditorUICreateFun);
             }
@@ -283,7 +280,7 @@ namespace Lzpy
                 Py_XDECREF(s_root);
                 s_root = nullptr;
 
-                s_uiFactoryMethod = new_reference(nullptr);
+                s_uiFactoryMethod = null_object;
             }
         };
 

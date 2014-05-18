@@ -190,7 +190,7 @@ namespace Lazy
     void CSlidebar::onSlide()
     {
 #ifdef ENABLE_SCRIPT
-        Lzpy::object(m_pSelf).call_method_quiet("onSlide", m_rate);
+        m_self.call_method_quiet("onSlide", m_rate);
 #endif
     }
 

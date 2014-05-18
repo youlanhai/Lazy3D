@@ -2,7 +2,7 @@
 
 namespace Lzpy
 {
-
+    class object_base;
     class object;
     class tuple;
     class list;
@@ -34,6 +34,7 @@ namespace Lzpy
     object build_object(const std::wstring & v);
     object build_object(const char * v);
     object build_object(const wchar_t * v);
+    object build_object(const object_base & v);
     object build_object(const object & v);
     object build_object(const tuple & v);
     object build_object(const dict & v);
@@ -54,6 +55,7 @@ namespace Lzpy
     bool parse_object(std::wstring & v,     const object & o);
     bool parse_object(char *& v,            const object & o);
     bool parse_object(wchar_t *& v,         const object & o);
+    bool parse_object(object_base & v,      const object & o);
     bool parse_object(object & v,           const object & o);
     bool parse_object(tuple & v,            const object & o);
     bool parse_object(dict & v,             const object & o);
@@ -172,18 +174,30 @@ namespace Lzpy
 
 #define PY_OBJECT_DECLARE(OBJECT, BASE)                                 \
     explicit OBJECT(PyObject *v){ m_ptr = xincref(v); }                 \
+    OBJECT(const OBJECT & v){ m_ptr = xincref(v.m_ptr); }               \
     OBJECT(const object_base & v){ m_ptr = xincref(v.get()); }          \
     OBJECT(const new_reference & v){ m_ptr = v.get(); }                 \
+    const OBJECT & operator = (const OBJECT & v){ set_borrow(v.m_ptr); return *this; }      \
     const OBJECT & operator = (const object_base & v){ set_borrow(v.get()); return *this; } \
     const OBJECT & operator = (const new_reference & v){ set_new(v.get()); return *this; }  \
 
     class object : public object_base
     {
     public:
+        PY_OBJECT_DECLARE(object, object_base);
+
         object();
         ~object();
 
-        PY_OBJECT_DECLARE(object, object_base);
+#if 0
+        explicit object(PyObject *v);
+        object(const object & v);
+        object(const object_base & v);
+        object(const new_reference & v);
+        const object & operator = (const object & v);
+        const object & operator = (const object_base & v);
+        const object & operator = (const new_reference & v);
+#endif
 
     protected:
 

@@ -25,8 +25,6 @@ namespace Lzpy
         LzpyControl();
         ~LzpyControl();
 
-        object getParent();
-
         object getSize();
         void setSize(object v);
 
@@ -102,8 +100,8 @@ namespace Lzpy
         LZPY_DEF_GET(script, m_control->getScript);
         LZPY_DEF_SET(script, m_control->setScript, tstring);
 
-        LZPY_DEF_GET_MEMBER(editorPool, m_editorPool);
-        LZPY_DEF_SET_MEMBER(editorPool, m_editorPool);
+        LZPY_DEF_GET(managed, getManaged);
+        LZPY_DEF_SET(managed, setManaged, bool);
 
         LZPY_DEF_GET_MEMBER(__dict__, m_pyDict);
 
@@ -128,21 +126,25 @@ namespace Lzpy
         LZPY_DEF_METHOD(getChild);
         LZPY_DEF_METHOD(getChildByName);
 
-        LZPY_DEF_METHOD(addEditorChild);
-        LZPY_DEF_METHOD(delEditorChild);
-
         LZPY_DEF_METHOD(clearChildren);
         LZPY_DEF_METHOD(getChildren);
         LZPY_DEF_METHOD(findChildByPos);
         LZPY_DEF_METHOD(destroy);
 
         bool createUI(int type, PyObject *arg = nullptr);
-        bool addChild(object child);
+
+        object_base getParent();
+        bool addChild(object_base child);
+        bool delChild(object_base child);
+        void clearChildren();
+
+        void setManaged(bool managed);
+        bool getManaged() const { return m_managed; }
 
         PyObject    *m_pyDict;
         PyObject    *m_pyWeakreflist;
-        list        m_editorPool;
         ControlPtr  m_control;
+        bool        m_managed;
     };
 
 }//end namespace Lzpy

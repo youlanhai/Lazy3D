@@ -202,11 +202,10 @@ class Editor(lui.IControl):
 		
 		return False
 
-	def setHost(self, host, clearOld=False):
-		if clearOld:
-			if self.host is not None:
-				self.host.destroy()
-				self.host = None
+	def setHost(self, host):
+		if self.host is not None:
+			self.host.destroy()
+			self.host = None
 
 		self.clearState()
 		self.host = host
@@ -236,9 +235,11 @@ class Editor(lui.IControl):
 		if not item: return
 
 		if self.target:
-			self.target.addEditorChild(item)
+			self.target.addChild(item)
+			item.managed = True
 		elif self.reference:
-			self.reference.addEditorChild(item)
+			self.reference.addChild(item)
+			item.managed = True
 		else:
 			ui.uiRoot.addChild(item)
 			self.setHost(item)
@@ -498,7 +499,6 @@ class MenuBar(lui.IControl):
 	def onBtnClose(self):
 		share.gui.editor.setHost(None)
 		self.layoutFile = ""
-
 
 ##################################################
 ### 

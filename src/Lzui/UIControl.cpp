@@ -169,9 +169,6 @@ namespace Lazy
         , m_name(L"noname")
         , m_bEditable(false)
         , m_bManaged(false)
-#ifdef ENABLE_SCRIPT
-        , m_pSelf(nullptr)
-#endif
     {
     }
 
@@ -288,7 +285,7 @@ namespace Lazy
         }
 
 #ifdef ENABLE_SCRIPT
-        if (ScriptEvent::onEvent(Lzpy::object(m_pSelf), event))
+        if (ScriptEvent::onEvent(m_self, event))
             processed = true;
 #endif
         return processed;
@@ -645,7 +642,7 @@ namespace Lazy
 
 #ifdef ENABLE_SCRIPT
         setScript(config->readString(L"script"));
-        if(m_pSelf) Lzpy::object(m_pSelf).call_method_quiet("onLoadLayout", Lzpy::make_object(config));
+        if(m_self) m_self.call_method_quiet("onLoadLayout", Lzpy::make_object(config));
 #endif
     }
 
@@ -723,7 +720,7 @@ namespace Lazy
 
 #ifdef ENABLE_SCRIPT
         if (!m_script.empty()) config->writeString(L"script", m_script);
-        if (m_pSelf) Lzpy::object(m_pSelf).call_method_quiet("onSaveLayout", Lzpy::make_object(config));
+        if (m_self) m_self.call_method_quiet("onSaveLayout", Lzpy::make_object(config));
 #endif
     }
 
@@ -740,7 +737,7 @@ namespace Lazy
         }
 
 #ifdef ENABLE_SCRIPT
-        if (m_pSelf) Lzpy::object(m_pSelf).call_method_quiet("onSizeChange");
+        m_self.call_method_quiet("onSizeChange");
 #endif
     }
 
@@ -834,7 +831,7 @@ namespace Lazy
         }
 
 #ifdef ENABLE_SCRIPT
-        Lzpy::object(m_pSelf).call_method_quiet("onDestroy");
+        m_self.call_method_quiet("onDestroy");
 #endif
 
         clearChildren();

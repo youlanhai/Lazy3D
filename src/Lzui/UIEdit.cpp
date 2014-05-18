@@ -215,7 +215,7 @@ namespace Lazy
     {
         getGUIMgr()->activeEdit(this);
 #ifdef ENABLE_SCRIPT
-        Lzpy::object(m_pSelf).call_method_quiet("onFocusGet");
+        m_self.call_method_quiet("onFocusGet");
 #endif
     }
 
@@ -223,7 +223,7 @@ namespace Lazy
     {
         getGUIMgr()->unactiveEdit(this);
 #ifdef ENABLE_SCRIPT
-        Lzpy::object(m_pSelf).call_method_quiet("onFocusLost");
+        m_self.call_method_quiet("onFocusLost");
 #endif
     }
 
