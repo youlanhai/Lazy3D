@@ -6,7 +6,7 @@ root
 	id = 0
 	font = def|17
 	color = ffffffff
-	bgcolor = 7f000000
+	bgcolor = bf000000
 	visible = true
 	enable = true
 	enableSelfMsg = true
@@ -26,10 +26,10 @@ root
 		{
 			type = 5
 			id = 0
-			text = label
+			text = 选择路径...
 			font = def|17
-			color = ffffffff
-			bgcolor = 7fffffff
+			color = ffff0000
+			bgcolor = ffffffff
 			visible = true
 			enable = false
 			enableSelfMsg = true
@@ -38,7 +38,7 @@ root
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 20 28
+			position = 20 27
 			size = 349 24
 			children = ""
 			textAlign = 00000009
@@ -114,7 +114,7 @@ root
 			id = 0
 			font = def|17
 			color = ffffffff
-			bgcolor = 7fffffff
+			bgcolor = 7f000000
 			visible = true
 			enable = true
 			enableSelfMsg = true

@@ -363,12 +363,14 @@ class PropertyBar(lui.IControl):
 	def __init__(self, parent, x, y, w, h):
 		super(PropertyBar, self).__init__(parent)
 		
-		if not self.loadFromFile("layout/propertybar.lzd"):
-			print("Failed load PropertyBar from file.")
-			return
+		self.loadFromFile("layout/editor/propertybar.lzd")
 
 		self.position = (x, y)
 		self.size = (w, h)
+
+		self.propList = PropertyList(self, 0, 45, w, 300)
+
+	def onLoadLayout(self, config):
 		self.title = self.getChildByName("title")
 
 		self.btnPushTarget = self.getChildByName("pushTarget")
@@ -381,9 +383,7 @@ class PropertyBar(lui.IControl):
 		self.btnSearchResculy.onButtonCheck = gui.MethodProxy(self, "onBtnResculy")
 
 		self.btnRemove = self.getChildByName("btnRemove")
-		self.btnRemove.onButtonCheck = gui.MethodProxy(self, "onBtnRemove")
-
-		self.propList = PropertyList(self, 0, 45, w, 300)
+		self.btnRemove.onButtonClick = gui.MethodProxy(self, "onBtnRemove")
 		
 	def applyCtl(self, control):
 		self.propList.applyCtl(control)
@@ -409,6 +409,7 @@ class PropertyBar(lui.IControl):
 		share.gui.editor.enableResculySearch(isCheck)
 
 	def onBtnRemove(self):
+		print("onBtnRemove")
 		share.gui.editor.removeTarget()
 
 class PropertyList(gui.ListControl):

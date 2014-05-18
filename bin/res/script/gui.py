@@ -604,12 +604,8 @@ class ITree(lui.Form):
 
 	UI_EDITOR_PROPERTY = (
 		edt_const.TP_EXTERNAL_LAYOUT,
-		edt_const.TP_EXTERNAL_SCRIPT,
 		edt_const.TP_NUM_TESTCASE,
 	)
-
-	def getExternalScript(self): return self.itemClassFile
-	def setExternalScript(self, value): self.itemClassFile = value
 
 	def getExternalLayout(self): return self.itemConfigFile
 	def setExternalLayout(self, value): self.itemConfigFile = value
@@ -633,14 +629,12 @@ class ITree(lui.Form):
 		self.__root = None
 		self.itemCreateMethod = None
 
-		self.itemClassFile = ""
 		self.itemConfigFile = ""
 
 	def onLoadLayout(self, config):
 		self.slidebar = self.getChildByName("slidebar")
 		self.slidebar.onSlide = MethodProxy(self, "onSlide")
 
-		self.itemClassFile = config.readString("itemClass")
 		self.itemConfigFile = config.readString("itemConfig")
 
 		w, h = self.size
@@ -650,14 +644,11 @@ class ITree(lui.Form):
 		if len(self.itemConfigFile) > 0:
 			config.writeString("itemConfig", self.itemConfigFile)
 
-		if len(self.itemClassFile) > 0:
-			config.writeString("itemClass", self.itemClassFile)
-
 	def _createItem(self):
 		if self.itemCreateMethod:
 			item = self.itemCreateMethod()
 		else:
-			item = loadUIScript(self.itemClassFile, self.itemConfigFile)
+			item = loadUIFromFile(self.itemConfigFile)
 		item.setItemCreateMethod(MethodProxy(self, "_createItem"))
 		return item
 
@@ -708,4 +699,3 @@ class ITree(lui.Form):
 
 	def onSlide(self, pos):
 		self.layoutPosition()
-

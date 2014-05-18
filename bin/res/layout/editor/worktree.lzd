@@ -15,32 +15,13 @@ mainview
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 35 37
+	position = 0 154
 	size = 219 398
+	relative = true
+	relativeAlign = 32
+	relativePos = 0.000000 0.500000
 	children
 	{
-		title
-		{
-			type = 5
-			id = 0
-			text = 工作区
-			font = def|17
-			color = ff00ff00
-			bgcolor = af808080
-			visible = true
-			enable = false
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 55 3
-			size = 100 30
-			children = ""
-			align = 00000000
-			mutiline = false
-		}
 		root
 		{
 			type = 3
@@ -84,8 +65,29 @@ mainview
 				}
 			}
 			script = uieditor.editor.WorkTree
-			itemConfig = layout/worktree_tree_item.lzd
-			itemClass = uieditor.editor.WorkTreeItem
+			itemConfig = layout/editor/worktree_tree_item.lzd
+		}
+		title
+		{
+			type = 5
+			id = 0
+			text = 工作区
+			font = def|17
+			color = ff00ff00
+			bgcolor = af808080
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 55 3
+			size = 100 30
+			children = ""
+			textAlign = 00000000
+			mutiline = false
 		}
 	}
 	script = uieditor.editor.WorkTreeBar
