@@ -8,40 +8,16 @@ namespace Lzpy
     class tuple : public object
     {
     public:
-        tuple() :
-            object(new_reference(PyTuple_New(0)))
-        {}
+        PY_OBJECT_DECLARE(tuple, object);
 
-        explicit tuple(size_t n)
-            : object(new_reference(PyTuple_New(n)))
-        {}
-
-        tuple(const tuple & o)
-            : object(borrow_reference(o.m_ptr))
-        {}
-
-        tuple(const object & o)
-            : object(o)
-        {}
-
-        tuple(const borrow_reference & o)
-            : object(o)
-        {}
-
-        tuple(const new_reference & o)
-            : object(o)
-        {}
-
-        const tuple & operator=(const tuple & o)
+        tuple()
         {
-            set_borrow(o.m_ptr);
-            return *this;
+            m_ptr = PyTuple_New(0);
         }
 
-        const tuple & operator=(const object & o)
+        explicit tuple(size_t n)
         {
-            set_borrow(o.get());
-            return *this;
+            m_ptr = PyTuple_New(n);
         }
 
         size_t size() const
@@ -68,11 +44,13 @@ namespace Lzpy
 
         object getitem(size_t i) const
         {
-            return borrow_reference(PyTuple_GetItem(m_ptr, i));
+            //borrow reference
+            return object(PyTuple_GetItem(m_ptr, i));
         }
 
         bool setitem(size_t i, const object & v)
         {
+            //steal reference
             return 0 == PyTuple_SetItem(m_ptr, i, xincref(v.get()));
         }
 
@@ -80,15 +58,6 @@ namespace Lzpy
         bool setitem(size_t i, const T & v)
         {
             return setitem(i, build_object(v));
-        }
-
-        template<typename... Args>
-        void build_tuple(Args... args)
-        {
-            size_t n = sizeof...(args);
-            this->set_new(PyTuple_New(n));
-
-            if (n > 0) this->_build_tuple(0, args...);
         }
 
         template<typename... Args>
@@ -104,22 +73,19 @@ namespace Lzpy
         }
 
         template<typename... Args>
-        bool parse_n_tuple(size_t n, Args... args) const
+        bool parse_tuple_default(size_t nMust, Args... args) const
         {
-            n = min(n, this->size());
-            return this->_parse_n_tuple(n, 0, args...);
+            if (this->size() < nMust)
+            {
+                PyErr_SetString(PyExc_TypeError, "argument count doesn't match the tuple size!");
+                return false;
+            }
+
+            assert(sizeof...(args) >= nMust);
+
+            return this->_parse_tuple(0, args...);
         }
     private:
-
-        inline void _build_tuple(size_t i)
-        {}
-
-        template<typename T, typename... Args>
-        void _build_tuple(size_t i, T v, Args... args)
-        {
-            this->setitem(i, v);
-            this->_build_tuple(i + 1, args...);
-        }
 
         inline bool _parse_tuple(size_t i) const
         {
@@ -129,8 +95,10 @@ namespace Lzpy
         template<typename T, typename... Args>
         bool _parse_tuple(size_t i, T *v, Args... args) const
         {
+            if (i >= this->size()) return true;
+
             object o = this->getitem(i);
-            if (!o.parse(*v))
+            if (!parse_object(*v, o))
             {
                 PyErr_Format(PyExc_TypeError, "can't extract %dth argument!", i);
                 return false;
@@ -138,33 +106,24 @@ namespace Lzpy
 
             return this->_parse_tuple(i + 1, args...);
         }
-
-        inline bool _parse_n_tuple(size_t n, size_t i) const
-        {}
-
-        template<typename T, typename... Args>
-        bool _parse_n_tuple(size_t n, size_t i, T *v, Args... args) const
-        {
-            if (i >= n) return;
-
-            object o = this->getitem(i);
-            if (!o.parse(*v))
-            {
-                PyErr_Format(PyExc_TypeError, "can't extract %dth argument!", i);
-                return false;
-            }
-
-            return this->_parse_n_tuple(n, i + 1, args...);
-        }
-
     };
 
     template<typename... Args>
     tuple build_tuple(Args... args)
     {
-        tuple tp;
-        tp.build_tuple(args...);
+        size_t n = sizeof...(args);
+        tuple tp(n);
+        set_tuple_item(tp, 0, args...);
         return tp;
     }
 
+    inline void set_tuple_item(tuple & tp, size_t i)
+    {}
+
+    template<typename T, typename... Args>
+    void set_tuple_item(tuple & tp, size_t i, T v, Args... args)
+    {
+        tp.setitem(i, v);
+        set_tuple_item(tp, i + 1, args...);
+    }
 }

@@ -9,6 +9,8 @@ namespace Lzpy
     class list : public object
     {
     public:
+        PY_OBJECT_DECLARE(list, object);
+
         list()
         {
             m_ptr = PyList_New(0);
@@ -17,30 +19,6 @@ namespace Lzpy
         explicit list(size_t n)
         {
             m_ptr = PyList_New(n);
-        }
-
-        list(const list & l)
-        {
-            m_ptr = xincref(l.m_ptr);
-        }
-
-        list(const object & o)
-        {
-            m_ptr = xincref(o.get());
-        }
-
-        const list & operator=(const list & l)
-        {
-            if (&l != this) set_borrow(l.m_ptr);
-            
-            return *this;
-        }
-
-        const list & operator=(const object & o)
-        {
-            if (&o != this) set_borrow(o.get());
-
-            return *this;
         }
 
     public:
@@ -62,11 +40,13 @@ namespace Lzpy
 
         object getitem(size_t i) const
         {
-            return borrow_reference(PyList_GetItem(m_ptr, i));
+            //borrow reference
+            return object(PyList_GetItem(m_ptr, i));
         }
 
         bool setitem(size_t i, const object & v)
         {
+            //steal reference
             return 0 == PyList_SetItem(m_ptr, i, xincref(v.get()));
         }
 

@@ -27,18 +27,18 @@ public:                                                         \
 ////////////////////////////////////////////////////////////////////////
 
 ///导出方法声明，任意参数
-#define LZPY_DEF_METHOD(NAME)                         \
+#define LZPY_DEF_METHOD(NAME)                           \
     static PyObject* _wraper_py_##NAME(                 \
         PyObject *self, PyObject *arg)                  \
     {                                                   \
-        tuple o_arg = borrow_reference(arg);            \
+        tuple o_arg(arg);                               \
         object o_ret = ((ThisClass*) self)->py_##NAME(o_arg);\
         return xincref(o_ret.get());                    \
     }                                                   \
     object py_##NAME(const tuple & arg)
 
 ///导出方法声明，没有参数
-#define LZPY_DEF_METHOD_0(NAME)                       \
+#define LZPY_DEF_METHOD_0(NAME)                         \
     static PyObject * _wraper_py_##NAME##_0(            \
         PyObject *self)                                 \
     {                                                   \
@@ -48,11 +48,11 @@ public:                                                         \
     object py_##NAME()
 
 ///导出方法声明，只有一个参数
-#define LZPY_DEF_METHOD_1(NAME)                       \
+#define LZPY_DEF_METHOD_1(NAME)                         \
     static PyObject * _wraper_py_##NAME##_1(            \
         PyObject *self, PyObject *value)                \
     {                                                   \
-        object o_arg = borrow_reference(value);         \
+        object o_arg(value);                            \
         object o_ret = ((ThisClass*) self)->py_##NAME(o_arg); \
         return xincref(o_ret.get());                    \
     }                                                   \
@@ -92,9 +92,8 @@ public:                                                         \
     static int _wraper_set_##NAME(                      \
         ThisClass *self, PyObject *value, void*)        \
     {                                                   \
-        object obj(value);                              \
         TYPE v;                                         \
-        if (!obj.parse(v))                              \
+        if (!parse_object(v, object(value)))            \
         {                                               \
             LOG_ERROR(L"Script Error: set property failed!", #NAME);  \
             return -1;                                  \
@@ -115,12 +114,11 @@ public:                                                         \
         return xincref(ret.get());                      \
     }
 
-#define LZPY_DEF_SET_MEMBER(NAME, MEMBER)             \
+#define LZPY_DEF_SET_MEMBER(NAME, MEMBER)               \
     static int _wraper_set_##NAME(                      \
         ThisClass *self, PyObject *value, void*)        \
     {                                                   \
-        object obj = borrow_reference(value);           \
-        if (!obj.parse(self->MEMBER)) return -1;        \
+        if (!parse_object(self->MEMBER, object(value))) return -1;        \
         return 0;                                       \
     }
 

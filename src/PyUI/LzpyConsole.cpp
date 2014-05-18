@@ -147,7 +147,7 @@ namespace Lzpy
         if (!m_pyGlobal)
         {
             PyObject *pyMain = PyImport_AddModule("__main__");
-            m_pyGlobal = borrow_reference( PyModule_GetDict(pyMain) );
+            m_pyGlobal = object( PyModule_GetDict(pyMain) );
         }
 
         m_pyOutput.cast<PyConsoleOutput>()->m_msg.clear();
@@ -257,7 +257,7 @@ namespace Lzpy
     LZPY_IMP_METHOD_1(PyConsoleOutput, write)
     {
         std::wstring msg;
-        if (value.parse(msg))
+        if (parse_object(msg, value))
         {
             m_msg += msg;
             return null_object;

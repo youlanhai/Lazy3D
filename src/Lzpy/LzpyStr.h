@@ -8,52 +8,21 @@ namespace Lzpy
     class str : public object
     {
     public:
-        str()
-            : object(new_reference(PyUnicode_FromString("")))
-        {}
+        PY_OBJECT_DECLARE(str, object);
 
-        str(const std::wstring & s)
-        {
-            m_ptr = PyUnicode_FromUnicode(s.c_str(), s.length());
-        }
+        str();
 
-        str(const object & o)
-            : object(o)
-        {}
+        str(const std::wstring & s);
 
-        str(const str & o)
-            : object(borrow_reference(o.m_ptr))
-        {}
+        const str & operator=(const std::wstring & s);
 
-        const str & operator=(const str & o)
-        {
-            set_borrow(o.get());
-            return *this;
-        }
+        std::wstring string() const;
 
-        const str & operator=(const object & o)
-        {
-            set_borrow(o.get());
-            return *this;
-        }
+        const wchar_t * c_str() const;
 
-        const str & operator=(const std::wstring & s)
-        {
-            return *this = str(s);
-        }
+        size_t size() const;
 
-        size_t size() const
-        {
-            assert(m_ptr);
-            return PyUnicode_GetLength(m_ptr);
-        }
-
-        bool check() const
-        {
-            return m_ptr && PyUnicode_Check(m_ptr);
-        }
-
+        bool check() const;
     };
 
 }
-

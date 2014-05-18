@@ -9,40 +9,11 @@ namespace Lzpy
     class dict : public object
     {
     public:
+        PY_OBJECT_DECLARE(dict, object);
+
         dict()
         {
             m_ptr = PyDict_New();
-        }
-
-        ~dict()
-        {}
-
-        dict(const dict & v)
-        {
-            m_ptr = xincref(v.m_ptr);
-        }
-
-        dict(const object & v)
-        {
-            m_ptr = xincref(v.get());
-        }
-
-        const dict & operator = (const dict & v)
-        {
-            if (&v != this)
-            {
-                set_borrow(v.m_ptr);
-            }
-            return *this;
-        }
-
-        const dict & operator = (const object & v)
-        {
-            if (&v != this)
-            {
-                set_borrow(v.get());
-            }
-            return *this;
         }
 
     public:
@@ -59,7 +30,8 @@ namespace Lzpy
 
         object getitem(object k) const
         {
-            return borrow_reference(PyDict_GetItem(m_ptr, k.get()));
+            //borrow reference
+            return object(PyDict_GetItem(m_ptr, k.get()));
         }
 
         template<typename K>

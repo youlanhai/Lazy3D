@@ -303,32 +303,27 @@ namespace Lzpy
 
     object build_object(const tuple & v)
     {
-        return borrow_reference(v.get());
+        return object(v);
     }
 
     object build_object(const dict & v)
     {
-        return borrow_reference(v.get());
+        return object(v);
     }
 
     object build_object(const str & v)
     {
-        return borrow_reference(v.get());
+        return object(v);
     }
 
     object build_object(const list & v)
     {
-        return borrow_reference(v.get());
+        return object(v);
     }
 
     object build_object(PyObject *p)
     {
-        return object(borrow_reference(p));
-    }
-
-    object build_object(const borrow_reference & v)
-    {
-        return object(v);
+        return object(p);
     }
 
     object build_object(const new_reference & v)
@@ -337,7 +332,7 @@ namespace Lzpy
     }
 
     ////////////////////////////////////////////////////////////////////
-    // class object
+    // python exception
     ////////////////////////////////////////////////////////////////////
 
     python_error::python_error()
@@ -347,18 +342,62 @@ namespace Lzpy
         : exception(error)
     {}
 
+    ////////////////////////////////////////////////////////////////////
+    // class object_base
+    ////////////////////////////////////////////////////////////////////
 
-    object object::call_python()
+    object_base::object_base()
+        : m_ptr(nullptr)
+    {}
+
+    object_base::object_base(PyObject *p)
+        : m_ptr(p)
+    {}
+
+    object_base::object_base(const object_base & t)
+        : m_ptr(t.m_ptr)
+    {}
+
+    object_base::~object_base()
+    {}
+
+    object_base::operator bool() const
+    {
+        return m_ptr && PyObject_IsTrue(m_ptr);
+    }
+
+    const object_base & object_base::operator = (const object_base & o)
+    {
+        m_ptr = o.m_ptr;
+        return *this;
+    }
+
+    bool object_base::operator == (const object_base & o) const
+    {
+        return m_ptr == o.m_ptr;
+    }
+
+    bool object_base::operator < (const object_base & o) const
+    {
+        return m_ptr < o.m_ptr;
+    }
+
+    bool object_base::operator > (const object_base & o) const
+    {
+        return m_ptr > o.m_ptr;
+    }
+
+    object object_base::call_python()
     {
         return call_python(tuple(), null_object);
     }
 
-    object object::call_python(tuple arg)
+    object object_base::call_python(tuple arg)
     {
         return call_python(arg, null_object);
     }
 
-    object object::call_python(tuple arg, dict kwd)
+    object object_base::call_python(tuple arg, dict kwd)
     {
         if (!callable())
             throw(python_error("This object doesn't callable!"));
@@ -366,23 +405,19 @@ namespace Lzpy
         PyObject * ret = PyObject_Call(m_ptr, arg.get(), kwd.get());
         if (ret == nullptr)
         {
-            //throw(python_error("Function call failed!"));
-            //LOG_ERROR(L"Python call failed!");
-            //PyErr_SetString(PyExc_RuntimeError, "function call failed!");
             PyErr_Print();
         }
 
         return new_reference(ret);
     }
 
-
-    bool object::hasattr(const char *attr) const
+    bool object_base::hasattr(const char *attr) const
     {
         assert(m_ptr);
         return 0 != PyObject_HasAttrString(m_ptr, attr);
     }
 
-    object object::getattr(const char *attr) const
+    object object_base::getattr(const char *attr) const
     {
         object ret = new_reference(PyObject_GetAttrString(m_ptr, attr));
         if (ret.is_null())
@@ -391,84 +426,117 @@ namespace Lzpy
         return ret;
     }
 
-    bool object::setattr(const char *attr, object value)
+    bool object_base::setattr(const char *attr, object value)
     {
         return -1 != PyObject_SetAttrString(m_ptr, attr, value.get());
     }
 
-    bool object::delattr(const char *attr)
+    bool object_base::delattr(const char *attr)
     {
         assert(m_ptr);
         return -1 != PyObject_DelAttrString(m_ptr, attr);
     }
 
-    bool object::callable() const
+    bool object_base::callable() const
     {
         if (nullptr == m_ptr) return false;
         return 1 == PyCallable_Check(m_ptr);
     }
 
-    bool object::is_null() const
+    bool object_base::is_null() const
     {
         return nullptr == m_ptr;
     }
 
-    bool object::is_none() const
+    bool object_base::is_none() const
     {
         return m_ptr == Py_None;
     }
 
-    bool object::is_int() const
+    bool object_base::is_int() const
     {
         return m_ptr && PyLong_Check(m_ptr);
     }
 
-    bool object::is_float() const
+    bool object_base::is_float() const
     {
         return m_ptr && PyFloat_Check(m_ptr);
     }
 
-    bool object::is_bool() const
+    bool object_base::is_bool() const
     {
         return m_ptr && PyBool_Check(m_ptr);
     }
 
-    bool object::is_str() const
+    bool object_base::is_str() const
     {
         return m_ptr && PyUnicode_Check(m_ptr);
     }
 
-    bool object::is_tuple() const
+    bool object_base::is_tuple() const
     {
         return m_ptr && PyTuple_Check(m_ptr);
     }
 
-    bool object::is_list() const
+    bool object_base::is_list() const
     {
         return m_ptr && PyList_Check(m_ptr);
     }
 
-    bool object::is_dict() const
+    bool object_base::is_dict() const
     {
         return m_ptr && PyDict_Check(m_ptr);
     }
 
-    bool object::is_module() const
+    bool object_base::is_module() const
     {
         return m_ptr && PyModule_Check(m_ptr);
     }
 
-    Lazy::tstring object::repr()
+    Lazy::tstring object_base::repr()
     {
         if (is_null()) return _T("null");
         
-        object v = new_reference(PyObject_Repr(m_ptr));
-        return v.parse<Lazy::tstring>();
+        object pyStr = new_reference(PyObject_Repr(m_ptr));
+        Lazy::tstring text;
+        parse_object(text, pyStr);
+        return text;
     }
 
-    void object::print()
+    void object_base::print()
     {
         Lazy::tstring text = repr();
         LOG_INFO(_T("python object info: %s"), text.c_str());
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    // class object
+    ////////////////////////////////////////////////////////////////////
+
+    object::object()
+    {}
+
+    object::~object()
+    {
+        delRef();
+    }
+
+    //borrowed refrence
+    void object::set_borrow(PyObject *p)
+    {
+        if (p == m_ptr) return;
+
+        Py_XINCREF(p);
+        Py_XDECREF(m_ptr);
+        m_ptr = p;
+    }
+
+    //new refrence
+    void object::set_new(PyObject *p)
+    {
+        if (p == m_ptr) return;
+
+        Py_XDECREF(m_ptr);
+        m_ptr = p;
     }
 }

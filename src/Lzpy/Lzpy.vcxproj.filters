@@ -5,32 +5,82 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Lzpy.h" />
-    <ClInclude Include="LzpyBase.h" />
     <ClInclude Include="LzpyConfig.h" />
-    <ClInclude Include="LzpyDict.h" />
-    <ClInclude Include="LzpyEmbed.h" />
-    <ClInclude Include="LzpyExtend.h" />
-    <ClInclude Include="LzpyExtendHelper.h" />
-    <ClInclude Include="LzpyExtendMacro.h" />
-    <ClInclude Include="LzpyList.h" />
-    <ClInclude Include="LzpyObject.h" />
-    <ClInclude Include="LzpyOutput.h" />
-    <ClInclude Include="LzpyStr.h" />
-    <ClInclude Include="LzpyTuple.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="LzpyDict.h">
+      <Filter>embed</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyList.h">
+      <Filter>embed</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyObject.h">
+      <Filter>embed</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyStr.h">
+      <Filter>embed</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyTuple.h">
+      <Filter>embed</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyBase.h">
+      <Filter>extend</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyExtend.h">
+      <Filter>extend</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyExtendHelper.h">
+      <Filter>extend</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyExtendMacro.h">
+      <Filter>extend</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyOutput.h">
+      <Filter>extend</Filter>
+    </ClInclude>
+    <ClInclude Include="LzpyEmbed.h">
+      <Filter>embed</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LzpyBase.cpp" />
-    <ClCompile Include="LzpyDict.cpp" />
-    <ClCompile Include="LzpyEmbed.cpp" />
-    <ClCompile Include="LzpyExtend.cpp" />
-    <ClCompile Include="LzpyExtendHelper.cpp" />
-    <ClCompile Include="LzpyList.cpp" />
-    <ClCompile Include="LzpyObject.cpp" />
-    <ClCompile Include="LzpyOutput.cpp" />
-    <ClCompile Include="LzpyStr.cpp" />
-    <ClCompile Include="LzpyTuple.cpp" />
     <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="LzpyDict.cpp">
+      <Filter>embed</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyList.cpp">
+      <Filter>embed</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyObject.cpp">
+      <Filter>embed</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyStr.cpp">
+      <Filter>embed</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyTuple.cpp">
+      <Filter>embed</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyBase.cpp">
+      <Filter>extend</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyExtend.cpp">
+      <Filter>extend</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyExtendHelper.cpp">
+      <Filter>extend</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyOutput.cpp">
+      <Filter>extend</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyEmbed.cpp">
+      <Filter>embed</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="extend">
+      <UniqueIdentifier>{3f13a172-808f-4a18-bc79-04f9d727d253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="embed">
+      <UniqueIdentifier>{d82e798f-9ac5-4dc9-b27d-b802b7b65620}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

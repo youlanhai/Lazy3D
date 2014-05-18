@@ -140,7 +140,7 @@ namespace Lzpy
             py = parent->getSelf();
         }
         
-        return borrow_reference(py);
+        return object(py);
     }
 
     object LzpyControl::getSize()
@@ -384,7 +384,7 @@ namespace Lzpy
         PControl p = m_control->finChildByPos(pt, resculy);
         if (!p || !p->getSelf()) return none_object;
 
-        return borrow_reference(p->getSelf());
+        return object(p->getSelf());
     }
 
     LZPY_IMP_METHOD(LzpyControl, destroy)

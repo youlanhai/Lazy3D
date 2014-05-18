@@ -161,7 +161,7 @@ namespace Lzpy
         ControlPtr p = getUI()->getHost();
         if (!p || !p->getSelf()) return none_object;
 
-        return borrow_reference(p->getSelf());
+        return object(p->getSelf());
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ namespace Lzpy
 
     LZPY_DEF_FUN(root)
     {
-        return toPyObject(s_root);
+        return xincref(s_root);
     }
 
     LZPY_DEF_FUN(regUIFactory)
@@ -181,7 +181,7 @@ namespace Lzpy
         PyObject *method;
         if (!PyArg_ParseTuple(arg, "O", &method)) return NULL;
 
-        s_uiFactoryMethod = borrow_reference(method);
+        s_uiFactoryMethod = object(method);
         Py_RETURN_NONE;
     }
 

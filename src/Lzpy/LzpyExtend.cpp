@@ -47,7 +47,7 @@ namespace Lzpy
     {
         if (!value.is_str()) return null_object;
 
-        debugMessage(L"Test 1, 1 arg. %s", value.parse<wchar_t*>());
+        debugMessage(L"Test 1, 1 arg. %s", parse_object<wchar_t*>(value));
 
         return none_object;
     }
@@ -89,10 +89,8 @@ namespace Lzpy
 
     LZPY_DEF_FUN_1(test1)
     {
-        PyObject *pStr = PyObject_Str(value);
-        std::wstring str = fromPyObject<std::wstring>(pStr);
-        debugMessage(L"Test 1, 1 arg. %s", str.c_str());
-        Py_DecRef(pStr);
+        str s(value);
+        debugMessage(L"Test 1, 1 arg. %s", s.c_str());
 
         Py_RETURN_NONE;
     }
