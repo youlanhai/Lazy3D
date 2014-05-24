@@ -8,6 +8,9 @@ import ui_helper
 
 import weakref
 
+ALIGN_DESC = ("左上", "左中", "左下", "中上", "居中", "中下", "右上", "右中", "右下")
+ALIGN_KEYS = [9, 17, 33, 10, 18, 34, 12, 20, 36]
+
 ##################################################
 ###
 ##################################################
@@ -202,7 +205,23 @@ class _intItem(BaseItem):
 		except:
 			v = 0
 		self.setCtlValue(v)
-		
+
+class _combItem(BaseItem):
+	def __init__(self):
+		super(_combItem, self).__init__()
+		x = self.getBiasX()
+		self.value = gui.ComboBox.createUI()
+		self.addChild(self.value)
+		self.value.position = (x, 0)
+		self.value.onSelectChange = gui.MethodProxy(self, "onSelectChange")
+
+	def onSelectChange(self, key):
+		self.setCtlValue(key)
+
+	def updateData(self):
+		infos, idx = self.getCtlValue()
+		self.value.setInfo(infos)
+		self.value.setSelect(idx)
 
 ##################################################
 ###
@@ -285,10 +304,23 @@ class RelativePosItem(_vector2fItem):
 	def getCtlValue(self): return self.control.relativePos
 	def setCtlValue(self, v): self.control.relativePos = v
 
-class RelativeAlignItem(_hexItem):
+class RelativeAlignItem(_combItem):
+
+	def __init__(self):
+		super(RelativeAlignItem, self).__init__()
+		self.zorder = -10
+
 	def getName(self): return "相对排版"
-	def getCtlValue(self): return self.control.relativeAlign
-	def setCtlValue(self, v): self.control.relativeAlign = v
+	def getCtlValue(self):
+		v = self.control.relativeAlign
+		idx = 0
+		try:
+			idx = ALIGN_KEYS.index(v)
+		except ValueError:
+			pass
+		return ALIGN_DESC, idx
+
+	def setCtlValue(self, v): self.control.relativeAlign = ALIGN_KEYS[v]
 
 class ColorItem(_hexItem):
 	def getName(self): return "颜色"
@@ -316,10 +348,22 @@ class EditableItem(_boolItem):
 	def getCtlValue(self): return self.control.editable
 	def setCtlValue(self, v): self.control.editable = v
 
-class TextAlignItem(_hexItem):
+class TextAlignItem(_combItem):
+	def __init__(self):
+		super(TextAlignItem, self).__init__()
+		self.zorder = -10
+
 	def getName(self): return "文字排版"
-	def getCtlValue(self): return self.control.textAlign
-	def setCtlValue(self, v): self.control.textAlign = v
+	def getCtlValue(self):
+		v = self.control.textAlign
+		idx = 0
+		try:
+			idx = ALIGN_KEYS.index(v)
+		except ValueError:
+			pass
+		return ALIGN_DESC, idx
+
+	def setCtlValue(self, v): self.control.textAlign = ALIGN_KEYS[v]
 
 ##################################################
 ### 选项类型
@@ -386,9 +430,10 @@ COMMON_TYPES = (
 	TP_PARENT, TP_ID,
 	TP_SCRIPT, TP_EDITABLE,
 	TP_POSITION, TP_SIZE,
+	TP_RELATIVE, TP_RELATIVE_POS, TP_RELATIVE_ALIGN,
 	TP_TEXT, TP_IMAGE, TP_FONT,
 	TP_SHOW, TP_ENABLE, TP_CLICKTOP, TP_HANDEL_MSG, TP_DRAG,
-	TP_COLOR, TP_BGCOLOR, TP_RELATIVE, TP_RELATIVE_POS, TP_RELATIVE_ALIGN,
+	TP_COLOR, TP_BGCOLOR, 
 )
 
 #内建ui的属性列表写在这里，非内建类型，写在类属性UI_EDITOR_PROPERTY中

@@ -30,10 +30,16 @@ root.enableHandleSelfMsg = False
 root.name = "PyUIRoot"
 
 uiRoot     = Window(root)
-uiRoot.name = "NormalUIRoot"
+uiRoot.name = "uiRoot"
+
+editorUILayer = lui.Form(root)
+editorUILayer.name = "editorUILayer"
+editorUILayer.size = (640, 480)
+editorUILayer.position = (100, 20)
+editorUILayer.bgColor = 0xff7f7f7f
 
 editorRoot = lui.IControl(root)
-editorRoot.name = "EditorRoot"
+editorRoot.name = "editorRoot"
 
 def onSize(w, h):
 	#lui.root().size = (w, h)
@@ -92,8 +98,8 @@ align_left      = 1
 align_hcenter   = 2
 align_right     = 4
 align_top       = 8
-align_bottom    = 16
-align_vcenter   = 32
+align_vcenter   = 16
+align_bottom    = 32
 align_center    = align_hcenter | align_vcenter
 align_mutiLine  = 64
 

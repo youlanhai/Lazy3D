@@ -15,99 +15,13 @@ root
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 494 139
+	position = 131 26
 	size = 379 429
 	relative = true
-	relativeAlign = 34
+	relativeAlign = 18
 	relativePos = 0.500000 0.500000
 	children
 	{
-		lbl_path
-		{
-			type = 5
-			id = 0
-			text = 选择路径...
-			font = def|17
-			color = ffff0000
-			bgcolor = ffffffff
-			visible = true
-			enable = false
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = false
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 20 27
-			size = 349 24
-			children = ""
-			textAlign = 00000009
-			mutiline = false
-		}
-		btn_cancel
-		{
-			type = 4
-			id = 0
-			text = 取消
-			font = def|17
-			color = ffffffff
-			bgcolor = af808080
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 254 387
-			size = 80 30
-			children = ""
-			textAlign = 00000022
-		}
-		noname
-		{
-			type = 5
-			id = 0
-			text = 文件浏览器
-			font = def|17
-			color = ff00ff00
-			bgcolor = 7fffffff
-			visible = true
-			enable = false
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = false
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 134 6
-			size = 100 20
-			children = ""
-			textAlign = 00000009
-			mutiline = false
-		}
-		btn_ok
-		{
-			type = 4
-			id = 0
-			text = 确定
-			font = def|17
-			color = ffffffff
-			bgcolor = af808080
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 40 391
-			size = 80 30
-			children = ""
-			textAlign = 00000022
-		}
 		list
 		{
 			type = 3
@@ -152,6 +66,92 @@ root
 			}
 			script = gui.ListView
 			itemConfig = layout/editor/explorer_item.lzd
+		}
+		btn_ok
+		{
+			type = 4
+			id = 0
+			text = 确定
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 40 391
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+		noname
+		{
+			type = 5
+			id = 0
+			text = 文件浏览器
+			font = def|17
+			color = ff00ff00
+			bgcolor = 7fffffff
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 134 6
+			size = 100 20
+			children = ""
+			textAlign = 00000009
+			mutiline = false
+		}
+		btn_cancel
+		{
+			type = 4
+			id = 0
+			text = 取消
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 254 387
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+		lbl_path
+		{
+			type = 5
+			id = 0
+			text = 选择路径...
+			font = def|17
+			color = ffff0000
+			bgcolor = ffffffff
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 20 27
+			size = 349 24
+			children = ""
+			textAlign = 00000009
+			mutiline = false
 		}
 	}
 	script = uieditor.edt_explorer.FileExplorer

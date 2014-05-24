@@ -38,7 +38,7 @@ mainview
 			position = 0 10
 			size = 100 30
 			children = ""
-			textAlign = 00000000
+			textAlign = 17
 			mutiline = false
 		}
 		pushTarget
@@ -60,7 +60,7 @@ mainview
 			position = 65 9
 			size = 81 28
 			children = ""
-			textAlign = 00000022
+			textAlign = 18
 		}
 		popTarget
 		{
@@ -81,7 +81,7 @@ mainview
 			position = 66 11
 			size = 80 27
 			children = ""
-			textAlign = 00000022
+			textAlign = 18
 		}
 		btnRemove
 		{
@@ -102,7 +102,7 @@ mainview
 			position = 154 9
 			size = 80 30
 			children = ""
-			textAlign = 00000022
+			textAlign = 18
 		}
 		searchResculy
 		{
@@ -142,11 +142,11 @@ mainview
 					position = 49 -2
 					size = 67 28
 					children = ""
-					textAlign = 00000000
+					textAlign = 17
 					mutiline = false
 				}
 			}
-			textAlign = 00000022
+			textAlign = 18
 		}
 	}
 }

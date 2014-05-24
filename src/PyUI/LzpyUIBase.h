@@ -88,6 +88,9 @@ namespace Lzpy
         LZPY_DEF_GET(enableSelfMsg, m_control->isSelfMsgEnable);
         LZPY_DEF_SET(enableSelfMsg, m_control->enableSelfMsg, bool);
 
+        LZPY_DEF_GET(enableLimitInRect, m_control->canLimitInRect);
+        LZPY_DEF_SET(enableLimitInRect, m_control->enableLimitInRect, bool);
+
         LZPY_DEF_GET(enableClickTop, m_control->canClickTop);
         LZPY_DEF_SET(enableClickTop, m_control->enableClickTop, bool);
 

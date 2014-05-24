@@ -10,7 +10,7 @@ menu
 	visible = true
 	enable = true
 	enableSelfMsg = true
-	enalbeDrag = true
+	enalbeDrag = false
 	clickTop = true
 	limitInRect = true
 	changeChildOrder = true
@@ -19,14 +19,14 @@ menu
 	size = 300 200
 	children
 	{
-		btn_scan
+		noname
 		{
-			type = 4
+			type = 5
 			id = 0
-			text = 浏览
+			text = 菜单
 			font = def|17
-			color = ffffffff
-			bgcolor = af808080
+			color = ff00ff00
+			bgcolor = 7fffffff
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -35,19 +35,20 @@ menu
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 215 58
-			size = 80 30
+			position = 0 0
+			size = 49 24
 			children = ""
-			textAlign = 00000022
+			textAlign = 17
+			mutiline = false
 		}
-		btn_close
+		noname
 		{
-			type = 4
+			type = 5
 			id = 0
-			text = 关闭
+			text = 文件
 			font = def|17
 			color = ffffffff
-			bgcolor = af808080
+			bgcolor = 7fffffff
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -56,52 +57,11 @@ menu
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 3 148
-			size = 80 30
+			position = 1 27
+			size = 59 28
 			children = ""
-			textAlign = 00000022
-		}
-		btn_save
-		{
-			type = 4
-			id = 0
-			text = 保存
-			font = def|17
-			color = ffffffff
-			bgcolor = af808080
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 3 110
-			size = 80 30
-			children = ""
-			textAlign = 00000022
-		}
-		btn_open
-		{
-			type = 4
-			id = 0
-			text = 打开
-			font = def|17
-			color = ffffffff
-			bgcolor = af808080
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 4 71
-			size = 80 30
-			children = ""
-			textAlign = 00000022
+			textAlign = 17
+			mutiline = false
 		}
 		edt_file
 		{
@@ -124,14 +84,14 @@ menu
 			children = ""
 			mutiline = false
 		}
-		noname
+		btn_open
 		{
-			type = 5
+			type = 4
 			id = 0
-			text = 文件
+			text = 打开
 			font = def|17
 			color = ffffffff
-			bgcolor = 7fffffff
+			bgcolor = af808080
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -140,20 +100,19 @@ menu
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 1 27
-			size = 59 28
+			position = 4 71
+			size = 80 30
 			children = ""
-			textAlign = 00000000
-			mutiline = false
+			textAlign = 18
 		}
-		noname
+		btn_save
 		{
-			type = 5
+			type = 4
 			id = 0
-			text = 菜单
+			text = 保存
 			font = def|17
-			color = ff00ff00
-			bgcolor = 7fffffff
+			color = ffffffff
+			bgcolor = af808080
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -162,11 +121,52 @@ menu
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 0 0
-			size = 49 24
+			position = 3 110
+			size = 80 30
 			children = ""
-			textAlign = 00000000
-			mutiline = false
+			textAlign = 18
+		}
+		btn_close
+		{
+			type = 4
+			id = 0
+			text = 关闭
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 3 148
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+		btn_scan
+		{
+			type = 4
+			id = 0
+			text = 浏览
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 215 58
+			size = 80 30
+			children = ""
+			textAlign = 18
 		}
 	}
 }

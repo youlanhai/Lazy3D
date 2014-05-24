@@ -32,6 +32,11 @@ namespace Lazy
         int m_id;
     };
 
+    bool sortCompare(IControl * x, IControl * y)
+    {
+        return x->getPositionZ() < y->getPositionZ();
+    }
+
     static EditorUICreateFun g_pUICreateFun = nullptr;
     void setEditorUICreateFun(EditorUICreateFun fun)
     {
@@ -177,6 +182,8 @@ namespace Lazy
         , m_name(L"noname")
         , m_bEditable(false)
         , m_bManaged(false)
+        , m_bOrderDirty(true)
+        , m_zorder(0)
     {
     }
 
@@ -339,6 +346,7 @@ namespace Lazy
         {
             m_parent->topmostChild(this);
             m_parent->topmost();
+            m_parent->setChildOrderDirty();
         }
     }
 
@@ -467,6 +475,7 @@ namespace Lazy
     void IControl::setPositionZ(int z)
     {
         m_zorder = z;
+        if (m_parent) m_parent->setChildOrderDirty();
     }
 
     void IControl::setWidth(int width)
@@ -624,7 +633,7 @@ namespace Lazy
         if (m_bRelative)
         {
             misc::readVector2(m_relativePos, config, L"relativePos");
-            setRelativeAlign(config->readUint(L"relativeAlign"));
+            setRelativeAlign(config->readInt(L"relativeAlign"));
         }
 
         clearChildren();
@@ -710,7 +719,7 @@ namespace Lazy
         if (m_bRelative)
         {
             config->writeBool(L"relative", m_bRelative);
-            config->writeUint(L"relativeAlign", m_relativeAlign);
+            config->writeInt(L"relativeAlign", m_relativeAlign);
             misc::writeVector2(m_relativePos, config, L"relativePos");
         }
 
@@ -764,6 +773,7 @@ namespace Lazy
 
         pCtrl->m_parent = this;
         m_children.addFront(pCtrl);
+        setChildOrderDirty();
     }
 
     PControl IControl::getChild(int id)
@@ -804,6 +814,7 @@ namespace Lazy
 
         pCtrl->m_parent = nullptr;
         m_children.remove(pCtrl);
+        setChildOrderDirty();
     }
 
     ///将子空间至于最顶层。
@@ -897,6 +908,12 @@ namespace Lazy
 
     void IControl::update(float elapse)
     {
+        if (m_bOrderDirty)
+        {
+            m_bOrderDirty = false;
+            m_children.sort(sortCompare);
+        }
+
         m_children.update(elapse);
     }
 

@@ -4,6 +4,7 @@
 
 
 import lui
+import ui
 import copy
 import weakref
 import lzd
@@ -231,7 +232,7 @@ class ListControl(lui.Form):
 		self.layoutPosition()
 
 	def layoutPosition(self):
-		height = self.list.getHeight()
+		height = self.list.getHeight()  + 50
 
 		w, h = self.size
 		if height <= h:
@@ -251,6 +252,8 @@ class ListControl(lui.Form):
 		if self.slidebar is None: return False
 		self.slidebar.slideByWheel(z)
 
+		return True
+
 ##################################################
 ### 只用于item类型相同的结构
 ##################################################
@@ -262,14 +265,33 @@ class IListItem(lui.IControl):
 		super(IListItem, self).__init__(parent)
 		self.layoutHeight = 20
 		self.msgHandler = None
+		self.label = None
+		self.key = 0
 	
 	def setMsgHandler(self, msgHandler): self.msgHandler = msgHandler
 
 	def getHeight(self): return self.layoutHeight
 	
-	def setInfo(self, info): pass
+	def setInfo(self, info):
+		if self.label is not None:
+			self.label.text = str(info)
 
 	def layout(self): self.layoutHeight = self.size[1]
+
+	def onMouseEvent(self, msg, x, y):
+		if msg == ui.ME_LMOUSE_UP:
+			self.onSelect()
+		return True
+
+	def onSelect(self):
+		print("onSelect", self.key)
+
+		if self.msgHandler:
+			self.msgHandler.onItemSelect(self.key)
+
+	def getText(self):
+		if self.label is not None: return self.label.text
+		return ""
 
 	@classmethod
 	def createUI(cls):
@@ -321,6 +343,7 @@ class IListView(IListItem):
 			self.addChild(item)
 
 		item.visible = True
+		item.key = len(self.items)
 		item.setMsgHandler(self.msgHandler)
 		self.items.append(item)
 		return item
@@ -424,6 +447,9 @@ class ListView(lui.Form):
 		
 		return item
 
+	def getItem(self, key):
+		return self.root.items[key]
+
 	def setItemCreateMethod(self, method):
 		self.itemCreateMethod = method
 
@@ -468,6 +494,8 @@ class ListView(lui.Form):
 	def onMouseWheel(self, x, y, z):
 		if self.slidebar is None: return False
 		self.slidebar.slideByWheel(z)
+
+		return True
 
 	@classmethod
 	def createUI(cls):
@@ -546,21 +574,44 @@ class ComboBox(lui.Form):
 
 	def __init__(self, parent=None):
 		super(ComboBox, self).__init__(parent)
+		self.onSelectChange = lambda x: None
 
 	def onLoadLayout(self, config):
 		self.label = self.getChildByName("label")
 		self.button = self.getChildByName("button")
 		self.menu = self.getChildByName("menu")
 
+		self.bindScript()
+
 	def onBtnDropdown(self):
 		self.menu.visible = not self.menu.visible
 
+	def bindScript(self):
+		self.button.onButtonClick = MethodProxy(self, "onBtnDropdown")
+		self.menu.setMsgHandler(weakref.proxy(self))
+
+	def onItemSelect(self, key):
+		self.setSelect(key)
+		self.menu.visible = False
+		self.onSelectChange(key)
+
+	def setInfo(self, info):
+		self.menu.setInfo(info)
+
+	def setSelect(self, key):
+		item = self.menu.getItem(key)
+		self.label.text = item.getText()
+
 	@classmethod
 	def createUI(cls):
+		w, h = 120, 20
+
 		e = cls()
 		e.name = "ComboBox"
-		e.size = (120, 30)
-		e.enalbeDrag = False
+		e.size = (w-h, h)
+		e.enableDrag = False
+		e.bgColor = 0xff7f7f7f
+		e.enableLimitInRect = False
 		e.script = cls.SCRIPT_NAME
 
 		e.label = lui.Label(e)
@@ -569,20 +620,22 @@ class ComboBox(lui.Form):
 		e.label.editable = True
 
 		e.button = lui.Button(e)
-		e.button.position = (90, 0)
-		e.button.size = (30, 30)
+		e.button.position = (w - h, 0)
+		e.button.size = (h, h)
 		e.button.name = "button"
-		e.button.onButtonClick = MethodProxy(e, "onBtnDropdown")
 		e.button.editable = True
 
 		e.menu = Menu.createUI()
 		e.addChild(e.menu)
-		e.menu.position = (0, 35)
-		e.menu.size = (120, 20)
-		e.menu.setMaxHeight(100)
+		e.menu.visible = False
+		e.menu.position = (0, h)
+		e.menu.size = (w, h)
+		e.menu.setMaxHeight(50)
 		e.menu.name = "menu"
 		e.menu.editable = True
+		e.menu.bgColor = 0xffafafaf
 
+		e.bindScript()
 		return e
 
 ##################################################

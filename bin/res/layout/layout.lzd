@@ -16,21 +16,21 @@ root
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 577 201
+	position = 214 88
 	size = 212 304
 	relative = true
-	relativeAlign = 34
+	relativeAlign = 18
 	relativePos = 0.500000 0.500000
 	children
 	{
-		edt_msg
+		btn_ok
 		{
-			type = 7
-			id = 0
-			text = edit\nfdsf
-			font = def|30
+			type = 4
+			id = 2
+			text = 确定
+			font = def|17
 			color = ffffffff
-			bgcolor = ffffffff
+			bgcolor = af808080
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -39,10 +39,10 @@ root
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 50 100
-			size = 129 133
+			position = 52 263
+			size = 100 30
 			children = ""
-			mutiline = true
+			textAlign = 18
 		}
 		lbl_title
 		{
@@ -63,17 +63,17 @@ root
 			position = 15 16
 			size = 177 54
 			children = ""
-			textAlign = 00000000
+			textAlign = 17
 			mutiline = true
 		}
-		btn_ok
+		edt_msg
 		{
-			type = 4
-			id = 2
-			text = 确定
-			font = def|17
+			type = 7
+			id = 0
+			text = edit\nfdsf
+			font = def|30
 			color = ffffffff
-			bgcolor = af808080
+			bgcolor = ffffffff
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -82,10 +82,10 @@ root
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 52 263
-			size = 100 30
+			position = 50 100
+			size = 129 133
 			children = ""
-			textAlign = 00000022
+			mutiline = true
 		}
 	}
 	script = guimgr.TestForm

@@ -236,6 +236,8 @@ namespace Lazy
         void setManaged(bool managed);
         bool getManaged() const { return m_bManaged; }
 
+        void setChildOrderDirty(){ m_bOrderDirty = true; }
+
         ///根据坐标查找活动的控件。pos的参考系为当前控件。
         PControl finChildByPos(const CPoint & pos, bool resculy = false);
 
@@ -298,6 +300,7 @@ namespace Lazy
         bool            m_bChangeChildOrder;///< 是否可改变子控件顺序
         bool            m_bLimitInRect;     ///< 消息是否限制在窗体区域内
         bool            m_bRelative;    ///< 相对坐标系
+        bool            m_bOrderDirty;
 
     protected:
         static PControl        m_pFocus;       ///< 当前鼠标所在位置的控件

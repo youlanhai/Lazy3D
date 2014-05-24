@@ -31,6 +31,7 @@ namespace Lzpy
         LZPY_GETSET(enable);
         LZPY_GETSET(enableDrag);
         LZPY_GETSET(enableSelfMsg);
+        LZPY_GETSET(enableLimitInRect);
         LZPY_GETSET(enableClickTop); 
         LZPY_GETSET(enableChangeChildOrder);
         LZPY_GETSET(editable);

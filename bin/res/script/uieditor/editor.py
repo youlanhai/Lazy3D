@@ -241,7 +241,7 @@ class Editor(lui.IControl):
 		elif self.reference:
 			self.reference.addChild(item)
 		else:
-			ui.uiRoot.addChild(item)
+			ui.editorUILayer.addChild(item)
 			self.setHost(item)
 
 		item.managed = True
@@ -483,7 +483,7 @@ class MenuBar(lui.IControl):
 			print("Failed to load layout ", self.layoutFile)
 			return
 		
-		ui.uiRoot.addChild(host)
+		ui.editorUILayer.addChild(host)
 		share.gui.editor.setHost(host)
 
 	def onBtnSave(self):

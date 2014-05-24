@@ -4,20 +4,6 @@
 
 namespace Lazy
 {
-
-    ///文字对齐方式
-    namespace AlignType
-    {
-        const uint32 Left = 1; ///<左对齐
-        const uint32 HCenter = 2; ///<水平居中
-        const uint32 Right = 4; ///<右对齐
-        const uint32 Top = 8; ///<顶对齐
-        const uint32 Bottom = 16; ///<底对齐
-        const uint32 VCenter = 32; ///<垂直居中
-        const uint32 Center = HCenter | VCenter; ///垂直、水平都居中
-        const uint32 MutiLine = 64; ///以后要去掉
-    }
-
     ///文字信息。用于渲染一个文字。
     struct WordInfo
     {

@@ -19,11 +19,11 @@ mainview
 	size = 165 22
 	children
 	{
-		title
+		btnShrink
 		{
 			type = 4
 			id = 0
-			text = tree item
+			text = -
 			font = def|17
 			color = ffff0000
 			bgcolor = af808080
@@ -35,10 +35,10 @@ mainview
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 25 0
-			size = 100 20
+			position = 0 0
+			size = 20 20
 			children = ""
-			textAlign = 00000020
+			textAlign = 18
 		}
 		btnExpand
 		{
@@ -59,13 +59,13 @@ mainview
 			position = 0 0
 			size = 20 20
 			children = ""
-			textAlign = 00000022
+			textAlign = 18
 		}
-		btnShrink
+		title
 		{
 			type = 4
 			id = 0
-			text = -
+			text = tree item
 			font = def|17
 			color = ffff0000
 			bgcolor = af808080
@@ -77,10 +77,10 @@ mainview
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 0 0
-			size = 20 20
+			position = 25 0
+			size = 100 20
 			children = ""
-			textAlign = 00000022
+			textAlign = 17
 		}
 	}
 	script = uieditor.editor.WorkTreeItem

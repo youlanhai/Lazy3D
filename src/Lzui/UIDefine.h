@@ -78,8 +78,8 @@ namespace Lazy
         const uint32 hcenter = 2; ///<水平居中
         const uint32 right = 4; ///<右对齐
         const uint32 top = 8; ///<顶对齐
-        const uint32 bottom = 16; ///<底对齐
-        const uint32 vcenter = 32; ///<垂直居中
+        const uint32 vcenter = 16; ///<垂直居中
+        const uint32 bottom = 32; ///<底对齐
         const uint32 center = hcenter | vcenter;///< 完全居中
     }
 

@@ -72,6 +72,12 @@ public:
         return std::find_if(begin(), end(), pred);
     }
 
+    template<typename Pred>
+    void sort(Pred pred)
+    {
+        m_pool.sort(pred);
+    }
+
     ///添加一个元素
     void addFront(VisitType obj)
     {

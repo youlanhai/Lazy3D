@@ -8,162 +8,162 @@
 namespace Lazy
 {
 
-CLabel::CLabel(void)
-    : m_align(AlignType::Left | AlignType::Top)
-    , m_bMutiLine(false)
-    , m_textSprite(new TextLineSprite())
-    , m_lineSpace(4)
-    , m_maxWidth(100)
-{
-    enable(false);
-    m_size.set(m_maxWidth, 20);
-    m_textSprite->setColor(m_color);
-
-    m_fontPtr = getDefaultFontPtr();
-}
-
-
-CLabel::~CLabel(void)
-{
-}
-
-void CLabel::create(int id, const tstring & caption, int x, int y)
-{
-    m_id = id;
-    m_position.set(x, y);
-    setText(caption);
-}
-
-
-void CLabel::enableMutiLine(bool enable)
-{
-    if (m_bMutiLine == enable) return;
-
-    m_bMutiLine = enable;
-    if (m_bMutiLine)
+    CLabel::CLabel(void)
+        : m_align(RelativeAlign::left | RelativeAlign::top)
+        , m_bMutiLine(false)
+        , m_textSprite(new TextLineSprite())
+        , m_lineSpace(4)
+        , m_maxWidth(100)
     {
-        m_textSprite = new TextViewSprite();
-    }
-    else
-    {
-        m_textSprite = new TextLineSprite();
+        enable(false);
+        m_size.set(m_maxWidth, 20);
+        m_textSprite->setColor(m_color);
+
+        m_fontPtr = getDefaultFontPtr();
     }
 
-    m_textSprite->setColor(m_color);
-    updateText();
-}
 
-void CLabel::update(float elapse)
-{
-    m_textSprite->update(elapse);
-}
-
-void CLabel::render(IUIRender * pDevice)
-{
-    if (m_text.empty()) return;
-    if (!m_textSprite) return;
-    
-    CPoint pt;
-    localToGlobal(pt);
-
-    if (m_align & AlignType::HCenter)
+    CLabel::~CLabel(void)
     {
-        pt.x += (m_size.cx - m_textSprite->getSize().cx) / 2;
-    }
-    else if (m_align & AlignType::Right)
-    {
-        pt.x += m_size.cx - m_textSprite->getSize().cx;
     }
 
-    if (m_align & AlignType::VCenter)
+    void CLabel::create(int id, const tstring & caption, int x, int y)
     {
-        pt.y += (m_size.cy - m_textSprite->getSize().cy) / 2;
-    }
-    else if (m_align & AlignType::Bottom)
-    {
-        pt.y += m_size.cy - m_textSprite->getSize().cy;
+        m_id = id;
+        m_position.set(x, y);
+        setText(caption);
     }
 
-    m_textSprite->render(pDevice, pt);
-}
 
-const CSize & CLabel::getTextSize()
-{
-    m_textSprite->layout();
-    return m_textSprite->getSize();
-}
-
-int CLabel::getTextLines()
-{
-    m_textSprite->layout();
-    return m_textSprite->getTextLines();
-}
-
-void CLabel::updateText()
-{
-    if (!m_fontPtr)
+    void CLabel::enableMutiLine(bool enable)
     {
-        m_textSprite->clear();
-        return;
+        if (m_bMutiLine == enable) return;
+
+        m_bMutiLine = enable;
+        if (m_bMutiLine)
+        {
+            m_textSprite = new TextViewSprite();
+        }
+        else
+        {
+            m_textSprite = new TextLineSprite();
+        }
+
+        m_textSprite->setColor(m_color);
+        updateText();
     }
 
-    m_textSprite->setText(m_text, m_fontPtr);
-}
+    void CLabel::update(float elapse)
+    {
+        m_textSprite->update(elapse);
+    }
 
-void CLabel::setFont(const std::wstring & font)
-{
-    if (m_font == font) return;
+    void CLabel::render(IUIRender * pDevice)
+    {
+        if (m_text.empty()) return;
+        if (!m_textSprite) return;
 
-    m_font = font;
-    m_fontPtr = FontMgr::instance()->getFont(font);
+        CPoint pt;
+        localToGlobal(pt);
 
-    updateText();
-}
+        if (m_align & RelativeAlign::hcenter)
+        {
+            pt.x += (m_size.cx - m_textSprite->getSize().cx) / 2;
+        }
+        else if (m_align & RelativeAlign::right)
+        {
+            pt.x += m_size.cx - m_textSprite->getSize().cx;
+        }
 
-void CLabel::setText(const std::wstring & text)
-{
-    if (m_text == text) return;
+        if (m_align & RelativeAlign::vcenter)
+        {
+            pt.y += (m_size.cy - m_textSprite->getSize().cy) / 2;
+        }
+        else if (m_align & RelativeAlign::bottom)
+        {
+            pt.y += m_size.cy - m_textSprite->getSize().cy;
+        }
 
-    m_text = text;
-    m_text.erase(std::remove(m_text.begin(), m_text.end(), '\r'), m_text.end());
+        m_textSprite->render(pDevice, pt);
+    }
 
-    updateText();
-}
+    const CSize & CLabel::getTextSize()
+    {
+        m_textSprite->layout();
+        return m_textSprite->getSize();
+    }
 
-void CLabel::setLineSpace(int lineSpace)
-{
-    m_lineSpace = lineSpace;
-    m_textSprite->setLineSpace(lineSpace);
-}
+    int CLabel::getTextLines()
+    {
+        m_textSprite->layout();
+        return m_textSprite->getTextLines();
+    }
 
-void CLabel::setMaxWidth(int width)
-{
-    m_maxWidth = width;
-    m_textSprite->setMaxWidth(width);
-}
+    void CLabel::updateText()
+    {
+        if (!m_fontPtr)
+        {
+            m_textSprite->clear();
+            return;
+        }
 
-void CLabel::setColor(uint32 color)
-{
-    IControl::setColor(color);
-    m_textSprite->setColor(color);
-}
+        m_textSprite->setText(m_text, m_fontPtr);
+    }
 
-///加载布局。
-void CLabel::loadFromStream(LZDataPtr config)
-{
-    IControl::loadFromStream(config);
+    void CLabel::setFont(const std::wstring & font)
+    {
+        if (m_font == font) return;
 
-    setAlign(config->readHex(L"textAlign"));
-    enableMutiLine(config->readBool(L"mutiline"));
-}
+        m_font = font;
+        m_fontPtr = FontMgr::instance()->getFont(font);
 
-///保存布局
-void CLabel::saveToStream(LZDataPtr config)
-{
-    IControl::saveToStream(config);
+        updateText();
+    }
 
-    config->writeHex(L"textAlign", m_align);
-    config->writeBool(L"mutiline", m_bMutiLine);
-}
+    void CLabel::setText(const std::wstring & text)
+    {
+        if (m_text == text) return;
+
+        m_text = text;
+        m_text.erase(std::remove(m_text.begin(), m_text.end(), '\r'), m_text.end());
+
+        updateText();
+    }
+
+    void CLabel::setLineSpace(int lineSpace)
+    {
+        m_lineSpace = lineSpace;
+        m_textSprite->setLineSpace(lineSpace);
+    }
+
+    void CLabel::setMaxWidth(int width)
+    {
+        m_maxWidth = width;
+        m_textSprite->setMaxWidth(width);
+    }
+
+    void CLabel::setColor(uint32 color)
+    {
+        IControl::setColor(color);
+        m_textSprite->setColor(color);
+    }
+
+    ///加载布局。
+    void CLabel::loadFromStream(LZDataPtr config)
+    {
+        IControl::loadFromStream(config);
+
+        setAlign(config->readInt(L"textAlign"));
+        enableMutiLine(config->readBool(L"mutiline"));
+    }
+
+    ///保存布局
+    void CLabel::saveToStream(LZDataPtr config)
+    {
+        IControl::saveToStream(config);
+
+        config->writeInt(L"textAlign", m_align);
+        config->writeBool(L"mutiline", m_bMutiLine);
+    }
 
 }//namespace Lazy

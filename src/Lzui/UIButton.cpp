@@ -14,7 +14,7 @@ namespace Lazy
         : m_colorEnable(true)
         , m_posMoveEnable(true)
         , m_textSprite(new TextLineSprite())
-        , m_textAlign(AlignType::Center)
+        , m_textAlign(RelativeAlign::center)
     {
         memcpy(m_stateColor, buttonColor, sizeof(buttonColor));
 
@@ -99,20 +99,20 @@ namespace Lazy
 
         CPoint pt(rc.left, rc.top);
 
-        if (m_textAlign & AlignType::HCenter)
+        if (m_textAlign & RelativeAlign::hcenter)
         {
             pt.x += (m_size.cx - m_textSprite->getSize().cx) / 2;
         }
-        else if (m_textAlign & AlignType::Right)
+        else if (m_textAlign & RelativeAlign::right)
         {
             pt.x += m_size.cx - m_textSprite->getSize().cx;
         }
 
-        if (m_textAlign & AlignType::VCenter)
+        if (m_textAlign & RelativeAlign::vcenter)
         {
             pt.y += (m_size.cy - m_textSprite->getSize().cy) / 2;
         }
-        else if (m_textAlign & AlignType::Bottom)
+        else if (m_textAlign & RelativeAlign::bottom)
         {
             pt.y += m_size.cy - m_textSprite->getSize().cy;
         }
@@ -218,7 +218,7 @@ namespace Lazy
     {
         IControl::loadFromStream(config);
 
-        setTextAlign(config->readHex(L"textAlign", AlignType::Center));
+        setTextAlign(config->readInt(L"textAlign", RelativeAlign::center));
     }
 
     ///保存布局
@@ -226,6 +226,6 @@ namespace Lazy
     {
         IControl::saveToStream(config);
 
-        config->writeHex(L"textAlign", m_textAlign);
+        config->writeInt(L"textAlign", m_textAlign);
     }
 }//namespace Lazy

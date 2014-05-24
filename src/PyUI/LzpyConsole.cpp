@@ -63,7 +63,7 @@ namespace Lzpy
 
         m_strResult = L"python console.";
 
-        m_staticLabel.setAlign(Lazy::AlignType::Left);
+        m_staticLabel.setAlign(Lazy::RelativeAlign::left);
         m_staticLabel.enableMutiLine(true);
         addChild(&m_staticLabel);
 
