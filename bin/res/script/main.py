@@ -44,3 +44,8 @@ def onSize(w, h):
 
 def onClientSize(w, h):
 	ui.onClientSize(w, h)
+
+def onKeyEvent(isDown, key):
+	print("onKeyEvent", isDown, key)
+	
+	share.gui.onKeyEvent(isDown, key)

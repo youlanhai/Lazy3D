@@ -86,6 +86,12 @@ namespace Lzpy
 
         LZPY_DEF_GET(textAlign, getUI()->getTextAlign);
         LZPY_DEF_SET(textAlign, getUI()->setTextAlign, uint32);
+
+        LZPY_DEF_GET(colorFadable, getUI()->getColorFadable);
+        LZPY_DEF_SET(colorFadable, getUI()->setColorFadable, bool);
+
+        LZPY_DEF_GET(posMovable, getUI()->getPosMovable);
+        LZPY_DEF_SET(posMovable, getUI()->setPosMovable, bool);
     };
 
     class LzpySelect : public LzpyButton

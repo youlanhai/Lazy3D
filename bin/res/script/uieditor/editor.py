@@ -72,7 +72,7 @@ class Selector(lui.EditorCtl):
 		self.parent.refreshProperty()
 
 	def moveDelta(self, dx, dy):
-		x, y = self.getPosition()
+		x, y = self.position
 		self.position = (x + dx, y + dy)
 		self.onMouseDrag()
 
@@ -178,6 +178,8 @@ class Editor(lui.IControl):
 		self.focus.applyCtl(ctl)
 	
 	def onMouseDown(self, x, y):
+		if lui.isVkDown(vk.CONTROL): return
+
 		ctl = self.searchChild(x, y)
 		self.setTarget(ctl)
 	
@@ -196,10 +198,6 @@ class Editor(lui.IControl):
 				return True
 			elif key == vk.DOWN:
 				fun(0, 1)
-				return True
-		else:
-			if key == vk.ESCAPE:
-				self.visible = False
 				return True
 		
 		return False

@@ -109,6 +109,8 @@ namespace Lzpy
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyButton);
         LZPY_GETSET(textAlign);
+        LZPY_GETSET(colorFadable);
+        LZPY_GETSET(posMovable);
     LZPY_CLASS_END();
 
     LzpyButton::LzpyButton()

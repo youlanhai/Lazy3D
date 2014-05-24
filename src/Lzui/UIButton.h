@@ -30,17 +30,16 @@ namespace Lazy
         virtual void setBtnState(int state);
         int getBtnState(void){ return m_state; }
 
-        void setStateColor(DWORD state, DWORD cr);
-        DWORD getStateColor(DWORD state);
+        void setStateColor(uint32 state, uint32 cr);
+        uint32 getStateColor(uint32 state);
 
         /** 启禁用颜色绘制。*/
-        virtual void enableColor(bool e){ m_colorEnable = e; }
+        void setColorFadable(bool e){ m_colorFadable = e; }
+        bool getColorFadable() const { return m_colorFadable; }
 
         /** 启禁用位置漂移*/
-        virtual void enablePosMove(bool e){ m_posMoveEnable = e; }
-
-        /** 启禁用用户绘制。如果启用，则颜色绘制和位置漂移会被禁止。*/
-        virtual void enableUserDraw(bool d);
+        void setPosMovable(bool e){ m_posMovable = e; }
+        bool getPosMovable() const { return m_posMovable; }
 
         virtual void setText(const tstring & text) override;
         virtual void setFont(const tstring & font) override;
@@ -64,11 +63,11 @@ namespace Lazy
     protected:
         uint32          m_textAlign;
         CColorFade      m_crFade;
-        bool            m_colorEnable;
-        bool            m_posMoveEnable;
+        bool            m_colorFadable;
+        bool            m_posMovable;
 
         int             m_state;
-        DWORD           m_stateColor[5];
+        uint32           m_stateColor[5];
         FontPtr         m_fontPtr;
         TextSpritePtr   m_textSprite;
     };

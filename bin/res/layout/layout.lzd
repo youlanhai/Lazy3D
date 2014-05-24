@@ -17,20 +17,19 @@ root
 	changeChildOrder = true
 	drawSelf = true
 	position = 214 88
-	size = 212 304
+	size = 216 306
 	relative = true
 	relativeAlign = 18
-	relativePos = 0.500000 0.500000
+	relativePos = 0.503125 0.502083
 	children
 	{
-		btn_ok
+		ComboBox
 		{
-			type = 4
-			id = 2
-			text = 确定
+			type = 3
+			id = 0
 			font = def|17
 			color = ffffffff
-			bgcolor = af808080
+			bgcolor = ff7f7f7f
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -39,10 +38,101 @@ root
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 52 263
-			size = 100 30
+			position = 9 167
+			size = 120 20
+			children
+			{
+				menu
+				{
+					type = 3
+					id = 0
+					font = def|17
+					color = ffffffff
+					bgcolor = ffafafaf
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = true
+					changeChildOrder = true
+					drawSelf = true
+					position = 0 20
+					size = 120 58
+					children
+					{
+						slidebar
+						{
+							type = 9
+							id = 0
+							font = def|17
+							color = ffffffff
+							bgcolor = 7f000000
+							visible = true
+							enable = true
+							enableSelfMsg = true
+							enalbeDrag = false
+							clickTop = true
+							limitInRect = false
+							changeChildOrder = true
+							drawSelf = true
+							position = 100 0
+							size = 20 58
+							children = ""
+							vertical = true
+							slideStep = 0.050000
+							sliderSize = 80 30
+						}
+					}
+					script = gui.Menu
+					maxHeight = 50
+				}
+				button
+				{
+					type = 4
+					id = 0
+					text = combobox
+					font = def|17
+					color = ffffffff
+					bgcolor = af808080
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = false
+					changeChildOrder = true
+					drawSelf = true
+					position = 0 0
+					size = 120 20
+					children = ""
+					textAlign = 18
+					posMovable = false
+					colorFadable = true
+				}
+			}
+			script = gui.ComboBox
+		}
+		edt_msg
+		{
+			type = 7
+			id = 0
+			text = edit\nfdsf
+			font = def|30
+			color = ffffffff
+			bgcolor = ffffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 14 76
+			size = 129 71
 			children = ""
-			textAlign = 18
+			mutiline = true
 		}
 		lbl_title
 		{
@@ -66,14 +156,14 @@ root
 			textAlign = 17
 			mutiline = true
 		}
-		edt_msg
+		btn_ok
 		{
-			type = 7
-			id = 0
-			text = edit\nfdsf
-			font = def|30
+			type = 4
+			id = 2
+			text = 确定
+			font = def|17
 			color = ffffffff
-			bgcolor = ffffffff
+			bgcolor = af808080
 			visible = true
 			enable = true
 			enableSelfMsg = true
@@ -82,10 +172,12 @@ root
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 50 100
-			size = 129 133
+			position = 53 263
+			size = 100 30
 			children = ""
-			mutiline = true
+			textAlign = 18
+			posMovable = true
+			colorFadable = true
 		}
 	}
 	script = guimgr.TestForm

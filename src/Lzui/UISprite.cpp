@@ -545,7 +545,7 @@ namespace Lazy
         if (lines >= m_lineSprites.size()) return true;
 
         size_t cursor2;
-        m_lineSprites[cursor]->getCursorByPos(cursor2, x, y);
+        m_lineSprites[lines]->getCursorByPos(cursor2, x, y);
         cursor += cursor2;
         return true;
     }

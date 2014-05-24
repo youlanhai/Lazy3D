@@ -577,7 +577,6 @@ class ComboBox(lui.Form):
 		self.onSelectChange = lambda x: None
 
 	def onLoadLayout(self, config):
-		self.label = self.getChildByName("label")
 		self.button = self.getChildByName("button")
 		self.menu = self.getChildByName("menu")
 
@@ -600,7 +599,7 @@ class ComboBox(lui.Form):
 
 	def setSelect(self, key):
 		item = self.menu.getItem(key)
-		self.label.text = item.getText()
+		self.button.text = item.getText()
 
 	@classmethod
 	def createUI(cls):
@@ -608,29 +607,26 @@ class ComboBox(lui.Form):
 
 		e = cls()
 		e.name = "ComboBox"
-		e.size = (w-h, h)
+		e.size = (w, h)
 		e.enableDrag = False
 		e.bgColor = 0xff7f7f7f
 		e.enableLimitInRect = False
 		e.script = cls.SCRIPT_NAME
 
-		e.label = lui.Label(e)
-		e.label.name = "label"
-		e.label.text = "ComboBox"
-		e.label.editable = True
-
 		e.button = lui.Button(e)
-		e.button.position = (w - h, 0)
-		e.button.size = (h, h)
+		e.button.position = (0, 0)
+		e.button.size = (w, h)
 		e.button.name = "button"
+		e.button.text = "combobox"
+		e.button.posMovable = False
 		e.button.editable = True
 
 		e.menu = Menu.createUI()
 		e.addChild(e.menu)
 		e.menu.visible = False
 		e.menu.position = (0, h)
-		e.menu.size = (w, h)
-		e.menu.setMaxHeight(50)
+		e.menu.size = (w, h*3)
+		e.menu.setMaxHeight(h*4)
 		e.menu.name = "menu"
 		e.menu.editable = True
 		e.menu.bgColor = 0xffafafaf

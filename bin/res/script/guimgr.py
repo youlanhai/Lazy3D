@@ -20,13 +20,14 @@ class guimgr(object):
 		#self.form = MyForm(1, ui.uiRoot)
 		self.editor = editor.Editor()
 		
-	def onKeyMessage(self, isDown, key):
-		print("onKeyMessage", isDown, key)
-		
+	def onKeyEvent(self, isDown, key):
 		if not isDown:
 			if key == vk.F1:
-				self.editor.visible = True
+				ui.editorRoot.visible = not ui.editorRoot.visible
 				return True
+
+		if self.editor.visible and self.editor.onKeyEvent(isDown, key):
+			return True
 		
 		return False
 

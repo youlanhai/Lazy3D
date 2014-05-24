@@ -249,6 +249,13 @@ bool SimpleDevice::onEvent(const Lazy::SEvent & event)
         {
             return true;
         }
+
+        if (event.isKeyEvent())
+        {
+            Lzpy::object mygame = Lzpy::import(gameModule);
+            if (mygame && mygame.call_method("onKeyEvent", event.keyEvent.down, (int) event.keyEvent.key))
+                return true;
+        }
     }
 
 #if 0

@@ -11,8 +11,8 @@ namespace Lazy
 
     //////////////////////////////////////////////////////////////////////////
     CButton::CButton(void)
-        : m_colorEnable(true)
-        , m_posMoveEnable(true)
+        : m_colorFadable(true)
+        , m_posMovable(true)
         , m_textSprite(new TextLineSprite())
         , m_textAlign(RelativeAlign::center)
     {
@@ -23,8 +23,6 @@ namespace Lazy
         setBgColor(m_stateColor[0]);
         setBtnState(ButtonState::normal);
         enableDrag(false);
-        enableColor(true);
-        enablePosMove(true);
         enableClickTop(true);
         setSize(80, 30);
 
@@ -54,23 +52,21 @@ namespace Lazy
 
     void CButton::update(float fElapse)
     {
-        m_crFade.update(fElapse);
-        setBgColor(m_crFade.getCurColor());
+        if (m_colorFadable)
+        {
+            m_crFade.update(fElapse);
+            setBgColor(m_crFade.getCurColor());
+        }
 
         m_textSprite->update(fElapse);
     }
 
     void CButton::render(IUIRender * pDevice)
     {
-        if (!m_colorEnable)
-        {
-            setBgColor(0xffffffff);
-        }
-
         CRect rc = getClientRect();
         localToGlobal(rc);
 
-        if (m_posMoveEnable)
+        if (m_posMovable)
         {
             if (m_state == ButtonState::active)
             {
@@ -174,18 +170,12 @@ namespace Lazy
         return m_image;
     }
 
-    void CButton::enableUserDraw(bool d)
-    {
-        enablePosMove(!d);
-        enableColor(!d);
-    }
-
-    void CButton::setStateColor(DWORD state, DWORD cr)
+    void CButton::setStateColor(uint32 state, uint32 cr)
     {
         m_stateColor[state] = cr;
     }
 
-    DWORD CButton::getStateColor(DWORD state)
+    uint32 CButton::getStateColor(uint32 state)
     {
         return m_stateColor[state];
     }
@@ -219,6 +209,8 @@ namespace Lazy
         IControl::loadFromStream(config);
 
         setTextAlign(config->readInt(L"textAlign", RelativeAlign::center));
+        setPosMovable(config->readBool(L"posMovable", m_posMovable));
+        setColorFadable(config->readBool(L"colorFadable", m_colorFadable));
     }
 
     ///保存布局
@@ -227,5 +219,7 @@ namespace Lazy
         IControl::saveToStream(config);
 
         config->writeInt(L"textAlign", m_textAlign);
+        config->writeBool(L"posMovable", m_posMovable);
+        config->writeBool(L"colorFadable", m_colorFadable);
     }
 }//namespace Lazy

@@ -15,9 +15,6 @@ class Window(lui.IControl):
 		super(Window, self).__init__(parent)
 		self.enableChangeChildOrder = False
 		self.enableHandleSelfMsg = False
-	
-	def onKeyEvent(self, isDown, key):
-		return share.gui.onKeyMessage(isDown, key)
 
 ##################################################
 ###
@@ -35,7 +32,7 @@ uiRoot.name = "uiRoot"
 editorUILayer = lui.Form(root)
 editorUILayer.name = "editorUILayer"
 editorUILayer.size = (640, 480)
-editorUILayer.position = (100, 20)
+editorUILayer.position = (200, 20)
 editorUILayer.bgColor = 0xff7f7f7f
 
 editorRoot = lui.IControl(root)
