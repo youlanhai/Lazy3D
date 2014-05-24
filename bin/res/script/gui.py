@@ -255,6 +255,9 @@ class ListControl(lui.Form):
 ### 只用于item类型相同的结构
 ##################################################
 class IListItem(lui.IControl):
+
+	SCRIPT_NAME = "gui.IListItem"
+
 	def __init__(self, parent=None):
 		super(IListItem, self).__init__(parent)
 		self.layoutHeight = 20
@@ -268,8 +271,24 @@ class IListItem(lui.IControl):
 
 	def layout(self): self.layoutHeight = self.size[1]
 
+	@classmethod
+	def createUI(cls):
+		e = cls()
+		e.script = cls.SCRIPT_NAME
+		e.name = "IListItem"
+		e.size = (50, 30)
+
+		e.label = lui.Label(e)
+		e.label.name = "label"
+		e.label.text = "label"
+
+		return e
+
 
 class IListView(IListItem):
+
+	SCRIPT_NAME = "gui.IListView"
+
 	def __init__(self, parent=None):
 		super(IListView, self).__init__(parent)
 
@@ -361,6 +380,7 @@ class IListView(IListItem):
 ##################################################
 class ListView(lui.Form):
 
+	SCRIPT_NAME = "gui.ListView"
 	UI_EDITOR_PROPERTY = (
 		edt_const.TP_EXTERNAL_LAYOUT,
 		edt_const.TP_NUM_TESTCASE,
@@ -378,8 +398,7 @@ class ListView(lui.Form):
 		self.enableDrag = False
 
 		self.root = None
-		self.itemCreateMethod = None
-
+		self.itemCreateMethod = IListItem.createUI
 		self.itemConfigFile = ""
 
 	def onLoadLayout(self, config):
@@ -396,10 +415,12 @@ class ListView(lui.Form):
 			config.writeString("itemConfig", self.itemConfigFile)
 
 	def _createItem(self):
-		if self.itemCreateMethod:
-			item = self.itemCreateMethod()
-		else:
+		item = None
+
+		if len(self.itemConfigFile) > 0:
 			item = loadUIFromFile(self.itemConfigFile)
+		elif self.itemCreateMethod:
+			item = self.itemCreateMethod()
 		
 		return item
 
@@ -464,8 +485,7 @@ class ListView(lui.Form):
 
 		#e.setItemCreateMethod(IListItem)
 		e.size = (200, 300)
-
-		e.script = "gui.ListView"
+		e.script = cls.SCRIPT_NAME
 		return e
 
 	def setNumTestcase(self, n):
@@ -477,6 +497,7 @@ class ListView(lui.Form):
 ##################################################
 class Menu(ListView):
 
+	SCRIPT_NAME = "gui.Menu"
 	UI_EDITOR_PROPERTY = (edt_const.TP_MAX_HEIGHT, )
 
 	def getMaxHeight(self): return self.maxHeight
@@ -519,7 +540,58 @@ class Menu(ListView):
 ##################################################
 ###
 ##################################################
+class ComboBox(lui.Form):
+
+	SCRIPT_NAME = "gui.ComboBox"
+
+	def __init__(self, parent=None):
+		super(ComboBox, self).__init__(parent)
+
+	def onLoadLayout(self, config):
+		self.label = self.getChildByName("label")
+		self.button = self.getChildByName("button")
+		self.menu = self.getChildByName("menu")
+
+	def onBtnDropdown(self):
+		self.menu.visible = not self.menu.visible
+
+	@classmethod
+	def createUI(cls):
+		e = cls()
+		e.name = "ComboBox"
+		e.size = (120, 30)
+		e.enalbeDrag = False
+		e.script = cls.SCRIPT_NAME
+
+		e.label = lui.Label(e)
+		e.label.name = "label"
+		e.label.text = "ComboBox"
+		e.label.editable = True
+
+		e.button = lui.Button(e)
+		e.button.position = (90, 0)
+		e.button.size = (30, 30)
+		e.button.name = "button"
+		e.button.onButtonClick = MethodProxy(e, "onBtnDropdown")
+		e.button.editable = True
+
+		e.menu = Menu.createUI()
+		e.addChild(e.menu)
+		e.menu.position = (0, 35)
+		e.menu.size = (120, 20)
+		e.menu.setMaxHeight(100)
+		e.menu.name = "menu"
+		e.menu.editable = True
+
+		return e
+
+##################################################
+###
+##################################################
 class ITreeItem(IListItem):
+
+	SCRIPT_NAME = "gui.ITreeItem"
+
 	def __init__(self):
 		super(ITreeItem, self).__init__()
 
@@ -602,6 +674,7 @@ class ITreeItem(IListItem):
 
 class ITree(lui.Form):
 
+	SCRIPT_NAME = "gui.ITree"
 	UI_EDITOR_PROPERTY = (
 		edt_const.TP_EXTERNAL_LAYOUT,
 		edt_const.TP_NUM_TESTCASE,
@@ -645,11 +718,14 @@ class ITree(lui.Form):
 			config.writeString("itemConfig", self.itemConfigFile)
 
 	def _createItem(self):
-		if self.itemCreateMethod:
-			item = self.itemCreateMethod()
-		else:
+		item = None
+
+		if len(self.itemConfigFile) > 0:
 			item = loadUIFromFile(self.itemConfigFile)
-		item.setItemCreateMethod(MethodProxy(self, "_createItem"))
+		elif self.itemCreateMethod:
+			item = self.itemCreateMethod()
+		
+		if item: item.setItemCreateMethod(MethodProxy(self, "_createItem"))
 		return item
 
 	def setItemCreateMethod(self, method):

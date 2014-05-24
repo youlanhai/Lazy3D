@@ -54,6 +54,7 @@ CUSTEOM_TP_MAP = {
 CUSTOM_UI_MAP = {
 	ui.ListView : ("列表", gui.ListView.createUI, ),
 	ui.Menu : ("菜单", gui.Menu.createUI, ),
+	ui.CombBox : ("下拉框", gui.ComboBox.createUI, ),
 }
 
 ##################################################

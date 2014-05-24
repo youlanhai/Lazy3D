@@ -79,6 +79,7 @@ EditorCtl   = 14
 UIProxy     = 15
 ListView    = 16
 Menu		= 17
+CombBox 	= 18
 
 def isContainerType(type):
 	return True
