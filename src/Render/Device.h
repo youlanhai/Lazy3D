@@ -19,6 +19,9 @@ namespace Lazy
         ///设备重置后回调
         virtual void onResetDevice() = 0;
 
+        virtual void onCloseDevice() {}
+
+    public:
 
         ///注册设备
         static void regDevice(IDevice *pDevice);
@@ -26,13 +29,18 @@ namespace Lazy
         ///取消注册
         static void unregDevice(IDevice *pDevice);
 
-    public:
 
-        static void lostDevice();
-        static void resetDevice();
+        static void lostAllDevice();
+
+        static void resetAllDevice();
+
+        static void closeAllDevice();
+
+        static void deviceClose();
 
     private:
-        static std::list<IDevice*> s_devicePool;
+        static  bool s_deviceRunning;
+        static  std::set<IDevice*> s_devicePool;
     };
 
 }

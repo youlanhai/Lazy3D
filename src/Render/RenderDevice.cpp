@@ -151,7 +151,10 @@ namespace Lazy
 
     void RenderDevice::destroy()
     {
-        if (m_device) return;
+        if (!m_device)
+            return;
+
+        IDevice::closeAllDevice();
 
         m_device->Release();
         m_device = NULL;
@@ -163,7 +166,7 @@ namespace Lazy
     bool RenderDevice::resetDevice()
     {
         debugMessage(_T("INFO: reset device."));
-        IDevice::lostDevice();
+        IDevice::lostAllDevice();
 
         fillPresentParameter();
 
@@ -174,7 +177,7 @@ namespace Lazy
             return false;
         }
 
-        IDevice::resetDevice();
+        IDevice::resetAllDevice();
         return true;
     }
 

@@ -3,8 +3,8 @@
 
 namespace Lazy
 {
-
-    /*static*/ std::list<IDevice*> IDevice::s_devicePool;
+    /*static*/ bool IDevice::s_deviceRunning = true;
+    /*static*/ std::set<IDevice*> IDevice::s_devicePool;
 
     IDevice::IDevice()
     {
@@ -19,16 +19,19 @@ namespace Lazy
 
     /*static*/ void IDevice::regDevice(IDevice *pDevice)
     {
-        if (std::find(s_devicePool.begin(), s_devicePool.end(), pDevice) == s_devicePool.end())
-            s_devicePool.push_back(pDevice);
-    }
-    /*static*/ void IDevice::unregDevice(IDevice *pDevice)
-    {
-        std::list<IDevice*>::iterator it = std::find(s_devicePool.begin(), s_devicePool.end(), pDevice);
-        if (it != s_devicePool.end()) s_devicePool.erase(it);
+        if (!s_deviceRunning) return;
+
+        s_devicePool.insert(pDevice);
     }
 
-    /*static*/ void IDevice::lostDevice()
+    /*static*/ void IDevice::unregDevice(IDevice *pDevice)
+    {
+        if (!s_deviceRunning) return;
+
+        s_devicePool.erase(pDevice);
+    }
+
+    /*static*/ void IDevice::lostAllDevice()
     {
         for (IDevice * p : s_devicePool)
         {
@@ -36,12 +39,24 @@ namespace Lazy
         }
     }
 
-    /*static*/ void IDevice::resetDevice()
+    /*static*/ void IDevice::resetAllDevice()
     {
         for (IDevice * p : s_devicePool)
         {
             if (p) p->onResetDevice();
         }
+    }
+
+    /*static*/ void IDevice::closeAllDevice()
+    {
+        s_deviceRunning = false;
+
+        for (IDevice * p : s_devicePool)
+        {
+            if (p) p->onCloseDevice();
+        }
+
+        s_devicePool.clear();
     }
 
 }

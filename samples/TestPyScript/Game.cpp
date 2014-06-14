@@ -11,13 +11,16 @@
 CGame g_game;
 RefPtr<Lzpy::ConsolePanel> g_pyConsole;
 
+const std::string Script = "main";
+
+
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
     Lazy::changeCurDirectory();
     Lazy::defaultCodePage = Lazy::CP::utf8;
     Lazy::getfs()->addResPath(L"res/");
 
-    INIT_LOG(L"Test.txt");
+    INIT_LOG(L"test_pyscript.log");
 
     if (g_game.create(hInstance, L"Lazy Test", 640, 480, false))
     {
@@ -29,7 +32,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
 bool initPython()
 {
-    Py_SetPythonHome(L"../../src/third_part/python33");
+    Py_SetPythonHome(L"../src/third_part/python33");
 
     PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
     PyImport_AppendInittab("Lazy", Lzpy::PyInit_Lazy);
@@ -45,23 +48,36 @@ bool initPython()
 
     try
     {
-
-        Lzpy::PyInit_Lazy();
-        //Lzpy::PyInit_lui();
-        //Lzpy::PyInit_lzd();
+        Lzpy::import("helper");
+        Lzpy::import("Lazy");
+        Lzpy::import("lui");
+        Lzpy::import("lzd");
 
         Lzpy::object sys = Lzpy::import(L"sys");
         Lzpy::object ouput = Lzpy::new_reference(Lzpy::helper::new_instance_ex<Lzpy::PyOutput>());
         sys.setattr("stdout", ouput);
         sys.setattr("stderr", ouput);
 
+        PyRun_SimpleString("print('hahah')");
+
         Lzpy::addSysPath(L"res/script");
 
         Lzpy::LzpyResInterface::initAll();
 
-        PyRun_SimpleString("print('hahah')");
-        PyRun_SimpleString("import MyGame");
-        PyRun_SimpleString("MyGame.init()");
+        Lzpy::object entry = Lzpy::import(Script.c_str());
+        if (!entry)
+        {
+            LOG_ERROR(L"Can't find script '%s'", Script.c_str());
+            PyErr_Print();
+            return false;
+        }
+
+        if (!entry.call_method("init"))
+        {
+            LOG_ERROR(L"Failed to init script.");
+            PyErr_Print();
+            return false;
+        }
     }
     catch (std::exception e)
     {
@@ -189,7 +205,8 @@ bool CGame::onEvent(const Lazy::SEvent & event)
     if (EntityMgr::instance()->handleMouseEvent(uMsg, wParam, lParam)) return 1;
 #endif
 
-    return CApp::onEvent(event);
+    return false;
+    //return CApp::onEvent(event);
 }
 
 CGame::CGame()

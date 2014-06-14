@@ -21,6 +21,8 @@ def init() :
 		
 	except:
 		print(traceback.print_exc())
+		
+	return True
 
 
 def fini() :
