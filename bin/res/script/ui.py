@@ -29,14 +29,16 @@ root.name = "PyUIRoot"
 uiRoot     = Window(root)
 uiRoot.name = "uiRoot"
 
-editorUILayer = lui.Form(root)
+editorRoot = lui.IControl(root)
+editorRoot.name = "editorRoot"
+
+editorUILayer = lui.Form(editorRoot)
 editorUILayer.name = "editorUILayer"
 editorUILayer.size = (640, 480)
 editorUILayer.position = (200, 50)
 editorUILayer.bgColor = 0xff7f7f7f
-
-editorRoot = lui.IControl(root)
-editorRoot.name = "editorRoot"
+editorUILayer.zorder = 1000
+editorUILayer.canDrag = False
 
 def onSize(w, h):
 	#lui.root().size = (w, h)

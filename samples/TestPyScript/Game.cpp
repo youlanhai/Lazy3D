@@ -22,7 +22,7 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 
     INIT_LOG(L"test_pyscript.log");
 
-    if (g_game.create(hInstance, L"Lazy Test", 640, 480, false))
+    if (g_game.create(hInstance, L"Lazy Test", 800, 600, false))
     {
         g_game.mainLoop();
     }
@@ -100,8 +100,8 @@ bool finiPython()
 
     try
     {
-        PyRun_SimpleString("import MyGame");
-        PyRun_SimpleString("MyGame.fini()");
+        Lzpy::object entry = Lzpy::import(Script.c_str());
+        entry.call_method("fini");
 
         Lzpy::LzpyResInterface::finiAll();
     }
@@ -177,14 +177,6 @@ bool CGame::onEvent(const Lazy::SEvent & event)
         default:
             break;
         }
-
-    }
-    else if (event.eventType == Lazy::EET_KEY_EVENT)
-    {
-        if (g_pyConsole && event.keyEvent.key == Lazy::KEY_F1)
-        {
-            g_pyConsole->toggle();
-        }
     }
 
 #ifdef USE_GUI
@@ -194,6 +186,23 @@ bool CGame::onEvent(const Lazy::SEvent & event)
         return true;
     }
 #endif
+
+    if (event.eventType == Lazy::EET_KEY_EVENT)
+    {
+        auto keyEvent = event.keyEvent;
+
+        if (g_pyConsole &&
+            keyEvent.key == Lazy::KEY_F1 &&
+            !keyEvent.down)
+        {
+            g_pyConsole->toggle();
+            return true;
+        }
+
+        Lzpy::object script = Lzpy::import(Script.c_str());
+        if (script.call_method("onKeyEvent", keyEvent.down, int(keyEvent.key)))
+            return true;
+    }
 
     if (m_pCamera && m_pCamera->handleEvent(event)) return 1;
 

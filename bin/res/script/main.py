@@ -50,4 +50,4 @@ def onClientSize(w, h):
 def onKeyEvent(isDown, key):
 	print("onKeyEvent", isDown, key)
 	
-	share.gui.onKeyEvent(isDown, key)
+	return share.gui.onKeyEvent(isDown, key)

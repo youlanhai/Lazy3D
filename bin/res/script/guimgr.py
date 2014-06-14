@@ -21,8 +21,9 @@ class guimgr(object):
 		self.editor = editor.Editor()
 		
 	def onKeyEvent(self, isDown, key):
+
 		if not isDown:
-			if key == vk.F1:
+			if key == vk.F2:
 				ui.editorRoot.visible = not ui.editorRoot.visible
 				return True
 
