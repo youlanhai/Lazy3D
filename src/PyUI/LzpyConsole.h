@@ -4,6 +4,8 @@
 
 namespace Lzpy
 {
+    class PyConsoleOutput;
+
     class ConsoleEdit : public Lazy::CEdit
     {
     public:
@@ -45,9 +47,10 @@ namespace Lzpy
 
         object m_pyLocal;
         object m_pyGlobal;
-        object m_pyOutput;
         object m_pyOldStderr;
         object m_pyOldStdout;
+
+        object_ptr<PyConsoleOutput> m_pyOutput;
     };
 
 
@@ -63,7 +66,5 @@ namespace Lzpy
 
         std::wstring m_msg;
     };
-
-    void registerConsoleOutput();
 
 }//end namespace Lzpy

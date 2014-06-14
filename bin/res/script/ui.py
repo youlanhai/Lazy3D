@@ -31,6 +31,7 @@ uiRoot.name = "uiRoot"
 
 editorRoot = lui.IControl(root)
 editorRoot.name = "editorRoot"
+editorRoot.visible = False
 
 editorUILayer = lui.Form(editorRoot)
 editorUILayer.name = "editorUILayer"

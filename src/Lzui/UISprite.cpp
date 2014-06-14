@@ -337,7 +337,6 @@ namespace Lazy
     ////////////////////////////////////////////////////////////////////
     TextViewSprite::TextViewSprite()
     {
-
     }
 
     TextViewSprite::~TextViewSprite()
@@ -357,6 +356,9 @@ namespace Lazy
     void TextViewSprite::setText(const std::wstring & text, FontPtr font)
     {
         ITextSprite::setText(text, font);
+
+        if (text.empty())
+            return;
 
         TextLineSpritePtr curLine = createLineSprite();
         m_lineSprites.push_back(curLine);
@@ -392,6 +394,9 @@ namespace Lazy
         if (pos > m_text.size()) return;
 
         m_text.insert(pos, 1, ch);
+
+        if (m_lineSprites.empty())
+            m_lineSprites.push_back(createLineSprite());
 
         for (TextLineSpritePtr & spr : m_lineSprites)
         {

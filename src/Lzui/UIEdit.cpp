@@ -12,14 +12,13 @@ namespace Lazy
     CEdit::CEdit(void)
         : m_bMutiLine(false)
         , m_cursor(0)
-        , m_textSprite(new TextLineSprite())
     {
         setSize(80, 20);
 
-        m_textSprite->setColor(m_color);
         m_fontPtr = getDefaultFontPtr();
+        
+        createTextSprite();
     }
-
 
     CEdit::~CEdit(void)
     {
@@ -231,11 +230,12 @@ namespace Lazy
     {
         if (!m_fontPtr)
         {
-            m_textSprite->clear();
+            //m_textSprite->clear();
             return;
         }
 
-        m_textSprite->setText(m_text, m_fontPtr);
+        if (m_textSprite) 
+            m_textSprite->setText(m_text, m_fontPtr);
     }
 
     void CEdit::setMutiLine(bool enable)
@@ -243,16 +243,20 @@ namespace Lazy
         if (m_bMutiLine == enable) return;
 
         m_bMutiLine = enable;
+
+        createTextSprite();
+    }
+
+    void CEdit::createTextSprite()
+    {
         if (m_bMutiLine)
-        {
             m_textSprite = new TextViewSprite();
-        }
         else
-        {
             m_textSprite = new TextLineSprite();
-        }
 
         m_textSprite->setColor(m_color);
+        m_textSprite->setMaxWidth(m_size.cx);
+
         updateText();
     }
 
@@ -279,7 +283,16 @@ namespace Lazy
     void CEdit::setColor(uint32 color)
     {
         IControl::setColor(color);
-        m_textSprite->setColor(color);
+        if (m_textSprite)
+            m_textSprite->setColor(color);
+    }
+
+    void CEdit::setSize(int w, int h)
+    {
+        IControl::setSize(w, h);
+
+        if (m_textSprite)
+            m_textSprite->setMaxWidth(w);
     }
 
     void CEdit::loadFromStream(LZDataPtr root)

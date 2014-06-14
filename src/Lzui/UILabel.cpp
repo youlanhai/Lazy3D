@@ -11,15 +11,14 @@ namespace Lazy
     CLabel::CLabel(void)
         : m_align(RelativeAlign::left | RelativeAlign::top)
         , m_bMutiLine(false)
-        , m_textSprite(new TextLineSprite())
         , m_lineSpace(4)
         , m_maxWidth(100)
     {
         enable(false);
         m_size.set(m_maxWidth, 20);
-        m_textSprite->setColor(m_color);
 
         m_fontPtr = getDefaultFontPtr();
+        createTextSprite();
     }
 
 
@@ -40,16 +39,19 @@ namespace Lazy
         if (m_bMutiLine == enable) return;
 
         m_bMutiLine = enable;
+        createTextSprite();
+    }
+
+    void CLabel::createTextSprite()
+    {
         if (m_bMutiLine)
-        {
             m_textSprite = new TextViewSprite();
-        }
         else
-        {
             m_textSprite = new TextLineSprite();
-        }
 
         m_textSprite->setColor(m_color);
+        m_textSprite->setMaxWidth(m_size.cx);
+
         updateText();
     }
 
@@ -103,11 +105,11 @@ namespace Lazy
     {
         if (!m_fontPtr)
         {
-            m_textSprite->clear();
             return;
         }
 
-        m_textSprite->setText(m_text, m_fontPtr);
+        if (m_textSprite)
+            m_textSprite->setText(m_text, m_fontPtr);
     }
 
     void CLabel::setFont(const std::wstring & font)
@@ -142,10 +144,19 @@ namespace Lazy
         m_textSprite->setMaxWidth(width);
     }
 
+    void CLabel::setSize(int w, int h)
+    {
+        IControl::setSize(w, h);
+
+        if (m_textSprite)
+            m_textSprite->setMaxWidth(w);
+    }
+
     void CLabel::setColor(uint32 color)
     {
         IControl::setColor(color);
-        m_textSprite->setColor(color);
+        if (m_textSprite) 
+            m_textSprite->setColor(color);
     }
 
     ///加载布局。

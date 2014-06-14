@@ -100,6 +100,8 @@ bool finiPython()
 
     try
     {
+        g_pyConsole = nullptr;
+
         Lzpy::object entry = Lzpy::import(Script.c_str());
         entry.call_method("fini");
 

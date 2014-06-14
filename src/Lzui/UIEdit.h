@@ -20,6 +20,7 @@ namespace Lazy
         virtual void setText(const tstring & text) override;
         virtual void setFont(const tstring & name) override;
         virtual void setColor(uint32 color) override;
+        virtual void setSize(int w, int h) override;
 
         virtual void loadFromStream(LZDataPtr root);
         virtual void saveToStream(LZDataPtr root);
@@ -45,6 +46,8 @@ namespace Lazy
         void cursorGoRight();
 
         void updateText();
+
+        void createTextSprite();
 
     protected:
         FontPtr     m_fontPtr;

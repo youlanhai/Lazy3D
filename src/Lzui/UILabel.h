@@ -17,6 +17,7 @@ public:
     void setText(const std::wstring & text) override;
     void setFont(const std::wstring & font) override;
     void setColor(uint32 color) override;
+    void setSize(int w, int h) override;
 
     void setLineSpace(int lineSpace);
     int getLineSpace() const { return m_lineSpace; }
@@ -41,7 +42,7 @@ public:
     virtual void saveToStream(LZDataPtr config) override;
 
 protected:
-
+    void createTextSprite();
     void updateText();
 
     uint32	    m_align;    ///排版风格

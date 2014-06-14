@@ -139,7 +139,11 @@ namespace Lazy
         }
         else if (event.isCharEvent())
         {
-            if (s_pActiveEdit) return s_pActiveEdit->sendEvent(event);
+            if (s_pActiveEdit)
+            {
+                s_pActiveEdit->sendEvent(event);
+                return true;
+            }
 
             //只有edit能处理char消息，所以消息就没必要向后传递了
             return false;
@@ -147,7 +151,11 @@ namespace Lazy
         else if (event.isKeyEvent())
         {
             //edit处理按键消息的优先级最高
-            if (s_pActiveEdit) return s_pActiveEdit->sendEvent(event);
+            if (s_pActiveEdit)
+            {
+                s_pActiveEdit->sendEvent(event);
+                return true;
+            }
 
             //按键消息不传递给ui
             return false;

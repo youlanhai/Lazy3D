@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "LzpyUIMisc.h"
 #include "LzpyLzd.h"
+#include "LzpyConsole.h"
 
 namespace Lzpy
 {
@@ -268,7 +269,7 @@ namespace Lzpy
         LZPY_REGISTER_CLASS(Edit, LzpyEdit);
         LZPY_REGISTER_CLASS(UIProxy, LzpyUIProxy);
         LZPY_REGISTER_CLASS(EditorCtl, LzpyEditorCtl);
-
+        LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
 
         LZPY_FUN(root);
         LZPY_FUN(param2Position);

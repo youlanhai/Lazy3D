@@ -47,8 +47,7 @@ namespace Lzpy
 
     void ConsoleEdit::clearText()
     {
-        m_text.clear();
-        m_cursor = 0;
+        setText(L"");
     }
 
 
@@ -150,7 +149,7 @@ namespace Lzpy
             m_pyGlobal = object( PyModule_GetDict(pyMain) );
         }
 
-        m_pyOutput.cast<PyConsoleOutput>()->m_msg.clear();
+        m_pyOutput->m_msg.clear();
 
         object sys = import("sys");
         m_pyOldStderr = sys.getattr("stderr");
@@ -200,16 +199,11 @@ namespace Lzpy
         PyObject *pRet = PyRun_StringFlags(cmdAsc.c_str(), Py_single_input,
             m_pyGlobal.get(), m_pyLocal.get(), nullptr);
 
-        if (!pRet)
-        {
-            if (PyErr_Occurred()) PyErr_Print();
-        }
-        else
-        {
-            Py_DECREF(pRet);
-        }
+        Py_XDECREF(pRet);
+        if (PyErr_Occurred())
+            PyErr_Print();
 
-        std::wstring & msg = m_pyOutput.cast<PyConsoleOutput>()->m_msg;
+        std::wstring & msg = m_pyOutput->m_msg;
         if (!msg.empty())
         {
             //msg.replace(L"\n", L"\n>>>");
@@ -234,11 +228,6 @@ namespace Lzpy
     }
 
     //////////////////////////////////////////////////////////////////
-    void registerConsoleOutput()
-    {
-        LZPY_REGISTER_CLASS_EX(ConsoleOutput, PyConsoleOutput, helper);
-    }
-
     LZPY_CLASS_BEG(PyConsoleOutput);
         LZPY_METHOD_1(write);
         LZPY_METHOD_0(flush);
