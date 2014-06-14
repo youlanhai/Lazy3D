@@ -3,8 +3,9 @@
 #include "font2d.h"
 #include "Res.h"
 
-#include "../Font/Font.h"
+#include "../Render/Texture.h"
 #include "../Render/RenderDevice.h"
+#include "../Font/Font.h"
 
 ///构造函数
 cResFont::cResFont()

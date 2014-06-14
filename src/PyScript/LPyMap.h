@@ -1,30 +1,40 @@
 #pragma once
 
-namespace LazyPy
+namespace Lzpy
 {
 
 
     class PyMap : public PyBase
     {
-        LAZYPY_DEF(PyMap, PyBase);
+        LZPY_DEF(PyMap, PyBase);
     public:
         PyMap();
         ~PyMap();
 
-        LAZYPY_DEF_GET(mapname);
-        LAZYPY_DEF_GET(width);
-        LAZYPY_DEF_GET(height);
+        LZPY_DEF_GET(name, m_map->getMapName);
+        LZPY_DEF_GET(width, m_map->width);
 
-        LAZYPY_DEF_GETSET(showLevel);
-        LAZYPY_DEF_GETSET(showRadius);
+        LZPY_DEF_GET(height, m_map->height);
 
-        LAZYPY_DEF_METHOD_1(loadMap);
-        LAZYPY_DEF_METHOD_1(saveMap);
-        LAZYPY_DEF_METHOD_1(setSource);
-        LAZYPY_DEF_METHOD_0(isUsefull);
-        LAZYPY_DEF_METHOD_0(getBoundry);
+        LZPY_DEF_GET(showLevel, m_map->getShowLevel);
+        LZPY_DEF_SET(showLevel, m_map->setShowLevel, int);
+
+        LZPY_DEF_GET(showRadius, m_map->getShowRadius);
+        LZPY_DEF_SET(showRadius, m_map->setShowRadius, float);
+
+        LZPY_DEF_GET(isUsefull, m_map->isUserfull);
+        LZPY_DEF_GET(boundry, getBoundry);
+
+        LZPY_DEF_METHOD_1(loadMap);
+        LZPY_DEF_METHOD_1(saveMap);
+
+        LZPY_DEF_METHOD_1(setSource);
+
+        object getBoundry();
 
         TerrainMap *m_map;
     };
+
+    void exportPyMap(const char * module);
 }
 

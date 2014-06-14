@@ -1,310 +1,269 @@
 ﻿#include "stdafx.h"
 #include "LPyEntity.h"
 #include "LPyPhysics.h"
+#include "../utility/MemoryCheck.h"
 
-namespace LazyPy
+namespace Lzpy
 {
-    LAZYPY_DEF_FUN_1(destroyEntity);
-
     ////////////////////////////////////////////////////////////////////
-    LAZYPY_IMP("Model", PyModel, "Lazy");
-    
-    LAZYPY_BEGIN_EXTEN(PyModel);
-    LAZYPY_GETSET(yaw);
-    LAZYPY_GETSET(pitch);
-    LAZYPY_GETSET(roll);
-    LAZYPY_GETSET(scale);
-    LAZYPY_GET(resource);
+    ///
+    ////////////////////////////////////////////////////////////////////
+    LZPY_CLASS_BEG(PyModel);
+        LZPY_GETSET(yaw);
+        LZPY_GETSET(pitch);
+        LZPY_GETSET(roll);
+        LZPY_GETSET(scale);
+        LZPY_GET(resource);
+        LZPY_GET(isSkeleton);
+        LZPY_GET(isMesh);
+        LZPY_GET(aabb);
+        LZPY_GET(height);
+        LZPY_GETSET(aabbVisible);
 
-    LAZYPY_METHOD_0(isSkeleton);
-    LAZYPY_METHOD_0(isMesh);
-    LAZYPY_METHOD_1(showBound);
-    LAZYPY_METHOD(playAction);
-    LAZYPY_METHOD_0(stopAction);
-    LAZYPY_METHOD_0(getActionCount);
-    LAZYPY_METHOD_1(getActionName);
-    LAZYPY_METHOD_1(setAnimSpeed);
-    LAZYPY_METHOD_0(getAAABB);
-    LAZYPY_METHOD_0(getHeight);
-    LAZYPY_END_EXTEN();
+        LZPY_METHOD(playAction);
+        LZPY_METHOD_0(stopAction);
+        LZPY_METHOD_0(getActionCount);
+        LZPY_METHOD_1(getActionName);
+        LZPY_METHOD_1(setAnimSpeed);
+    LZPY_CLASS_END();
 
     PyModel::PyModel()
     {
     }
 
-    LAZYPY_IMP_INIT(PyModel)
+    LZPY_IMP_INIT(PyModel)
     {
-        PyErr_SetString(PyExc_TypeError, "Can't create instance of Lazy.PyModel!");
+        PyErr_SetString(PyExc_RuntimeError, "PyModel can't initialize directly!");
         return false;
     }
 
-    LAZYPY_IMP_METHOD_0(PyModel, isSkeleton)
-    {
-        return toPyObject(m_model->isSkeleton());
-    }
-    LAZYPY_IMP_METHOD_0(PyModel, isMesh)
-    {
-        return toPyObject(m_model->isMesh());
-    }
-    LAZYPY_IMP_METHOD_1(PyModel, showBound)
-    {
-        m_model->showBound(fromPyObject<bool>(value));
-        Py_RETURN_NONE;
-    }
-    LAZYPY_IMP_METHOD(PyModel, playAction)
-    {
-        wchar_t *name;
-        PyObject *loop = nullptr;
-        if (!PyArg_ParseTuple(arg, "u|O", &name, &loop)) return NULL;
-
-        m_model->playAction(name, fromPyObject<bool>(loop));
-        Py_RETURN_NONE;
-    }
-    LAZYPY_IMP_METHOD_0(PyModel, stopAction)
-    {
-        m_model->stopAction();
-        Py_RETURN_NONE;
-    }
-    LAZYPY_IMP_METHOD_0(PyModel, getActionCount)
-    {
-        return toPyObject(m_model->getActionCount());
-    }
-    LAZYPY_IMP_METHOD_1(PyModel, getActionName)
+    LZPY_IMP_METHOD(PyModel, playAction)
     {
         std::wstring name;
-        m_model->getActionName(name, fromPyObject<int>(value));
+        bool loop = false;
+        if (!arg.parse_tuple_default(1, &name, &loop))
+            return null_object;
 
-        return toPyObject(name);
+        m_model->playAction(name, loop);
+        return none_object;
     }
-    LAZYPY_IMP_METHOD_1(PyModel, setAnimSpeed)
+
+    LZPY_IMP_METHOD_0(PyModel, stopAction)
     {
-        m_model->setAnimSpeed(fromPyObject<float>(value));
-        Py_RETURN_NONE;
+        m_model->stopAction();
+        return none_object;
     }
 
-    LAZYPY_IMP_METHOD_0(PyModel, getAAABB)
+    LZPY_IMP_METHOD_0(PyModel, getActionCount)
+    {
+        return build_object(m_model->getActionCount());
+    }
+
+    LZPY_IMP_METHOD_1(PyModel, getActionName)
+    {
+        std::wstring name;
+        m_model->getActionName(name, parse_object<int>(value));
+
+        return build_object(name);
+    }
+
+    LZPY_IMP_METHOD_1(PyModel, setAnimSpeed)
+    {
+        m_model->setAnimSpeed(parse_object<float>(value));
+        return none_object;
+    }
+
+    float PyModel::getHeight()
     {
         Physics::AABB aabb = m_model->getAABB();
-        PyObject * pMin = toPyObject(aabb.min);
-        PyObject * pMax = toPyObject(aabb.max);
-        PyObject * pRet = PyTuple_New(2);
-        PyTuple_SetItem(pRet, 0, pMin);
-        PyTuple_SetItem(pRet, 1, pMax);
-        return pRet;
+        return aabb.max.y - aabb.min.y;
     }
 
-    LAZYPY_IMP_METHOD_0(PyModel, getHeight)
+    object PyModel::getAABB()
     {
         Physics::AABB aabb = m_model->getAABB();
-        return toPyObject(aabb.max.y - aabb.min.y);
+        return build_tuple(aabb.min, aabb.max);
     }
 
     ////////////////////////////////////////////////////////////////////
+    ///
+    ////////////////////////////////////////////////////////////////////
     EntityPhysics::EntityPhysics(PyObject *self)
         : m_self(self)
-    {
-
-    }
+    {}
 
     void EntityPhysics::onAITrigger()
     {
-        if (!PyObject_HasAttrString(m_self, "onAITrigger")) return;
-
-        PyObject *pRet = PyObject_CallMethod(m_self, "onAITrigger", NULL);
-        Py_XDECREF(pRet);
+        m_self.call_method_quiet("onAITrigger");
     }
 
     void EntityPhysics::onMoveToFinished(bool succed)
     {
-        if (!PyObject_HasAttrString(m_self, "onMoveToFinished")) return;
-
-        PyObject *pRet = PyObject_CallMethod(m_self, "onMoveToFinished", "i", (int)succed);
-        Py_XDECREF(pRet);
+        m_self.call_method_quiet("onMoveToFinished", succed);
     }
 
     void EntityPhysics::onMoveToEntityFinish(bool succed)
     {
-        if (!PyObject_HasAttrString(m_self, "onMoveToEntityFinish")) return;
-
-        PyObject *pRet = PyObject_CallMethod(m_self, "onMoveToEntityFinish", "i", (int) succed);
-        Py_XDECREF(pRet);
+        m_self.call_method_quiet("onMoveToEntityFinish", succed);
     }
 
     void EntityPhysics::onSearchToFinished(bool succed)
     {
-        if (!PyObject_HasAttrString(m_self, "onSearchToFinished")) return;
-
-        PyObject *pRet = PyObject_CallMethod(m_self, "onSearchToFinished", "i", (int) succed);
-        Py_XDECREF(pRet);
+        m_self.call_method_quiet("onSearchToFinished", succed);
     }
 
     void EntityPhysics::onStateChange(DWORD oldState)
     {
-        if (!PyObject_HasAttrString(m_self, "onStateChange")) return;
-
-        PyObject *pRet = PyObject_CallMethod(m_self, "onStateChange", "I", oldState);
-        Py_XDECREF(pRet);
+        m_self.call_method_quiet("onStateChange", oldState);
     }
 
+    ////////////////////////////////////////////////////////////////////
+    ///
+    ////////////////////////////////////////////////////////////////////
+    LZPY_CLASS_BEG(PyEntityPhysics);
+        LZPY_GET(source);
+        LZPY_GETSET(state);
+        LZPY_GETSET(enable);
+        LZPY_GETSET(aiEnble);
+        LZPY_GETSET(aiInterval);
 
-    LAZYPY_IMP("Physics", PyEntityPhysics, "Lazy");
-    LAZYPY_BEGIN_EXTEN(PyEntityPhysics);
-    LAZYPY_GET(source);
-    LAZYPY_GETSET(state);
-    LAZYPY_GETSET(enble);
-    LAZYPY_GETSET(aiEnble);
-    LAZYPY_GETSET(aiInterval);
-
-    LAZYPY_METHOD_1(searchPath);
-    LAZYPY_METHOD_1(faceTo);
-    LAZYPY_METHOD_1(faceToDir);
-    LAZYPY_METHOD_1(moveTo);
-    LAZYPY_METHOD_1(moveToEntity);
-    LAZYPY_METHOD_0(breakAutoMove);
-
-    LAZYPY_END_EXTEN();
+        LZPY_METHOD_1(searchPath);
+        LZPY_METHOD_1(faceTo);
+        LZPY_METHOD_1(faceToDir);
+        LZPY_METHOD_1(moveTo);
+        LZPY_METHOD_1(moveToEntity);
+        LZPY_METHOD_0(breakAutoMove);
+    LZPY_CLASS_END();
 
     PyEntityPhysics::PyEntityPhysics()
+        : m_source(none_object)
     {
-        m_source = (PyEntity*)Py_None;
-        Py_INCREF(m_source);
+        m_physics = new EntityPhysics(this);
     }
 
     PyEntityPhysics::~PyEntityPhysics()
     {
-        Py_DECREF(m_source);
-        m_source = nullptr;
     }
 
-    LAZYPY_IMP_INIT(PyEntityPhysics)
+    LZPY_IMP_INIT(PyEntityPhysics)
     {
-        m_physics = new EntityPhysics(this);
         return true;
     }
 
-    LAZYPY_IMP_GET(PyEntityPhysics, source)
-    {
-        return toPyObject(m_source);
-    }
-
-    void PyEntityPhysics::setSource(PyEntity *source)
-    {
-        copyPyObject((PyObject**) &m_source, source);
-    }
-
-    LAZYPY_IMP_GET(PyEntityPhysics, state)
-    {
-        return toPyObject(m_physics->getState());
-    }
-
-    LAZYPY_IMP_SET(PyEntityPhysics, state)
-    {
-        m_physics->setState(fromPyObject<DWORD>(value));
-    }
-
-
-    LAZYPY_IMP_GET(PyEntityPhysics, enble)
-    {
-        return toPyObject(m_physics->isEnabled());
-    }
-
-    LAZYPY_IMP_GET(PyEntityPhysics, aiEnble)
-    {
-        return toPyObject(m_physics->isAIEnable());
-    }
-
-    LAZYPY_IMP_GET(PyEntityPhysics, aiInterval)
-    {
-        return toPyObject(m_physics->getAIInterval());
-    }
-
-    LAZYPY_IMP_SET(PyEntityPhysics, enble)
-    {
-        m_physics->enable(fromPyObject<bool>(value));
-    }
-
-    LAZYPY_IMP_SET(PyEntityPhysics, aiEnble)
-    {
-        m_physics->enableAI(fromPyObject<bool>(value));
-    }
-
-    LAZYPY_IMP_SET(PyEntityPhysics, aiInterval)
-    {
-        m_physics->setAIInterval(fromPyObject<float>(value));
-    }
-
-    LAZYPY_IMP_METHOD_1(PyEntityPhysics, searchPath)
+    LZPY_IMP_METHOD_1(PyEntityPhysics, searchPath)
     {
         Physics::Vector3 vec;
-        if (!v3FromPyObject(vec, value)) return nullptr;
+        if (!parse_object(vec, value)) 
+            return null_object;
 
-        return toPyObject(m_physics->searchPath(vec));
+        return build_object(m_physics->searchPath(vec));
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityPhysics, faceTo)
+    LZPY_IMP_METHOD_1(PyEntityPhysics, faceTo)
     {
         Physics::Vector3 vec;
-        if (!v3FromPyObject(vec, value)) return nullptr;
+        if (!parse_object(vec, value))
+            return null_object;
 
         m_physics->faceTo(vec);
-        Py_RETURN_NONE;
+        return none_object;
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityPhysics, faceToDir)
+    LZPY_IMP_METHOD_1(PyEntityPhysics, faceToDir)
     {
         Physics::Vector3 vec;
-        if (!v3FromPyObject(vec, value)) return nullptr;
+        if (!parse_object(vec, value))
+            return null_object;
 
         m_physics->faceToDir(vec);
-        Py_RETURN_NONE;
+        return none_object;
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityPhysics, moveTo)
+    LZPY_IMP_METHOD_1(PyEntityPhysics, moveTo)
     {
         Physics::Vector3 vec;
-        if (!v3FromPyObject(vec, value)) return nullptr;
+        if (!parse_object(vec, value))
+            return null_object;
 
         m_physics->moveTo(vec);
-        Py_RETURN_NONE;
+        return none_object;
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityPhysics, moveToEntity)
+    LZPY_IMP_METHOD_1(PyEntityPhysics, moveToEntity)
     {
-        if (!PyEntity_Check(value)) return NULL;
+        if (!helper::has_instance<PyEntity>(value.get(), true))
+            return null_object;
 
-        PyEntity *pEnt = (PyEntity*) value;
+        PyEntity *pEnt = value.cast<PyEntity>();
         m_physics->moveToEntity(pEnt->m_entity.get());
 
-        Py_RETURN_NONE;
+        return none_object;
     }
 
-    LAZYPY_IMP_METHOD_0(PyEntityPhysics, breakAutoMove)
+    LZPY_IMP_METHOD_0(PyEntityPhysics, breakAutoMove)
     {
         m_physics->breakAutoMove();
-        Py_RETURN_NONE;
+        return none_object;
+    }
+
+    void PyEntityPhysics::setSource(object source)
+    {
+        if (source.is_none())
+        {
+            m_source = source;
+            m_physics->setSource(nullptr);
+        }
+        else if (helper::has_instance<PyEntity>(source.get(), true))
+        {
+            m_source = source;
+            m_physics->setSource(m_source->m_entity.get());
+        }
     }
 
     ////////////////////////////////////////////////////////////////////
+    ///
+    ////////////////////////////////////////////////////////////////////
 
-    LAZYPY_IMP("Entity", PyEntity, "Lazy");
+    Entity::Entity(PyObject * self)
+        : m_self(self)
+    {}
 
-    LAZYPY_BEGIN_EXTEN(PyEntity);
-    LAZYPY_GET(id);
-    LAZYPY_GETSET(position);
-    LAZYPY_GETSET(speed);
-    LAZYPY_GETSET(scale);
-    LAZYPY_GETSET(model);
-    LAZYPY_GETSET(physics);
-    LAZYPY_GETSET(fadeDistance);
-    LAZYPY_GETSET(lockHeight);
+    ///是否可以被鼠标选择
+    bool Entity::canSelect(void) const 
+    {
+        object ret = const_cast<object_base &>(m_self).call_method_quiet("canSelect");
 
-    LAZYPY_METHOD_1(show);
-    LAZYPY_METHOD_0(visible);
-    LAZYPY_METHOD_0(distToCamera);
-    LAZYPY_METHOD_0(distToPlayer);
-    LAZYPY_METHOD_1(lookAtPosition);
+        return parse_object<bool>(ret);
+    }
 
-    LAZYPY_END_EXTEN();
+    bool Entity::isPlayer(void) 
+    {
+        if (!m_self.hasattr("isPlayer")) return false;
+
+        object ret = m_self.call_method_quiet("isPlayer");
+        return parse_object<bool>(ret);
+    }
+
+    void Entity::onFocusCursor(UINT msg) 
+    {
+        m_self.call_method_quiet("onFocusCursor", msg);
+    }
+
+    LZPY_CLASS_BEG(PyEntity);
+        LZPY_GET(id);
+        LZPY_GETSET(position);
+        LZPY_GETSET(speed);
+        LZPY_GETSET(scale);
+        LZPY_GETSET(model);
+        LZPY_GETSET(physics);
+        LZPY_GETSET(fadeDistance);
+        LZPY_GETSET(lockHeight);
+        LZPY_GETSET(visible);
+        LZPY_GET(distToCamera);
+        LZPY_GET(distToPlayer);
+
+        LZPY_METHOD_1(lookAtPosition);
+    LZPY_CLASS_END();
 
 
     bool PyEntity_Check(PyObject *value, bool setError/* = true*/)
@@ -316,26 +275,20 @@ namespace LazyPy
     PyEntity::PyEntity()
     {
         m_entity = new Entity(this);
-
-        m_pyModel = (PyModel*) Py_None;
-        Py_DecRef(m_pyModel);
-
-        m_pyPhysics = (PyEntityPhysics*) Py_None;
-        Py_DecRef(m_pyPhysics);
+        m_model = none_object;
+        m_physics = none_object;
     }
 
     PyEntity::~PyEntity()
     {
         if (m_entity)
         {
-            m_entity->m_self = nullptr;
             m_entity->setPhysics(nullptr);
             m_entity->setModel(nullptr);
         }
         m_entity = nullptr;
-
-        Py_DecRef(m_pyModel);
-        Py_DecRef(m_pyPhysics);
+        m_model = null_object;
+        m_physics = null_object;
     }
 
     int PyEntity::getId()
@@ -344,321 +297,184 @@ namespace LazyPy
         return 0;
     }
 
-    LAZYPY_IMP_INIT(PyEntity)
+    LZPY_IMP_INIT(PyEntity)
     {
-        PyErr_SetString(PyExc_RuntimeError, "Can't create instance of class Entity directly!");
-        //m_entity = new Entity(this);
-        return false;
+        return true;
     }
 
-    LAZYPY_IMP_GET(PyEntity, id)
+    void PyEntity::setModel(object model)
     {
-        return toPyObject(getId());
-    }
-
-    LAZYPY_IMP_METHOD_1(PyEntity, show)
-    {
-        m_entity->show(fromPyObject<bool>(value));
-
-        Py_RETURN_NONE;
-    }
-
-    LAZYPY_IMP_METHOD_0(PyEntity, visible)
-    {
-        return toPyObject(m_entity->visible());
-    }
-
-    LAZYPY_IMP_GET(PyEntity, position)
-    {
-        return toPyObject(m_entity->m_vPos);
-    }
-
-    LAZYPY_IMP_SET(PyEntity, position)
-    {
-        v3FromPyObject(m_entity->m_vPos, value);
-    }
-
-    LAZYPY_IMP_GET(PyEntity, scale)
-    {
-        return toPyObject(m_entity->m_vScale);
-    }
-
-    LAZYPY_IMP_SET(PyEntity, scale)
-    {
-        v3FromPyObject(m_entity->m_vScale, value);
-    }
-
-    LAZYPY_IMP_GET(PyEntity, speed)
-    {
-        return toPyObject(m_entity->m_vSpeed);
-    }
-
-    LAZYPY_IMP_SET(PyEntity, speed)
-    {
-        v3FromPyObject(m_entity->m_vSpeed, value);
-    }
-
-    LAZYPY_IMP_GET(PyEntity, model)
-    {
-        return toPyObject(m_pyModel);
-    }
-
-    LAZYPY_IMP_SET(PyEntity, model)
-    {
-        if (value == m_pyModel) return;
-
-        if (value != Py_None && !helper::has_instance<PyModel>(value, true))
-        {
+        if (m_model == model)
             return;
-        }
 
-        Py_DecRef(m_pyModel);
-        m_pyModel = (PyModel*) value;
-        Py_IncRef(m_pyModel);
-
-        m_entity->setModel(m_pyModel != Py_None ? m_pyModel->m_model : nullptr);
-    }
-
-
-    LAZYPY_IMP_GET(PyEntity, physics)
-    {
-        return toPyObject(m_pyPhysics);
-    }
-
-    LAZYPY_IMP_SET(PyEntity, physics)
-    {
-        if (value == m_pyPhysics) return;
-
-        if (value != Py_None && !helper::has_instance<PyEntityPhysics>(value, true))
+        if (model.is_none())
         {
+            m_model = model;
+            m_entity->setModel(nullptr);
+        }
+        else if (helper::has_instance<PyModel>(model.get(), true))
+        {
+            m_model = model;
+            m_entity->setModel(model.cast<PyModel>()->m_model);
+        }
+    }
+
+    void PyEntity::setPhysics(object physics)
+    {
+        if (m_physics == physics)
             return;
-        }
 
-        copyPyObject((PyObject**)&m_pyPhysics, value);
-
-        if (m_pyPhysics != Py_None)
+        if (m_physics)
         {
-            m_pyPhysics->setSource(this);
-            m_entity->setPhysics(m_pyPhysics->m_physics);
-        }
-        else
-        {
+            m_physics->setSource(null_object);
+            m_physics = none_object;
             m_entity->setPhysics(nullptr);
         }
+
+        if (physics.is_none())
+        {
+
+        }
+        else if (helper::has_instance<PyEntityPhysics>(physics.get(), true))
+        {
+            m_physics = physics;
+            m_physics->setSource(object(this));
+            m_entity->setPhysics(m_physics->m_physics);
+        }
     }
 
-    LAZYPY_IMP_GET(PyEntity, fadeDistance)
-    {
-        return toPyObject(m_entity->getShowDistance());
-    }
-
-    LAZYPY_IMP_SET(PyEntity, fadeDistance)
-    {
-        m_entity->setShowDistance(fromPyObject<float>(value));
-    }
-    LAZYPY_IMP_GET(PyEntity, lockHeight)
-    {
-        return toPyObject(m_entity->getLockHeight());
-    }
-    LAZYPY_IMP_SET(PyEntity, lockHeight)
-    {
-        m_entity->setLockHeight(fromPyObject<float>(value));
-    }
-
-    LAZYPY_IMP_METHOD_0(PyEntity, distToCamera)
-    {
-        return toPyObject(m_entity->distToCamera());
-    }
-
-    LAZYPY_IMP_METHOD_0(PyEntity, distToPlayer)
-    {
-        return toPyObject(m_entity->distToPlayer());
-    }
-
-    LAZYPY_IMP_METHOD_1(PyEntity, lookAtPosition)
+    LZPY_IMP_METHOD_1(PyEntity, lookAtPosition)
     {
         Physics::Vector3 vec;
-        if (!v3FromPyObject(vec, value)) return nullptr;
+        if (!parse_object(vec, value))
+            return null_object;
 
         m_entity->lookAtPosition(vec);
-        Py_RETURN_NONE;
+        return none_object;
     }
 
     ////////////////////////////////////////////////////////////////////
-    LAZYPY_IMP("EntityMgr", PyEntityMgr, "Lazy");
-
-    LAZYPY_BEGIN_EXTEN(PyEntityMgr);
-    LAZYPY_METHOD_1(addEntity);
-    LAZYPY_METHOD_1(delEntity);
-    LAZYPY_METHOD_1(getEntity);
-    LAZYPY_END_EXTEN();
+    ///
+    ////////////////////////////////////////////////////////////////////
+    LZPY_CLASS_BEG(PyEntityMgr);
+        LZPY_METHOD_1(addEntity);
+        LZPY_METHOD_1(delEntity);
+        LZPY_METHOD_1(getEntity);
+    LZPY_CLASS_END();
 
     PyEntityMgr::PyEntityMgr()
     {
-        m_pDict = PyDict_New();
-
-        MEMORY_CHECK_CONS;
+        MEMORY_CHECK_CONS(this);
     }
 
     PyEntityMgr::~PyEntityMgr()
     {
-        PyObject *list = PyDict_Values(m_pDict);
-        size_t n = PyList_Size(list);
+        list list = m_entities.values();
+
+        size_t n = list.size();
         for (size_t i = 0; i < n; ++i)
         {
-            PyObject *ret = _wraper_fundestroyEntity_1(nullptr, PyList_GetItem(list, i) );
-            Py_XDECREF(ret);
+            destroyEntity(list[i]);
         }
 
-        Py_DECREF(list);
-        Py_DECREF(m_pDict);
-
-        MEMORY_CHECK_DEST;
+        MEMORY_CHECK_DEST(this);
     }
 
-    LAZYPY_IMP_INIT(PyEntityMgr)
+    LZPY_IMP_INIT(PyEntityMgr)
     {
         PyErr_SetString(PyExc_RuntimeError, "Can't create instance of Lazy.EntityMgr");
         return false;
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityMgr, addEntity)
+    LZPY_IMP_METHOD_1(PyEntityMgr, addEntity)
     {
-        if (!PyEntity_Check(value)) return NULL;
-
-        PyEntity *pEnt = (PyEntity*) value;
-        int id = pEnt->getId();
-        if (id <= 0)
-        {
-            PyErr_SetString(PyExc_RuntimeError, "Inviliad entity!");
-            return NULL;
-        }
-
-        PyObject *pyId = toPyObject(id);
-        PyDict_SetItem(m_pDict, pyId, pEnt);
-        Py_DecRef(pyId);
-
-        EntityMgr::instance()->add(pEnt->m_entity);
-
-        Py_RETURN_NONE;
+        return build_object( addEntity(value) );
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityMgr, delEntity)
+    LZPY_IMP_METHOD_1(PyEntityMgr, delEntity)
     {
-        if (!PyEntity_Check(value)) return NULL;
+        return build_object( destroyEntity(value) );
+    }
 
-        PyEntity *pEnt = (PyEntity*) value;
-        int id = pEnt->getId();
-        if (id <= 0)
-        {
-            PyErr_SetString(PyExc_RuntimeError, "Inviliad entity!");
-            return NULL;
-        }
+    LZPY_IMP_METHOD_1(PyEntityMgr, getEntity)
+    {
+        return m_entities.getitem(value);
+    }
 
-        PyObject *pyId = toPyObject(id);
-        PyDict_DelItem(m_pDict, pyId);
-        Py_DecRef(pyId);
+    bool PyEntityMgr::addEntity(object entity)
+    {
+        if (!helper::has_instance<PyEntity>(entity.get(), true))
+            return false;
 
+        PyEntity *pEnt = entity.cast<PyEntity>();
+        EntityMgr::instance()->add(pEnt->m_entity);
+        m_entities.setitem(pEnt->getId(), entity);
+
+        entity.call_method_quiet("enterWorld");
+        return true;
+    }
+
+    bool PyEntityMgr::destroyEntity(object entity)
+    {
+        if (!helper::has_instance<PyEntity>(entity.get(), true))
+            return false;
+
+        entity.call_method_quiet("leaveWorld");
+        
+        PyEntity *pEnt = entity.cast<PyEntity>();
         EntityMgr::instance()->remove(pEnt->m_entity);
 
-        Py_RETURN_NONE;
+        m_entities.delitem(entity.cast<PyEntity>()->getId());
+        return true;
     }
 
-    LAZYPY_IMP_METHOD_1(PyEntityMgr, getEntity)
-    {
-        PyObject *pEnt = PyDict_GetItem(m_pDict, value);
-        if (!pEnt) Py_RETURN_NONE;
-
-        Py_IncRef(pEnt);
-        return pEnt;
-    }
-
+    ////////////////////////////////////////////////////////////////////
+    ///
     ////////////////////////////////////////////////////////////////////
     static PyEntity * s_pPlayer = nullptr;
     static PyEntityMgr * s_pEntityMgr = nullptr;
 
 
-    LAZYPY_DEF_FUN_1(entity)
+    LZPY_DEF_FUN_1(entity)
     {
         assert(s_pEntityMgr);
 
-        return s_pEntityMgr->py_getEntity(value);
+        return xincref(s_pEntityMgr->py_getEntity(object(value)));
     }
 
-    LAZYPY_DEF_FUN_0(entities)
+    LZPY_DEF_FUN_0(entities)
     {
         assert(s_pEntityMgr);
 
-        return PyDict_Copy(s_pEntityMgr->m_pDict);
+        return PyDict_Copy(s_pEntityMgr->m_entities.get());
     }
 
-    LAZYPY_DEF_FUN(createEntity)
+    LZPY_DEF_FUN(createEntity)
     {
         PyObject *pClass;
-        PyObject *pDict = nullptr;
-        if (!PyArg_ParseTuple(arg, "O|O", &pClass, &pDict)) return NULL;
-
-        if (!helper::has_sub_class<PyEntity>(pClass, true)) return NULL;
-        
-        if (pDict && !PyDict_Check(pDict))
-        {
-            PyErr_SetString(PyExc_TypeError, "The second arg must be a dict!");
+        if (!PyArg_ParseTuple(arg, "O", &pClass))
             return NULL;
-        }
+
+        if (!helper::has_sub_class<PyEntity>(pClass, true))
+            return NULL;
 
         //实例化对象
-        PyEntity *pEntity = (PyEntity *) PyObject_CallObject(pClass, NULL);
-        if (pEntity == NULL) return NULL;
-
-
-        //设置属性
-        if (pDict)
-        {
-            PyObject *key, *value;
-            Py_ssize_t pos = 0;
-
-            while (PyDict_Next(pDict, &pos, &key, &value)) 
-            {
-                PyObject_SetAttr(pEntity, key, value);
-            }
-        }
+        object entity = new_reference(PyObject_CallObject(pClass, NULL));
+        if (!entity) return NULL;
         
-        //enterworld
-        if (PyObject_HasAttrString(pEntity, "enterWorld"))
-        {
-            PyObject *ret = PyObject_CallMethod(pEntity, "enterWorld", nullptr);
-            Py_XDECREF(ret);
-        }
-
-        PyObject *ret = s_pEntityMgr->py_addEntity(pEntity);
-        Py_XDECREF(ret);
-
-        int id = pEntity->getId();
-        Py_DECREF(pEntity);
-
-        return toPyObject(id);
+        s_pEntityMgr->addEntity(entity);
+        
+        int id = entity.cast<PyEntity>()->getId();
+        return xincref(build_object(id));
     }
 
-    LAZYPY_DEF_FUN_1(destroyEntity)
+    LZPY_DEF_FUN_1(destroyEntity)
     {
-        if (!PyEntity_Check(value)) return NULL;
-
-        PyEntity *pEntity = (PyEntity*) value;
-
-        //leaveworld
-        if (PyObject_HasAttrString(pEntity, "leaveWorld"))
-        {
-            PyObject *ret = PyObject_CallMethod(pEntity, "leaveWorld", nullptr);
-            Py_XDECREF(ret);
-        }
-
-        PyObject *ret = s_pEntityMgr->py_delEntity(pEntity);
-        Py_XDECREF( ret );
-
-        Py_RETURN_NONE;
+        bool ret = s_pEntityMgr->destroyEntity(object(value));
+        return xincref(build_object(ret));
     }
 
-    LAZYPY_DEF_FUN(loadModel)
+    LZPY_DEF_FUN(loadModel)
     {
         wchar_t *source;
         int type;
@@ -672,16 +488,18 @@ namespace LazyPy
         return pModel;
     }
 
-    LAZYPY_DEF_FUN_0(player)
+    LZPY_DEF_FUN_0(player)
     {
-        return toPyObject(s_pPlayer);
+        return xincref(s_pPlayer);
     }
 
-    LAZYPY_DEF_FUN_1(setPlayer)
+    LZPY_DEF_FUN_1(setPlayer)
     {
-        if (s_pPlayer == value) Py_RETURN_NONE;
+        if (s_pPlayer == value)
+            Py_RETURN_NONE;
 
-        if (value != Py_None && !PyEntity_Check(value)) return NULL;
+        if (value != Py_None && !helper::has_instance<PyEntity>(value, true))
+            return NULL;
 
         Py_DecRef(s_pPlayer);
         s_pPlayer = (PyEntity*)value;
@@ -703,18 +521,8 @@ namespace LazyPy
 
     namespace _py_entity
     {
-        LAZYPY_BEGIN_FUN(Lazy);
-        LAZYPY_FUN_1(entity);
-        LAZYPY_FUN_0(entities);
-        LAZYPY_FUN(createEntity);
-        LAZYPY_FUN_1(destroyEntity);
-        LAZYPY_FUN(loadModel);
-        LAZYPY_FUN_0(player);
-        LAZYPY_FUN_1(setPlayer);
 
-        LAZYPY_END_FUN();
-
-        class EntityResInterface : public LazyPyResInterface
+        class EntityResInterface : public LzpyResInterface
         {
         public:
 
@@ -738,6 +546,22 @@ namespace LazyPy
         };
 
         static EntityResInterface s_resInterface;
+    }
+
+    void exportPyEntity(const char * module)
+    {
+        LZPY_REGISTER_CLASS(Model, PyModel);
+        LZPY_REGISTER_CLASS(Entity, PyEntity);
+        LZPY_REGISTER_CLASS(EntityPhysics, PyEntityPhysics);
+        LZPY_REGISTER_CLASS(EntityMgr, PyEntityMgr);
+
+        LZPY_FUN_1(entity);
+        LZPY_FUN_0(entities);
+        LZPY_FUN(createEntity);
+        LZPY_FUN_1(destroyEntity);
+        LZPY_FUN(loadModel);
+        LZPY_FUN_0(player);
+        LZPY_FUN_1(setPlayer);
     }
 
 }

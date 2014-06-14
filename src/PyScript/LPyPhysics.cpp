@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "LPyPhysics.h"
 
-namespace LazyPy
+namespace Lzpy
 {
 
     PyVector3 * PyVector3_add(PyVector3 * a, PyVector3 * b)
@@ -68,37 +68,37 @@ namespace LazyPy
         (binaryfunc) PyVector3_div,
     };
 
-    LAZYPY_IMP("Vector3", PyVector3, "Lazy");
 
-    LAZYPY_BEGIN_EXTEN(PyVector3);
-    LAZYPY_LINK_ATTR(tp_str, PyVector3::reprfunc);
+    LZPY_CLASS_BEG(PyVector3);
+    LZPY_LINK_ATTR(tp_str, PyVector3::reprfunc);
 
     PyVector3_numberMethods.nb_negative = (unaryfunc) PyVector3_negative;
-    LAZYPY_LINK_ATTR(tp_as_number, &PyVector3_numberMethods);
+    LZPY_LINK_ATTR(tp_as_number, &PyVector3_numberMethods);
 
 
-    LAZYPY_MEMEBER("x", T_FLOAT, m_vector.x);
-    LAZYPY_MEMEBER("y", T_FLOAT, m_vector.y);
-    LAZYPY_MEMEBER("z", T_FLOAT, m_vector.z);
-    LAZYPY_METHOD(set);
+    LZPY_MEMEBER(x, T_FLOAT, m_vector.x);
+    LZPY_MEMEBER(y, T_FLOAT, m_vector.y);
+    LZPY_MEMEBER(z, T_FLOAT, m_vector.z);
+    LZPY_METHOD(set);
 
-    LAZYPY_END_EXTEN();
+    LZPY_CLASS_END();
 
     PyVector3::PyVector3()
     {
     }
 
 
-    LAZYPY_IMP_INIT(PyVector3)
+    LZPY_IMP_INIT(PyVector3)
     {
-        return parse_object(m_vector, borrow_reference(arg));
+        return parse_object(m_vector, object(arg));
     }
 
-    LAZYPY_IMP_METHOD(PyVector3, set)
+    LZPY_IMP_METHOD(PyVector3, set)
     {
-        if (!PyArg_ParseTuple(arg, "fff", &m_vector.x, &m_vector.y, &m_vector.z)) return nullptr;
-
-        Py_RETURN_NONE;
+        if (!arg.parse_tuple(&m_vector.x, &m_vector.y, &m_vector.z))
+            return null_object;
+        
+        return none_object;
     }
 
     PyObject * PyVector3::reprfunc(PyObject * self)
@@ -106,10 +106,10 @@ namespace LazyPy
         PyVector3 * pThis = (PyVector3*)self;
 
         std::wstring str;
-        Lazy::formatStringW(str, L"%f, %f, %f", pThis->m_vector.x, pThis->m_vector.y, pThis->m_vector.z);
-        return fromString(str);
+        Lazy::formatStringW(str, L"%f, %f, %f",
+            pThis->m_vector.x, pThis->m_vector.y, pThis->m_vector.z);
+        return PyUnicode_FromWideChar(str.c_str(), str.size());
     }
-
 
     object build_object(const Math::Vector3 & v)
     {
@@ -128,23 +128,16 @@ namespace LazyPy
         else if (o.is_tuple())
         {
             tuple arg(o);
-
-            try
-            {
-                arg.parse_tuple(&v.x, &v.y, &v.z);
-            }
-            catch (python_error e)
-            {
-                return false;
-            }
-
-            return true;
-        }
-        else
-        {
-            PyErr_SetString(PyExc_TypeError, "Must be a Vector3 or tuple3!");
+            if (arg.parse_tuple(&v.x, &v.y, &v.z))
+                return true;
         }
 
+        PyErr_SetString(PyExc_TypeError, "Must be a Vector3 or tuple3!");
         return false;
+    }
+
+    void exportPyPhsicis(const char * module)
+    {
+        LZPY_REGISTER_CLASS(Vector3, PyVector3);
     }
 }

@@ -148,12 +148,12 @@ namespace Lazy
             return *this = ptr.get();
         }
 
-        const ThisType & operator < (const ThisType & v) const
+        bool operator < (const ThisType & v) const
         {
             return m_ptr < v.m_ptr;
         }
 
-        const ThisType & operator >(const ThisType & v) const
+        bool operator >(const ThisType & v) const
         {
             return m_ptr > v.m_ptr;
         }

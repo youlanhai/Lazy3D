@@ -1,8 +1,11 @@
 ﻿
 #include "stdafx.h"
 #include "Res.h"
+
+#include "../Render/Texture.h"
+#include "../Font/Font.h"
+
 #include "TextTexture.h"
-#include "..\Font\Font.h"
 #include "App.h"
 
 
@@ -241,7 +244,8 @@ void TextTextureEx::loadTexture()
         return;
     }
 
-    font->getTextSize(m_width, m_height, m_text);
+    m_width = (m_text.size() + 1) * font->getHeight();
+    m_height = font->getHeight();
     
     if (m_pTexture)
     {

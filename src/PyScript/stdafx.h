@@ -13,4 +13,4 @@
 
 // TODO: reference additional headers your program requires here
 #include "../Core/Core.h"
-#include "../LazyPy3/LazyPy.h"
+#include "../Lzpy/Lzpy.h"

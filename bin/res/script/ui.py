@@ -32,7 +32,7 @@ uiRoot.name = "uiRoot"
 editorUILayer = lui.Form(root)
 editorUILayer.name = "editorUILayer"
 editorUILayer.size = (640, 480)
-editorUILayer.position = (200, 20)
+editorUILayer.position = (200, 50)
 editorUILayer.bgColor = 0xff7f7f7f
 
 editorRoot = lui.IControl(root)

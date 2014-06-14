@@ -236,8 +236,8 @@ namespace Lazy
         }
         else if (event.eventType == EET_MOUSE_EVENT)
         {
-            if (m_bLimitInRect && !isPointIn(event.mouseEvent.x, event.mouseEvent.y))
-                return false;
+            //if (m_bLimitInRect && !isPointIn(event.mouseEvent.x, event.mouseEvent.y))
+            //    return false;
         }
 
         bool processed = false;

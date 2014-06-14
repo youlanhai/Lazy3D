@@ -61,6 +61,7 @@ public:
 
     ///显示包围盒
     void showBound( bool bShow ) { m_bShowBound = bShow; }
+    bool isBoundVisib() const { return m_bShowBound; }
 
     const AABB & getAABB() const { return m_aabb; }
     void setAABB(const AABB & aabb){ m_aabb = aabb; }

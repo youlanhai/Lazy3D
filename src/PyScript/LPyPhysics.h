@@ -1,17 +1,17 @@
 #pragma once
 
-namespace LazyPy
+namespace Lzpy
 {
     class PyVector3 : public PyBase
     {
-        LAZYPY_DEF(PyVector3, PyBase);
+        LZPY_DEF(PyVector3, PyBase);
 
     public:
         PyVector3();
 
         static PyObject * reprfunc(PyObject * self);
 
-        LAZYPY_DEF_METHOD(set);
+        LZPY_DEF_METHOD(set);
 
 
         Math::Vector3 m_vector;
@@ -19,4 +19,6 @@ namespace LazyPy
 
     object build_object(const Math::Vector3 & v);
     bool parse_object(Math::Vector3 & v, object o);
+
+    void exportPyPhsicis(const char * module);
 }

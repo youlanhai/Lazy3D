@@ -17,8 +17,9 @@ namespace Lzpy
 
         size_t size() const;
 
-        object getitem(object k) const;
-        bool setitem(const object & k, const object & v);
+        object getitem(const object & k) const;
+        bool setitem(const object & k, const object & v) const;
+        bool delitem(const object & k) const;
 
         list keys();
         list values();
@@ -32,9 +33,15 @@ namespace Lzpy
         }
 
         template<typename K, typename V>
-        bool setitem(const K & k, const V & v)
+        bool setitem(const K & k, const V & v) const
         {
             return setitem(build_object(k), build_object(v));
+        }
+
+        template<typename K>
+        bool delitem(const K & k) const
+        {
+            return delitem(build_object(k));
         }
     };
 

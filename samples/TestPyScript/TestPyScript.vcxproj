@@ -54,7 +54,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;ENABLE_SCRIPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\src;..\..\src\third_part\python33\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -92,16 +92,13 @@
     <ProjectReference Include="..\..\src\Font\Font.vcxproj">
       <Project>{d195a247-64d4-4b4d-a821-befccde9b09d}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\LazyPy3\LazyPy.vcxproj">
-      <Project>{565187cb-a76b-4b7f-96a4-56dd1ffe9628}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\..\src\Core\Core.vcxproj">
       <Project>{bf66b9b2-1853-4a8e-9953-fab9af8630db}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\LazyUIPy3\LazyUIPy3.vcxproj">
-      <Project>{6888c134-99a4-4d48-bfce-89d18351fb53}</Project>
+    <ProjectReference Include="..\..\src\Lzpy\Lzpy.vcxproj">
+      <Project>{565187cb-a76b-4b7f-96a4-56dd1ffe9628}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\LazyUI\LazyUI.vcxproj">
+    <ProjectReference Include="..\..\src\Lzui\Lzui.vcxproj">
       <Project>{528debdd-0756-491b-a2ab-5c993b0361e4}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Math\Math.vcxproj">
@@ -112,6 +109,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\src\PyScript\PyScript.vcxproj">
       <Project>{d75fc8b3-2026-4d50-8e89-35950d042c83}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\PyUI\PyUI.vcxproj">
+      <Project>{6888c134-99a4-4d48-bfce-89d18351fb53}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\src\Render\Render.vcxproj">
       <Project>{4719ec88-9005-4157-bef6-e77f304e3f24}</Project>

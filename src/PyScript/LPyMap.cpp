@@ -4,27 +4,25 @@
 #include "LPyMap.h"
 #include "LPyEntity.h"
 
-namespace LazyPy
+namespace Lzpy
 {
 
-    LAZYPY_IMP("Map", PyMap, "Lazy");
+    LZPY_CLASS_BEG(PyMap);
 
-    LAZYPY_BEGIN_EXTEN(PyMap);
+        LZPY_GET(name);
+        LZPY_GET(width);
+        LZPY_GET(height);
+        LZPY_GET(isUsefull);
+        LZPY_GET(boundry);
 
-        LAZYPY_GET(mapname);
-        LAZYPY_GET(width);
-        LAZYPY_GET(height);
+        LZPY_GETSET(showLevel);
+        LZPY_GETSET(showRadius);
 
-        LAZYPY_GETSET(showLevel);
-        LAZYPY_GETSET(showRadius);
+        LZPY_METHOD_1(loadMap);
+        LZPY_METHOD_1(saveMap);
+        LZPY_METHOD_1(setSource);
 
-        LAZYPY_METHOD_1(loadMap);
-        LAZYPY_METHOD_1(saveMap);
-        LAZYPY_METHOD_1(setSource);
-        LAZYPY_METHOD_0(isUsefull);
-        LAZYPY_METHOD_0(getBoundry);
-
-    LAZYPY_END_EXTEN();
+    LZPY_CLASS_END();
 
     PyMap::PyMap()
     {
@@ -36,109 +34,66 @@ namespace LazyPy
         m_map = nullptr;
     }
 
-    LAZYPY_IMP_INIT(PyMap)
+    LZPY_IMP_INIT(PyMap)
     {
-        return true;
+        PyErr_SetString(PyExc_RuntimeError, "PyMap can't create instance.");
+        return false;
     }
 
-    LAZYPY_IMP_GET(PyMap, mapname)
+    LZPY_IMP_METHOD_1(PyMap, loadMap)
     {
-        return toPyObject(m_map->getMapName());
+        Lazy::tstring name;
+        if (!parse_object(name, value))
+            return null_object;
+
+        bool ret = m_map->loadMap(name);
+        return build_object(ret);
     }
 
-    LAZYPY_IMP_GET(PyMap, width)
+    LZPY_IMP_METHOD_1(PyMap, saveMap)
     {
-        return toPyObject(m_map->width());
-    }
-    LAZYPY_IMP_GET(PyMap, height)
-    {
-        return toPyObject(m_map->height());
-    }
+        Lazy::tstring name;
+        if (!parse_object(name, value))
+            return null_object;
 
-    LAZYPY_IMP_GET(PyMap, showLevel)
-    {
-        return toPyObject(m_map->getShowLevel());
+        m_map->saveMap(name);
+        return none_object;
     }
 
-    LAZYPY_IMP_SET(PyMap, showLevel)
+    LZPY_IMP_METHOD_1(PyMap, setSource)
     {
-        m_map->setShowLevel(fromPyObject<bool>(value));
-    }
-
-
-    LAZYPY_IMP_GET(PyMap, showRadius)
-    {
-        return toPyObject(m_map->getShowRadius());
-    }
-
-    LAZYPY_IMP_SET(PyMap, showRadius)
-    {
-        m_map->setShowRadius(fromPyObject<bool>(value));
-    }
-
-    LAZYPY_IMP_METHOD_1(PyMap, loadMap)
-    {
-        bool ret = m_map->loadMap(fromPyObject<std::wstring>(value));
-        return toPyObject(ret);
-    }
-
-    LAZYPY_IMP_METHOD_1(PyMap, saveMap)
-    {
-        m_map->saveMap(fromPyObject<std::wstring>(value));
-        Py_RETURN_NONE;
-    }
-
-    LAZYPY_IMP_METHOD_1(PyMap, setSource)
-    {
-        if (value != Py_None && !PyEntity_Check(value)) return NULL;
-
-        iEntity *ent = nullptr;
-        if (value)
+        if (value.is_none())
         {
-            ent = ((PyEntity*) value)->m_entity.get();
+            m_map->setSource(nullptr);
+        }
+        else if (helper::has_instance<PyEntity>(value.get(), true))
+        {
+            m_map->setSource(value.cast<PyEntity>()->m_entity.get());
         }
 
-        m_map->setSource(ent);
-        Py_RETURN_NONE;
+        return none_object;
     }
 
-    LAZYPY_IMP_METHOD_0(PyMap, isUsefull)
-    {
-        return toPyObject(m_map->isUserfull());
-    }
 
-    LAZYPY_IMP_METHOD_0(PyMap, getBoundry)
+    object PyMap::getBoundry()
     {
-        return Py_BuildValue("ffff", m_map->xMin(),
-            m_map->zMin(), m_map->xMax(), m_map->zMax());
+        return build_tuple(m_map->xMin(), m_map->zMin(), 
+            m_map->xMax(), m_map->zMax());
     }
  
     ////////////////////////////////////////////////////////////////////
     static PyMap * s_pMap = nullptr;
 
 
-    LAZYPY_DEF_FUN_0(map)
+    LZPY_DEF_FUN_0(map)
     {
-        return toPyObject(s_pMap);
-    }
-
-    LAZYPY_DEF_FUN_1(setMap)
-    {
-        if (s_pMap == value) Py_RETURN_NONE;
-
-        if (value != Py_None && !helper::has_instance<PyMap>(value, true)) return nullptr;
-        
-        Py_DECREF(s_pMap);
-        s_pMap = (PyMap*)value;
-        Py_INCREF(s_pMap);
-
-        Py_RETURN_NONE;
+        return xincref(s_pMap);
     }
 
     namespace _py_map
     {
 
-        class ResLoader : public LazyPyResInterface
+        class ResLoader : public LzpyResInterface
         {
         public:
             void init() override
@@ -153,14 +108,12 @@ namespace LazyPy
         };
 
         static ResLoader s_resLoader;
+    }
 
+    void exportPyMap(const char * module)
+    {
+        LZPY_REGISTER_CLASS(Map, PyMap);
 
-        LAZYPY_BEGIN_FUN(Lazy);
-
-        LAZYPY_FUN_0(map);
-        LAZYPY_FUN_1(setMap);
-
-        LAZYPY_END_FUN();
-
+        LZPY_FUN_0(map);
     }
 }

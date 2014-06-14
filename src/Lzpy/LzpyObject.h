@@ -22,6 +22,9 @@ namespace Lzpy
         return p;
     }
 
+    PyObject * xincref(const object & v);
+    PyObject * xdecref(const object & v);
+
     //基本数据类型打包
     object build_object(bool v);
     object build_object(int v);
@@ -135,7 +138,7 @@ namespace Lzpy
     public:
 
         template<typename T>
-        T* cast() { return (T*) m_ptr; }
+        T* cast() const { return (T*) m_ptr; }
 
         inline PyObject *get() const {  return m_ptr; }
 
@@ -237,6 +240,27 @@ namespace Lzpy
         if (is_null() || !hasattr(method)) return null_object;
         return call_method(method, args...);
     }
+
+    template<typename T>
+    class object_ptr : public object
+    {
+    public:
+        typedef object_ptr<T>   this_type;
+        typedef T               value_type;
+        typedef T*              pointer;
+        typedef T&              reference;
+
+        PY_OBJECT_DECLARE(this_type, object);
+
+        object_ptr()
+        {}
+
+        pointer get() const { return static_cast<pointer>(m_ptr); }
+
+        pointer operator->() const { return get(); }
+
+        reference operator * () const { return *get(); }
+    };
 
 }// end namespace Lzpy
 

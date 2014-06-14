@@ -7,7 +7,15 @@
 
 namespace Lzpy
 {
+    PyObject * xincref(const object & v)
+    {
+        return xincref(v.get());
+    }
 
+    PyObject * xdecref(const object & v)
+    {
+        return xdecref(v.get());
+    }
     ////////////////////////////////////////////////////////////////////
     // parse_object
     ////////////////////////////////////////////////////////////////////

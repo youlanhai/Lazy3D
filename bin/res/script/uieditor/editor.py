@@ -10,6 +10,7 @@ import gui
 import ui_helper
 from . import edt_property
 from . import edt_creator
+from . import edt_menu
 
 from share import share
 
@@ -119,6 +120,8 @@ class Editor(lui.IControl):
 		self.workTree = gui.loadUIFromFile("layout/editor/worktree.lzd", self)
 		self.fileExplorer = gui.loadUIFromFile("layout/editor/explorer.lzd", self)
 		self.fileExplorer.visible = False
+
+		self.menuBar = gui.loadUIFromFile("layout/editor/menu_bar.lzd", self)
 
 		self.resculySearch = True
 		self.workStack = []

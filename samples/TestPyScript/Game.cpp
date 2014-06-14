@@ -3,13 +3,13 @@
 #include "Render/RenderDevice.h"
 #include "Font/Font.h"
 
-#include "LazyPy3/LazyPy.h"
+#include "Lzpy/Lzpy.h"
 #include "PyScript/LPyScript.h"
-#include "LazyUIPy3/LazyUIPy3.h"
+#include "PyUI/PyUI.h"
 
 //////////////////////////////////////////////////////////////////////////
 CGame g_game;
-RefPtr<LazyPy::ConsolePanel> g_pyConsole;
+RefPtr<Lzpy::ConsolePanel> g_pyConsole;
 
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 {
@@ -31,10 +31,10 @@ bool initPython()
 {
     Py_SetPythonHome(L"../../src/third_part/python33");
 
-    PyImport_AppendInittab("helper", LazyPy::PyInit_helper);
-    PyImport_AppendInittab("Lazy", LazyPy::PyInit_Lazy);
-    PyImport_AppendInittab("lui", LazyPy::PyInit_lui);
-    PyImport_AppendInittab("lzd", LazyPy::PyInit_lzd);
+    PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
+    PyImport_AppendInittab("Lazy", Lzpy::PyInit_Lazy);
+    PyImport_AppendInittab("lui", Lzpy::PyInit_lui);
+    PyImport_AppendInittab("lzd", Lzpy::PyInit_lzd);
 
     Py_Initialize();
     if (!Py_IsInitialized())
@@ -46,18 +46,18 @@ bool initPython()
     try
     {
 
-        LazyPy::PyInit_Lazy();
-        //LazyPy::PyInit_lui();
-        //LazyPy::PyInit_lzd();
+        Lzpy::PyInit_Lazy();
+        //Lzpy::PyInit_lui();
+        //Lzpy::PyInit_lzd();
 
-        LazyPy::object sys = LazyPy::import(L"sys");
-        LazyPy::object ouput = LazyPy::new_reference(LazyPy::helper::new_instance_ex<LazyPy::PyOutput>());
-        sys.setattr(L"stdout", ouput);
-        sys.setattr(L"stderr", ouput);
+        Lzpy::object sys = Lzpy::import(L"sys");
+        Lzpy::object ouput = Lzpy::new_reference(Lzpy::helper::new_instance_ex<Lzpy::PyOutput>());
+        sys.setattr("stdout", ouput);
+        sys.setattr("stderr", ouput);
 
-        LazyPy::addSysPath(L"res/script");
+        Lzpy::addSysPath(L"res/script");
 
-        LazyPy::LazyPyResInterface::initAll();
+        Lzpy::LzpyResInterface::initAll();
 
         PyRun_SimpleString("print('hahah')");
         PyRun_SimpleString("import MyGame");
@@ -87,7 +87,7 @@ bool finiPython()
         PyRun_SimpleString("import MyGame");
         PyRun_SimpleString("MyGame.fini()");
 
-        LazyPy::LazyPyResInterface::finiAll();
+        Lzpy::LzpyResInterface::finiAll();
     }
     catch (...)
     {
@@ -112,6 +112,7 @@ public:
         addChild(m_btnOk.get());
     }
 
+#if 0
     virtual void onButton(int id, bool isDown) override
     {
         if (id == m_btnOk->getID())
@@ -119,6 +120,7 @@ public:
             debugMessage(_T("onButton OK!"));
         }
     }
+#endif
 
 private:
 
@@ -141,41 +143,53 @@ void CGame::onCreateDevice(D3DPRESENT_PARAMETERS * pParam)
 }
 
 //窗口过程，内部使用
-LRESULT CGame::wndProc(HWND hWnd,UINT uMsg,
-							WPARAM wParam,LPARAM lParam)
+///消息处理
+bool CGame::onEvent(const Lazy::SEvent & event)
 {
-    if (uMsg == WM_LBUTTONDOWN)
+    if (event.eventType == Lazy::EET_MOUSE_EVENT)
     {
-        SetCapture(m_hWnd);
+        switch (event.mouseEvent.event)
+        {
+        case Lazy::EME_LMOUSE_DOWN:
+            SetCapture(m_hWnd);
+            break;
+
+        case Lazy::EME_LMOUSE_UP:
+            ReleaseCapture();
+            break;
+
+        default:
+            break;
+        }
+
     }
-    else if (uMsg == WM_LBUTTONUP)
+    else if (event.eventType == Lazy::EET_KEY_EVENT)
     {
-        ReleaseCapture();
-    }
-    else if (uMsg == WM_KEYUP)
-    {
-        if (wParam == VK_F1)
+        if (g_pyConsole && event.keyEvent.key == Lazy::KEY_F1)
         {
             g_pyConsole->toggle();
         }
     }
+
 #ifdef USE_GUI
-    if (m_pGUIMgr && m_pGUIMgr->processWndMessage(uMsg, wParam, lParam))
+    if (m_pGUIMgr && m_pGUIMgr->processEvent(event))
     {
         m_bMsgHooked = true;
         return true;
     }
 #endif
 
-    if (m_pCamera && m_pCamera->handleMessage(uMsg, wParam, lParam)) return 1;
+    if (m_pCamera && m_pCamera->handleEvent(event)) return 1;
 
+#if 0
     if (cPick::instance()->handleMouseEvent(uMsg, wParam, lParam)) return 1;
     
     TerrainMap::instance()->handeMouseEvent(uMsg, wParam, lParam);
 
     if (EntityMgr::instance()->handleMouseEvent(uMsg, wParam, lParam)) return 1;
+#endif
 
-    return __super::wndProc(hWnd,uMsg,wParam,lParam);
+    return CApp::onEvent(event);
 }
 
 CGame::CGame()
@@ -188,7 +202,7 @@ void CGame::clear()
     LOG_INFO(L"Release resource start...");
     finiPython();
 
-    __super::clear();
+    CApp::clear();
 
     WRITE_LOG(L"Release resource finished.");
 }
@@ -201,20 +215,18 @@ bool CGame::init(void)
 {
     LOG_INFO(L"Initialize game start...");
 
-    if (!__super::init()) return false;
-
-    Lazy::rcDevice()->setFontShader(L"shader/font.fx");
-    Lazy::rcDevice()->setUIShader(L"shader/ui.fx");
+    if (!CApp::init()) return false;
 
 #ifdef USE_GUI
     m_pGUIMgr = new Lazy::CGUIManager(m_pd3dDevice, m_hWnd, m_hInstance);
 
-    g_pyConsole = new LazyPy::ConsolePanel();
+    g_pyConsole = new Lzpy::ConsolePanel();
     g_pyConsole->setSize(m_nWidth, m_nHeight);
     m_pGUIMgr->addChild(g_pyConsole.get());
 
     TestForm *pForm = new TestForm();
-    pForm->create(1, L"gui/ui/goods.bmp", 500, 0, 200, 200);
+    pForm->create(1, L"gui/ui/goods.bmp", 500, 0);
+    pForm->setSize(300, 200);
     m_pGUIMgr->addChildManage(pForm);
 
 
@@ -247,7 +259,7 @@ bool CGame::init(void)
 //更新
 void CGame::update()
 {
-    __super::update();
+    CApp::update();
 
     //在此添加更新代码
     m_pUpdateTaskMgr->update(m_fElapse);
@@ -308,7 +320,7 @@ void CGame::render()
         //设置纹理
         m_pd3dDevice->SetTexture(0, NULL);
 
-        __super::render();
+        CApp::render();
 
         //设置时间矩阵
         D3DXMATRIX matWord;

@@ -19,15 +19,20 @@ namespace Lzpy
         return PyDict_Size(m_ptr);
     }
 
-    object dict::getitem(object k) const
+    object dict::getitem(const object & k) const
     {
         //borrow reference
         return object(PyDict_GetItem(m_ptr, k.get()));
     }
 
-    bool dict::setitem(const object & k, const object & v)
+    bool dict::setitem(const object & k, const object & v) const
     {
         return 0 == PyDict_SetItem(m_ptr, k.get(), v.get());
+    }
+
+    bool dict::delitem(const object & k) const
+    {
+        return 0 == PyDict_DelItem(m_ptr, k.get());
     }
 
     list dict::keys()

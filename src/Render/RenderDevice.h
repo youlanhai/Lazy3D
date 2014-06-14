@@ -54,10 +54,6 @@ namespace Lazy
         ///重置设备
         bool resetDevice();
 
-
-        void setFontShader(const tstring & shaderFile){ m_fontShader = shaderFile; }
-        const tstring & getFontShader(){ return m_fontShader; }
-
     protected:
 
         void fillPresentParameter();
@@ -76,8 +72,6 @@ namespace Lazy
         D3DPRESENT_PARAMETERS m_d3dpp;
         D3DDISPLAYMODE m_d3dmm;
         D3DCAPS9    m_d3dcaps;
-
-        tstring     m_fontShader;
     };
 
     ///获取渲染设备

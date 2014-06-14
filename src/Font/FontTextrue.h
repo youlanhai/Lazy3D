@@ -2,7 +2,6 @@
 
 namespace Lazy
 {
-
     namespace FontConfig
     {
         const int MaxTextureWidth = 512;

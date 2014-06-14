@@ -4,6 +4,7 @@
 #include "Core.h"
 #include "App.h"
 
+#include "../Render/Texture.h"
 #include "../Font/Font.h"
 #include "../Render/RenderDevice.h"
 

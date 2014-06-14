@@ -6,7 +6,12 @@
 #define USE_GUI
 
 #ifdef USE_GUI
-#include "LazyUI/LazyUI.h"
+#include "Lzpy/Lzpy.h"
+
+#include "Render/Texture.h"
+#include "Render/Effect.h"
+#include "Font/Font.h"
+#include "Lzui/Lzui.h"
 #endif
 
 
@@ -37,8 +42,9 @@ public:
 
 	void updateCamera(float fElapse);
 	
-    /**窗口过程。不需要调用默认窗口处理过程，如果未处理消息请返回0，否则请返回非0。*/
-    virtual LRESULT wndProc(HWND ,UINT ,WPARAM ,LPARAM );
+    ///消息处理
+    virtual bool onEvent(const Lazy::SEvent & event) override;
+
 public:
 	/*注意：所有指针成员，需在构造函数中进行赋空值初始化。*/
 	bool		        m_bGameStart;

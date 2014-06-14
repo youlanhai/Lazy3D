@@ -293,6 +293,9 @@ class IListItem(lui.IControl):
 		if self.label is not None: return self.label.text
 		return ""
 
+	def onLoadLayout(self, config):
+		self.label = self.getChildByName("label")
+
 	@classmethod
 	def createUI(cls):
 		e = cls()
@@ -303,6 +306,7 @@ class IListItem(lui.IControl):
 		e.label = lui.Label(e)
 		e.label.name = "label"
 		e.label.text = "label"
+		e.label.enable = False
 
 		return e
 

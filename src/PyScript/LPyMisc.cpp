@@ -2,22 +2,17 @@
 #include "LPyMisc.h"
 #include "LPyEntity.h"
 #include "LPyPhysics.h"
+#include "LPyMap.h"
 
-namespace LazyPy
+namespace Lzpy
 {
 
-    LAZYPY_IMP("SkyBox", PySkyBox, "Lazy");
-    LAZYPY_BEGIN_EXTEN(PySkyBox);
-
-    LAZYPY_METHOD_1(show);
-    LAZYPY_METHOD_0(visible);
-    LAZYPY_METHOD_0(toggle);
-    LAZYPY_METHOD(setRange);
-
-    LAZYPY_GETSET(source);
-    LAZYPY_GETSET(image);
-
-    LAZYPY_END_EXTEN();
+    LZPY_CLASS_BEG(PySkyBox);
+        LZPY_METHOD(setRange);
+        LZPY_GETSET(visible);
+        LZPY_GETSET(source);
+        LZPY_GETSET(image);
+    LZPY_CLASS_END();
 
     PySkyBox::PySkyBox()
     {
@@ -29,72 +24,57 @@ namespace LazyPy
         m_sky->setSource(nullptr);
     }
 
-    LAZYPY_IMP_INIT(PySkyBox)
+    LZPY_IMP_INIT(PySkyBox)
     {
         PyErr_SetString(PyExc_RuntimeError, "Can't create an instance of Lazy.SkyBox");
         return false;
     }
 
-    LAZYPY_IMP_METHOD_1(PySkyBox, show)
+    PyEntity * PySkyBox::getPySource()
     {
-        m_sky->show(fromPyObject<bool>(value));
-
-        Py_RETURN_NONE;
+        return m_source.cast<PyEntity>();
     }
-
-    LAZYPY_IMP_METHOD_0(PySkyBox, visible)
-    {
-        return PyBool_FromLong(m_sky->visible());
-    }
-    LAZYPY_IMP_METHOD_0(PySkyBox, toggle)
-    {
-        m_sky->toggle();
-        Py_RETURN_NONE;
-    }
-
 
     void PySkyBox::setSource(const object & v)
     {
-        if (m_source == v) return;
-        if (v && !PyEntity_Check(v.get())) return;
+        if (m_source == v)
+            return;
 
-        m_source = v;
+        m_source = none_object;
+        m_sky->setSource(nullptr);
 
-        iEntity *pSource = nullptr;
-        if (m_source)
+        if (v.is_none())
         {
-            pSource = m_source->m_entity.get();
-        }
 
-        m_sky->setSource(pSource);
+        }
+        else if (helper::has_instance<PyEntity>(v.get(), true))
+        {
+            m_source = v;
+            m_sky->setSource(m_source->m_entity.get());
+        }
     }
 
-    LAZYPY_IMP_METHOD(PySkyBox, setRange)
+    LZPY_IMP_METHOD(PySkyBox, setRange)
     {
-        PyObject * pMin, *pMax;
-        if (!PyArg_ParseTuple(arg, "OO", &pMin, &pMax)) return nullptr;
-
         Physics::Vector3 vecMin, vecMax;
-        if (!v3FromPyObject(vecMin, pMin)) return nullptr;
-
-        if (!v3FromPyObject(vecMax, pMax)) return nullptr;
+        if (!arg.parse_tuple(&vecMin, &vecMax))
+            return null_object;
 
         m_sky->setSkyRange(vecMin, vecMax);
 
-        Py_RETURN_NONE;
+        return none_object;
     }
 
 
     ////////////////////////////////////////////////////////////////////
-    LAZYPY_IMP("Topboard", PyTopboard, "Lazy");
-    LAZYPY_BEGIN_EXTEN(PyTopboard);
+    LZPY_CLASS_BEG(PyTopboard);
     
-    LAZYPY_GETSET(text);
-    LAZYPY_GETSET(color);
-    LAZYPY_GETSET(biasHeight);
-    LAZYPY_GETSET(source);
+    LZPY_GETSET(text);
+    LZPY_GETSET(color);
+    LZPY_GETSET(biasHeight);
+    LZPY_GETSET(source);
 
-    LAZYPY_END_EXTEN();
+    LZPY_CLASS_END();
 
     PyTopboard::PyTopboard()
     {
@@ -107,7 +87,7 @@ namespace LazyPy
         m_topboard = nullptr;
     }
 
-    LAZYPY_IMP_INIT(PyTopboard)
+    LZPY_IMP_INIT(PyTopboard)
     {
         wchar_t *text, *font;
         DWORD cr;
@@ -119,20 +99,23 @@ namespace LazyPy
         return true;
     }
 
-    void PyTopboard::setSource(const object & value)
+    void PyTopboard::setSource(const object & v)
     {
-        if (m_source == value) return;
-        if (value && !PyEntity_Check(value.get())) return;
+        if (m_source == v)
+            return;
 
-        m_source = value;
+        m_source = none_object;
+        m_topboard->setSource(nullptr);
 
-        iEntity *pSource = nullptr;
-        if (m_source)
+        if (v.is_none())
         {
-            pSource = m_source->m_entity.get();
-        }
 
-        m_topboard->setSource(pSource);
+        }
+        else if (helper::has_instance<PyEntity>(v.get(), true))
+        {
+            m_source = v;
+            m_topboard->setSource(m_source->m_entity.get());
+        }
     }
     
     ////////////////////////////////////////////////////////////////////
@@ -142,42 +125,28 @@ namespace LazyPy
     public:
         PyCallObj(float time, PyObject * pCall, PyObject *pArg)
             : Lazy::callObj(time)
-            , m_pCall(pCall)
-            , m_pArg(pArg)
-        {
-            assert(pCall && "PyCallObj");
-
-            Py_INCREF(m_pCall);
-            
-            if (m_pArg) Py_INCREF(m_pArg);
-            else m_pArg = PyTuple_New(0);
-        }
-
-        ~PyCallObj()
-        {
-            Py_DECREF(m_pCall);
-            Py_DECREF(m_pArg);
-        }
+            , m_func(pCall)
+            , m_args(pArg)
+        {}
 
         virtual void onDead() override
         {
-            PyObject *ret = PyObject_Call(m_pCall, m_pArg, NULL);
-            Py_XDECREF(ret);
+            m_func.call_python(m_args);
         }
 
     private:
-        PyObject *m_pCall;
-        PyObject *m_pArg;
+        object m_func;
+        object m_args;
     };
 
     static PySkyBox *s_pSkyBox = nullptr;
 
-    LAZYPY_DEF_FUN_0(getSkyBox)
+    LZPY_DEF_FUN_0(getSkyBox)
     {
-        return toPyObject(s_pSkyBox);
+        return xincref(s_pSkyBox);
     }
 
-    LAZYPY_DEF_FUN(callback)
+    LZPY_DEF_FUN(callback)
     {
         float time;
         PyObject *pFun;
@@ -187,7 +156,7 @@ namespace LazyPy
 
         if (!PyCallable_Check(pFun))
         {
-            PyErr_SetString(PyExc_TypeError, "argument 2 is not callable!");
+            PyErr_SetString(PyExc_TypeError, "argument 2 must callable!");
             return nullptr;
         }
 
@@ -198,24 +167,25 @@ namespace LazyPy
         }
 
         size_t id = Lazy::CallbackMgr::instance()->add(new PyCallObj(time, pFun, pFunArg));
-        return toPyObject(id);
+        return xincref(build_object(id));
     }
 
-    LAZYPY_DEF_FUN_1(cancelCallback)
+    LZPY_DEF_FUN_1(cancelCallback)
     {
         size_t id = 0;
-        fromPyObject(id, value);
+        if (!parse_object(id, object(value)))
+            return nullptr;
 
         Lazy::CallbackMgr::instance()->remove(id);
-
         Py_RETURN_NONE;
     }
 
     namespace _py_misc
     {
-        class ResLoader : public LazyPyResInterface
+        class ResLoader : public LzpyResInterface
         {
         public:
+
             void init() override
             {
                 s_pSkyBox = helper::new_instance_ex<PySkyBox>();
@@ -229,17 +199,19 @@ namespace LazyPy
         };
 
         static ResLoader s_resLoader;
-
-
-        LAZYPY_BEGIN_FUN(Lazy);
-
-        LAZYPY_FUN_0(getSkyBox);
-        LAZYPY_FUN(callback);
-        LAZYPY_FUN_1(cancelCallback);
-
-        LAZYPY_END_FUN();
     }
 
 
-    LAZYPY_IMP_MODULE(Lazy);
+    LZPY_MODULE_BEG(Lazy);
+        exportPyEntity(module);
+        exportPyMap(module);
+        exportPyPhsicis(module);
+
+        LZPY_REGISTER_CLASS(Topboard, PyTopboard);
+        LZPY_REGISTER_CLASS(SkyBox, PySkyBox);
+
+        LZPY_FUN_0(getSkyBox);
+        LZPY_FUN(callback);
+        LZPY_FUN_1(cancelCallback);
+    LZPY_MODULE_END();
 }
