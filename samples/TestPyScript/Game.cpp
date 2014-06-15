@@ -231,6 +231,8 @@ void CGame::clear()
     LOG_INFO(L"Release resource start...");
     finiPython();
 
+    Lazy::LoadingMgr::instance()->fini();
+
     CApp::clear();
 
     WRITE_LOG(L"Release resource finished.");
@@ -281,6 +283,8 @@ bool CGame::init(void)
 
     if (!initPython()) return false;
 
+    Lazy::LoadingMgr::instance()->init();
+
     LOG_INFO(L"Initialize game finished.");
 	return true;
 }
@@ -289,6 +293,8 @@ bool CGame::init(void)
 void CGame::update()
 {
     CApp::update();
+
+    Lazy::LoadingMgr::instance()->dispatchFinishTask();
 
     //在此添加更新代码
     m_pUpdateTaskMgr->update(m_fElapse);
