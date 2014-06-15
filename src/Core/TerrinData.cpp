@@ -15,8 +15,6 @@ namespace MapConfig
 
     bool ShowAllItemAABB = false;
 
-    bool UseNewFormat = true;
-
     bool UseMultiThread = true;
 
     bool ShowTerrain = true;

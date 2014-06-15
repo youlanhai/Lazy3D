@@ -150,9 +150,6 @@ protected:
     ///加载chunk
     void initChunks(void);
 
-    ///【旧接口】加载地图物件
-    bool loadChunkItems(const Lazy::tstring & filename);
-
     ///生成可见的chunk
     void genVisibleChunks(void);
 

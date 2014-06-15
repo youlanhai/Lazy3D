@@ -246,24 +246,6 @@ bool TerrainMap::loadMap(const Lazy::tstring & mapName)
     m_textureName = ptr->readString(L"texture");
 
     initChunks();
-
-    
-    //为兼容旧格式数据执行的加载
-    if (!MapConfig::UseNewFormat)
-    {
-        Lazy::tstring name = ptr->readString(L"resource");
-        if(!cTerrainRes::instance()->load(name))
-        {
-            LOG_WARNING(L"Load res config file '%s' failed!", name.c_str());
-        }
-
-        name = ptr->readString(L"object");
-        if (!loadChunkItems(name))
-        {
-            LOG_WARNING(L"Load obj config file '%s' failed!", name.c_str());
-        }
-    }
-
     
     //加载路点
     Lazy::tstring wpPath = ptr->readString(L"searchData");
@@ -358,44 +340,6 @@ void TerrainMap::initChunks(void)
     m_quadTree.save(_T("quadTree.xml"), Lazy::LZType::xml);
 #endif
 
-}
-
-bool TerrainMap::loadChunkItems(const Lazy::tstring & filename)
-{
-    LOG_INFO(L"TerrainMap::loadChunkItems...");
-
-    for (ChunkPtr chunk : m_mapNodes)
-    {
-        chunk->clearObj();
-    }
-
-    m_objFileName.clear();
-    if (!Lazy::getfs()->getRealPath(m_objFileName, filename)) return false;
-
-    std::ifstream fin(m_objFileName.c_str());
-    if (!fin.good()) return false;
-    
-    int count = 0;
-    fin>>count;
-    for (int i=0; i<count; ++i)
-    {
-        TerrainItemPtr item = new TerrainItem();
-        fin >> (*item);
-
-        if (m_objOnGround)
-        {
-            item->m_vPos.y = getHeight(item->m_vPos.x, item->m_vPos.z);
-        }
-
-        ChunkPtr chunk = getNode(item->m_vPos.x, item->m_vPos.z);
-        if(chunk) chunk->addItem(item);
-
-        m_loadingProgress += i * 0.5f / count;
-    }
-
-    fin.close();
-
-    return true;
 }
 
 
@@ -615,31 +559,12 @@ bool TerrainMap::intersectWithCursor()
 {
     TerrainItemPtr pActiveObj = NULL;
 
-    if (MapConfig::UseNewFormat)
-    {
-        //八叉树拾取
-        Physics::MapRayAndObjCollider collider(cPick::instance()->rayPos(), cPick::instance()->rayDir());
-        m_quadTree.pick(&collider);
+    //八叉树拾取
+    Physics::MapRayAndObjCollider collider(cPick::instance()->rayPos(), cPick::instance()->rayDir());
+    m_quadTree.pick(&collider);
 
-        pActiveObj = collider.getObj();
-    }
-    else
-    {
-        //暴力拾取
-        float minDist = Physics::MAX_FLOAT;
-        for (ChunkPtr chunk : m_renderNodes)
-        {
-            for (TerrainItemPtr item : (*chunk))
-            {
-                float dist = item->distToCamera();
-                if (dist < minDist && item->intersectWithCursor())
-                {
-                    pActiveObj = item;
-                    minDist = dist;
-                }
-            }
-        }
-    }
+    pActiveObj = collider.getObj();
+    
     setActiveObj(pActiveObj);
     return pActiveObj!=NULL;
 }

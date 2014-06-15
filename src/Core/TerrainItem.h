@@ -1,67 +1,14 @@
 ﻿#pragma once
+
 #include <iostream>
 #include "i3dobject.h"
 #include "Model.h"
 
 namespace Lazy
 {
-
     void writeVector3(LZDataPtr dataPtr, const Lazy::tstring & tag, const Math::Vector3 & v);
     void readVector3(LZDataPtr dataPtr, const Lazy::tstring & tag, Math::Vector3 & v);
-
 }
-
-
-struct TerrainResNode
-{
-    int id;
-    int type;
-    std::wstring path;
-
-    int getID(){ return id; }
-
-    friend std::istream& operator>>(std::istream & in, TerrainResNode & node)
-    {
-        std::string path;
-        in>>node.id>>node.type>>path;
-        Lazy::charToWChar(node.path, path);
-        return in;
-    }
-
-    bool operator==(const TerrainResNode& node)
-    {
-        return id == node.id;
-    }
-};
-
-class LZDLL_API cTerrainRes : public IBase
-{
-public:
-    typedef std::vector<TerrainResNode>     ResContiner;
-    typedef ResContiner::iterator           ResIterator;
-
-    static cTerrainRes* instance();
-
-    static void release();
-
-    bool load(const Lazy::tstring & filename);
-    
-    int getType(int id);
-
-    const std::wstring & getPath(int id);
-
-    TerrainResNode* find(int id);
-
-    ResContiner* getResPool(){ return &m_resPool; }
-protected:
-    cTerrainRes();
-    ~cTerrainRes();
-
-    ResContiner         m_resPool;
-    TerrainResNode      m_cache;
-    static cTerrainRes   *m_pInstance;
-};
-
 
 typedef RefPtr<class TerrainItem> TerrainItemPtr;
 //////////////////////////////////////////////////////////////////////////
@@ -122,19 +69,8 @@ public:
     //获取真实的模型矩阵
     void getAbsModelMatrix(Math::Matrix4x4 & mat) const;
 
-public://旧接口
-    int getID() const { return m_id; }
-
-    void setModelID(int id);
-    int getModelID(void){ return m_modeID; }
-
-    friend std::ostream& operator<<(std::ostream & out, TerrainItem & node );
-    friend std::istream& operator>>(std::istream & in, TerrainItem & node );
-
 protected:
-    int         m_id;
     int         m_chunkId;
-    int         m_modeID;
     ModelPtr    m_model;
     bool        m_collid;
     Lazy::tstring m_uuid;

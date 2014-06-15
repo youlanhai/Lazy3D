@@ -69,7 +69,6 @@ CApp::~CApp()
 
 void CApp::releaseSingleton()
 {
-    cTerrainRes::instance()->release();
     cSoundMgr::instance()->release();
 
 

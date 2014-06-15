@@ -393,43 +393,39 @@ void TerrainChunk::doLoading()
 
     updateVertices();
 
-    if (MapConfig::UseNewFormat)
+    Lazy::tstring path = Lazy::getFilePath(TerrainMap::instance()->getMapName());
+
+    Lazy::tstring name;
+    formatString(name, _T("%4.4d%4.4d.lzd"), m_rID, m_cID);
+    path += name;
+
+    debugMessage(_T("TRACE: load node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
+
+    Lazy::LZDataPtr root = Lazy::openSection(path);
+    if (!root)
     {
-        Lazy::tstring path = Lazy::getFilePath(TerrainMap::instance()->getMapName());
-
-        Lazy::tstring name;
-        formatString(name, _T("%4.4d%4.4d.lzd"), m_rID, m_cID);
-        path += name;
-
-        debugMessage(_T("TRACE: load node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
-
-        Lazy::LZDataPtr root = Lazy::openSection(path);
-        if (!root)
-        {
-            LOG_ERROR(L"Load failed! node(%d %d) path='%s'", m_rID, m_cID, path.c_str());
-            return;
-        }
-
-        m_objPool.clear();
-        Lazy::LZDataPtr itemsDatas = root->read(_T("items"));
-        if (itemsDatas)
-        {
-            for (Lazy::LZDataPtr ptr : (*itemsDatas))
-            {
-                if (!m_loadRunning) return;
-
-                if (ptr->tag() == L"item" && ptr->countChildren() > 0)
-                {
-                    TerrainItemPtr item = new TerrainItem();
-                    item->load(ptr);
-                    addItem(item);
-                }
-            }
-        }
-
-        debugMessage(_T("TRACE: finish load node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
+        LOG_ERROR(L"Load failed! node(%d %d) path='%s'", m_rID, m_cID, path.c_str());
+        return;
     }
 
+    m_objPool.clear();
+    Lazy::LZDataPtr itemsDatas = root->read(_T("items"));
+    if (itemsDatas)
+    {
+        for (Lazy::LZDataPtr ptr : (*itemsDatas))
+        {
+            if (!m_loadRunning) return;
+
+            if (ptr->tag() == L"item" && ptr->countChildren() > 0)
+            {
+                TerrainItemPtr item = new TerrainItem();
+                item->load(ptr);
+                addItem(item);
+            }
+        }
+    }
+
+    debugMessage(_T("TRACE: finish load node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
 }
 
 ///场景加载完毕

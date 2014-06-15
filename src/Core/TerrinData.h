@@ -22,9 +22,6 @@ namespace MapConfig
     ///显示所有物体AABB。
     extern bool ShowAllItemAABB;
 
-    ///使用新格式
-    extern bool UseNewFormat;
-
     ///使用多线程。注意：如果需要存贮地形数据，必须禁用多线程加载。
     extern bool UseMultiThread;
 

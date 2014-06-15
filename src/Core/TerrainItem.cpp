@@ -8,36 +8,10 @@
 #include "Entity.h"
 #include "CursorCamera.h"
 #include "TerrinMap.h"
-#include "..\Physics\Physics.h"
-#include "..\Physics\LazyConllision.h"
+#include "../Physics/Physics.h"
+#include "../Physics/LazyConllision.h"
 #include "ModelFactory.h"
 
-
-template<typename T>
-struct TR_PredID
-{
-    explicit TR_PredID(int id) : m_id(id) {}
-
-    bool operator()(T& node)
-    {
-        return m_id == node.getID();
-    }
-private:
-    int m_id;
-};
-
-template<typename T>
-struct TR_PredID_Ptr
-{
-    explicit TR_PredID_Ptr(int id) : m_id(id) {}
-
-    bool operator()(const T& node)
-    {
-        return m_id == node->getID();
-    }
-private:
-    int m_id;
-};
 
 namespace Lazy
 {
@@ -58,112 +32,20 @@ namespace Lazy
             return;
         }
 
-#pragma warning(push)
-#pragma warning(disable: 4996)
         swscanf(str.c_str(), _T("%f %f %f"), &v.x, &v.y, &v.z);
-#pragma warning(pop)
     }
 
-}
-
-/*static*/ cTerrainRes* cTerrainRes::m_pInstance = NULL;
-
-cTerrainRes::cTerrainRes()
-{
-    m_cache.id = -1;
-}
-
-cTerrainRes::~cTerrainRes()
-{
-}
-
-bool cTerrainRes::load(const std::wstring & filename)
-{
-    std::wstring realPath;
-    if (!Lazy::getfs()->getRealPath(realPath, filename)) return false;
-
-    std::string name;
-    Lazy::wcharToChar(name, realPath);
-    std::ifstream fin(name.c_str());
-
-    if (!fin.good()) return false;
-
-    int count;
-    fin>>count;
-    m_resPool.resize(count);
-    for (int i=0; i<count; ++i)
-    {
-        fin>>m_resPool[i];
-    }
-
-    return true;
-}
-
-int cTerrainRes::getType(int id)
-{
-    if (id != m_cache.id)
-    {
-        if (NULL == find(id))
-        {
-            return 0;
-        }
-    }
-    return m_cache.type;
-}
-
-const std::wstring & cTerrainRes::getPath(int id)
-{
-    if (id != m_cache.id)
-    {
-        if (NULL == find(id))
-        {
-            return Lazy::EmptyStr;
-        }
-    }
-    return m_cache.path;
-}
-
-TerrainResNode* cTerrainRes::find(int id)
-{
-    ResIterator it = std::find_if(
-        m_resPool.begin(), 
-        m_resPool.end(), 
-        TR_PredID<TerrainResNode>(id));
-    if (it == m_resPool.end())
-    {
-        return NULL;
-    }
-    m_cache = *it;
-    return &m_cache;
-}
-
-/*static*/ cTerrainRes* cTerrainRes::instance()
-{
-    if (NULL == m_pInstance)
-    {
-        m_pInstance = new cTerrainRes();
-    }
-    return m_pInstance;
-}
-
-/*static*/ void cTerrainRes::release()
-{
-    delete m_pInstance;
 }
 
 //////////////////////////////////////////////////////////////////////////
-static int g_id_allocator = 100000;
-
+///
+//////////////////////////////////////////////////////////////////////////
 TerrainItem::TerrainItem(void)
     : m_collid(true)
     , m_angle(0, 0, 0)
-    , m_modeID(0)
     , m_isRef(false)
     , m_refChunk(0)
 {
-
-    m_id = g_id_allocator++;
-    
     Lazy::generateGUID32(m_uuid);
     m_aabb.min.set(-10, -10, -10);
     m_aabb.max.set(10, 10, 10);
@@ -242,20 +124,6 @@ void TerrainItem::setModel(ModelPtr model)
         m_aabb.min.set(-10, -10, -10);
         m_aabb.max.set(10, 10, 10);
     }
-}
-
-void TerrainItem::setModelID(int id)
-{
-    m_modeID = id;
-
-    TerrainResNode* pNode = cTerrainRes::instance()->find(id);
-    if (NULL == pNode)
-    {
-        setModel(NULL);
-        return;
-    }
-
-    setModel(ModelFactory::loadModel(pNode->path, pNode->type));
 }
 
 void TerrainItem::addLookAngle(float angle)
@@ -377,35 +245,6 @@ bool TerrainItem::load(Lazy::LZDataPtr dataPtr)
 
     updateRotationAxis();
     return true;
-}
-
-std::ostream& operator<<(std::ostream & out, TerrainItem & node )
-{
-    out<<node.m_modeID<<" "
-        <<node.getScale()<<" "
-        <<node.m_vPos.x<<" "
-        <<node.m_vPos.y<<" "
-        <<node.m_vPos.z<<" "
-        <<node.m_angle.x<<" "
-        <<node.m_angle.y<<" "
-        <<node.m_angle.z<<" ";
-    return out;
-}
-
-std::istream& operator>>(std::istream & in, TerrainItem & node )
-{
-    float scale;
-    in>>node.m_modeID
-        >>scale
-        >>node.m_vPos.x
-        >>node.m_vPos.y
-        >>node.m_vPos.z
-        >>node.m_angle.x
-        >>node.m_angle.y
-        >>node.m_angle.z;
-    node.setModelID(node.m_modeID);
-    node.setScale(scale);
-    return in;
 }
 
 //获取真实的模型矩阵
