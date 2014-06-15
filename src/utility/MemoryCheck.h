@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "ZLock.h"
+
 namespace Lazy
 {
 
@@ -61,12 +63,16 @@ namespace Lazy
         template<typename T>
         void addObj(T *p)
         {
+            ZLockHolder holder(&m_lock);
+
             m_objects.insert(new ImpTypeProxy<T>(p));
         }
 
         template<typename T>
         void delObj(T *p)
         {
+            ZLockHolder holder(&m_lock);
+
             auto cmpFun = [p](ITypeProxy * v){ return v->get() == p; };
 
             auto it = std::find_if(m_objects.begin(), m_objects.end(), cmpFun);
@@ -84,6 +90,7 @@ namespace Lazy
         ~MemoryChecker();
 
         std::set<ITypeProxy*, ProxyLessCompare> m_objects;
+        ZCritical m_lock;
 
         static MemoryChecker * s_instance;
     };

@@ -49,11 +49,12 @@ namespace Lazy
     {
         std::map<std::string, int> counter;
 
+        m_lock.lock();
         for (auto it : m_objects)
         {
             ++counter[it->getTypeName()];
         }
-
+        m_lock.unlock();
 
         for (auto it : counter)
         {

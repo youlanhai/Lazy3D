@@ -7,8 +7,8 @@
 
 namespace
 {
-    const float CollisionError = 50.0f; //碰撞误差
-    const float HeightError = 10.0f; //贴地误差
+    const float CollisionError = 0.5f; //碰撞误差
+    const float HeightError = 0.1f; //贴地误差
 }
 
 CCursorCamera* g_pCamera_ = NULL;
@@ -26,7 +26,7 @@ CCursorCamera::CCursorCamera(CameraType type /*= THIRD*/)
     m_bMouseDown = false;
     m_bCurShow = true;
     m_draged = false;
-    m_height = 60.0f;
+    m_height = 0.60f;
     m_realDistToPlayer = m_fDistToPlayer;
 
     float angleX = D3DX_PI/getApp()->getWidth()*0.5f;

@@ -33,7 +33,7 @@ class AvatarPhysics(Lazy.Physics):
 			model.playAction("stand", True)
 
 		elif self.state == PS_MOVE:
-			model.playAction("walk1", True)
+			model.playAction("walk", True)
 
 ##################################################
 ###
@@ -50,10 +50,10 @@ class Avatar(Lazy.Entity):
 		print("Avatar.enterWorld")
 
 		self.model = Lazy.loadModel("model/jingtian/jingtian.x", 1)
-		self.model.scale = 0.02
+		self.model.scale = 0.05
 		self.model.yaw = 3.14
 		self.physics = AvatarPhysics()
-		self.speed = (2.0, 2.0, 2.0)
+		self.speed = (10.0, 10.0, 10.0)
 
 	def leaveWorld(self):
 		print("Avatar.leaveWorld")

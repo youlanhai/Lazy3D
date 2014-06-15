@@ -1,11 +1,11 @@
+#coding = utf-8
+
 vrows       = 257
 vcols       = 257
-squareSize  = 1
-heightScale = 1.0f
+squareSize  = 2.0
+heightScale = 1.0
 mapName     = map/test/height.raw
-object      = map/test/obj.dat
-resource    = map/res.dat
 texture     = map/f.jpg
 useOneTex   = true
 searchData  = waypoint/test
-onGround    = false
+onGround    = true
