@@ -522,6 +522,26 @@ namespace Lzpy
         return text;
     }
 
+    std::string object_base::repr_a()
+    {
+        if (is_null()) return "null";
+
+        object pyStr = new_reference(PyObject_Repr(m_ptr));
+        std::string text;
+        parse_object(text, pyStr);
+        return text;
+    }
+
+    std::wstring object_base::repr_u()
+    {
+        if (is_null()) return _T("null");
+
+        object pyStr = new_reference(PyObject_Repr(m_ptr));
+        std::wstring text;
+        parse_object(text, pyStr);
+        return text;
+    }
+
     void object_base::print()
     {
         Lazy::tstring text = repr();

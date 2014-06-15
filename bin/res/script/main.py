@@ -18,6 +18,11 @@ def init() :
 
 		import guimgr
 		share.gui = guimgr.guimgr()
+
+		import Lazy
+		from avatar import Avatar
+		playerID = Lazy.createEntity(Avatar)
+		Lazy.setPlayer(Lazy.entity(playerID))
 		
 	except:
 		print(traceback.print_exc())

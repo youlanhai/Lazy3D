@@ -106,12 +106,21 @@ namespace Lzpy
         }
 
         template<typename class_type>
-        bool has_instance(PyObject * p, bool set_error = false)
+        bool has_instance(PyObject *p, bool set_error = false)
         {
-            bool ret(PyObject_IsInstance(p, (PyObject*) py_type<class_type>()) != 0);
+            PyTypeObject * pType = py_type<class_type>();
+            bool ret(PyObject_IsInstance(p, (PyObject*) pType) != 0);
 
             if (!ret && set_error)
-                PyErr_Format(PyExc_TypeError, "Type %s needed.", typeid(class_type).name());
+            {
+                std::string desc = object_base(p).repr_a();
+
+                std::string msg;
+                Lazy::formatStringA(msg, "Type %s needed, but %s was given.", typeid(class_type).name(), desc.c_str());
+
+                PyErr_SetString(PyExc_TypeError, msg.c_str());
+                Lazy::debugMessageA("Script Error - has_instance: ", msg.c_str());
+            }
 
             return ret;
         }
@@ -121,8 +130,16 @@ namespace Lzpy
         {
             bool ret(PyObject_IsSubclass(p, (PyObject*) py_type<class_type>()) != 0);
 
-            if (set_error)
-                PyErr_Format(PyExc_TypeError, "Type %s needed.", typeid(class_type).name());
+            if (!ret && set_error)
+            {
+                std::string desc = object_base(p).repr_a();
+
+                std::string msg;
+                Lazy::formatStringA(msg, "Type %s needed, but %s was given.", typeid(class_type).name(), desc.c_str());
+
+                PyErr_SetString(PyExc_TypeError, msg.c_str());
+                Lazy::debugMessageA("Script Error - has_sub_class: ", msg.c_str());
+            }
 
             return ret;
         }
@@ -278,3 +295,18 @@ namespace Lzpy
     };
 
 }
+
+inline bool _check_instance(const char * desc, const char * func, const char * file, int line)
+{
+    ::Lazy::debugMessageA("Script Error: %s, func: %s, line: %d, file: %s.",
+        desc, func, line, file);
+    return false;
+}
+
+#define CHECK_INSTANCE(CLASS, INSTANCE) \
+    (::Lzpy::helper::has_instance<CLASS>(INSTANCE, true) || \
+    _check_instance("CHECK_INSTANCE(" #CLASS ", " #INSTANCE ")", __FUNCTION__, __FILE__, __LINE__))
+
+#define CHECK_SUBCLASS(CLASS, SUBCLASS) \
+    (::Lzpy::helper::has_sub_class<CLASS>(SUBCLASS, true) || \
+    _check_instance("CHECK_SUBCLASS(" #CLASS ", " #SUBCLASS ")", __FUNCTION__, __FILE__, __LINE__))

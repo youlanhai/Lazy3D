@@ -124,7 +124,7 @@ namespace Lzpy
 
     bool LzpyControl::addChild(object_base child)
     {
-        if (!helper::has_instance<LzpyControl>(child.get(), true)) return false;
+        if (!CHECK_INSTANCE(LzpyControl, child.get())) return false;
 
         LzpyControl *p = child.cast<LzpyControl>();
         m_control->addChild(p->m_control.get());
@@ -134,7 +134,7 @@ namespace Lzpy
 
     bool LzpyControl::delChild(object_base child)
     {
-        if (!helper::has_instance<LzpyControl>(child.get(), true)) return false;
+        if (!CHECK_INSTANCE(LzpyControl, child.get())) return false;
 
         LzpyControl *p = child.cast<LzpyControl>();
         m_control->delChild(p->m_control.get());
@@ -150,9 +150,8 @@ namespace Lzpy
         if (parent == Py_None)
             parent = nullptr;
 
-        if (parent && !helper::has_instance<LzpyControl>(parent))
+        if (parent && !CHECK_INSTANCE(LzpyControl, parent))
         {
-            PyErr_SetString(PyExc_TypeError, "Parent must be type of lui!");
             return false;
         }
 

@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-struct I3DObject;
+class I3DObject;
 
 /** 鼠标拾取*/
 class LZDLL_API cPick : public IBase

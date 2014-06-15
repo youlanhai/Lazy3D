@@ -3,6 +3,7 @@
 #ifndef LAZY_PY_WRAPPER_H
 #define LAZY_PY_WRAPPER_H
 
+#include "LzpyObject.h"
 #include "LzpyTuple.h"
 #include "LzpyStr.h"
 #include "LzpyList.h"

@@ -2,7 +2,7 @@
 
 #include "CameraBase.h"
 
-struct I3DObject;
+class I3DObject;
 
 class LZDLL_API CCamera : public CameraBase
 {

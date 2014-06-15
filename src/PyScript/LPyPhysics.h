@@ -1,5 +1,9 @@
 #pragma once
 
+#include "../Math/Math.h"
+#include "../Physics/Physics.h"
+#include "../Lzpy/Lzpy.h"
+
 namespace Lzpy
 {
     class PyVector3 : public PyBase

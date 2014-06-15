@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Physics/Physics.h"
+#include "../Core/Entity.h"
 #include "LPyPhysics.h"
 
 namespace Lzpy
@@ -108,8 +108,6 @@ namespace Lzpy
         LZPY_DEF_METHOD_1(moveTo);
         LZPY_DEF_METHOD_1(moveToEntity);
         LZPY_DEF_METHOD_0(breakAutoMove);
-
-        void setSource(object source);
 
         RefPtr<EntityPhysics>   m_physics;
         object_ptr<PyEntity>    m_source;

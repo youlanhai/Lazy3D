@@ -47,7 +47,7 @@ namespace Lzpy
         {
 
         }
-        else if (helper::has_instance<PyEntity>(v.get(), true))
+        else if (CHECK_INSTANCE(PyEntity, v.get()))
         {
             m_source = v;
             m_sky->setSource(m_source->m_entity.get());
@@ -111,7 +111,7 @@ namespace Lzpy
         {
 
         }
-        else if (helper::has_instance<PyEntity>(v.get(), true))
+        else if (CHECK_INSTANCE(PyEntity, v.get()))
         {
             m_source = v;
             m_topboard->setSource(m_source->m_entity.get());

@@ -191,7 +191,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, moveToEntity)
     {
-        if (!helper::has_instance<PyEntity>(value.get(), true))
+        if (!CHECK_INSTANCE(PyEntity, value.get()))
             return null_object;
 
         PyEntity *pEnt = value.cast<PyEntity>();
@@ -204,20 +204,6 @@ namespace Lzpy
     {
         m_physics->breakAutoMove();
         return none_object;
-    }
-
-    void PyEntityPhysics::setSource(object source)
-    {
-        if (source.is_none())
-        {
-            m_source = source;
-            m_physics->setSource(nullptr);
-        }
-        else if (helper::has_instance<PyEntity>(source.get(), true))
-        {
-            m_source = source;
-            m_physics->setSource(m_source->m_entity.get());
-        }
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -266,12 +252,6 @@ namespace Lzpy
     LZPY_CLASS_END();
 
 
-    bool PyEntity_Check(PyObject *value, bool setError/* = true*/)
-    {
-        return helper::has_instance<PyEntity>(value, setError);
-    }
-
-
     PyEntity::PyEntity()
     {
         m_entity = new Entity(this);
@@ -312,7 +292,7 @@ namespace Lzpy
             m_model = model;
             m_entity->setModel(nullptr);
         }
-        else if (helper::has_instance<PyModel>(model.get(), true))
+        else if (CHECK_INSTANCE(PyModel, model.get()))
         {
             m_model = model;
             m_entity->setModel(model.cast<PyModel>()->m_model);
@@ -326,7 +306,9 @@ namespace Lzpy
 
         if (m_physics)
         {
-            m_physics->setSource(null_object);
+            m_physics.call_method_quiet("onActive", false);
+
+            m_physics->m_source = none_object;
             m_physics = none_object;
             m_entity->setPhysics(nullptr);
         }
@@ -335,11 +317,13 @@ namespace Lzpy
         {
 
         }
-        else if (helper::has_instance<PyEntityPhysics>(physics.get(), true))
+        else if (CHECK_INSTANCE(PyEntityPhysics, physics.get()))
         {
             m_physics = physics;
-            m_physics->setSource(object(this));
+            m_physics->m_source = object(this);
             m_entity->setPhysics(m_physics->m_physics);
+
+            m_physics.call_method_quiet("onActive", true);
         }
     }
 
@@ -403,7 +387,7 @@ namespace Lzpy
 
     bool PyEntityMgr::addEntity(object entity)
     {
-        if (!helper::has_instance<PyEntity>(entity.get(), true))
+        if (!CHECK_INSTANCE(PyEntity, entity.get()))
             return false;
 
         PyEntity *pEnt = entity.cast<PyEntity>();
@@ -416,7 +400,7 @@ namespace Lzpy
 
     bool PyEntityMgr::destroyEntity(object entity)
     {
-        if (!helper::has_instance<PyEntity>(entity.get(), true))
+        if (!CHECK_INSTANCE(PyEntity, entity.get()))
             return false;
 
         entity.call_method_quiet("leaveWorld");
@@ -455,7 +439,7 @@ namespace Lzpy
         if (!PyArg_ParseTuple(arg, "O", &pClass))
             return NULL;
 
-        if (!helper::has_sub_class<PyEntity>(pClass, true))
+        if (!CHECK_SUBCLASS(PyEntity, pClass))
             return NULL;
 
         //实例化对象
@@ -498,18 +482,21 @@ namespace Lzpy
         if (s_pPlayer == value)
             Py_RETURN_NONE;
 
-        if (value != Py_None && !helper::has_instance<PyEntity>(value, true))
-            return NULL;
-
-        Py_DecRef(s_pPlayer);
-        s_pPlayer = (PyEntity*)value;
-        Py_IncRef(s_pPlayer);
-
         iEntity *player = nullptr;
-        if (s_pPlayer != Py_None && s_pPlayer->m_entity)
+        if (value == Py_None)
         {
-            player = s_pPlayer->m_entity.get();
         }
+        else if (CHECK_INSTANCE(PyEntity, value))
+        {
+            player = ((PyEntity*) value)->m_entity.get();
+        }
+        else
+        {
+            return NULL;
+        }
+
+        xdecref(s_pPlayer);
+        s_pPlayer = (PyEntity*) xincref(value);
 
         EntityMgr::instance()->setPlayer(player);
         TerrainMap::instance()->setSource(player);
@@ -552,7 +539,7 @@ namespace Lzpy
     {
         LZPY_REGISTER_CLASS(Model, PyModel);
         LZPY_REGISTER_CLASS(Entity, PyEntity);
-        LZPY_REGISTER_CLASS(EntityPhysics, PyEntityPhysics);
+        LZPY_REGISTER_CLASS(Physics, PyEntityPhysics);
         LZPY_REGISTER_CLASS(EntityMgr, PyEntityMgr);
 
         LZPY_FUN_1(entity);

@@ -153,6 +153,8 @@ namespace Lzpy
         bool setattr(const char *attr, object value);
         bool delattr(const char *attr);
         Lazy::tstring repr();
+        std::string repr_a();
+        std::wstring repr_u();
         void print();
 
         object call_python();

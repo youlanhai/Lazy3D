@@ -66,7 +66,7 @@ namespace Lzpy
         {
             m_map->setSource(nullptr);
         }
-        else if (helper::has_instance<PyEntity>(value.get(), true))
+        else if (CHECK_INSTANCE(PyEntity, value.get()))
         {
             m_map->setSource(value.cast<PyEntity>()->m_entity.get());
         }

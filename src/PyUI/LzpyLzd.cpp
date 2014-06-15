@@ -15,7 +15,7 @@ namespace Lzpy
 
     bool parse_object(LZDataPtr & ptr, object o)
     {
-        if (!helper::has_instance<PyLazyData>(o.get(), true)) return false;
+        if (!CHECK_INSTANCE(PyLazyData, o.get())) return false;
         ptr = (o.cast<PyLazyData>())->m_data;
         return true;
     }
@@ -121,7 +121,7 @@ namespace Lzpy
         PyLazyData *child;
         if (!PyArg_ParseTuple(arg.get(), "O", &child)) return null_object;
 
-        if (!helper::has_instance<PyLazyData>(child, true)) return null_object;
+        if (!CHECK_INSTANCE(PyLazyData, child)) return null_object;
 
         m_data->addChild(child->m_data);
         return none_object;
@@ -363,7 +363,7 @@ namespace Lzpy
         wchar_t *path;
         if (!PyArg_ParseTuple(arg, "Ou", &pData, &path)) return nullptr;
 
-        if (!helper::has_instance<PyLazyData>(pData, true)) return nullptr;
+        if (!CHECK_INSTANCE(PyLazyData, pData)) return nullptr;
 
         LZDataPtr ptr = pData->m_data;
         if (!ptr) Py_RETURN_FALSE;

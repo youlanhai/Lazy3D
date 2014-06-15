@@ -4,7 +4,9 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-struct LZDLL_API I3DObject : public IBase, public IRenderObj
+class LZDLL_API I3DObject :
+    public IBase,
+    public IRenderObj
 {
 public:
 	I3DObject(void);

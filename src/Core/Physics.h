@@ -22,7 +22,7 @@ enum PHYSICS_STATE
     PS_FORCE_DWORD = 0x7fffffff
 };
 
-struct I3DObject;
+class I3DObject;
 
 /** 物理类*/
 class LZDLL_API iPhysics : public IBase, public IRenderObj

@@ -6,8 +6,8 @@ namespace Lzpy
 
     PyVector3 * PyVector3_add(PyVector3 * a, PyVector3 * b)
     {
-        if (!helper::has_instance<PyVector3>(a, true)) return nullptr;
-        if (!helper::has_instance<PyVector3>(b, true)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, a)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, b)) return nullptr;
 
         PyVector3 * c = helper::new_instance_ex<PyVector3>();
         c->m_vector = a->m_vector + b->m_vector;
@@ -16,8 +16,8 @@ namespace Lzpy
 
     PyVector3 * PyVector3_sub(PyVector3 * a, PyVector3 * b)
     {
-        if (!helper::has_instance<PyVector3>(a, true)) return nullptr;
-        if (!helper::has_instance<PyVector3>(b, true)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, a)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, b)) return nullptr;
 
         PyVector3 * c = helper::new_instance_ex<PyVector3>();
         c->m_vector = a->m_vector - b->m_vector;
@@ -26,7 +26,7 @@ namespace Lzpy
 
     PyVector3 * PyVector3_mutiply(PyVector3 * a, PyObject * b)
     {
-        if (!helper::has_instance<PyVector3>(a, true)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, a)) return nullptr;
 
         float v = (float)PyFloat_AsDouble(b);
 
@@ -37,7 +37,7 @@ namespace Lzpy
 
     PyVector3 * PyVector3_div(PyVector3 * a, PyObject * b)
     {
-        if (!helper::has_instance<PyVector3>(a, true)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, a)) return nullptr;
 
         float v = (float) PyFloat_AsDouble(b);
         if (v == 0.0f)
@@ -53,7 +53,7 @@ namespace Lzpy
 
     PyVector3 * PyVector3_negative(PyVector3 * a)
     {
-        if (!helper::has_instance<PyVector3>(a, true)) return nullptr;
+        if (!CHECK_INSTANCE(PyVector3, a)) return nullptr;
 
         PyVector3 * c = helper::new_instance_ex<PyVector3>();
         c->m_vector = a->m_vector;
