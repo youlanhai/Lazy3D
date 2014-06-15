@@ -1,8 +1,6 @@
 ﻿#pragma once
 
-#include "TerrinData.h"
 #include "RenderTask.h"
-#include "TerrainItem.h"
 #include "TerrainChunk.h"
 #include "../Physics/QuadTree.h"
 
