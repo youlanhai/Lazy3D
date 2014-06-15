@@ -1,4 +1,5 @@
 ﻿//Game.cpp
+#include "resource.h"
 #include "Game.h"
 #include "Render/RenderDevice.h"
 #include "Font/Font.h"
@@ -150,8 +151,8 @@ private:
 /*注册窗口类消息。请实现该消息来修改窗口风格。*/
 void CGame::onRegisterClass(WNDCLASSEX *pwc)
 {
-    //pwc->hIcon = LoadIcon(m_hInstance,MAKEINTRESOURCE(IDI_LZ));
-    //pwc->hIconSm = pwc->hIcon;
+    pwc->hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_LAZY));
+    pwc->hIconSm = pwc->hIcon;
 }
 
 /*创建设备消息。实现该方法来修改设备。*/

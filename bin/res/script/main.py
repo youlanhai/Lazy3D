@@ -24,6 +24,8 @@ def init() :
 		playerID = Lazy.createEntity(Avatar)
 		Lazy.setPlayer(Lazy.entity(playerID))
 		
+		Lazy.map().loadMap("map/test/map.lzd")
+
 	except:
 		print(traceback.print_exc())
 		
