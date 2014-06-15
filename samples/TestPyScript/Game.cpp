@@ -257,7 +257,8 @@ bool CGame::init(void)
 
     TestForm *pForm = new TestForm();
     pForm->create(1, L"gui/ui/goods.bmp", 500, 0);
-    pForm->setSize(300, 200);
+    pForm->setSize(200, 300);
+    pForm->show(false);
     m_pGUIMgr->addChildManage(pForm);
 
 
@@ -268,7 +269,7 @@ bool CGame::init(void)
     m_pCamera->setSpeed(2.0f);
     m_pCamera->setDistRange(2.0f, 10.0f);
     m_pCamera->setNearFar(1.0f, 10000.0f);
-    m_pCamera->setHeight(1.5f);
+    m_pCamera->setHeight(1.8f);
 	
 	m_pFPS = new cFpsRender();
 	m_pFPS->init();

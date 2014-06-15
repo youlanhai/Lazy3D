@@ -2,7 +2,7 @@
 
 vrows       = 257
 vcols       = 257
-squareSize  = 2.0
+squareSize  = 1.0
 heightScale = 1.0
 mapName     = map/test/height.raw
 texture     = map/f.jpg

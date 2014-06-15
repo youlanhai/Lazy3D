@@ -8,7 +8,7 @@
 namespace
 {
     const float CollisionError = 0.5f; //碰撞误差
-    const float HeightError = 0.1f; //贴地误差
+    const float HeightError = 0.5f; //贴地误差
 }
 
 CCursorCamera* g_pCamera_ = NULL;
@@ -26,7 +26,7 @@ CCursorCamera::CCursorCamera(CameraType type /*= THIRD*/)
     m_bMouseDown = false;
     m_bCurShow = true;
     m_draged = false;
-    m_height = 0.60f;
+    m_height = 1.60f;
     m_realDistToPlayer = m_fDistToPlayer;
 
     float angleX = D3DX_PI/getApp()->getWidth()*0.5f;
@@ -71,7 +71,7 @@ bool CCursorCamera::handleEvent(const Lazy::SEvent & event)
         }
         else if (event.mouseEvent.event == Lazy::EME_MOUSE_WHEEL)
         {
-            float z = event.mouseEvent.wheel;
+            float z = event.mouseEvent.wheel * 0.5f;
 
             if (NULL == m_pSource)
             {
@@ -87,14 +87,7 @@ bool CCursorCamera::handleEvent(const Lazy::SEvent & event)
             else
             {
                 float dt = (m_distMax - m_distMin) * z;
-                if (z < 0.0f)
-                {
-                    m_fDistToPlayer += dt;
-                }
-                else if (z > 0.0f)
-                {
-                    m_fDistToPlayer -= dt;
-                }
+                m_fDistToPlayer -= dt;
 
                 correctDist();
             }

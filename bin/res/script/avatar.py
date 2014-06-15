@@ -24,7 +24,7 @@ class AvatarPhysics(Lazy.Physics):
 		print("AvatarPhysics.onActive", active)
 
 	def onStateChange(self, old):
-		print("AvatarPhysics.onStateChange", self.state, old)
+		#print("AvatarPhysics.onStateChange", self.state, old)
 		model = self.source.model
 		if model is None:
 			return
@@ -32,7 +32,7 @@ class AvatarPhysics(Lazy.Physics):
 		if self.state == PS_FREE:
 			model.playAction("stand", True)
 
-		elif self.state == PS_MOVE:
+		elif self.state in (PS_MOVE, PS_JUMP):
 			model.playAction("walk", True)
 
 ##################################################
@@ -50,10 +50,10 @@ class Avatar(Lazy.Entity):
 		print("Avatar.enterWorld")
 
 		self.model = Lazy.loadModel("model/jingtian/jingtian.x", 1)
-		self.model.scale = 0.05
+		self.model.scale = 0.02
 		self.model.yaw = 3.14
 		self.physics = AvatarPhysics()
-		self.speed = (10.0, 10.0, 10.0)
+		self.speed = (5.0, 5.0, 5.0)
 
 	def leaveWorld(self):
 		print("Avatar.leaveWorld")

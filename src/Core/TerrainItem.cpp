@@ -359,8 +359,8 @@ bool TerrainItem::load(Lazy::LZDataPtr dataPtr)
     Lazy::readVector3(dataPtr, _T("scale"), m_vScale);
     Lazy::readVector3(dataPtr, _T("pos"), m_vPos);
     Lazy::readVector3(dataPtr, _T("angle"), m_angle);
-    Lazy::readVector3(dataPtr, _T("aabb/min"), m_aabb.min);
-    Lazy::readVector3(dataPtr, _T("aabb/max"), m_aabb.max);
+    //Lazy::readVector3(dataPtr, _T("aabb/min"), m_aabb.min);
+    //Lazy::readVector3(dataPtr, _T("aabb/max"), m_aabb.max);
 
     Lazy::tstring temp;
     temp = dataPtr->readString(_T("path"));
@@ -368,6 +368,11 @@ bool TerrainItem::load(Lazy::LZDataPtr dataPtr)
     {
         int type = dataPtr->readInt(_T("type"));
         setModel(ModelFactory::loadModel(temp, type));
+    }
+
+    if (dataPtr->readBool(L"drop", false))
+    {
+        m_vPos.y = TerrainMap::instance()->getHeight(m_vPos.x, m_vPos.z);
     }
 
     updateRotationAxis();

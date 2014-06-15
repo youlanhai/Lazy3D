@@ -8,19 +8,19 @@
 #include "Physics.h"
 #include "Collision.h"
 
-float g_maxDistToNpc = 300.0f;
+float g_maxDistToNpc = 20.0f;
 bool g_drawCollision = false;
 
-const float ModelWidth  = 40.0f;
-const float ModelHeight = 80.0f;
-const float ModelDepth  = 30.0f;
-const float ClimbHeight = 20.0f;
+const float ModelWidth  = 0.40f;
+const float ModelHeight = 1.80f;
+const float ModelDepth  = 0.30f;
+const float ClimbHeight = 0.30f;
 
-const float JumpUpSpeed = 800.0f;
-const float JumpDownSpeed = 400.0f;
+const float JumpUpSpeed = 10.0f;
+const float JumpDownSpeed = 5.0f;
 const float JumpDuration = 0.4f;
 
-const float heighError = 5.0f; //高度误差值
+const float heighError = 0.5f; //高度误差值
 
 const Physics::CollisionConfig CConfig(ModelWidth, ModelHeight, ModelDepth, ClimbHeight);
 

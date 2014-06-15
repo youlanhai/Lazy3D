@@ -21,10 +21,18 @@ def init() :
 
 		import Lazy
 		from avatar import Avatar
+
 		playerID = Lazy.createEntity(Avatar)
-		Lazy.setPlayer(Lazy.entity(playerID))
+		player = Lazy.entity(playerID)
+		Lazy.setPlayer(player)
 		
 		Lazy.map().loadMap("map/test/map.lzd")
+
+		sky = Lazy.getSkyBox()
+		size = 200
+		sky.setRange((-size, -size, -size), (size, size, size))
+		sky.source = player
+		sky.image = "gui/sky/01/%d.jpg"
 
 	except:
 		print(traceback.print_exc())
@@ -55,6 +63,6 @@ def onClientSize(w, h):
 	ui.onClientSize(w, h)
 
 def onKeyEvent(isDown, key):
-	print("onKeyEvent", isDown, key)
+	#print("onKeyEvent", isDown, key)
 	
 	return share.gui.onKeyEvent(isDown, key)
