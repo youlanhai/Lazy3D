@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 namespace Lazy
 {
     template<typename T>
@@ -18,7 +20,7 @@ namespace Lazy
 
         static bool initInstance()
         {
-            IF_ASSERT(s_pInstance == nullptr)
+            if(s_pInstance == nullptr)
             {
                 s_pInstance = new T();
                 return true;
@@ -28,7 +30,7 @@ namespace Lazy
 
         static void finiInstance()
         {
-            IF_ASSERT(s_pInstance != nullptr)
+            if(s_pInstance != nullptr)
             {
                 delete s_pInstance;
                 s_pInstance = nullptr;
@@ -50,24 +52,7 @@ namespace Lazy
         static T * s_pInstance;
     };
 
-#define DECLARE_SINGLETON(CLASS) \
+#define IMPLEMENT_SINGLETON(CLASS) \
     CLASS * ::Lazy::Singleton<CLASS>::s_pInstance = nullptr
-
-    template<typename T>
-    class SimpleSingleton
-    {
-    public:
-        SimpleSingleton()
-        {}
-
-        ~SimpleSingleton()
-        {}
-
-        static T * instance()
-        {
-            static T s;
-            return &s;
-        }
-    };
 
 }// end namespace Lazy

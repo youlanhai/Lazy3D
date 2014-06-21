@@ -14,15 +14,10 @@ public:
 };
 
 
-typedef RefPtr<class cResFont> ResFontPtr;
-
 class LZDLL_API cResMgr : public cRenderResMgr
 {
 public:
     
-    ResFontPtr getFont(const std::wstring & filename, bool useDefault = true);
-    LPD3DXFONT getFontEx(const std::wstring & filename, bool useDefault = true);
-
     cResMgr();
 };
 

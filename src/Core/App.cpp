@@ -56,7 +56,7 @@ CApp::CApp()
 {
     g_pApp = this;
 
-    Lazy::MemoryPool::init();
+    createSingleton();
 }
 
 CApp::~CApp()
@@ -67,6 +67,12 @@ CApp::~CApp()
     SafeRelease(m_pd3dDevice);
 }
 
+void CApp::createSingleton()
+{
+    Lazy::MemoryChecker::initInstance();
+    Lazy::MemoryPool::init();
+}
+
 void CApp::releaseSingleton()
 {
     cSoundMgr::instance()->release();
@@ -74,7 +80,7 @@ void CApp::releaseSingleton()
 
     //////////////////////////////////////////////////////////////////////////
     Lazy::MemoryPool::fini();
-    Lazy::MemoryChecker::deleteInstance();
+    Lazy::MemoryChecker::finiInstance();
 }
 
 bool CApp::create(HINSTANCE hInstance, const std::wstring & caption,
@@ -295,8 +301,6 @@ bool CApp::init(void)
     m_pResMgr = new cResMgr();
     m_pResMgr->setFactory(new cResFactory());
 
-    m_pTextTextureFactory = new cTextTextureFactory(m_pd3dDevice);
-
     m_pKeyboard = new CKeyboard();
     addUpdater(m_pKeyboard.get());
 
@@ -327,7 +331,6 @@ void CApp::render(void)
 void CApp::clear(void)
 {
     m_pSkyBox = NULL;
-    m_pTextTextureFactory = NULL;
     m_pRenderTaskMgr = NULL;
     m_pUpdateTaskMgr = NULL;
     m_pBillboardMgr = NULL;

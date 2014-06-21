@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "ZLock.h"
+#include "Singleton.h"
 
 namespace Lazy
 {
@@ -22,16 +23,6 @@ namespace Lazy
 
     protected:
         void *m_ptr;
-
-        friend struct ProxyLessCompare;
-    };
-
-    struct ProxyLessCompare
-    {
-        bool operator () (const ITypeProxy * a, const ITypeProxy * b) const
-        {
-            return a->m_ptr < b->m_ptr;
-        }
     };
 
     template<typename T>
@@ -53,18 +44,18 @@ namespace Lazy
 
 
     //统计实例个数，以校验那些类型的对象出现内存泄漏
-    class MemoryChecker
+    class MemoryChecker :
+        public Singleton<MemoryChecker>
     {
-
     public:
-        static MemoryChecker * getInstance();
-        static void deleteInstance();
+
+        MemoryChecker();
+        ~MemoryChecker();
 
         template<typename T>
         void addObj(T *p)
         {
             ZLockHolder holder(&m_lock);
-
             m_objects.insert(new ImpTypeProxy<T>(p));
         }
 
@@ -73,12 +64,15 @@ namespace Lazy
         {
             ZLockHolder holder(&m_lock);
 
-            auto cmpFun = [p](ITypeProxy * v){ return v->get() == p; };
+            auto cmpFun = [p](ITypeProxy * v)->bool{ return v->get() == p; };
 
             auto it = std::find_if(m_objects.begin(), m_objects.end(), cmpFun);
             if (it != m_objects.end())
             {
+                ITypeProxy * p = *it;
                 m_objects.erase(it);
+
+                //delete p;
             }
         }
 
@@ -86,18 +80,19 @@ namespace Lazy
 
     private:
 
-        MemoryChecker();
-        ~MemoryChecker();
-
-        std::set<ITypeProxy*, ProxyLessCompare> m_objects;
+        std::set<ITypeProxy*> m_objects;
         ZCritical m_lock;
-
-        static MemoryChecker * s_instance;
     };
 
-#ifndef MEMORY_CHECK_CONS
-#   define MEMORY_CHECK_CONS(p)  ::Lazy::MemoryChecker::getInstance()->addObj(p)
-#   define MEMORY_CHECK_DEST(p)  ::Lazy::MemoryChecker::getInstance()->delObj(p)
+#ifdef XXXXXXXXXXXX
+#   define MEMORY_CHECK_CONS(p) \
+    if(::Lazy::MemoryChecker::hasInstance()) ::Lazy::MemoryChecker::instance()->addObj(p)
+
+#   define MEMORY_CHECK_DEST(p) \
+    if (::Lazy::MemoryChecker::hasInstance()) ::Lazy::MemoryChecker::instance()->delObj(p)
+#else
+#   define MEMORY_CHECK_CONS(p)
+#   define MEMORY_CHECK_DEST(p)
 #endif
 
 }//namespace Lazy

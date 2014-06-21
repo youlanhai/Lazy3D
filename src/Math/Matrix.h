@@ -4,6 +4,7 @@
 namespace Math
 {
     class Vector3;
+    class Quaternion;
 
     class Matrix4x4 : public D3DXMATRIX
     {
@@ -31,6 +32,7 @@ namespace Math
         void makeRatateZ(float angle);
         void makeRatateYawPitchRoll(float yaw, float pitch, float roll);
         void makeRatateAxis(const Vector3 & v, float angle);
+        void setRotationQuaternion(const Quaternion & q);
 
         void makeLookAt(const Vector3 & target, const Vector3 & position, const Vector3 & up);
 
@@ -106,5 +108,7 @@ namespace Math
 
 
     extern const Matrix4x4 matIdentity;
+
+    typedef Matrix4x4 Matrix;
 
 }//end namespace Math

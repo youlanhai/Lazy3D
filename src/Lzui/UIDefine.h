@@ -2,6 +2,14 @@
 
 #define LUI_EDITOR
 
+#include "../Render/Config.h"
+#include "../Render/RenderDevice.h"
+#include "../Render/Texture.h"
+#include "../Render/Effect.h"
+
+#include "../Font/Font.h"
+
+
 namespace Lazy
 {
 

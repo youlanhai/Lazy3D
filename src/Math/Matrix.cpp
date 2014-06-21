@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Matrix.h"
 #include "Vector.h"
+#include "Quaternion.h"
 
 namespace Math
 {
@@ -130,6 +131,11 @@ namespace Math
         _42 = -position.dot(V);
         _43 = -position.dot(N);
         _44 = 1.0f;
+    }
+
+    void Matrix4x4::setRotationQuaternion(const Quaternion & q)
+    {
+        D3DXMatrixRotationQuaternion(this, &q);
     }
 
     void Matrix4x4::getRow(int i, Vector3 & v) const

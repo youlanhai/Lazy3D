@@ -82,7 +82,6 @@
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pick.cpp" />
-    <ClCompile Include="font2d.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="RenderRes.cpp" />
@@ -128,7 +127,6 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Pick.h" />
-    <ClInclude Include="Font2D.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="RenderObj.h" />

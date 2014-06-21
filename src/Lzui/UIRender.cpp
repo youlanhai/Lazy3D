@@ -37,7 +37,7 @@ namespace Lazy
     int UIVertex::SIZE = sizeof(UIVertex);
     DWORD UIVertex::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
-    class SpiritBatcher : public SimpleSingleton<SpiritBatcher>
+    class SpiritBatcher : public Singleton<SpiritBatcher>
     {
         TexturePtr  m_texture;
         EffectPtr   m_shader;
@@ -140,7 +140,7 @@ namespace Lazy
             m_vertices.push_back(vertex);
         }
     };
-
+    IMPLEMENT_SINGLETON(SpiritBatcher);
 
 
 
@@ -154,11 +154,15 @@ namespace Lazy
         ZeroMemory(&s_rsCache, sizeof(s_rsCache));
 
         m_matWorldViewProj.makeIdentity();
+
+        SpiritBatcher::initInstance();
     }
 
     GUIRender::~GUIRender()
     {
         if (m_device) m_device->Release();
+
+        SpiritBatcher::finiInstance();
     }
 
     bool GUIRender::isClipEnable() const

@@ -14,7 +14,6 @@
 #include "Entity.h"
 
 #include "Face.h"
-#include "Font2D.h"
 #include "FPS.h"
 
 #include "Keyboard.h"

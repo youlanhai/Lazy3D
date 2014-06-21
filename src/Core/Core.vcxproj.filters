@@ -53,9 +53,6 @@
     <ClCompile Include="Pick.cpp">
       <Filter>physics</Filter>
     </ClCompile>
-    <ClCompile Include="font2d.cpp">
-      <Filter>res</Filter>
-    </ClCompile>
     <ClCompile Include="Light.cpp">
       <Filter>res</Filter>
     </ClCompile>
@@ -174,9 +171,6 @@
     </ClInclude>
     <ClInclude Include="Pick.h">
       <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Font2D.h">
-      <Filter>res</Filter>
     </ClInclude>
     <ClInclude Include="Light.h">
       <Filter>res</Filter>

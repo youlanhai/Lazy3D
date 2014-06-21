@@ -9,29 +9,7 @@ namespace Lazy
 
     /////////////////////////////////////////////////////////////////////////////
 
-
-    MemoryChecker * MemoryChecker::s_instance = nullptr;
-
-
-    /*static*/ MemoryChecker * MemoryChecker::getInstance()
-    {
-        if (s_instance == nullptr)
-        {
-            s_instance = new MemoryChecker();
-            LOG_INFO(L"MemoryChecker created.");
-        }
-        return s_instance;
-    }
-
-    /*static*/ void MemoryChecker::deleteInstance()
-    {
-        if (s_instance != nullptr)
-        {
-            delete s_instance;
-            s_instance = nullptr;
-            LOG_INFO(L"MemoryChecker deleted.");
-        }
-    }
+    IMPLEMENT_SINGLETON(MemoryChecker);
 
     MemoryChecker::MemoryChecker()
     {

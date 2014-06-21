@@ -9,7 +9,6 @@
 #include "PyUI/PyUI.h"
 
 //////////////////////////////////////////////////////////////////////////
-CGame g_game;
 RefPtr<Lzpy::ConsolePanel> g_pyConsole;
 
 const std::string Script = "main";
@@ -21,12 +20,18 @@ int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     Lazy::defaultCodePage = Lazy::CP::utf8;
     Lazy::getfs()->addResPath(L"res/");
 
+    
+    RefPtr<CGame> g_game = new CGame();
+
     INIT_LOG(L"test_pyscript.log");
 
-    if (g_game.create(hInstance, L"Lazy Test", 800, 600, false))
+    if (g_game->create(hInstance, L"Lazy Test", 800, 600, false))
     {
-        g_game.mainLoop();
+        g_game->mainLoop();
     }
+
+    g_game = nullptr;
+
     return 0;
 }
 
@@ -229,14 +234,18 @@ CGame::CGame()
 void CGame::clear()
 {
     LOG_INFO(L"Release resource start...");
+    Lazy::LoadingMgr::instance()->fini();
+
     finiPython();
 
-    Lazy::LoadingMgr::instance()->fini();
+    m_pGUIMgr->destroy();
+    m_pGUIMgr = nullptr;
 
     CApp::clear();
 
     WRITE_LOG(L"Release resource finished.");
 }
+
 CGame::~CGame()
 {
 }

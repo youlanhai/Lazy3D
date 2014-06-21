@@ -23,14 +23,15 @@ namespace Lazy
     {
         g_pFrame = this;
 
+        MemoryChecker::initInstance();
         MemoryPool::init();
     }
 
 
     SimpleFrame::~SimpleFrame(void)
     {
-        MemoryChecker::getInstance()->dumpAll();
         MemoryPool::fini();
+        MemoryChecker::finiInstance();
     }
 
     void SimpleFrame::clear()

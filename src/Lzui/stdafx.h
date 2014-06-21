@@ -15,16 +15,10 @@
 #include "../utility/Utility.h"
 #include "../Math/Math.h"
 
-#include "../Render/Config.h"
-#include "../Render/RenderDevice.h"
-#include "../Render/Texture.h"
-#include "../Render/Effect.h"
-
-#include "../Font/Font.h"
-
 #ifdef ENABLE_SCRIPT
 #include "../Lzpy/Lzpy.h"
 #endif
+
 
 #include "UIDefine.h"
 #include "UIControl.h"

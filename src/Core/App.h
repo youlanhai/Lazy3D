@@ -97,6 +97,9 @@ protected:
     /** 释放单例资源。*/
     virtual void releaseSingleton();
 
+    /** 创建单例对象*/
+    virtual void createSingleton();
+
 private:
 
     /**注册窗口类*/
@@ -216,6 +219,5 @@ protected:
     RenderTaskPtr           m_pBillboardMgr;
     RefPtr<CKeyboard>	    m_pKeyboard;
     bool                    m_bMsgHooked;
-    RefPtr<cTextTextureFactory> m_pTextTextureFactory;
     RefPtr<cSkyBox>         m_pSkyBox;
 };

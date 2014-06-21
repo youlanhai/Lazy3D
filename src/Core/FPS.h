@@ -1,13 +1,13 @@
-﻿/************************************************************************/
-/*FPS.h                                                            */
-/*帧频率计数器：获得游戏的帧刷新率fps。                                       */
-/************************************************************************/
-#pragma once
+﻿#pragma once
 
 #include "../utility/FPS.h"
 
 using Lazy::Fps;
 
+namespace Lazy
+{
+    class CLabel;
+}
 
 class LZDLL_API cFpsRender : public Fps
 {
@@ -16,4 +16,11 @@ public:
     ~cFpsRender();
     
     void render();
+
+    void show(bool show);
+    bool visible() const;
+    void toggle();
+
+private:
+    RefPtr<Lazy::CLabel> m_label;
 };
