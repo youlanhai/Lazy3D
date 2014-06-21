@@ -2,7 +2,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 
-namespace Math
+namespace Lazy
 {
     std::ostream & operator<<(std::ostream & out, const Vector2 & v)
     {
@@ -22,7 +22,8 @@ namespace Math
         do
         {
             in >> ch;
-        } while (ch != '(');
+        }
+        while (ch != '(');
 
         in >> v.x >> ch >> v.y >> ch >> v.z >> ch;
 
@@ -95,24 +96,24 @@ namespace Math
         return axis;
     }
 
-    void Vector3::applyMatrix(const Matrix4x4 & mat)
+    void Vector3::applyMatrix(const Matrix & mat)
     {
         D3DXVec3TransformCoord(this, this, &mat);
     }
 
-    void Vector3::applyNormalMatrix(const Matrix4x4 & mat)
+    void Vector3::applyNormalMatrix(const Matrix & mat)
     {
         D3DXVec3TransformNormal(this, this, &mat);
     }
 
-    void Vector3::applyMatrix(Vector3 & out, const Matrix4x4 & mat) const
+    void Vector3::applyMatrix(Vector3 & out, const Matrix & mat) const
     {
         D3DXVec3TransformCoord(&out, this, &mat);
     }
 
-    void Vector3::applyNormalMatrix(Vector3 & out, const Matrix4x4 & mat) const
+    void Vector3::applyNormalMatrix(Vector3 & out, const Matrix & mat) const
     {
         D3DXVec3TransformNormal(&out, this, &mat);
     }
 
-}//end namespace Math
+}//end namespace Lazy

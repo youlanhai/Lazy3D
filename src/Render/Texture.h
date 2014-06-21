@@ -22,7 +22,7 @@ namespace Lazy
         /** 获得资源类型*/
         virtual int getType(void) const override { return rt::texture; }
 
-        dx::Texture* getTexture(void){ return m_texture; }
+        dx::Texture* getTexture(void) { return m_texture; }
 
         uint32 getWidth() const { return m_width; }
         uint32 getHeight() const { return m_height; }
@@ -43,7 +43,7 @@ namespace Lazy
     class TextureMgr : public ResMgr<TextureMgr, TexturePtr>
     {
     public:
-        virtual int getType(){ return rt::texture; }
+        virtual int getType() { return rt::texture; }
 
         dx::Texture * getTexture(const std::wstring & name);
     };

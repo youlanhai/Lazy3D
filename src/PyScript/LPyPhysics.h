@@ -6,6 +6,8 @@
 
 namespace Lzpy
 {
+    using namespace Lazy;
+
     class PyVector3 : public PyBase
     {
         LZPY_DEF(PyVector3, PyBase);
@@ -18,11 +20,11 @@ namespace Lzpy
         LZPY_DEF_METHOD(set);
 
 
-        Math::Vector3 m_vector;
+        Vector3 m_vector;
     };
 
-    object build_object(const Math::Vector3 & v);
-    bool parse_object(Math::Vector3 & v, object o);
+    object build_object(const Vector3 & v);
+    bool parse_object(Vector3 & v, object o);
 
     void exportPyPhsicis(const char * module);
 }

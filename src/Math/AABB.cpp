@@ -2,7 +2,7 @@
 #include "AABB.h"
 #include "Triangle.h"
 
-namespace Math
+namespace Lazy
 {
 
     bool AABB::intersectsRay(const Vector3 & origin, const Vector3 & dir) const
@@ -77,7 +77,7 @@ namespace Math
                     int prevAxis = (axis + 2) % 3;
 
                     if (min[nextAxis] < ptOnPlane[nextAxis] && ptOnPlane[nextAxis] < max[nextAxis] &&
-                        min[prevAxis] < ptOnPlane[prevAxis] && ptOnPlane[prevAxis] < max[prevAxis])
+                            min[prevAxis] < ptOnPlane[prevAxis] && ptOnPlane[prevAxis] < max[prevAxis])
                     {
                         return true;
                     }
@@ -144,14 +144,14 @@ namespace Math
         }
     }
 
-    void AABB::applyMatrix(const Matrix4x4 & mat)
+    void AABB::applyMatrix(const Matrix & mat)
     {
         min.applyMatrix(mat);
         max.applyMatrix(mat);
         normalization();
     }
 
-    void AABB::applyMatrix(AABB & out, const Matrix4x4 & mat) const
+    void AABB::applyMatrix(AABB & out, const Matrix & mat) const
     {
         min.applyMatrix(out.min, mat);
         max.applyMatrix(out.max, mat);
@@ -198,4 +198,4 @@ namespace Math
         max.z = min2(max.z, aabb.max.z);
     }
 
-}//end namespace Math
+}//end namespace Lazy

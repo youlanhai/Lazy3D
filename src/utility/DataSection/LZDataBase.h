@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////////////////////////////////
-/* 
+/*
  * author: youlanhai
  * e-mail: you_lan_hai@foxmail.com
  * blog: http://blog.csdn.net/you_lan_hai
@@ -53,9 +53,9 @@ namespace Lazy
     {
     protected:
         LZDataBase(void);
-    
+
         explicit LZDataBase(const tstring & tag);
-    
+
         LZDataBase(const tstring & tag, const tstring & value_);
 
     public:
@@ -71,11 +71,11 @@ namespace Lazy
 
     public: //对自身的操作
 
-        void setTag(const tstring &tag){ m_tag = tag; }
+        void setTag(const tstring &tag) { m_tag = tag; }
         const tstring& tag() const { return m_tag; }
         const tchar* ctag() const { return m_tag.c_str(); }
 
-        void setValue(const tstring & v){ m_value = v; }
+        void setValue(const tstring & v) { m_value = v; }
         const tstring & value() const { return m_value; }
         const tchar* cvalue()const { return m_value.c_str(); }
 
@@ -103,31 +103,31 @@ namespace Lazy
 
         virtual bool loadFromBuffer(const tchar* buffer, int length) = 0;
 
-        virtual void print(tostream & out, int depth=0) = 0;
+        virtual void print(tostream & out, int depth = 0) = 0;
 
     public:
-        DataIterator begin(){ return m_children.begin(); }
+        DataIterator begin() { return m_children.begin(); }
         DataConstIterator begin()const { return m_children.begin();}
 
-        DataIterator end(){ return m_children.end(); }
+        DataIterator end() { return m_children.end(); }
         DataConstIterator end() const { return m_children.end(); }
 
         //获得子孙结点属性。支持a/b/c的形式。
         virtual LZDataPtr read(const tstring & tag);
 
-        virtual LZDataPtr write(const tstring & tag, tstring value_=_T(""));
+        virtual LZDataPtr write(const tstring & tag, tstring value_ = _T(""));
 
-        virtual const DataPool& children(void){ return m_children; }
+        virtual const DataPool& children(void) { return m_children; }
 
-        void clearChildren(){ m_children.clear(); }
+        void clearChildren() { m_children.clear(); }
 
-        virtual int countChildren(void){ return (int)m_children.size(); }
+        virtual int countChildren(void) { return (int)m_children.size(); }
 
-        virtual int addChild(LZDataPtr ptr){ m_children.push_back(ptr); return countChildren()-1;}
+        virtual int addChild(LZDataPtr ptr) { m_children.push_back(ptr); return countChildren() - 1;}
 
-        virtual LZDataPtr getChild(int index){ return m_children[index]; }
+        virtual LZDataPtr getChild(int index) { return m_children[index]; }
 
-        virtual int findChild(const tstring & name){ return findNextChild(-1, name); }
+        virtual int findChild(const tstring & name) { return findNextChild(-1, name); }
 
         virtual int findNextChild(int index, const tstring& name);
 

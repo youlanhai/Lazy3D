@@ -69,7 +69,7 @@ namespace Lzpy
     T parse_object(const object & o)
     {
         T v;
-        if (!parse_object(v, o)) 
+        if (!parse_object(v, o))
             throw(python_error("extract value failed!"));
         return v;
     }
@@ -142,7 +142,7 @@ namespace Lzpy
 
         inline PyObject *get() const {  return m_ptr; }
 
-        inline void addRef(){ Py_XINCREF(m_ptr); }
+        inline void addRef() { Py_XINCREF(m_ptr); }
 
         inline void delRef() { Py_XDECREF(m_ptr); }
 
@@ -185,7 +185,7 @@ namespace Lzpy
     const OBJECT & operator = (const OBJECT & v){ set_borrow(v.m_ptr); return *this; }      \
     const OBJECT & operator = (const object_base & v){ set_borrow(v.get()); return *this; } \
     const OBJECT & operator = (const new_reference & v){ set_new(v.get()); return *this; }  \
-
+ 
     class object : public object_base
     {
     public:

@@ -3,7 +3,7 @@
 #include "Line.h"
 #include "Triangle.h"
 
-namespace Math
+namespace Lazy
 {
     Plane::Plane(const Vector3 & n, const Vector3 & p)
         : normal(n)
@@ -95,4 +95,4 @@ namespace Math
         return true;
     }
 
-}//end namespace Math
+}//end namespace Lazy

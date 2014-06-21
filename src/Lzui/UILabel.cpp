@@ -155,7 +155,7 @@ namespace Lazy
     void CLabel::setColor(uint32 color)
     {
         IControl::setColor(color);
-        if (m_textSprite) 
+        if (m_textSprite)
             m_textSprite->setColor(color);
     }
 

@@ -26,8 +26,8 @@ namespace Lazy
     }
     bool CRect::isIntersect(const RECT * rc) const
     {
-        if (right<rc->left || left>rc->right
-            || bottom<rc->top || top>rc->bottom)
+        if (right < rc->left || left > rc->right
+                || bottom < rc->top || top > rc->bottom)
         {
             return false;
         }

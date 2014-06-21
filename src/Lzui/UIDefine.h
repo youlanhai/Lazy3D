@@ -15,7 +15,7 @@ namespace Lazy
 
     class IControl;
     typedef IControl* PControl;
-    
+
     typedef RefPtr<IControl> ControlPtr;
 
     typedef RefPtr<class ITextSprite> TextSpritePtr;
@@ -91,7 +91,7 @@ namespace Lazy
         const uint32 center = hcenter | vcenter;///< 完全居中
     }
 
-    
+
     //////////////////////////////////////////////////////////////////////////
 
     class IUIRender
@@ -110,7 +110,7 @@ namespace Lazy
         virtual void drawRect(const CRect & rc, uint32 color, TexturePtr texture) = 0;
         virtual void drawRect(const CRect & rc, const UVRect & srcRc, uint32 color, TexturePtr texture) = 0;
         virtual void drawWord(const CRect & dest, const UVRect & src, uint32 color, TexturePtr texture) = 0;
-        
+
         virtual void drawRectFrame(const CRect & rc, int edgeSize, uint32 color) = 0;
     };
 
@@ -127,11 +127,11 @@ namespace Lazy
 
         virtual void update(float elapse) = 0;
         virtual void render(IUIRender * pDevice, const CPoint & world) = 0;
-        
-        virtual void setPosition(int x, int y){ m_position.set(x, y); }
-        const CPoint & getPosition() const{ return m_position; }
 
-        virtual void setSize(int w, int h){ m_size.set(w, h); }
+        virtual void setPosition(int x, int y) { m_position.set(x, y); }
+        const CPoint & getPosition() const { return m_position; }
+
+        virtual void setSize(int w, int h) { m_size.set(w, h); }
         const CSize & getSize() const { return m_size; }
 
         void getRect(CRect & rc) const;
@@ -166,10 +166,10 @@ namespace Lazy
         void setDestColor(COLORREF cr);
 
         /** 获得当前颜色。该颜色为所需的渐变色。*/
-        COLORREF getCurColor(void){ return m_crCur; }
+        COLORREF getCurColor(void) { return m_crCur; }
 
         ///获得当前颜色
-        void getCurColor(COLORREF cr){ m_crCur = cr; }
+        void getCurColor(COLORREF cr) { m_crCur = cr; }
 
     private:
         COLORREF    m_crDest;   //< 目标颜色
@@ -190,11 +190,11 @@ namespace Lazy
 
         void update(float fElapse);
 
-        void setCur(CPoint cur){ m_cur = cur; }
-        void setSpeed(float v){ m_speed = v; }
+        void setCur(CPoint cur) { m_cur = cur; }
+        void setSpeed(float v) { m_speed = v; }
 
-        CPoint getCur(void){ return m_cur; }
-        int fadeOver(void){ return m_fadeOver; }
+        CPoint getCur(void) { return m_cur; }
+        int fadeOver(void) { return m_fadeOver; }
     private:
         CPoint  m_dest;
         CPoint  m_cur;
@@ -226,8 +226,8 @@ namespace Lazy
         bool readSize(CSize & pos, LZDataPtr ptr, const tstring & tag);
         bool writeSize(const CSize & pos, LZDataPtr ptr, const tstring & tag);
 
-        bool readVector2(Math::Vector2 & vec, LZDataPtr ptr, const tstring & tag);
-        bool writeVector2(Math::Vector2 & vec, LZDataPtr ptr, const tstring & tag);
+        bool readVector2(Vector2 & vec, LZDataPtr ptr, const tstring & tag);
+        bool writeVector2(Vector2 & vec, LZDataPtr ptr, const tstring & tag);
     }
 
 

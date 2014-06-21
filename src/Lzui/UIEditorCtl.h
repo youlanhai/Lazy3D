@@ -29,7 +29,7 @@ namespace Lazy
         virtual void onDrag(const CPoint & delta, const CPoint & point) override;
 
         int getEdgeSize() const { return m_edgeSize; }
-        void setEdgeSize(int size){ m_edgeSize = size; }
+        void setEdgeSize(int size) { m_edgeSize = size; }
     private:
 
         int m_dragType;

@@ -5,142 +5,147 @@
 
 #include "../Physics/PathFind.h"
 
-/** 物理状态*/
-enum PHYSICS_STATE
+namespace Lazy
 {
-    PS_FREE     = 0,    //休闲
-    PS_MOVE     = 1,    //移动
-    PS_ROTATE   = 2,    //旋转
-    PS_ATTACK   = 3,    //攻击
-    PS_SKILL    = 4,    //释放技能
-    PS_BE_HIT   = 5,    //受击
-    PS_DEAD     = 6,    //死亡
-    PS_RUN      = 7,    //奔跑
-    PS_RIDE     = 8,    //骑马
-    PS_JUMP     = 9,    //跳跃
-    PS_SWIM     = 10,   //游泳
-    PS_FORCE_DWORD = 0x7fffffff
-};
 
-class I3DObject;
+    /** 物理状态*/
+    enum PHYSICS_STATE
+    {
+        PS_FREE     = 0,    //休闲
+        PS_MOVE     = 1,    //移动
+        PS_ROTATE   = 2,    //旋转
+        PS_ATTACK   = 3,    //攻击
+        PS_SKILL    = 4,    //释放技能
+        PS_BE_HIT   = 5,    //受击
+        PS_DEAD     = 6,    //死亡
+        PS_RUN      = 7,    //奔跑
+        PS_RIDE     = 8,    //骑马
+        PS_JUMP     = 9,    //跳跃
+        PS_SWIM     = 10,   //游泳
+        PS_FORCE_DWORD = 0x7fffffff
+    };
 
-/** 物理类*/
-class LZDLL_API iPhysics : public IBase, public IRenderObj
-{
-public:
-    iPhysics(void);
+    class I3DObject;
 
-    explicit iPhysics(I3DObject* pSource);
+    /** 物理类*/
+    class LZDLL_API IPhysics : public IBase, public IRenderObj
+    {
+    public:
+        IPhysics(void);
 
-    ~iPhysics(void);
+        explicit IPhysics(I3DObject* pSource);
 
-    virtual void update(float elapse);
+        ~IPhysics(void);
 
-    virtual void render(IDirect3DDevice9 * pDevice);
+        virtual void update(float elapse);
 
-    ///根据路线更新坐标等信息
-    void updateByPath();
+        virtual void render(IDirect3DDevice9 * pDevice);
 
-    void updatePlayer(float elapse);
+        ///根据路线更新坐标等信息
+        void updateByPath();
 
-    ///朝向某点
-    void faceTo(const Math::Vector3 & dest);
+        void updatePlayer(float elapse);
 
-    ///朝向某个方向
-    void faceToDir(const Math::Vector3 & dir);
+        ///朝向某点
+        void faceTo(const Vector3 & dest);
 
-    ///移动到某点
-    void moveTo(const Math::Vector3 & pos);
+        ///朝向某个方向
+        void faceToDir(const Vector3 & dir);
 
-    ///移动到entity
-    void moveToEntity(I3DObject* taget);
+        ///移动到某点
+        void moveTo(const Vector3 & pos);
 
-    ///寻路
-    bool searchPathEx(Physics::WpPtrArray & way, const Math::Vector3 & dest);
+        ///移动到entity
+        void moveToEntity(I3DObject* taget);
 
-    ///寻路
-    ///TODO: 使用异步方式计算寻路。
-    bool searchPath(const Math::Vector3 & dest);
+        ///寻路
+        bool searchPathEx(WpPtrArray & way, const Vector3 & dest);
 
-    ///移动完毕
-    virtual void onMoveToFinished(bool succed);
+        ///寻路
+        ///TODO: 使用异步方式计算寻路。
+        bool searchPath(const Vector3 & dest);
 
-    virtual void onMoveToEntityFinish(bool succed);
+        ///移动完毕
+        virtual void onMoveToFinished(bool succed);
 
-    virtual void onSearchToFinished(bool succed);
+        virtual void onMoveToEntityFinish(bool succed);
 
-    ///状态发生变化
-    virtual void onStateChange(DWORD oldState);
+        virtual void onSearchToFinished(bool succed);
 
-    ///是否是玩家的物理
-    virtual bool isPlayers();
+        ///状态发生变化
+        virtual void onStateChange(DWORD oldState);
 
-    void enableAI(bool e){ m_aiEnable = e; }
+        ///是否是玩家的物理
+        virtual bool isPlayers();
 
-    bool isAIEnable(){ return m_aiEnable; }
+        void enableAI(bool e) { m_aiEnable = e; }
 
-    ///触发AI。
-    virtual void onAITrigger(){  }
+        bool isAIEnable() { return m_aiEnable; }
 
-    void setAIInterval(float interval){ m_aiInterval = interval; }
+        ///触发AI。
+        virtual void onAITrigger() {  }
 
-    float getAIInterval(){ return m_aiInterval; }
-public:
+        void setAIInterval(float interval) { m_aiInterval = interval; }
 
-    void setSource(I3DObject* pSource){ m_pSource = pSource; }
+        float getAIInterval() { return m_aiInterval; }
+    public:
 
-    I3DObject* getSource(void){ return m_pSource; }
+        void setSource(I3DObject* pSource) { m_pSource = pSource; }
 
-    void enable(bool e){ m_enable = e; }
+        I3DObject* getSource(void) { return m_pSource; }
 
-    bool isEnabled(void){ return m_enable; }
+        void enable(bool e) { m_enable = e; }
 
-    void setState(DWORD state);
+        bool isEnabled(void) { return m_enable; }
 
-    DWORD getState(void){ return m_state; }
+        void setState(DWORD state);
 
-    void breakAutoMove();
+        DWORD getState(void) { return m_state; }
 
-    //锁定高度
-    void enableLockHeight(bool l){ m_lockHInMap = l; }
-    void setLockHeight(float h){ m_lockHeight = h ;}
-protected:
+        void breakAutoMove();
 
-    void updateAutoMove(float elapse);
+        //锁定高度
+        void enableLockHeight(bool l) { m_lockHInMap = l; }
+        void setLockHeight(float h) { m_lockHeight = h ;}
+    protected:
 
-    void updateHeight(float elapse);
+        void updateAutoMove(float elapse);
 
-protected:
-    bool            m_enable;       //< 物理是否可用
-    I3DObject       *m_pSource;
-    DWORD           m_state;        //< 状态
-    //自动行走相关
-    bool            m_autoMove;     //< 是否在自动行走
-    bool            m_bMoveToEntity; //< 是否移动到entity
-    I3DObject       *m_pMoveToTarget;
-    Math::Vector3     m_nextPos;      //< 下一个目标点
-    Math::Vector3     m_prevPos;      //< 前一个点
+        void updateHeight(float elapse);
 
-    bool    m_aiEnable;
-    float   m_aiElapse;
-    float   m_aiInterval;
+    protected:
+        bool            m_enable;       //< 物理是否可用
+        I3DObject       *m_pSource;
+        DWORD           m_state;        //< 状态
+        //自动行走相关
+        bool            m_autoMove;     //< 是否在自动行走
+        bool            m_bMoveToEntity; //< 是否移动到entity
+        I3DObject       *m_pMoveToTarget;
+        Vector3     m_nextPos;      //< 下一个目标点
+        Vector3     m_prevPos;      //< 前一个点
 
-    bool    m_collid;
-    float   m_jumpingTime;
-    bool    m_isJumping;
-    bool    m_isFaling;
+        bool    m_aiEnable;
+        float   m_aiElapse;
+        float   m_aiInterval;
 
-    bool    m_lockHInMap;
-    float   m_lockHeight;
+        bool    m_collid;
+        float   m_jumpingTime;
+        bool    m_isJumping;
+        bool    m_isFaling;
 
-    bool    m_moveByPath;///<是否根据路线移动
-    Physics::Vector3Array m_wayPath;///<寻路路线
-};
+        bool    m_lockHInMap;
+        float   m_lockHeight;
 
-typedef RefPtr<iPhysics> PhysicsPtr;
+        bool    m_moveByPath;///<是否根据路线移动
+        Vector3Array m_wayPath;///<寻路路线
+    };
 
-LZDLL_API float getMaxDistToNpc();
-LZDLL_API void setMaxDistToNpc(float dist);
+    typedef RefPtr<IPhysics> PhysicsPtr;
 
-LZDLL_API void enableDrawCollision(bool e);
-LZDLL_API bool isDrawCollisionEnable();
+    LZDLL_API float getMaxDistToNpc();
+    LZDLL_API void setMaxDistToNpc(float dist);
+
+    LZDLL_API void enableDrawCollision(bool e);
+    LZDLL_API bool isDrawCollisionEnable();
+
+} // end namespace Lazy

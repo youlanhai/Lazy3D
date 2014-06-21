@@ -3,44 +3,49 @@
 #include "I3DObject.h"
 #include "particle.h"
 
-/**雪花类*/
-class LZDLL_API cSnow : public cParticleSystem
+namespace Lazy
 {
-public:
-    /**构造函数
-    * @param [in] numParticles : 粒子数量
-    */
-    cSnow(int maxAmount, const std::wstring & texture, I3DObject* source);
 
-    ///析构函数
-    ~cSnow(void);
+    /**雪花类*/
+    class LZDLL_API Snow : public cParticleSystem
+    {
+    public:
+        /**构造函数
+        * @param [in] numParticles : 粒子数量
+        */
+        Snow(int maxAmount, const std::wstring & texture, I3DObject* source);
 
-    virtual void render(IDirect3DDevice9 *pDevice);
+        ///析构函数
+        ~Snow(void);
 
-    virtual void update(float fElapse);
+        virtual void render(IDirect3DDevice9 *pDevice);
 
-    void setSource(I3DObject* source){ m_pSource = source; }
+        virtual void update(float fElapse);
 
-    void setRange(const Math::Vector3 & min_, const Math::Vector3 & max_);
+        void setSource(I3DObject* source) { m_pSource = source; }
 
-    void show(bool s){ m_visible = s; }
+        void setRange(const Vector3 & min_, const Vector3 & max_);
 
-    bool visible(){ return m_visible; }
+        void show(bool s) { m_visible = s; }
 
-protected:
+        bool visible() { return m_visible; }
 
-    virtual void updateParticle(Attribute *attribute, float elapse) ;
+    protected:
 
-    ///重置一个粒子的属性
-    virtual void resetParticle(Attribute *attribute) ;
+        virtual void updateParticle(Attribute *attribute, float elapse) ;
 
-    ///设置渲染状态
-    virtual void setRenderState(IDirect3DDevice9 *pDevice);
+        ///重置一个粒子的属性
+        virtual void resetParticle(Attribute *attribute) ;
 
-private:	
-    I3DObject*  m_pSource;
-    Math::Vector3 m_rangeMin;
-    Math::Vector3 m_rangeMax;
-    bool        m_visible;
-};
+        ///设置渲染状态
+        virtual void setRenderState(IDirect3DDevice9 *pDevice);
 
+    private:
+        I3DObject*  m_pSource;
+        Vector3 m_rangeMin;
+        Vector3 m_rangeMax;
+        bool        m_visible;
+    };
+
+
+} // end namespace Lazy

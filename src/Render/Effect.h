@@ -24,22 +24,22 @@ namespace Lazy
         ///结束技术
         void end();
 
-        dx::Effect * getEffect(){ return m_pEffect; }
+        dx::Effect * getEffect() { return m_pEffect; }
 
         bool setTechnique(D3DXHANDLE name);
         void setTexture(D3DXHANDLE name, dx::Texture *pTexture);
-        void setMatrix(D3DXHANDLE name, const D3DXMATRIX & mat);
+        void setMatrix(D3DXHANDLE name, const Matrix & mat);
 
     public://实现接口
 
         virtual void onLostDevice() override;
         virtual void onResetDevice() override;
-        
+
         /// 加载资源
         virtual bool load() override;
 
         ///获得资源类型
-        virtual int getType(void) const override{ return rt::effect; };
+        virtual int getType(void) const override { return rt::effect; };
 
     private:
         dx::Effect *m_pEffect;
@@ -51,7 +51,7 @@ namespace Lazy
     class EffectMgr : public ResMgr<EffectMgr, EffectPtr>
     {
     public:
-        virtual int getType(){ return rt::effect; }
+        virtual int getType() { return rt::effect; }
 
         dx::Effect * getEffect(const std::wstring & name);
     };

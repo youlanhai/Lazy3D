@@ -5,7 +5,7 @@
 #include "AABB.h"
 
 
-namespace Math
+namespace Lazy
 {
     void FRect::zero()
     {
@@ -135,5 +135,5 @@ namespace Math
 
 
 
-}//end namespace Math
+}//end namespace Lazy
 

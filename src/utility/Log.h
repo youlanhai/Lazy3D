@@ -19,7 +19,7 @@ namespace Lazy
     namespace LogLvl
     {
         const int debug = 1;
-        const int info = 2; 
+        const int info = 2;
         const int warning = 5;
         const int error = 8;
         const int disable = 100;

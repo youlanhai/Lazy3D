@@ -4,39 +4,44 @@
 #include "StaticModel.h"
 #include "AnimModel.h"
 
-ModelFactory::ModelFactory()
-{
-}
-
-
-ModelFactory::~ModelFactory()
-{
-}
-
-
-
-/*static*/ ModelPtr ModelFactory::loadModel(const std::wstring & filename, int typeId)
+namespace Lazy
 {
 
-    ModelPtr pModel;
-
-    if (typeId == ModelType::StaticModel)
+    ModelFactory::ModelFactory()
     {
-        pModel = new StaticModel();
-    }
-    else if (typeId == ModelType::SkinModel)
-    {
-        pModel = new AnimalModel();
-    }
-    else
-    {
-        return nullptr;
     }
 
-    if (!pModel->load(filename))
+
+    ModelFactory::~ModelFactory()
     {
-        return nullptr;
     }
 
-    return pModel;
-}
+
+
+    /*static*/ ModelPtr ModelFactory::loadModel(const std::wstring & filename, int typeId)
+    {
+
+        ModelPtr pModel;
+
+        if (typeId == ModelType::StaticModel)
+        {
+            pModel = new StaticModel();
+        }
+        else if (typeId == ModelType::SkinModel)
+        {
+            pModel = new AnimalModel();
+        }
+        else
+        {
+            return nullptr;
+        }
+
+        if (!pModel->load(filename))
+        {
+            return nullptr;
+        }
+
+        return pModel;
+    }
+
+} // end namespace Lazy

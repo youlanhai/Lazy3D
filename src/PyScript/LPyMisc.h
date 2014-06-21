@@ -2,6 +2,8 @@
 
 namespace Lzpy
 {
+    using namespace Lazy;
+
     class PyEntity;
 
     class PySkyBox : public PyBase
@@ -26,7 +28,7 @@ namespace Lzpy
         void setSource(const object & v);
         PyEntity * getPySource();
 
-        RefPtr<cSkyBox> m_sky;
+        RefPtr<SkyBox> m_sky;
         object_ptr<PyEntity> m_source;
     };
 
@@ -53,7 +55,7 @@ namespace Lzpy
         void setSource(const object & v);
 
 
-        RefPtr<cTopBoard> m_topboard;
+        RefPtr<TopBoard> m_topboard;
         object_ptr<PyEntity>  m_source;
     };
 

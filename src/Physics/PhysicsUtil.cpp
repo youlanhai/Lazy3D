@@ -2,14 +2,14 @@
 #include "stdafx.h"
 #include "PhysicsUtil.h"
 
-namespace Physics
+namespace Lazy
 {
-    float getMatrixScale(const Matrix4x4 & matrix)
+    float getMatrixScale(const Matrix & matrix)
     {
         Vector3 pos0, pos1;
         D3DXVec3TransformCoord(&pos0, &Vector3(0, 0, 0), &matrix);
         D3DXVec3TransformCoord(&pos1, &Vector3(10000.0f, 0, 0), &matrix);
-        return D3DXVec3Length(&(pos0 - pos1))/10000.0f;
+        return D3DXVec3Length(&(pos0 - pos1)) / 10000.0f;
     }
 
     void splitAABB(Plane & p, AABB & front, AABB & back, const AABB & aabb, int axis)
@@ -49,7 +49,7 @@ namespace Physics
     {
         aabb.zero();
         for (TriangleIndices::const_iterator it = indices.begin();
-            it != indices.end(); ++it)
+                it != indices.end(); ++it)
         {
             aabb.addTriangle(triangles[*it]);
         }
@@ -100,26 +100,26 @@ namespace Physics
         m_triangles.reserve(mNbTris);
         Triangle triangle;
         DWORD i0, i1, i2;
-        for (DWORD i=0; i<mNbTris; ++i)
+        for (DWORD i = 0; i < mNbTris; ++i)
         {
             //取出3个索引
             if (isIdx32)
             {
-                i0 = *((DWORD*)pIndexBuffer + i*3);
-                i1 = *((DWORD*)pIndexBuffer + i*3 + 1);
-                i2 = *((DWORD*)pIndexBuffer + i*3 + 2);
+                i0 = *((DWORD*)pIndexBuffer + i * 3);
+                i1 = *((DWORD*)pIndexBuffer + i * 3 + 1);
+                i2 = *((DWORD*)pIndexBuffer + i * 3 + 2);
             }
             else
             {
-                i0 = *((WORD*)pIndexBuffer + i*3);
-                i1 = *((WORD*)pIndexBuffer + i*3 + 1);
-                i2 = *((WORD*)pIndexBuffer + i*3 + 2);
+                i0 = *((WORD*)pIndexBuffer + i * 3);
+                i1 = *((WORD*)pIndexBuffer + i * 3 + 1);
+                i2 = *((WORD*)pIndexBuffer + i * 3 + 2);
             }
 
             //取出3个顶点
-            triangle.a = *((Vector3*)(pVertexBuffer + step*i0));
-            triangle.b = *((Vector3*)(pVertexBuffer + step*i1));
-            triangle.c = *((Vector3*)(pVertexBuffer + step*i2));
+            triangle.a = *((Vector3*)(pVertexBuffer + step * i0));
+            triangle.b = *((Vector3*)(pVertexBuffer + step * i1));
+            triangle.c = *((Vector3*)(pVertexBuffer + step * i2));
 
             m_triangles.push_back(triangle);
         }

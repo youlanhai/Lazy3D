@@ -326,15 +326,15 @@ void CGame::updateCamera(float fEla)
     //更新摄像机
     if(m_pKeyboard->isKeyDown('1'))
     {
-        m_pCamera->setCamareType(CCamera::FIRST);
+        m_pCamera->setCamareType(Camera::FIRST);
     }
     else if(m_pKeyboard->isKeyDown('2'))
     {
-        m_pCamera->setCamareType(CCamera::THIRD);
+        m_pCamera->setCamareType(Camera::THIRD);
     }
     else if (m_pKeyboard->isKeyDown('3'))
     {
-        m_pCamera->setCamareType(CCamera::FREE);
+        m_pCamera->setCamareType(Camera::FREE);
     }
 
 }

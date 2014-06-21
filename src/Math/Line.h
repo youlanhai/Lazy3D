@@ -2,13 +2,13 @@
 
 #include "Vector.h"
 
-namespace Math
+namespace Lazy
 {
     ///直线
     class Line
     {
     public:
-        Line(){}
+        Line() {}
 
         Line(const Vector3 & s, const Vector3 & e)
             : start(s), end(e)
@@ -29,7 +29,7 @@ namespace Math
         //线性插值
         Vector3 interpolation(float ratio) const
         {
-            return end*ratio + start*(1.0f - ratio);
+            return end * ratio + start * (1.0f - ratio);
         }
 
         //线性插值
@@ -42,7 +42,7 @@ namespace Math
             }
             down = 1.0f / down;
             //return interpolation(rs*down);
-            return (end*rs + start*re)*down;
+            return (end * rs + start * re) * down;
         }
 
         //点在直线上的投影

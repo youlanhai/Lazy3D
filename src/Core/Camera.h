@@ -2,44 +2,49 @@
 
 #include "CameraBase.h"
 
-class I3DObject;
-
-class LZDLL_API CCamera : public CameraBase
+namespace Lazy
 {
-public:
-	enum CameraType //摄像机样式
-	{
-		FIRST = 1,	//第一人称
-		THIRD = 2,	//第三人称
-		FREE  = 3,  //自由模式
-	};
 
-    explicit CCamera(CameraType type = THIRD);
-	~CCamera(void);
+    class I3DObject;
 
-    void setCamareType( CameraType cameraType );
-    CameraType getCameraType( void ){ return m_cameraType; } 
+    class LZDLL_API Camera : public CameraBase
+    {
+    public:
+        enum CameraType //摄像机样式
+        {
+            FIRST = 1,	//第一人称
+            THIRD = 2,	//第三人称
+            FREE  = 3,  //自由模式
+        };
 
-	void setDistance(float fDistance);
+        explicit Camera(CameraType type = THIRD);
+        ~Camera(void);
 
-	float getDistance(){return m_fDistToPlayer;}
+        void setCamareType( CameraType cameraType );
+        CameraType getCameraType( void ) { return m_cameraType; }
 
-    void setDistRange(float mind, float maxd);
+        void setDistance(float fDistance);
 
-    void setSource(I3DObject *p){ m_pSource = p; }
+        float getDistance() {return m_fDistToPlayer;}
 
-protected:
+        void setDistRange(float mind, float maxd);
 
-    void initCamera(CameraType type = THIRD);
+        void setSource(I3DObject *p) { m_pSource = p; }
 
-    /** 矫正距离玩家的距离。*/
-    void correctDist(void);
+    protected:
 
-protected:
-    
-    CameraType  m_cameraType;			//照相机类型
-    I3DObject*  m_pSource;
-	float		m_fDistToPlayer;	//照相机离玩家的距（跟随玩家移动用）
-    float       m_distMin;
-    float       m_distMax;
-};
+        void initCamera(CameraType type = THIRD);
+
+        /** 矫正距离玩家的距离。*/
+        void correctDist(void);
+
+    protected:
+
+        CameraType  m_cameraType;			//照相机类型
+        I3DObject*  m_pSource;
+        float		m_fDistToPlayer;	//照相机离玩家的距（跟随玩家移动用）
+        float       m_distMin;
+        float       m_distMax;
+    };
+
+} // end namespace Lazy

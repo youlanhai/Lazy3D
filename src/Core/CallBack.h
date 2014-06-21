@@ -7,10 +7,10 @@ namespace Lazy
 {
 
     ///回调对象基类。
-    class LZDLL_API callObj: public IBase
+    class LZDLL_API CallableNode: public IBase
     {
     public:
-        explicit callObj(float time) 
+        explicit CallableNode(float time)
             : m_time(time)
             , m_id(0)
         {}
@@ -32,7 +32,7 @@ namespace Lazy
         friend class CallbackMgr;
     };
 
-    typedef RefPtr<callObj> CallObjPtr;
+    typedef RefPtr<CallableNode> CallObjPtr;
 
 
     ///回调管理器
@@ -66,11 +66,11 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////////
     ///默认回调函数结构
     template<typename Type>
-    class cDefaultCall: public callObj
+    class cDefaultCall: public CallableNode
     {
     public:
-        cDefaultCall(float time, Type call) 
-            : callObj(time)
+        cDefaultCall(float time, Type call)
+            : CallableNode(time)
             , m_callBack(call)
         {}
 

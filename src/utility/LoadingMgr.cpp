@@ -74,7 +74,7 @@ namespace Lazy
         {
             TaskPtr task = m_finishMgr.getTask();
             if (!task) break; //已经没有任务了
-            
+
             task->onTaskFinish();
         }
     }

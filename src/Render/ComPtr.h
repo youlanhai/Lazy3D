@@ -69,10 +69,10 @@ namespace Lazy
         Com* get() const { return m_ptr; }
 
         template<class U>
-        U* to(){ return (U*) m_ptr; }
+        U* to() { return (U*) m_ptr; }
 
-        void addRef(){ SAFE_ADDREF_COM(m_ptr); }
-        void delRef(){ SAFE_DELREF_COM(m_ptr); }
+        void addRef() { SAFE_ADDREF_COM(m_ptr); }
+        void delRef() { SAFE_DELREF_COM(m_ptr); }
 
     private:
         Com *m_ptr;

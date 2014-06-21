@@ -139,7 +139,7 @@ namespace Lazy
     {
         int x = a->x - b->x;
         int y = a->y - b->y;
-        return x*x + y*y;
+        return x * x + y * y;
     }
 
     float distance(POINT* a, POINT* b)
@@ -183,8 +183,8 @@ namespace Lazy
             m_fadeOver = 1;
             return;
         }
-        m_cur.x += (LONG) (m_vx*fElapse);
-        m_cur.y += (LONG) (m_vy*fElapse);
+        m_cur.x += (LONG) (m_vx * fElapse);
+        m_cur.y += (LONG) (m_vy * fElapse);
         if (m_dest.x > m_cur.x != m_dirvx || m_dest.y > m_cur.y != m_dirvy)
         {
             m_fadeOver = 0;
@@ -229,7 +229,7 @@ namespace Lazy
             return true;
         }
 
-        bool readVector2(Math::Vector2 & vec, LZDataPtr ptr, const tstring & tag)
+        bool readVector2(Vector2 & vec, LZDataPtr ptr, const tstring & tag)
         {
             LZDataPtr p = ptr->read(tag);
             if (!p) return false;
@@ -237,7 +237,7 @@ namespace Lazy
             return p->formatTo(L"%f %f", &vec.x, &vec.y);
         }
 
-        bool writeVector2(Math::Vector2 & vec, LZDataPtr ptr, const tstring & tag)
+        bool writeVector2(Vector2 & vec, LZDataPtr ptr, const tstring & tag)
         {
             LZDataPtr p = ptr->newOne(tag, L"");
             p->formatFrom(L"%f %f", vec.x, vec.y);

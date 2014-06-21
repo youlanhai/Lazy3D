@@ -20,7 +20,7 @@ collision info : start->end, externd.
 
 */
 
-namespace Physics
+namespace Lazy
 {
     namespace DebugFlag
     {
@@ -64,9 +64,9 @@ namespace Physics
         : m_pTriangles(NULL)
     {}
 
-    bool OCTreeLeaf::build(const AABB & aabb, 
-        const TriangleIndices & triangleIndices, 
-        const TriangleSet & triangles)
+    bool OCTreeLeaf::build(const AABB & aabb,
+                           const TriangleIndices & triangleIndices,
+                           const TriangleSet & triangles)
     {
         m_aabb = aabb;
         m_indices = triangleIndices;
@@ -80,7 +80,7 @@ namespace Physics
         if(DebugFlag::renderLeafTri)
         {
             for (TriangleIndices::const_iterator it = m_indices.begin();
-                it != m_indices.end(); ++it)
+                    it != m_indices.end(); ++it)
             {
                 drawTriangle(pDevice, m_pTriangles->at(*it), 0x7f7f7f7f);
             }
@@ -130,7 +130,7 @@ namespace Physics
 
     size_t OCTreeLeaf::getBytes() const
     {
-        return sizeof(*this) + m_indices.capacity()*sizeof(int);
+        return sizeof(*this) + m_indices.capacity() * sizeof(int);
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -139,15 +139,15 @@ namespace Physics
 
     }
 
-    /*static */bool OCTreeNode::build(OCTreePtr & child, 
-        const AABB & aabb, 
-        const TriangleIndices & indices, 
-        const TriangleSet & triangles,
-        int depth)
+    /*static */bool OCTreeNode::build(OCTreePtr & child,
+                                      const AABB & aabb,
+                                      const TriangleIndices & indices,
+                                      const TriangleSet & triangles,
+                                      int depth)
     {
         AABB newAabb = aabb;
 
-        bool stopDivide = (indices.size() <= OCTreeConfig::maxLeafSize || depth>=OCTreeConfig::maxBuildDepth);
+        bool stopDivide = (indices.size() <= OCTreeConfig::maxLeafSize || depth >= OCTreeConfig::maxBuildDepth);
         if (depth > 1 && (OCTreeConfig::bestAABB || stopDivide))
         {
             AABB ab;
@@ -184,7 +184,7 @@ namespace Physics
                 splitAABB(splitPlane, front, back, newAabb, splitAxsis);
 
                 for (TriangleIndices::const_iterator it = indices.begin();
-                    it != indices.end(); ++it)
+                        it != indices.end(); ++it)
                 {
                     int side = splitPlane.witchSide(triangles[*it]);
 
@@ -222,8 +222,8 @@ namespace Physics
 
                     pNode->m_aabb = newAabb;
                     pNode->m_plane = splitPlane;
-                    pNode->build(pNode->m_front, front, triFront, triangles, depth+1);
-                    pNode->build(pNode->m_back, back, triBack, triangles, depth+1);
+                    pNode->build(pNode->m_front, front, triFront, triangles, depth + 1);
+                    pNode->build(pNode->m_back, back, triBack, triangles, depth + 1);
 
                     return true;
                 }
@@ -303,14 +303,14 @@ namespace Physics
         }
         else
         {
-            float pos = fabs(distS)/(fabs(distS) + fabs(distE));
+            float pos = fabs(distS) / (fabs(distS) + fabs(distE));
             OCTreeCollider front, back;
             collider.split(pos, front, back);
 
             float dist1 = MAX_FLOAT;
             float dist2 = MAX_FLOAT;
             bool collid = false;
-            
+
             if (distS > 0)
             {
                 collid |= (m_front && m_front->collied(front, dist1));
@@ -350,7 +350,7 @@ namespace Physics
         const TriangleSet & triangles = m_meshExtractor.triangles();
 
         TriangleIndices indices(triangles.size());
-        for (size_t i=0; i<indices.size(); ++i)
+        for (size_t i = 0; i < indices.size(); ++i)
         {
             indices[i] = i;
         }
@@ -471,17 +471,17 @@ namespace Physics
         pt[6] = end - leftUp;
         pt[7] = end - rightUp;
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            drawLine(pDevice, pt[i], pt[(i+1) % 4], color);
+            drawLine(pDevice, pt[i], pt[(i + 1) % 4], color);
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            drawLine(pDevice, pt[i+4], pt[(i+1) % 4 + 4], color);
+            drawLine(pDevice, pt[i + 4], pt[(i + 1) % 4 + 4], color);
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             drawLine(pDevice, pt[i], pt[i + 4], color);
         }
@@ -515,7 +515,7 @@ namespace Physics
         back = *this;
         back.start = back.end;
         back.calAABB();
-        
+
     }
 
     //////////////////////////////////////////////////////////////////////////
@@ -556,18 +556,18 @@ namespace Physics
     OCTreePtr findOCTree(LPD3DXMESH pMesh)
     {
         DWORD id = (DWORD)pMesh;
-        auto pred = [id](const OCTreeCacheNode & node){ return node.id == id; } ;
+        auto pred = [id](const OCTreeCacheNode & node) { return node.id == id; } ;
         auto it = std::find_if(g_cache.begin(), g_cache.end(), pred); //_Finder(id)
         if (it != g_cache.end()) return it->tree;
-        
+
         return NULL;
     }
 
-    
+
     OCTreePtr getOCTree(LPD3DXMESH pMesh)
     {
         DWORD id = (DWORD)pMesh;
-        auto pred = [id](const OCTreeCacheNode & node){ return node.id == id; };
+        auto pred = [id](const OCTreeCacheNode & node) { return node.id == id; };
         OCTreeCache::iterator it = std::find_if(g_cache.begin(), g_cache.end(),  pred);
 
         OCTreeCacheNode node;
@@ -603,7 +603,7 @@ namespace Physics
     size_t getOCTreeCacheBytes()
     {
         size_t size = 0;
-        for (OCTreeCache::iterator it=g_cache.begin(); it!=g_cache.end(); ++it)
+        for (OCTreeCache::iterator it = g_cache.begin(); it != g_cache.end(); ++it)
         {
             size += it->getBytes();
         }
@@ -616,7 +616,7 @@ namespace Physics
     }
 
     //////////////////////////////////////////////////////////////////////////
-   
+
     LazyCollision::LazyCollision(void)
     {
 
@@ -657,5 +657,5 @@ namespace Physics
         return tree->pick(info);
     }
 
-    
+
 }

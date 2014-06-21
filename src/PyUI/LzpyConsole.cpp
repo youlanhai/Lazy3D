@@ -19,7 +19,7 @@ namespace Lzpy
         std::wstring strDest;
         for (size_t i = 0; i <= n - nDest; ++i)
         {
-            
+
         }
 
         return strDest;
@@ -119,7 +119,7 @@ namespace Lzpy
                 m_cmdEdit.clearText();
                 return true;
             }
-            
+
             if (text.back() != L':')
             {
                 m_cmdEdit.clearText();
@@ -197,7 +197,7 @@ namespace Lzpy
         Lazy::wcharToChar(cmdAsc, cmd);
 
         PyObject *pRet = PyRun_StringFlags(cmdAsc.c_str(), Py_single_input,
-            m_pyGlobal.get(), m_pyLocal.get(), nullptr);
+                                           m_pyGlobal.get(), m_pyLocal.get(), nullptr);
 
         Py_XDECREF(pRet);
         if (PyErr_Occurred())
@@ -229,8 +229,8 @@ namespace Lzpy
 
     //////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyConsoleOutput);
-        LZPY_METHOD_1(write);
-        LZPY_METHOD_0(flush);
+    LZPY_METHOD_1(write);
+    LZPY_METHOD_0(flush);
     LZPY_CLASS_END();
 
     PyConsoleOutput::PyConsoleOutput()

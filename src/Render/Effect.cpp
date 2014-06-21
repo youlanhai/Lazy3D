@@ -12,7 +12,7 @@ namespace Lazy
         : m_pEffect(nullptr)
         , IResource(file)
     {
-       
+
     }
 
 
@@ -41,7 +41,7 @@ namespace Lazy
 
         LPD3DXBUFFER pError = nullptr;
         HRESULT hr = D3DXCreateEffectFromFile(rcDevice()->getDevice(),
-            realPath.c_str(), nullptr, nullptr, 0, nullptr, &m_pEffect, &pError);
+                                              realPath.c_str(), nullptr, nullptr, 0, nullptr, &m_pEffect, &pError);
 
         if (FAILED(hr))
         {
@@ -115,7 +115,7 @@ namespace Lazy
         m_pEffect->SetTexture(name, pTexture);
     }
 
-    void Effect::setMatrix(D3DXHANDLE name, const D3DXMATRIX & mat)
+    void Effect::setMatrix(D3DXHANDLE name, const Matrix & mat)
     {
         m_pEffect->SetMatrix(name, &mat);
     }

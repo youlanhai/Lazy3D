@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Math
+namespace Lazy
 {
     class Vector2;
     class AABB;
@@ -66,4 +66,4 @@ namespace Math
 
 
 
-}//end namespace Math
+}//end namespace Lazy

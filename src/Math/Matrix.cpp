@@ -3,25 +3,25 @@
 #include "Vector.h"
 #include "Quaternion.h"
 
-namespace Math
+namespace Lazy
 {
-    const Matrix4x4 matIdentity(
+    const Matrix matIdentity(
         1.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f, 0.0f,
         0.0f, 0.0f, 1.0f, 0.0f,
         0.0f, 0.0f, 0.0f, 1.0f
-        );
+    );
 
-    Matrix4x4::Matrix4x4()
+    Matrix::Matrix()
     {
     }
 
-    Matrix4x4::Matrix4x4(
+    Matrix::Matrix(
         float m11, float m12, float m13, float m14,
         float m21, float m22, float m23, float m24,
         float m31, float m32, float m33, float m34,
         float m41, float m42, float m43, float m44
-        )
+    )
     {
         _11 = m11; _12 = m12; _13 = m13; _14 = m14;
         _21 = m21; _22 = m22; _23 = m23; _24 = m24;
@@ -29,27 +29,23 @@ namespace Math
         _41 = m31; _42 = m42; _43 = m43; _44 = m44;
     }
 
-    Matrix4x4::~Matrix4x4()
+    void Matrix::makeZero()
     {
+        memset(this, 0, sizeof(Matrix));
     }
 
-    void Matrix4x4::makeZero()
+    void Matrix::makeIdentity()
     {
-        memset(this, 0, sizeof(Matrix4x4));
+        memcpy(this, &matIdentity, sizeof(Matrix));
     }
 
-    void Matrix4x4::makeIdentity()
-    {
-        memcpy(this, &matIdentity, sizeof(Matrix4x4));
-    }
-
-    void Matrix4x4::makeTranslate(const Vector3 & v)
+    void Matrix::makeTranslate(const Vector3 & v)
     {
         makeIdentity();
         setRow(3, v);
     }
 
-    void Matrix4x4::makeTranslate(float x, float y, float z)
+    void Matrix::makeTranslate(float x, float y, float z)
     {
         makeIdentity();
         _41 = x;
@@ -57,12 +53,12 @@ namespace Math
         _43 = z;
     }
 
-    void Matrix4x4::makeScale(const Vector3 & v)
+    void Matrix::makeScale(const Vector3 & v)
     {
         makeScale(v.x, v.y, v.z);
     }
 
-    void Matrix4x4::makeScale(float x, float y, float z)
+    void Matrix::makeScale(float x, float y, float z)
     {
         makeIdentity();
         _11 = x;
@@ -71,7 +67,7 @@ namespace Math
     }
 
 
-    void Matrix4x4::makeRatateX(float angle)
+    void Matrix::makeRatateX(float angle)
     {
         makeIdentity();
         float sina = sinf(angle);
@@ -81,7 +77,7 @@ namespace Math
         _32 = -sina;    _33 = cosa;
     }
 
-    void Matrix4x4::makeRatateY(float angle)
+    void Matrix::makeRatateY(float angle)
     {
         makeIdentity();
         float sina = sinf(angle);
@@ -91,7 +87,7 @@ namespace Math
         _31 = sina;    _33 = cosa;
     }
 
-    void Matrix4x4::makeRatateZ(float angle)
+    void Matrix::makeRatateZ(float angle)
     {
         makeIdentity();
         float sina = sinf(angle);
@@ -101,17 +97,17 @@ namespace Math
         _21 = -sina;    _22 = cosa;
     }
 
-    void Matrix4x4::makeRatateYawPitchRoll(float yaw, float pitch, float roll)
+    void Matrix::makeRatateYawPitchRoll(float yaw, float pitch, float roll)
     {
         D3DXMatrixRotationYawPitchRoll(this, yaw, pitch, roll);
     }
 
-    void Matrix4x4::makeRatateAxis(const Vector3 & v, float angle)
+    void Matrix::makeRatateAxis(const Vector3 & v, float angle)
     {
         D3DXMatrixRotationAxis(this, &v, angle);
     }
 
-    void Matrix4x4::makeLookAt(const Vector3 & target, const Vector3 & position, const Vector3 & up)
+    void Matrix::makeLookAt(const Vector3 & target, const Vector3 & position, const Vector3 & up)
     {
         Vector3 N = target - position;
         N.normalize();
@@ -133,12 +129,12 @@ namespace Math
         _44 = 1.0f;
     }
 
-    void Matrix4x4::setRotationQuaternion(const Quaternion & q)
+    void Matrix::setRotationQuaternion(const Quaternion & q)
     {
         D3DXMatrixRotationQuaternion(this, &q);
     }
 
-    void Matrix4x4::getRow(int i, Vector3 & v) const
+    void Matrix::getRow(int i, Vector3 & v) const
     {
         assert(i >= 0 && i < 4);
         v.x = m[i][0];
@@ -146,7 +142,7 @@ namespace Math
         v.z = m[i][2];
     }
 
-    void Matrix4x4::setRow(int i, const Vector3 & v)
+    void Matrix::setRow(int i, const Vector3 & v)
     {
         assert(i >= 0 && i < 4);
         m[i][0] = v.x;
@@ -154,7 +150,7 @@ namespace Math
         m[i][2] = v.z;
     }
 
-    void Matrix4x4::getCol(int i, Vector3 & v) const
+    void Matrix::getCol(int i, Vector3 & v) const
     {
         assert(i >= 0 && i < 4);
         v.x = m[0][i];
@@ -162,7 +158,7 @@ namespace Math
         v.z = m[2][i];
     }
 
-    void Matrix4x4::setCol(int i, const Vector3 & v)
+    void Matrix::setCol(int i, const Vector3 & v)
     {
         assert(i >= 0 && i < 4);
         m[0][i] = v.x;
@@ -170,50 +166,115 @@ namespace Math
         m[2][i] = v.z;
     }
 
-    void Matrix4x4::transpose()
+    void Matrix::transpose()
     {
         D3DXMatrixTranspose(this, this);
     }
 
-    void Matrix4x4::invsert()
+    void Matrix::invert()
     {
         D3DXMatrixInverse(this, 0, this);
     }
 
-    Vector3 & Matrix4x4::operator [](int i)
+    void Matrix::getInvert(Matrix & out) const
+    {
+        D3DXMatrixInverse(&out, 0, this);
+    }
+
+    Vector3 & Matrix::operator [](int i)
     {
         assert(i >= 0 && i < 4);
         return reinterpret_cast<Vector3&>(m[i]);
     }
 
-    float Matrix4x4::yaw() const
+    float Matrix::yaw() const
     {
         return 0.0f;
     }
 
-    float Matrix4x4::pitch() const
+    float Matrix::pitch() const
     {
         return 0.0f;
     }
 
-    float Matrix4x4::roll() const
+    float Matrix::roll() const
     {
         return 0.0f;
     }
 
-    void Matrix4x4::makeOrtho(float w, float h, float zn, float zf)
+    void Matrix::makeOrtho(float w, float h, float zn, float zf)
     {
         D3DXMatrixOrthoLH(this, w, h, zn, zf);
     }
 
-    void Matrix4x4::makeOrthoOffCenter(float left, float right, float bottom, float top, float zn, float zf)
+    void Matrix::makeOrthoOffCenter(float left, float right, float bottom, float top, float zn, float zf)
     {
         D3DXMatrixOrthoOffCenterLH(this, left, right, bottom, top, zn, zf);
     }
 
-    void Matrix4x4::makePerspective(float fovy, float aspect, float zn, float zf)
+    void Matrix::makePerspective(float fovy, float aspect, float zn, float zf)
     {
         D3DXMatrixPerspectiveFovLH(this, fovy, aspect, zn, zf);
     }
 
-}//end namespace Math
+
+    const Matrix & Matrix::operator = (const D3DXMATRIX & right)
+    {
+        memcpy(this, &right, sizeof(D3DXMATRIX));
+        return *this;
+    }
+
+    const Matrix &  Matrix::operator = (const Matrix & right)
+    {
+        memcpy(this, &right, sizeof(Matrix));
+        return *this;
+    }
+
+    Matrix Matrix::operator + (const Matrix & right) const
+    {
+        Matrix temp;
+        for (int r = 0; r < 4; ++r)
+            for (int c = 0; c < 4; ++c)
+                temp.m[r][c] = m[r][c] + right.m[r][c];
+        return temp;
+    }
+
+    Matrix Matrix::operator - (const Matrix & right) const
+    {
+        Matrix temp;
+        for (int r = 0; r < 4; ++r)
+            for (int c = 0; c < 4; ++c)
+                temp.m[r][c] = m[r][c] - right.m[r][c];
+        return temp;
+    }
+
+    Matrix Matrix::operator * (const Matrix & right) const
+    {
+        Matrix temp;
+        D3DXMatrixMultiply(&temp, this, &right);
+        return temp;
+    }
+
+    const Matrix & Matrix::operator += (const Matrix & right)
+    {
+        for (int r = 0; r < 4; ++r)
+            for (int c = 0; c < 4; ++c)
+                m[r][c] += right.m[r][c];
+        return *this;
+    }
+
+    const Matrix & Matrix::operator -= (const Matrix & right)
+    {
+        for (int r = 0; r < 4; ++r)
+            for (int c = 0; c < 4; ++c)
+                m[r][c] -= right.m[r][c];
+        return *this;
+    }
+
+    const Matrix & Matrix::operator *= (const Matrix & right)
+    {
+        D3DXMatrixMultiply(this, this, &right);
+        return *this;
+    }
+
+}//end namespace Lazy

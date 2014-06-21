@@ -44,12 +44,12 @@ namespace Lazy
         SliderPtr getSlider() const { return m_slider; }
 
         /** 每次滑动，前进的步长*/
-        void setSlideStep(float percent){ m_slideStep = percent; }
+        void setSlideStep(float percent) { m_slideStep = percent; }
         float getSlideStep() const { return m_slideStep; }
 
         /** 是否垂直风格。默认是水平风格。*/
         void setVertical(bool v);
-        bool getVertical() const{ return m_bVertical; }
+        bool getVertical() const { return m_bVertical; }
 
         void setRate(float percent);
         float getRate(void) const { return m_rate; }

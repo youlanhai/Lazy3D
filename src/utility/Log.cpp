@@ -41,7 +41,7 @@ namespace Lazy
     bool cLog::init(const tstring & fileName)
     {
         assert(m_file == nullptr && "Initialize more than once!");
-        
+
         errno_t err = _wfopen_s(&m_file, fileName.c_str(), L"wb");
         if (err != 0)
         {
@@ -73,8 +73,8 @@ namespace Lazy
         GetLocalTime(&systm);
 
         formatString(header, _T("[%d-%d-%d %2.2d:%2.2d:%2.2d]"),
-            systm.wYear, systm.wMonth, systm.wDay,
-            systm.wHour, systm.wMinute, systm.wSecond);
+                     systm.wYear, systm.wMonth, systm.wDay,
+                     systm.wHour, systm.wMinute, systm.wSecond);
     }
 
     void cLog::writeA(const std::string & buffer)
@@ -142,12 +142,12 @@ namespace Lazy
     {
         LOG_WRITE_VS(LogLvl::debug, L"DEBUG: ");
     }
-    
+
     void cLog::info(LPCWSTR format, ...)
     {
         LOG_WRITE_VS(LogLvl::info, L"INFO: ");
     }
-    
+
     void cLog::warning(LPCWSTR format, ...)
     {
         LOG_WRITE_VS(LogLvl::warning, L"WARNING: ");

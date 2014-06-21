@@ -77,7 +77,7 @@ namespace Lazy
     bool RenderDevice::create(HWND hWnd, HINSTANCE hInstance, bool fullSrc)
     {
         assert(hWnd && "RenderDevice::create");
-        
+
         if (m_device != nullptr)
             throw(std::runtime_error("Dx Device has been created!"));
 
@@ -131,7 +131,7 @@ namespace Lazy
 
         //创建Direct3D设备对象
         if (FAILED(pd3d->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, hWnd,
-            vp, &m_d3dpp, &m_device)))
+                                      vp, &m_d3dpp, &m_device)))
         {
             return false;
         }
@@ -229,8 +229,8 @@ namespace Lazy
         ::SetWindowLong(m_hWnd, GWL_STYLE, style);
         ::MoveWindow(m_hWnd, x, y, m_windowWidth, m_windowHeight, TRUE);
 
-        debugMessage(_T("changeFullScreen full=%d (%d, %d, %d, %d)"), 
-            fullSrc, x, y, m_windowWidth, m_windowHeight);
+        debugMessage(_T("changeFullScreen full=%d (%d, %d, %d, %d)"),
+                     fullSrc, x, y, m_windowWidth, m_windowHeight);
 
         return resetDevice();
     }
@@ -241,7 +241,7 @@ namespace Lazy
     }
 
     bool RenderDevice::beginScene()
-    { 
+    {
         while(m_isLost)
         {
             HRESULT hr = testCooperativeLevel();
@@ -258,11 +258,11 @@ namespace Lazy
             return false;
         }
 
-        return SUCCEEDED(m_device->BeginScene()); 
+        return SUCCEEDED(m_device->BeginScene());
     }
 
     void RenderDevice::present()
-    { 
+    {
         HRESULT hr = m_device->Present(NULL, NULL, NULL, NULL);
         if (SUCCEEDED(hr))
         {
@@ -281,26 +281,26 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////////
     void RenderDevice::setRenderState(dx::RSType type, DWORD value)
     {
-        m_device->SetRenderState(type, value); 
+        m_device->SetRenderState(type, value);
     }
 
     void RenderDevice::getRenderState(dx::RSType type, DWORD & value)
     {
-        m_device->GetRenderState(type, &value); 
+        m_device->GetRenderState(type, &value);
     }
 
     DWORD RenderDevice::getRenderState(dx::RSType type)
     {
         DWORD value;
         m_device->GetRenderState(type, &value);
-        return value; 
+        return value;
     }
-    
-    void RenderDevice::getWorldViewProj(D3DXMATRIX & mat)
+
+    void RenderDevice::getWorldViewProj(Matrix & mat)
     {
         m_device->GetTransform(D3DTS_WORLD, &mat);
 
-        D3DXMATRIX temp;
+        Matrix temp;
         m_device->GetTransform(D3DTS_VIEW, &temp);
         mat *= temp;
 
@@ -308,20 +308,20 @@ namespace Lazy
         mat *= temp;
     }
 
-   
-    void RenderDevice::setTransform(dx::TSType type, D3DXMATRIX & matrix)
+
+    void RenderDevice::setTransform(dx::TSType type, Matrix & matrix)
     {
         m_device->SetTransform(type, &matrix);
     }
 
     HRESULT RenderDevice::testCooperativeLevel()
-    { 
-        return m_device->TestCooperativeLevel(); 
+    {
+        return m_device->TestCooperativeLevel();
     }
-    
+
     HRESULT RenderDevice::setfvf(DWORD fvf)
-    { 
-        return m_device->SetFVF(fvf); 
+    {
+        return m_device->SetFVF(fvf);
     }
 
     HRESULT RenderDevice::setTexture(DWORD stage, dx::BaseTexture *pTexture)

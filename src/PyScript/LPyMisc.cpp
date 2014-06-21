@@ -8,10 +8,10 @@ namespace Lzpy
 {
 
     LZPY_CLASS_BEG(PySkyBox);
-        LZPY_METHOD(setRange);
-        LZPY_GETSET(visible);
-        LZPY_GETSET(source);
-        LZPY_GETSET(image);
+    LZPY_METHOD(setRange);
+    LZPY_GETSET(visible);
+    LZPY_GETSET(source);
+    LZPY_GETSET(image);
     LZPY_CLASS_END();
 
     PySkyBox::PySkyBox()
@@ -56,7 +56,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD(PySkyBox, setRange)
     {
-        Physics::Vector3 vecMin, vecMax;
+        Vector3 vecMin, vecMax;
         if (!arg.parse_tuple(&vecMin, &vecMax))
             return null_object;
 
@@ -68,7 +68,7 @@ namespace Lzpy
 
     ////////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyTopboard);
-    
+
     LZPY_GETSET(text);
     LZPY_GETSET(color);
     LZPY_GETSET(biasHeight);
@@ -78,7 +78,7 @@ namespace Lzpy
 
     PyTopboard::PyTopboard()
     {
-        m_topboard = new cTopBoard();
+        m_topboard = new TopBoard();
     }
 
     PyTopboard::~PyTopboard()
@@ -117,14 +117,14 @@ namespace Lzpy
             m_topboard->setSource(m_source->m_entity.get());
         }
     }
-    
+
     ////////////////////////////////////////////////////////////////////
 
-    class PyCallObj : public Lazy::callObj
+    class PyCallObj : public Lazy::CallableNode
     {
     public:
         PyCallObj(float time, PyObject * pCall, PyObject *pArg)
-            : Lazy::callObj(time)
+            : Lazy::CallableNode(time)
             , m_func(pCall)
             , m_args(pArg)
         {}
@@ -203,15 +203,15 @@ namespace Lzpy
 
 
     LZPY_MODULE_BEG(Lazy);
-        exportPyEntity(module);
-        exportPyMap(module);
-        exportPyPhsicis(module);
+    exportPyEntity(module);
+    exportPyMap(module);
+    exportPyPhsicis(module);
 
-        LZPY_REGISTER_CLASS(Topboard, PyTopboard);
-        LZPY_REGISTER_CLASS(SkyBox, PySkyBox);
+    LZPY_REGISTER_CLASS(Topboard, PyTopboard);
+    LZPY_REGISTER_CLASS(SkyBox, PySkyBox);
 
-        LZPY_FUN_0(getSkyBox);
-        LZPY_FUN(callback);
-        LZPY_FUN_1(cancelCallback);
+    LZPY_FUN_0(getSkyBox);
+    LZPY_FUN(callback);
+    LZPY_FUN_1(cancelCallback);
     LZPY_MODULE_END();
 }

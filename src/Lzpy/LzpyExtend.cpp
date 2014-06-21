@@ -5,16 +5,16 @@
 namespace Lzpy
 {
     ////////////////////////////////////////////////////////////////////
-   
+
     ////////////////////////////////////////////////////////////////////
 
     LZPY_CLASS_BEG(PyTestClass);
-        LZPY_METHOD_0(test0);
-        LZPY_METHOD_1(test1);
-        LZPY_METHOD(test2);
-        LZPY_METHOD(hello);
-        LZPY_MEMEBER(data, T_INT, mydata);
-        LZPY_GETSET(testId);
+    LZPY_METHOD_0(test0);
+    LZPY_METHOD_1(test1);
+    LZPY_METHOD(test2);
+    LZPY_METHOD(hello);
+    LZPY_MEMEBER(data, T_INT, mydata);
+    LZPY_GETSET(testId);
     LZPY_CLASS_END();
 
     PyTestClass::PyTestClass()
@@ -61,7 +61,7 @@ namespace Lzpy
     }
 
     ////////////////////////////////////////////////////////////////////
-    
+
     ////////////////////////////////////////////////////////////////////
 
     LZPY_DEF_FUN_0(hello)
@@ -105,13 +105,13 @@ namespace Lzpy
 
 
     LZPY_MODULE_BEG(helper);
-        LZPY_REGISTER_CLASS(Base, PyBase);
-        LZPY_REGISTER_CLASS(TestClass, PyTestClass);
-        LZPY_REGISTER_CLASS(Output, PyOutput);
-        LZPY_FUN_0(hello);
-        LZPY_FUN_0(test0);
-        LZPY_FUN_1(test1);
-        LZPY_FUN(test2);
-        LZPY_FUN(debugMsg);
+    LZPY_REGISTER_CLASS(Base, PyBase);
+    LZPY_REGISTER_CLASS(TestClass, PyTestClass);
+    LZPY_REGISTER_CLASS(Output, PyOutput);
+    LZPY_FUN_0(hello);
+    LZPY_FUN_0(test0);
+    LZPY_FUN_1(test1);
+    LZPY_FUN(test2);
+    LZPY_FUN(debugMsg);
     LZPY_MODULE_END();
 }

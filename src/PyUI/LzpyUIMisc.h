@@ -38,7 +38,7 @@ namespace Lzpy
     public:
         LzpyForm();
 
-        CForm * getUI(){ return m_control.cast<CForm>(); }
+        CForm * getUI() { return m_control.cast<CForm>(); }
 
         LZPY_DEF_GET(enableClip, getUI()->canClip);
         LZPY_DEF_SET(enableClip, getUI()->enableClip, bool);
@@ -82,7 +82,7 @@ namespace Lzpy
     public:
         LzpyButton();
 
-        CButton * getUI(){ return m_control.cast<CButton>(); }
+        CButton * getUI() { return m_control.cast<CButton>(); }
 
         LZPY_DEF_GET(textAlign, getUI()->getTextAlign);
         LZPY_DEF_SET(textAlign, getUI()->setTextAlign, uint32);
@@ -113,7 +113,7 @@ namespace Lzpy
     public:
         LzpyEditorCtl();
 
-        CEditorCtl * getUI(){ return m_control.cast<CEditorCtl>(); }
+        CEditorCtl * getUI() { return m_control.cast<CEditorCtl>(); }
 
         LZPY_DEF_GET(edgeSize, getUI()->getEdgeSize);
         LZPY_DEF_SET(edgeSize, getUI()->setEdgeSize, int);
@@ -133,7 +133,7 @@ namespace Lzpy
     public:
         LzpyEdit();
 
-        CEdit * getUI(){ return m_control.cast<CEdit>(); }
+        CEdit * getUI() { return m_control.cast<CEdit>(); }
 
         LZPY_DEF_GET(mutiline, getUI()->isMutiLine);
         LZPY_DEF_SET(mutiline, getUI()->setMutiLine, bool);
@@ -146,7 +146,7 @@ namespace Lzpy
     public:
         LzpyUIProxy();
 
-        UIProxy * getUI(){ return m_control.cast<UIProxy>(); }
+        UIProxy * getUI() { return m_control.cast<UIProxy>(); }
 
         LZPY_DEF_GET(host, getHost);
         LZPY_DEF_METHOD(loadHost);

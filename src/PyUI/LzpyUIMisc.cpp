@@ -8,12 +8,12 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyLabel);
-        LZPY_GETSET(lineSpace);
-        LZPY_GETSET(maxWidth);
-        LZPY_GETSET(textAlign);
-        LZPY_GETSET(mutiline);
-        LZPY_GET(textLines);
-        LZPY_GET(textSize);
+    LZPY_GETSET(lineSpace);
+    LZPY_GETSET(maxWidth);
+    LZPY_GETSET(textAlign);
+    LZPY_GETSET(mutiline);
+    LZPY_GET(textLines);
+    LZPY_GET(textSize);
     LZPY_CLASS_END();
 
 
@@ -31,7 +31,7 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyForm)
-        LZPY_GETSET(enableClip);
+    LZPY_GETSET(enableClip);
     LZPY_CLASS_END();
 
     LzpyForm::LzpyForm()
@@ -46,13 +46,13 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpySlidebar)
-        LZPY_GETSET(vertical);
-        LZPY_GETSET(rate);
-        LZPY_GETSET(sliderSize);
-        LZPY_GETSET(slideStep);
-        LZPY_METHOD_0(slideForward);
-        LZPY_METHOD_0(slideBackward);
-        LZPY_METHOD_1(slideByWheel);
+    LZPY_GETSET(vertical);
+    LZPY_GETSET(rate);
+    LZPY_GETSET(sliderSize);
+    LZPY_GETSET(slideStep);
+    LZPY_METHOD_0(slideForward);
+    LZPY_METHOD_0(slideBackward);
+    LZPY_METHOD_1(slideByWheel);
     LZPY_CLASS_END();
 
     LzpySlidebar::LzpySlidebar()
@@ -109,9 +109,9 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyButton);
-        LZPY_GETSET(textAlign);
-        LZPY_GETSET(colorFadable);
-        LZPY_GETSET(posMovable);
+    LZPY_GETSET(textAlign);
+    LZPY_GETSET(colorFadable);
+    LZPY_GETSET(posMovable);
     LZPY_CLASS_END();
 
     LzpyButton::LzpyButton()
@@ -123,7 +123,7 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpySelect)
-        LZPY_GETSET(check);
+    LZPY_GETSET(check);
     LZPY_CLASS_END();
 
     LzpySelect::LzpySelect()
@@ -135,7 +135,7 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyEditorCtl)
-        LZPY_GETSET(edgeSize);
+    LZPY_GETSET(edgeSize);
     LZPY_CLASS_END();
 
     LzpyEditorCtl::LzpyEditorCtl()
@@ -159,7 +159,7 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyEdit)
-        LZPY_GETSET(mutiline);
+    LZPY_GETSET(mutiline);
     LZPY_CLASS_END();
 
     LzpyEdit::LzpyEdit()
@@ -171,8 +171,8 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyUIProxy)
-        LZPY_GET(host);
-        LZPY_METHOD(loadHost);
+    LZPY_GET(host);
+    LZPY_METHOD(loadHost);
     LZPY_CLASS_END();
 
     LzpyUIProxy::LzpyUIProxy()
@@ -259,23 +259,23 @@ namespace Lzpy
 
 
     LZPY_MODULE_BEG(lui);
-        LZPY_REGISTER_CLASS(IControl, LzpyControl);
-        LZPY_REGISTER_CLASS(Label, LzpyLabel);
-        LZPY_REGISTER_CLASS(Form, LzpyForm);
-        LZPY_REGISTER_CLASS(Button, LzpyButton);
-        LZPY_REGISTER_CLASS(CheckBox, LzpySelect);
-        LZPY_REGISTER_CLASS(Slidebar, LzpySlidebar);
-        LZPY_REGISTER_CLASS(Image, LzpyImage);
-        LZPY_REGISTER_CLASS(Edit, LzpyEdit);
-        LZPY_REGISTER_CLASS(UIProxy, LzpyUIProxy);
-        LZPY_REGISTER_CLASS(EditorCtl, LzpyEditorCtl);
-        LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
+    LZPY_REGISTER_CLASS(IControl, LzpyControl);
+    LZPY_REGISTER_CLASS(Label, LzpyLabel);
+    LZPY_REGISTER_CLASS(Form, LzpyForm);
+    LZPY_REGISTER_CLASS(Button, LzpyButton);
+    LZPY_REGISTER_CLASS(CheckBox, LzpySelect);
+    LZPY_REGISTER_CLASS(Slidebar, LzpySlidebar);
+    LZPY_REGISTER_CLASS(Image, LzpyImage);
+    LZPY_REGISTER_CLASS(Edit, LzpyEdit);
+    LZPY_REGISTER_CLASS(UIProxy, LzpyUIProxy);
+    LZPY_REGISTER_CLASS(EditorCtl, LzpyEditorCtl);
+    LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
 
-        LZPY_FUN(root);
-        LZPY_FUN(param2Position);
-        LZPY_FUN(position2Param);
-        LZPY_FUN(regUIFactory);
-        LZPY_FUN(isVkDown);
+    LZPY_FUN(root);
+    LZPY_FUN(param2Position);
+    LZPY_FUN(position2Param);
+    LZPY_FUN(regUIFactory);
+    LZPY_FUN(isVkDown);
 
     LZPY_MODULE_END();
 

@@ -3,23 +3,28 @@
 #include "Base.h"
 #include "RenderObj.h"
 
-class LZDLL_API CKeyboard : public IUpdate, public IBase
+namespace Lazy
 {
-public:
-	CKeyboard(void);
 
-	~CKeyboard(void);
+    class LZDLL_API CKeyboard : public IUpdate, public IBase
+    {
+    public:
+        CKeyboard(void);
 
-	virtual void update(float fElapse);
+        ~CKeyboard(void);
 
-	bool isKeyDown(DWORD vk);
+        virtual void update(float fElapse);
 
-    bool isKeyPress(DWORD vk);
+        bool isKeyDown(DWORD vk);
 
-	bool isKeyUp(DWORD vk);
+        bool isKeyPress(DWORD vk);
 
-	BYTE* getKeyboard(void){ return m_keyboard; }
-private:
-	BYTE	m_keyboard[256];
-    BYTE	m_oldKeyboard[256];
-};
+        bool isKeyUp(DWORD vk);
+
+        BYTE* getKeyboard(void) { return m_keyboard; }
+    private:
+        BYTE	m_keyboard[256];
+        BYTE	m_oldKeyboard[256];
+    };
+
+} // end namespace Lazy

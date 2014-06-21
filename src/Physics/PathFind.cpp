@@ -4,12 +4,12 @@
 #include "PhysicsDebug.h"
 
 
-namespace Physics
+namespace Lazy
 {
     const size_t WaysetMagic = Lazy::makeMagic('w', 's', 'e', 't');
     const size_t WaySetVersion = 0;
     const size_t WayPointMagic = Lazy::makeMagic('w', 'p', 'o', 't');
-    
+
     namespace NagenDebug
     {
         bool showLayer = true;
@@ -32,8 +32,8 @@ namespace Physics
             const int Open = 1;
             const int Close = 2;
         }
-        
-        
+
+
         ///寻路结点
         template<class T>
         struct WayNode : public IBase
@@ -41,9 +41,9 @@ namespace Physics
             typedef T wtype;
             typedef RefPtr<WayNode<wtype>> WayNodePtr;
 
-            WayNode(){}
-            ~WayNode(){}
-        
+            WayNode() {}
+            ~WayNode() {}
+
             WayNode(WayNodePtr parent, wtype wp, wtype end)
                 : pParent(parent)
                 , pPoint(wp)
@@ -69,7 +69,7 @@ namespace Physics
             WayNodePtr  pParent;///<父节点
             float       costToS;///<到起点的花费
             float       costTotal;///<总权值 = 起点花费 + 终点估价
-            
+
             DEC_MEMORY_ALLOCATER()
         };
 
@@ -122,7 +122,7 @@ namespace Physics
                 way.push_back(pEndPoint);
                 return true;
             }
-            
+
             std::list<ThisNodePtr> openList;//open表
             std::map<int, int> markMap;//标记表。记录每个路点的访问状态。
 
@@ -134,7 +134,7 @@ namespace Physics
                 //保证第一个元素，始终是权值最小的
                 ThisNodePtr pWayNode = openList.front();
                 openList.pop_front();
-            
+
                 TYPE pPoint = pWayNode->pPoint;
                 markMap[pPoint->id] = Vm::Close;
 
@@ -150,7 +150,7 @@ namespace Physics
                 }
 
                 int nAdj = pPoint->numNeighbour();
-                for(int i=0; i<nAdj; ++i)
+                for(int i = 0; i < nAdj; ++i)
                 {
                     const int adjId = pPoint->getNeighbour(i);
                     //无效邻接
@@ -160,7 +160,7 @@ namespace Physics
 
                     if(mark == Vm::Close)
                     {
-                       //已访问完毕
+                        //已访问完毕
                     }
                     else if(mark == Vm::None)
                     {
@@ -171,8 +171,8 @@ namespace Physics
                     else if(mark == Vm::Open)
                     {
                         std::list<ThisNodePtr>::iterator it = std::find_if(
-                            openList.begin(), openList.end(), PredWayNode<ThisNodePtr>(adjId));
-                        assert(it!=openList.end() && "the adjId not in openlist.Because of th invalid mark value.");
+                                openList.begin(), openList.end(), PredWayNode<ThisNodePtr>(adjId));
+                        assert(it != openList.end() && "the adjId not in openlist.Because of th invalid mark value.");
 
                         ThisNodePtr pp = *it;
                         float costS = pWayNode->costToS + pp->pPoint->distTo(*pPoint);
@@ -204,7 +204,7 @@ namespace Physics
         , numAdj(0)
 //        , setID(InvalidWp)
     {
-        for (int i=0; i<MaxWpAdj; ++i)
+        for (int i = 0; i < MaxWpAdj; ++i)
         {
             adjPoints[i] = InvalidWp;
         }
@@ -234,7 +234,7 @@ namespace Physics
         stream.loadStruct(numAdj);
         assert(numAdj <= MaxWpAdj && "WayPoint::load");
 
-        for(int i=0; i<numAdj; ++i)
+        for(int i = 0; i < numAdj; ++i)
         {
             stream.loadStruct(adjPoints[i]);
         }
@@ -255,7 +255,7 @@ namespace Physics
 
         //为邻接点个数扩展做准备
         stream.saveStruct(numAdj);
-        for(int i=0; i<numAdj; ++i)
+        for(int i = 0; i < numAdj; ++i)
         {
             stream.saveStruct(adjPoints[i]);
         }
@@ -268,7 +268,7 @@ namespace Physics
         float dt = FindWay::Config.cubeSize / 10.0f;
         FRect rc = rect;
         rc.delta(-dt, -dt);
-        drawFRectSolid(pDevice, rc, yMin+dt, color);
+        drawFRectSolid(pDevice, rc, yMin + dt, color);
     }
 
     float WayPoint::distTo(const Vector3 & pos) const
@@ -349,7 +349,7 @@ namespace Physics
         return bestId;
     }
 
-    
+
     bool WaySet::findEdgeWp(const Vector3 & destPos, int selfWpId, int nextSetId, int & selfDestWp, int & nextDestWp) const
     {
         float minDistance = MAX_FLOAT;
@@ -372,7 +372,7 @@ namespace Physics
                 nextDestWp = it->destWp;
             }
         }
-        
+
         return minDistance < MAX_FLOAT;
     }
 
@@ -409,7 +409,7 @@ namespace Physics
 
 #if 1
         LinkerArray & arr = m_adjDetail[destSet];
-        for(size_t i=0; i<arr.size(); ++i)
+        for(size_t i = 0; i < arr.size(); ++i)
         {
             if(arr[i] == linker)
             {
@@ -447,7 +447,7 @@ namespace Physics
             stream.saveStruct(dit->first);
             const LinkerArray & arr = dit->second;
             stream.saveStruct(arr.size());
-            for(size_t i=0; i<arr.size(); ++i)
+            for(size_t i = 0; i < arr.size(); ++i)
             {
                 stream.saveStruct(arr[i]);
             }
@@ -456,7 +456,7 @@ namespace Physics
         Lazy::streambuffer & buffer = stream.steam();
         return Lazy::getfs()->writeBinary(fname, &buffer[0], buffer.size());
     }
-    
+
     bool WaySet::load(const Lazy::tstring & fname)
     {
 #ifdef _DEBUG
@@ -488,7 +488,7 @@ namespace Physics
         stream.loadStruct(n);
         m_wayPoints.reserve(n);
 
-        for(size_t i=0; i<n; ++i)
+        for(size_t i = 0; i < n; ++i)
         {
             WayPointPtr ptr = new WayPoint(i);
             ptr->load(stream);
@@ -497,7 +497,7 @@ namespace Physics
 
         //加载邻接数据
         stream.loadStruct(n);
-        for(size_t i=0; i<n; ++i)
+        for(size_t i = 0; i < n; ++i)
         {
             int adjId;
             stream.loadStruct(adjId);
@@ -505,7 +505,7 @@ namespace Physics
             size_t numLink;
             WpLinker linker;
             stream.loadStruct(numLink);
-            for(size_t k=0; k<numLink; ++k)
+            for(size_t k = 0; k < numLink; ++k)
             {
                 stream.loadStruct(linker);
                 addEdgeLinker(adjId, linker);
@@ -533,7 +533,7 @@ namespace Physics
         size_t n;
         stream.loadStruct(n);
         adjSets.resize(n);
-        for(size_t i=0; i<adjSets.size(); ++i)
+        for(size_t i = 0; i < adjSets.size(); ++i)
         {
             stream.saveStruct(adjSets[i]);
         }
@@ -551,7 +551,7 @@ namespace Physics
 //        stream.saveStruct(yMax);
 
         stream.saveStruct(adjSets.size());
-        for(size_t i=0; i<adjSets.size(); ++i)
+        for(size_t i = 0; i < adjSets.size(); ++i)
         {
             stream.saveStruct(adjSets[i]);
         }
@@ -565,7 +565,7 @@ namespace Physics
     {
         return FindWay::findWayById<WaySetPtr>(way, start, end, this);
     }
-    
+
     /*static*/ WaySetMgr * WaySetMgr::instance()
     {
         static WaySetMgr mgr;
@@ -617,7 +617,7 @@ namespace Physics
         size_t n;
         stream.loadStruct(n);
         m_waySets.reserve(n);
-        for(size_t i=0; i<n; ++i)
+        for(size_t i = 0; i < n; ++i)
         {
             WaySetPtr ptr = new WaySet(0, 0);
             ptr->loadInfo(stream);
@@ -625,7 +625,7 @@ namespace Physics
         }
 
 
-#if 1   
+#if 1
         //可以等到用的时候，再加载详细数据
 
         //加载每个wayset的详细数据
@@ -657,7 +657,7 @@ namespace Physics
         Lazy::tstring pathName = path;
         Lazy::formatDirName(pathName);
         Lazy::tstring fname = pathName + _T("wayset.dat");
-        
+
         Lazy::streambuffer & buffer = stream.steam();
         if(!Lazy::getfs()->writeBinary(fname, &buffer[0], buffer.size()))
         {
@@ -677,7 +677,7 @@ namespace Physics
         }
         return true;
     }
-        
+
     int WaySetMgr::addWaySet(WaySetPtr ptr)
     {
         int id = (int)m_waySets.size();
@@ -710,7 +710,7 @@ namespace Physics
 
         return true;
     }
-        
+
     ///保存到文件流
     bool WayChunk::save(Lazy::LZDataPtr stream) const
     {
@@ -735,8 +735,8 @@ namespace Physics
         }
     }
 
-    int WayChunk::numWayPoint() const 
-    { 
+    int WayChunk::numWayPoint() const
+    {
         int n = 0;
 
         WpIdArray::const_iterator it;
@@ -804,7 +804,7 @@ namespace Physics
 
         return findWay(way, startId, start, end);
     }
-        
+
     //在一个waySet中寻路
     bool WayChunk::findWay(WpPtrArray & way, int waySetId, const Vector3 & start, const Vector3 & end) const
     {
@@ -812,9 +812,9 @@ namespace Physics
         if(!pSet) return false;
         return pSet->findWay(way, start, end);
     }
-        
+
     ///////////////////////////////////////////////////////////////////
-    
+
     /*static*/ WayChunkMgr * WayChunkMgr::instance()
     {
         static WayChunkMgr s_mgr;
@@ -824,7 +824,7 @@ namespace Physics
     WayChunkMgr::WayChunkMgr()
         : m_rows(0), m_cols(0), m_x0(0), m_z0(0), m_chunkSize(0)
     {
-        
+
     }
 
     WayChunkMgr::~WayChunkMgr()
@@ -835,7 +835,7 @@ namespace Physics
     void WayChunkMgr::resetChunks(int n)
     {
         m_chunkPool.clear();
-        for(int i=0; i<n; ++i)
+        for(int i = 0; i < n; ++i)
         {
             m_chunkPool.push_back(new WayChunk(i));
         }
@@ -864,15 +864,15 @@ namespace Physics
         m_x0 = ptr->readFloat(_T("x0"));
         m_z0 = ptr->readFloat(_T("z0"));
         m_chunkSize = ptr->readFloat(_T("chunkSize"));
-        
+
         resetChunks(m_rows * m_cols);
 
 
         ptr = root->write(_T("chunk"));
         Lazy::tstring name;
-        for(int r=0; r<m_rows; ++r)
+        for(int r = 0; r < m_rows; ++r)
         {
-            for(int c=0; c<m_cols; ++c)
+            for(int c = 0; c < m_cols; ++c)
             {
                 size_t key = r << 16 | c;
                 formatString(name, _T("%8.8x"), key);
@@ -910,9 +910,9 @@ namespace Physics
         Lazy::tstring fname = path;
         Lazy::formatDirName(fname);
         fname += _T("path.lzd");
-        
+
         Lazy::LZDataPtr root = new Lazy::lzd();
-        
+
         Lazy::LZDataPtr ptr = root->write(_T("basic"), Lazy::EmptyStr);
 
         ptr->writeInt(_T("rows"), m_rows);
@@ -924,9 +924,9 @@ namespace Physics
         ptr = root->write(_T("chunk"));
 
         Lazy::tstring name;
-        for(int r=0; r<m_rows; ++r)
+        for(int r = 0; r < m_rows; ++r)
         {
-            for(int c=0; c<m_cols; ++c)
+            for(int c = 0; c < m_cols; ++c)
             {
                 size_t key = r << 16 | c;
                 formatString(name, _T("%8.8x"), key);
@@ -948,7 +948,7 @@ namespace Physics
 
     WayChunkPtr WayChunkMgr::getChunk(int id, bool urgent/*=true*/)
     {
-        if(id<0 || id>=int(m_chunkPool.size())) return NULL;
+        if(id < 0 || id >= int(m_chunkPool.size())) return NULL;
 
         return m_chunkPool[id];
     }
@@ -959,14 +959,14 @@ namespace Physics
         int r = int((m_z0 - z) / m_chunkSize);
         int c = int((x - m_x0) / m_chunkSize);
 
-        if(r<0 || r>= m_rows || c<0 || c>=m_cols) return NULL;
+        if(r < 0 || r >= m_rows || c < 0 || c >= m_cols) return NULL;
 
         return getChunk(r * m_cols + c, urgent);
     }
 
     void WayChunkMgr::render(LPDIRECT3DDEVICE9 pDevice)
     {
-        for (size_t i=0; i<m_chunkPool.size(); ++i)
+        for (size_t i = 0; i < m_chunkPool.size(); ++i)
         {
             WayChunkPtr ptr = m_chunkPool[i];
             if(ptr) ptr->render(pDevice);
@@ -993,7 +993,7 @@ namespace Physics
 
         //寻路
         if(!pa->findWayById(way, startWpId, endWpId)) return InvalidWp;
-        
+
         return oterWpId;
     }
 
@@ -1028,13 +1028,13 @@ namespace Physics
         debugMessage(_T("TRACE: find way between %d sets"), n);
 
         //在每个wayset内寻路
-        for(int i=0; i<n-1; ++i)
+        for(int i = 0; i < n - 1; ++i)
         {
-            startWpId = finWayBetweenSets(way, waysets[i], waysets[i+1], startWpId, end);
+            startWpId = finWayBetweenSets(way, waysets[i], waysets[i + 1], startWpId, end);
             if(isInvalidWp(startWpId)) return false;
         }
 
-        return waysets[n-1]->findWayById(way, startWpId, endWpId);
+        return waysets[n - 1]->findWayById(way, startWpId, endWpId);
     }
 
 
@@ -1043,9 +1043,9 @@ namespace Physics
     {
         size_t n = way.size();
         arr.resize(n);
-        for(size_t i=0; i<n; ++i)
+        for(size_t i = 0; i < n; ++i)
         {
-            way[i]->getCenter( arr[n-i-1] );
+            way[i]->getCenter( arr[n - i - 1] );
         }
     }
 

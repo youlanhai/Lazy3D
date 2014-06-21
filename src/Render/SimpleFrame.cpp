@@ -75,7 +75,7 @@ namespace Lazy
 
         //清空后台缓冲区
         Lazy::rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
-            D3DCOLOR_XRGB(45, 50, 170), 1.0f, 0);
+                                D3DCOLOR_XRGB(45, 50, 170), 1.0f, 0);
 
         //开始在后台缓冲区绘制图形
         if (Lazy::rcDevice()->beginScene())

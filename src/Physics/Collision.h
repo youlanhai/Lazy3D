@@ -1,16 +1,16 @@
 ﻿#pragma once
 
-namespace Physics
+namespace Lazy
 {
-	struct CollisionInfo
-	{
-		Vector3 newPos;
-		Vector3 oldPos;
-		LPD3DXMESH	pMesh;
-		Vector3 center;
-		Vector3 extends;
-		TriangleSet hitTriangles;
-	};
+    struct CollisionInfo
+    {
+        Vector3 newPos;
+        Vector3 oldPos;
+        LPD3DXMESH	pMesh;
+        Vector3 center;
+        Vector3 extends;
+        TriangleSet hitTriangles;
+    };
 
     struct RayInfo
     {
@@ -21,42 +21,42 @@ namespace Physics
         Triangle hitTriangle;
     };
 
-	//Collision interface
-	class ICollision : public IBase
-	{
-	public:
-		ICollision(void);
-		virtual ~ICollision(void);
+    //Collision interface
+    class ICollision : public IBase
+    {
+    public:
+        ICollision(void);
+        virtual ~ICollision(void);
 
-		virtual bool preventCollision(CollisionInfo & info) = 0;
+        virtual bool preventCollision(CollisionInfo & info) = 0;
 
         virtual bool pickRay(RayInfo & info) = 0;
-	};
+    };
 
-	typedef RefPtr<ICollision> CollisionPtr;
+    typedef RefPtr<ICollision> CollisionPtr;
 
-	//collision type
-	namespace CollisionType
-	{
-		const int Opcode = 1;//使用opcode库，已经不支持此类型了。
+    //collision type
+    namespace CollisionType
+    {
+        const int Opcode = 1;//使用opcode库，已经不支持此类型了。
         const int OCTree = 2;//使用八叉树
         const int Bsp    = 3;//二叉树，暂不支持。
-        
+
         const int Default = OCTree;
-	}
+    }
 
 
-	//collision factory
-	class CollisionFactory
-	{
-	public:
-		static CollisionPtr create(int type);
-	};
+    //collision factory
+    class CollisionFactory
+    {
+    public:
+        static CollisionPtr create(int type);
+    };
 
     //碰撞体配置
     struct CollisionConfig
     {
-        CollisionConfig(){}
+        CollisionConfig() {}
         CollisionConfig(float w, float h, float d, float c)
             : modelWidth(w), modelHeight(h), modelDepth(d), climbHeight(c)
         {}
@@ -74,20 +74,20 @@ namespace Physics
     {
     public:
         CollisionPrevent(const Vector3 & oldPos, const Vector3& newPos, bool vertical,
-            const CollisionConfig & config);
+                         const CollisionConfig & config);
 
         void drawDebug(IDirect3DDevice9* device) const;
 
         //与模型碰撞检测。
-        bool preventCollision(LPD3DXMESH pMesh, const Matrix4x4 & world);
-    
+        bool preventCollision(LPD3DXMESH pMesh, const Matrix & world);
+
     public:
-        
-        bool collision(const Triangle & tri, const Matrix4x4 & world);
 
-        bool clip(Math::Polygon & polyInOut);
+        bool collision(const Triangle & tri, const Matrix & world);
 
-        int witchSide(const Triangle & tri, const Matrix4x4 & world);
+        bool clip(Polygon & polyInOut);
+
+        int witchSide(const Triangle & tri, const Matrix & world);
 
         int witchSide(const Plane & panel);
 
@@ -101,7 +101,7 @@ namespace Physics
         CollisionConfig m_config;
         Vector3 m_start;
         Vector3 m_end;
-        
+
         float   m_distance;
 
         bool    m_verticalCheck;
@@ -120,10 +120,10 @@ namespace Physics
 
         Vector3 m_point8[8];
 
-        Physics::CollisionPtr m_collision;
+        CollisionPtr m_collision;
         Triangle m_hitTriangle;
 
-        std::vector<Math::Polygon> m_debugPolygons;
+        std::vector<Polygon> m_debugPolygons;
 
     };
 
@@ -131,12 +131,12 @@ namespace Physics
     class RayCollision
     {
     public:
-        RayCollision(){}
+        RayCollision() {}
 
-        RayCollision(const Vector3 & start, const Vector3 & dir, float distance=MAX_FLOAT);
+        RayCollision(const Vector3 & start, const Vector3 & dir, float distance = MAX_FLOAT);
 
         //射线拾取
-        bool pick(LPD3DXMESH pMesh, const Matrix4x4 & world);
+        bool pick(LPD3DXMESH pMesh, const Matrix & world);
 
         bool isCollied() const { return m_collied; }
 
@@ -157,4 +157,4 @@ namespace Physics
         bool        m_collied;
         CollisionPtr m_collisionPtr;
     };
-}//namespace Physics
+}//namespace Lazy

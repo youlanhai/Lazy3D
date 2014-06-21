@@ -3,7 +3,7 @@
 #include "Collision.h"
 #include "PhysicsUtil.h"
 
-namespace Physics
+namespace Lazy
 {
     class OCTreeCollider
     {
@@ -22,7 +22,7 @@ namespace Physics
          */
         void split(float pos, OCTreeCollider & font, OCTreeCollider & back) const;
 
-        void render(LPDIRECT3DDEVICE9 pDevice, DWORD color=0xff00ff00);
+        void render(LPDIRECT3DDEVICE9 pDevice, DWORD color = 0xff00ff00);
 
     public:
         CollisionInfo *pInfo;
@@ -68,9 +68,9 @@ namespace Physics
 
         OCTreeLeaf();
 
-        bool build(const AABB & aabb, 
-            const TriangleIndices & triangleIndices, 
-            const TriangleSet & triangles);
+        bool build(const AABB & aabb,
+                   const TriangleIndices & triangleIndices,
+                   const TriangleSet & triangles);
 
         virtual void render(LPDIRECT3DDEVICE9 pDevice) const;
 
@@ -104,10 +104,10 @@ namespace Physics
         virtual size_t getBytes() const;
 
         static bool build(OCTreePtr & child,
-            const AABB & aabb, 
-            const TriangleIndices & indices, 
-            const TriangleSet & triangles,
-            int depth);
+                          const AABB & aabb,
+                          const TriangleIndices & indices,
+                          const TriangleSet & triangles,
+                          int depth);
 
     protected:
         Plane           m_plane;//子树分割平面。
@@ -126,7 +126,7 @@ namespace Physics
 
         bool collision(CollisionInfo & info) const;
 
-        bool valid() const{ return m_root && m_meshExtractor.valid(); }
+        bool valid() const { return m_root && m_meshExtractor.valid(); }
 
         virtual bool pick(RayInfo & info) const;
 

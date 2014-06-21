@@ -8,12 +8,12 @@
 //////////////////////////////////////////////////////////////////////////
 
 
-namespace Physics
+namespace Lazy
 {
 
     //////////////////////////////////////////////////////////////////////////
 
-    void check2WithObj( Physics::CollisionPrevent & ci, TerrainItemPtr pobj)
+    void check2WithObj( CollisionPrevent & ci, TerrainItemPtr pobj)
     {
         if(!pobj) return;
 
@@ -27,7 +27,7 @@ namespace Physics
         pobj->getWorldAABB(aabb);
         if(!aabb.intersect(ci.m_aabb)) return;
 
-        Matrix4x4 world;
+        Matrix world;
         pobj->getAbsModelMatrix(world);
 
 #if 0
@@ -47,8 +47,8 @@ namespace Physics
 
     }
 
-    
-    void collisionInSpace(Physics::CollisionPrevent & ci)
+
+    void collisionInSpace(CollisionPrevent & ci)
     {
         ChunkPtr node = TerrainMap::instance()->currentNode();
         if(!node) return;
@@ -60,7 +60,7 @@ namespace Physics
         }
     }
 
-    bool preventCollision(Physics::CollisionPrevent & ci)
+    bool preventCollision(CollisionPrevent & ci)
     {
         collisionInSpace(ci);
         return ci.m_isCollisiond;
@@ -81,7 +81,7 @@ namespace Physics
             return true; //如果没有模型，则只与aabb碰撞检测
         }
 
-        Matrix4x4 world;
+        Matrix world;
         pobj->getAbsModelMatrix(world);
         return rc.pick(model->getMesh(), world);
     }
@@ -105,4 +105,4 @@ namespace Physics
         return rc.isCollied();
     }
 
-}//namespace Physics
+}//namespace Lazy

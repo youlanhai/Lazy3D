@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////////////////////////////////
-/* 
+/*
  * author: youlanhai
  * e-mail: you_lan_hai@foxmail.com
  * blog: http://blog.csdn.net/you_lan_hai
@@ -23,98 +23,98 @@ namespace Lazy
     }
 
 ///语法分析器。仅分析一个模块，即从当前位置起，到第一个‘}’终止
-class cParser : public IBase
-{
-public:
-    /** 构造函数。
-        @param text : 待解析文本。
-        @pram curNode : 当前模块结点。
-        */
-    cParser(StrStreamPtr stream, LZDataPtr curNode, int lineNo);
-    ~cParser(void);
+    class cParser : public IBase
+    {
+    public:
+        /** 构造函数。
+            @param text : 待解析文本。
+            @pram curNode : 当前模块结点。
+            */
+        cParser(StrStreamPtr stream, LZDataPtr curNode, int lineNo);
+        ~cParser(void);
 
-    ///开始分析
-    void parse(void);
+        ///开始分析
+        void parse(void);
 
-    ///获得行号
-    int getLineNo(void) const { return m_lineNo;}
+        ///获得行号
+        int getLineNo(void) const { return m_lineNo;}
 
-    ///是否有错误
-    bool error(void) const { return m_errorNo != ErrorCode::None; }
+        ///是否有错误
+        bool error(void) const { return m_errorNo != ErrorCode::None; }
 
-    ///错误编号
-    int getErrorNo(void) const { return m_errorNo; }
+        ///错误编号
+        int getErrorNo(void) const { return m_errorNo; }
 
-    ///错误行号
-    int getErrorLine(void) const { return m_errorLine; }
-    
-    ///解析编码头
-    static size_t parseCodingHeader(const char *buffer, size_t len);
+        ///错误行号
+        int getErrorLine(void) const { return m_errorLine; }
 
-    ///字符转义
-    static tchar real2transChar(tchar src);
+        ///解析编码头
+        static size_t parseCodingHeader(const char *buffer, size_t len);
 
-    static tchar trans2realChar(tchar src);
+        ///字符转义
+        static tchar real2transChar(tchar src);
 
-    ///字符串转义
-    static void real2transString(tstring & dest, const tstring & src);
+        static tchar trans2realChar(tchar src);
 
-    static void trans2realString(tstring & dest, const tstring & src);
+        ///字符串转义
+        static void real2transString(tstring & dest, const tstring & src);
 
-protected:
+        static void trans2realString(tstring & dest, const tstring & src);
 
-    ///设置错误
-    void setError(int eno, int line)
-    { 
-        m_errorNo = eno; 
-        m_errorLine = line;
-    }
+    protected:
 
-    ///左大括号
-    void onLBraket(void);
+        ///设置错误
+        void setError(int eno, int line)
+        {
+            m_errorNo = eno;
+            m_errorLine = line;
+        }
 
-    ///右花括号
-    void onRBraket(void);
+        ///左大括号
+        void onLBraket(void);
 
-    ///等号
-    void onEqual(void);
+        ///右花括号
+        void onRBraket(void);
 
-    ///空白符
-    void onSpace(void);
+        ///等号
+        void onEqual(void);
 
-    ///回车符
-    void onReturn(void);
+        ///空白符
+        void onSpace(void);
 
-    ///注释‘#’
-    void onComment(void);
+        ///回车符
+        void onReturn(void);
 
-    ///分号
-    void onSemicolon(void);
+        ///注释‘#’
+        void onComment(void);
 
-    ///其他字符
-    void onOther(tchar ch);
+        ///分号
+        void onSemicolon(void);
 
-    ///跳到语句结尾
-    void skipToEnd(void);
+        ///其他字符
+        void onOther(tchar ch);
 
-    ///跳的回车符处
-    void skipToReturn(void);
+        ///跳到语句结尾
+        void skipToEnd(void);
 
-    ///从当前位置起，获得一个合法字符串。
-    tstring getAStr(void);
+        ///跳的回车符处
+        void skipToReturn(void);
 
-private:
-    StrStreamPtr    m_stream;
-    LZDataPtr       m_pCurNode;
+        ///从当前位置起，获得一个合法字符串。
+        tstring getAStr(void);
 
-    bool            m_bEnd;
+    private:
+        StrStreamPtr    m_stream;
+        LZDataPtr       m_pCurNode;
 
-    int             m_errorNo;
-    int             m_errorLine;
+        bool            m_bEnd;
 
-    tstring         m_cacheName;
-    tstring         m_tempStr;
-    int             m_lineNo;
-};
+        int             m_errorNo;
+        int             m_errorLine;
+
+        tstring         m_cacheName;
+        tstring         m_tempStr;
+        int             m_lineNo;
+    };
 
 }//namespace Lazy

@@ -1,4 +1,4 @@
-﻿//D3DTimer.cpp 
+﻿//D3DTimer.cpp
 #include "stdafx.h"
 #include "FPS.h"
 
@@ -7,38 +7,43 @@
 
 #include "../Lzui/Lzui.h"
 
-cFpsRender::cFpsRender()
+namespace Lazy
 {
-    m_label = new Lazy::CLabel();
-    m_label->setPosition(10, 10);
 
-    Lazy::CGUIManager *p = Lazy::getGUIMgr();
-    if(p) p->addChild(m_label.get());
-}
+    cFpsRender::cFpsRender()
+    {
+        m_label = new CLabel();
+        m_label->setPosition(10, 10);
 
-cFpsRender::~cFpsRender()
-{
-}
+        CGUIManager *p = getGUIMgr();
+        if(p) p->addChild(m_label.get());
+    }
 
-void cFpsRender::render()
-{
-    Lazy::tstring str;
-    formatString(str, L"fps:%.2f", getFps());
+    cFpsRender::~cFpsRender()
+    {
+    }
 
-    m_label->setText(str);
-}
+    void cFpsRender::render()
+    {
+        tstring str;
+        formatString(str, L"fps:%.2f", getFps());
 
-void cFpsRender::show(bool show)
-{
-    m_label->show(show);
-}
+        m_label->setText(str);
+    }
 
-bool cFpsRender::visible() const
-{
-    return m_label->isVisible();
-}
+    void cFpsRender::show(bool show)
+    {
+        m_label->show(show);
+    }
 
-void cFpsRender::toggle()
-{
-    m_label->toggle();
-}
+    bool cFpsRender::visible() const
+    {
+        return m_label->isVisible();
+    }
+
+    void cFpsRender::toggle()
+    {
+        m_label->toggle();
+    }
+
+} // end namespace Lazy

@@ -14,6 +14,7 @@
 #include "Lzui/Lzui.h"
 #endif
 
+using namespace Lazy;
 
 //游戏类
 class CGame :public CApp

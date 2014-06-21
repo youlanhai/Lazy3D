@@ -3,64 +3,69 @@
 #include "Model.h"
 #include "../Render/SkinMesh.h"
 
-///动画实例
-class LZDLL_API AnimalModel : public iModel
+namespace Lazy
 {
-public:
-    /** 构造函数。*/
-    AnimalModel(void);
 
-    /** 析构函数。*/
-    ~AnimalModel(void);
-    
-    /** 是否有骨骼*/
-    virtual bool isSkeleton(void) const override { return true; }
+///动画实例
+    class LZDLL_API AnimalModel : public IModel
+    {
+    public:
+        /** 构造函数。*/
+        AnimalModel(void);
 
-    virtual bool load(const std::wstring & name) override;
+        /** 析构函数。*/
+        ~AnimalModel(void);
 
-    /** 更新*/
-    virtual void update(float elapse);
+        /** 是否有骨骼*/
+        virtual bool isSkeleton(void) const override { return true; }
 
-    /** 渲染*/
-    virtual void render(IDirect3DDevice9* pDevice);
+        virtual bool load(const std::wstring & name) override;
 
-public:
+        /** 更新*/
+        virtual void update(float elapse);
 
-    /** 播放动画*/
-    virtual bool playAction(const std::wstring & name, bool loop) override;
+        /** 渲染*/
+        virtual void render(IDirect3DDevice9* pDevice);
 
-    /** 停止动画*/
-    virtual void stopAction(void) override;
+    public:
 
-    /** 获得动画个数*/
-    virtual int getActionCount(void) const override;
+        /** 播放动画*/
+        virtual bool playAction(const std::wstring & name, bool loop) override;
 
-    /** 获得动画名称*/
-    virtual void getActionName(std::wstring & name, int index) const override;
+        /** 停止动画*/
+        virtual void stopAction(void) override;
 
-    /** 步进动画*/
-    virtual void advanceAnimation(void);
+        /** 获得动画个数*/
+        virtual int getActionCount(void) const override;
 
-    virtual void setAnimSpeed(float s) override { m_speed = s; }
+        /** 获得动画名称*/
+        virtual void getActionName(std::wstring & name, int index) const override;
 
-public:
+        /** 步进动画*/
+        virtual void advanceAnimation(void);
 
-    bool playAction(LPD3DXANIMATIONSET pAnimSet);
+        virtual void setAnimSpeed(float s) override { m_speed = s; }
 
-    LPD3DXANIMATIONSET getAnimSet(int n) const;
+    public:
 
-    LPD3DXANIMATIONSET getAnimSet(const std::wstring & name) const;
+        bool playAction(LPD3DXANIMATIONSET pAnimSet);
 
-    LPD3DXANIMATIONSET findAnimSet(const std::wstring & name) const;
+        LPD3DXANIMATIONSET getAnimSet(int n) const;
 
-    /** 获得动画控制器。*/
-    LPD3DXANIMATIONCONTROLLER getAnimalControler(void){ return m_pAnimControler; }
+        LPD3DXANIMATIONSET getAnimSet(const std::wstring & name) const;
 
-protected:
-    LPD3DXANIMATIONCONTROLLER m_pAnimControler;
-    Lazy::SkinMeshPtr m_pSkinMesh;
-    float           m_elapse;
-    float           m_elapsedTime;
-    bool            m_loop;
-    float           m_speed;
-};
+        LPD3DXANIMATIONSET findAnimSet(const std::wstring & name) const;
+
+        /** 获得动画控制器。*/
+        LPD3DXANIMATIONCONTROLLER getAnimalControler(void) { return m_pAnimControler; }
+
+    protected:
+        LPD3DXANIMATIONCONTROLLER m_pAnimControler;
+        SkinMeshPtr m_pSkinMesh;
+        float           m_elapse;
+        float           m_elapsedTime;
+        bool            m_loop;
+        float           m_speed;
+    };
+
+}// end namespace Lazy

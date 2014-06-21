@@ -1,12 +1,16 @@
 #include "stdafx.h"
 #include "Transform.h"
 
-
-Transform::Transform()
+namespace Lazy
 {
-}
+
+    Transform::Transform()
+    {
+    }
 
 
-Transform::~Transform()
-{
-}
+    Transform::~Transform()
+    {
+    }
+
+} // end namespace Lazy

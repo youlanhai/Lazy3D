@@ -16,7 +16,7 @@ namespace Lazy
         setSize(80, 20);
 
         m_fontPtr = getDefaultFontPtr();
-        
+
         createTextSprite();
     }
 
@@ -164,14 +164,14 @@ namespace Lazy
         //渲染光标
         if (getGUIMgr()->isEditActive(this))
         {
-            float delta = sinf(GetTickCount()*0.003f);
+            float delta = sinf(GetTickCount() * 0.003f);
             DWORD cr = DWORD(255 * fabs(delta));
             cr = (cr << 24) | 0x00ffffff;
 
             int x, y;
             m_textSprite->getCursorPos(m_cursor, x, y);
-                
-            CRect rc2(x, y, x+2, y+m_fontPtr->getHeight());
+
+            CRect rc2(x, y, x + 2, y + m_fontPtr->getHeight());
             rc2.offset(rc.left, rc.top);
             pDevice->drawRect(rc2, cr);
         }
@@ -234,7 +234,7 @@ namespace Lazy
             return;
         }
 
-        if (m_textSprite) 
+        if (m_textSprite)
             m_textSprite->setText(m_text, m_fontPtr);
     }
 
@@ -276,7 +276,7 @@ namespace Lazy
 
         m_font = font;
         m_fontPtr = FontMgr::instance()->getFont(font);
-        
+
         updateText();
     }
 

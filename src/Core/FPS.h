@@ -2,25 +2,24 @@
 
 #include "../utility/FPS.h"
 
-using Lazy::Fps;
-
 namespace Lazy
 {
     class CLabel;
-}
 
-class LZDLL_API cFpsRender : public Fps
-{
-public:
-    cFpsRender();
-    ~cFpsRender();
-    
-    void render();
+    class LZDLL_API cFpsRender : public Fps
+    {
+    public:
+        cFpsRender();
+        ~cFpsRender();
 
-    void show(bool show);
-    bool visible() const;
-    void toggle();
+        void render();
 
-private:
-    RefPtr<Lazy::CLabel> m_label;
-};
+        void show(bool show);
+        bool visible() const;
+        void toggle();
+
+    private:
+        RefPtr<CLabel> m_label;
+    };
+
+} // end namespace Lazy

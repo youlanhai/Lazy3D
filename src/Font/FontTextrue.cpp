@@ -93,7 +93,7 @@ namespace Lazy
     FontTextureNodePtr FontTextureMgr::createNode(int fontSize)
     {
         FontTextureNodePtr ptr(new FontTextureNode(
-            FontConfig::MaxTextureWidth, FontConfig::MaxTextureHeight, fontSize, fontSize));
+                                   FontConfig::MaxTextureWidth, FontConfig::MaxTextureHeight, fontSize, fontSize));
 
         if (!ptr->valid()) return NULL;
 

@@ -8,7 +8,7 @@ namespace Lazy
 
     TextureSprite::TextureSprite()
     {}
-    
+
     TextureSprite::~TextureSprite()
     {}
 
@@ -232,7 +232,7 @@ namespace Lazy
         ITextSprite::setColor(color);
 
         for (std::vector<WordSpritePtr>::iterator it = m_sprites.begin();
-            it != m_sprites.end(); ++it)
+                it != m_sprites.end(); ++it)
         {
             (*it)->setColor(color);
         }
@@ -277,13 +277,13 @@ namespace Lazy
         m_size.set(0, 0);
 
         for (std::vector<WordSpritePtr>::iterator it = m_sprites.begin();
-            it != m_sprites.end(); ++it)
+                it != m_sprites.end(); ++it)
         {
             m_size.cy = max(m_size.cy, (*it)->getSize().cy);
         }
 
         for (std::vector<WordSpritePtr>::iterator it = m_sprites.begin();
-            it != m_sprites.end(); ++it)
+                it != m_sprites.end(); ++it)
         {
             const CSize & sz = (*it)->getSize();
             (*it)->setPosition(m_size.cx, m_size.cy - sz.cy);//µ×¶ÔÆë
@@ -296,7 +296,7 @@ namespace Lazy
         CPoint pt = m_position + world;
 
         for (std::vector<WordSpritePtr>::iterator it = m_sprites.begin();
-            it != m_sprites.end(); ++it)
+                it != m_sprites.end(); ++it)
         {
             (*it)->render(pDevice, pt);
         }
@@ -328,7 +328,7 @@ namespace Lazy
         if (m_sprites.empty() || cursor < 1) return;
 
         WordSpritePtr spr;
-        if (cursor <= m_sprites.size()) spr = m_sprites[cursor-1];
+        if (cursor <= m_sprites.size()) spr = m_sprites[cursor - 1];
         else spr = m_sprites.back();
 
         x = spr->getPosition().x + spr->getSize().cx;
@@ -383,7 +383,7 @@ namespace Lazy
         ITextSprite::setColor(color);
 
         for (std::vector<TextLineSpritePtr>::iterator it = m_lineSprites.begin();
-            it != m_lineSprites.end(); ++it)
+                it != m_lineSprites.end(); ++it)
         {
             (*it)->setColor(color);
         }
@@ -417,7 +417,7 @@ namespace Lazy
         if (pos >= m_text.size()) return;
 
         for (std::vector<TextLineSpritePtr>::iterator it = m_lineSprites.begin();
-            it != m_lineSprites.end(); ++it)
+                it != m_lineSprites.end(); ++it)
         {
             if (pos <= (*it)->length())
             {
@@ -511,7 +511,7 @@ namespace Lazy
 
         m_size.set(0, 0);
         for (std::vector<TextLineSpritePtr>::iterator it = m_lineSprites.begin();
-            it != m_lineSprites.end(); ++it)
+                it != m_lineSprites.end(); ++it)
         {
             (*it)->setPosition(0, m_size.cy);
             m_size.cx = max(m_size.cx, (*it)->getSize().cx);
@@ -523,8 +523,8 @@ namespace Lazy
     {
         CPoint pt = m_position + world;
 
-        for (std::vector<TextLineSpritePtr>::iterator it = m_lineSprites.begin(); 
-            it != m_lineSprites.end(); ++it)
+        for (std::vector<TextLineSpritePtr>::iterator it = m_lineSprites.begin();
+                it != m_lineSprites.end(); ++it)
         {
             (*it)->render(pDevice, pt);
         }

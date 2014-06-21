@@ -111,7 +111,7 @@ namespace Lazy
 
         int i = m_bVertical ? 1 : 0;
         int j = (i + 1) & 1;
-     
+
         CPoint pos;
         pos[i] = int(m_rate * getSlideRange());
         pos[j] = (m_size[j] - m_slider->m_size[j]) / 2;

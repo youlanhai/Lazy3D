@@ -2,7 +2,7 @@
 #include "Octree.h"
 #include "PhysicsDebug.h"
 
-namespace Physics
+namespace Lazy
 {
     namespace oc
     {
@@ -24,7 +24,7 @@ namespace Physics
 
         ///最优分隔法
         bool splitAABBBetter(AABB & rcFront, AABB & rcBack, float & splitPos, const AABB & rect,
-            OctreeBase* tree, const IndicesArray & indices, int splitAxis)
+                             OctreeBase* tree, const IndicesArray & indices, int splitAxis)
         {
             rcFront = rcBack = rect;
 
@@ -64,7 +64,7 @@ namespace Physics
 
         ///最优分隔法
         bool splitAABBBest(AABB & rcFront, AABB & rcBack, float & splitPos, const AABB & rect,
-            OctreeBase* tree, const IndicesArray & indices, int & splitAxis)
+                           OctreeBase* tree, const IndicesArray & indices, int & splitAxis)
         {
             rcFront = rcBack = rect;
 
@@ -140,7 +140,7 @@ namespace Physics
     {
 
     }
-    
+
     OctreeBase::~OctreeBase()
     {
 
@@ -256,7 +256,7 @@ namespace Physics
         return false;
     }
 
-    
+
     ///渲染AABB树
     void OctreeNode::render(LPDIRECT3DDEVICE9 pDevice)
     {
@@ -267,8 +267,8 @@ namespace Physics
     }
 
     ///构造八叉树
-    /*static*/bool OctreeNode::build(OctreePtr & child, const AABB &, 
-        OctreeBase *pTree, const IndicesArray & indices, size_t depth)
+    /*static*/bool OctreeNode::build(OctreePtr & child, const AABB &,
+                                     OctreeBase *pTree, const IndicesArray & indices, size_t depth)
     {
         assert(pTree && "OctreeNode::build");
 
@@ -306,12 +306,12 @@ namespace Physics
                 if (pTree->config().best)//最优分隔
                 {
                     if (!oc::splitAABBBest(rcFront, rcBack, splitPos,
-                        newAABB, pTree, indices, splitAxis)) break;
+                                           newAABB, pTree, indices, splitAxis)) break;
                 }
                 else if (pTree->config().better)//最优分隔
                 {
                     if (!oc::splitAABBBetter(rcFront, rcBack, splitPos,
-                        newAABB, pTree, indices, splitAxis)) break;
+                                             newAABB, pTree, indices, splitAxis)) break;
                 }
                 else//快速分隔
                 {
@@ -342,7 +342,7 @@ namespace Physics
                     OctreeNode *pNode = new OctreeNode(newAABB, splitAxis, splitPos);
                     child = pNode;
                     build(pNode->m_front, rcFront, pTree, front, depth + 1);
-                    build(pNode->m_back,  rcBack, pTree,back, depth + 1);
+                    build(pNode->m_back,  rcBack, pTree, back, depth + 1);
 
                     return true;
                 }
@@ -436,21 +436,21 @@ namespace Physics
     }
 
     ///最大深度
-    size_t Octree::numMaxDepth() const 
+    size_t Octree::numMaxDepth() const
     {
         if (m_root) return m_root->numMaxDepth();
         return 0;
     }
 
     ///结点个数
-    size_t Octree::numNode() const 
+    size_t Octree::numNode() const
     {
         if (m_root) return m_root->numNode();
         return 0;
     }
 
     ///叶结点个数
-    size_t Octree::numLeaf() const 
+    size_t Octree::numLeaf() const
     {
         if (m_root) return m_root->numLeaf();
         return 0;
@@ -463,4 +463,4 @@ namespace Physics
         return size;
     }
 
-}//namespace Physics
+}//namespace Lazy

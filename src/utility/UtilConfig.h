@@ -46,11 +46,11 @@ namespace Lazy
     typedef std::wifstream  tifstream;
     typedef std::wofstream  tofstream;
 
-    #define lzstricmp       _wcsicmp
-    #define lzstrcmp        wcscmp
-    #define lzstrncmp       wcsncmp
-    #define lzstrlen        wcslen
-    #define lzstrcpy        wcscpy
+#define lzstricmp       _wcsicmp
+#define lzstrcmp        wcscmp
+#define lzstrncmp       wcsncmp
+#define lzstrlen        wcslen
+#define lzstrcpy        wcscpy
 
 #else
 
@@ -60,11 +60,11 @@ namespace Lazy
     typedef std::ifstream   tifstream;
     typedef std::ofstream	tofstream;
 
-    #define lzstricmp       stricmp
-    #define lzstrcmp        strcmp
-    #define lzstrncmp       strncmp
-    #define lzstrlen        strlen
-    #define lzstrcpy        strcpy
+#define lzstricmp       stricmp
+#define lzstrcmp        strcmp
+#define lzstrncmp       strncmp
+#define lzstrlen        strlen
+#define lzstrcpy        strcpy
 
 #endif
 

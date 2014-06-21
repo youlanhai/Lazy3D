@@ -22,13 +22,13 @@ namespace Lazy
     {
         switch (type)
         {
-        case rt::texture: 
+        case rt::texture:
             return new Texture(source);
 
-        case rt::staticmesh: 
+        case rt::staticmesh:
             return new StaticMesh(source);
 
-        case rt::skinmesh: 
+        case rt::skinmesh:
             return new SkinMesh(source);
 
         case rt::effect:

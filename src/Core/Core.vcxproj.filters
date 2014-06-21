@@ -1,293 +1,92 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="model">
-      <UniqueIdentifier>{8b49be40-65e6-424b-a72d-080997baca39}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="app">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>
-      </Extensions>
-    </Filter>
-    <Filter Include="physics">
-      <UniqueIdentifier>{ad1998d7-d42f-434d-9600-b1fb98f7c136}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="res">
-      <UniqueIdentifier>{dd93b22e-45e2-491c-9f6c-868bd92f8257}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="terrain">
-      <UniqueIdentifier>{23bb0c6e-11b1-421d-b427-db605669856e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="music">
-      <UniqueIdentifier>{45fcdb9a-0e8b-4dd3-b1f8-6abd22637f9d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="camera">
-      <UniqueIdentifier>{9010b525-4b9d-4b44-908a-4474fcb83666}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="entity">
-      <UniqueIdentifier>{abc4fec4-c39b-4385-90e6-e7300300f67a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="utility">
-      <UniqueIdentifier>{4c83ea6d-ca1b-454c-8c74-6444053f648b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="particle">
-      <UniqueIdentifier>{a573d865-f0ee-4ce8-8102-0597f5265b9b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="misc">
-      <UniqueIdentifier>{95b7ce8d-6b17-404f-b340-059299706c3f}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="AnimModel.cpp" />
+    <ClCompile Include="App.cpp" />
+    <ClCompile Include="Billboard.cpp" />
+    <ClCompile Include="CallBack.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraBase.cpp" />
+    <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="cube.cpp" />
+    <ClCompile Include="CursorCamera.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="Face.cpp" />
+    <ClCompile Include="FPS.cpp" />
+    <ClCompile Include="I3DObject.cpp" />
+    <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Light.cpp" />
+    <ClCompile Include="LRCLoader.cpp" />
+    <ClCompile Include="Material.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelFactory.cpp" />
+    <ClCompile Include="MusicPlayer.cpp" />
+    <ClCompile Include="Particle.cpp" />
+    <ClCompile Include="Physics.cpp" />
+    <ClCompile Include="Pick.cpp" />
+    <ClCompile Include="RenderRes.cpp" />
+    <ClCompile Include="Res.cpp" />
+    <ClCompile Include="SceneFog.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="Snow.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="square.cpp" />
+    <ClCompile Include="StaticModel.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TerrainChunk.cpp" />
+    <ClCompile Include="TerrainItem.cpp" />
+    <ClCompile Include="TerrinData.cpp" />
+    <ClCompile Include="TerrinMap.cpp" />
+    <ClCompile Include="TextTexture.cpp" />
+    <ClCompile Include="TopBoard.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Model.cpp">
-      <Filter>model</Filter>
-    </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Physics.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Pick.cpp">
-      <Filter>physics</Filter>
-    </ClCompile>
-    <ClCompile Include="Light.cpp">
-      <Filter>res</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>res</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderRes.cpp">
-      <Filter>res</Filter>
-    </ClCompile>
-    <ClCompile Include="Res.cpp">
-      <Filter>res</Filter>
-    </ClCompile>
-    <ClCompile Include="TextTexture.cpp">
-      <Filter>res</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrinData.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrinMap.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="LRCLoader.cpp">
-      <Filter>music</Filter>
-    </ClCompile>
-    <ClCompile Include="MusicPlayer.cpp">
-      <Filter>music</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>music</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>camera</Filter>
-    </ClCompile>
-    <ClCompile Include="CursorCamera.cpp">
-      <Filter>camera</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>entity</Filter>
-    </ClCompile>
-    <ClCompile Include="I3DObject.cpp">
-      <Filter>entity</Filter>
-    </ClCompile>
-    <ClCompile Include="CallBack.cpp">
-      <Filter>utility</Filter>
-    </ClCompile>
-    <ClCompile Include="FPS.cpp">
-      <Filter>utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Keyboard.cpp">
-      <Filter>utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Particle.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
-    <ClCompile Include="SceneFog.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Snow.cpp">
-      <Filter>particle</Filter>
-    </ClCompile>
-    <ClCompile Include="Billboard.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="cube.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="Face.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyBox.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="TopBoard.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraBase.cpp">
-      <Filter>camera</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="square.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelFactory.cpp">
-      <Filter>model</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimModel.cpp">
-      <Filter>model</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticModel.cpp">
-      <Filter>model</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainItem.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainChunk.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Model.h">
-      <Filter>model</Filter>
-    </ClInclude>
-    <ClInclude Include="App.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="Commen.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Physics.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Pick.h">
-      <Filter>physics</Filter>
-    </ClInclude>
-    <ClInclude Include="Light.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderObj.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderRes.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTask.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="Res.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="TextTexture.h">
-      <Filter>res</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrinData.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrinMap.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="LRCLoader.h">
-      <Filter>music</Filter>
-    </ClInclude>
-    <ClInclude Include="MusicPlayer.h">
-      <Filter>music</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
-      <Filter>music</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>camera</Filter>
-    </ClInclude>
-    <ClInclude Include="CursorCamera.h">
-      <Filter>camera</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>entity</Filter>
-    </ClInclude>
-    <ClInclude Include="I3DObject.h">
-      <Filter>entity</Filter>
-    </ClInclude>
-    <ClInclude Include="CallBack.h">
-      <Filter>utility</Filter>
-    </ClInclude>
-    <ClInclude Include="dlist.h">
-      <Filter>utility</Filter>
-    </ClInclude>
-    <ClInclude Include="FPS.h">
-      <Filter>utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Keyboard.h">
-      <Filter>utility</Filter>
-    </ClInclude>
-    <ClInclude Include="mlist.h">
-      <Filter>utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Particle.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneFog.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Snow.h">
-      <Filter>particle</Filter>
-    </ClInclude>
-    <ClInclude Include="Billboard.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="Face.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="SkyBox.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="TopBoard.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraBase.h">
-      <Filter>camera</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="Square.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="Base.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="Core.h">
-      <Filter>app</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelFactory.h">
-      <Filter>model</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimModel.h">
-      <Filter>model</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticModel.h">
-      <Filter>model</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainItem.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainChunk.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="AnimModel.h" />
+    <ClInclude Include="App.h" />
+    <ClInclude Include="Base.h" />
+    <ClInclude Include="Billboard.h" />
+    <ClInclude Include="CallBack.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraBase.h" />
+    <ClInclude Include="Collision.h" />
+    <ClInclude Include="Commen.h" />
+    <ClInclude Include="Core.h" />
+    <ClInclude Include="Cube.h" />
+    <ClInclude Include="CursorCamera.h" />
+    <ClInclude Include="dlist.h" />
+    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Face.h" />
+    <ClInclude Include="FPS.h" />
+    <ClInclude Include="I3DObject.h" />
+    <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Light.h" />
+    <ClInclude Include="LRCLoader.h" />
+    <ClInclude Include="Material.h" />
+    <ClInclude Include="mlist.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelFactory.h" />
+    <ClInclude Include="MusicPlayer.h" />
+    <ClInclude Include="particle.h" />
+    <ClInclude Include="Physics.h" />
+    <ClInclude Include="Pick.h" />
+    <ClInclude Include="RenderObj.h" />
+    <ClInclude Include="RenderRes.h" />
+    <ClInclude Include="RenderTask.h" />
+    <ClInclude Include="Res.h" />
+    <ClInclude Include="SceneFog.h" />
+    <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="Snow.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="Square.h" />
+    <ClInclude Include="StaticModel.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TerrainChunk.h" />
+    <ClInclude Include="TerrainItem.h" />
+    <ClInclude Include="TerrinData.h" />
+    <ClInclude Include="TerrinMap.h" />
+    <ClInclude Include="TextTexture.h" />
+    <ClInclude Include="TopBoard.h" />
   </ItemGroup>
 </Project>

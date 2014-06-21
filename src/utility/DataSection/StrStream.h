@@ -17,7 +17,7 @@ namespace Lazy
 
         }
 
-        int index(){ return m_index; }
+        int index() { return m_index; }
 
         tchar curchar() const
         {
@@ -54,7 +54,7 @@ namespace Lazy
 
         int find(char ch)
         {
-            for (int i=m_index; i<m_size; ++i)
+            for (int i = m_index; i < m_size; ++i)
             {
                 if (m_buffer[i] == ch)
                 {
@@ -69,7 +69,7 @@ namespace Lazy
             {
                 return false;
             }
-            out.assign(m_buffer+begin, end - begin);
+            out.assign(m_buffer + begin, end - begin);
             return true;
         }
 

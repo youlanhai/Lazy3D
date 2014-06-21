@@ -41,14 +41,14 @@ namespace Lazy
         DWORD numbers = 0;//材质数
 
         HRESULT hr = D3DXLoadMeshFromX(
-            realPath.c_str(),
-            D3DXMESH_MANAGED,
-            pDevice,
-            NULL,
-            &pBuffer,
-            NULL,
-            &numbers,
-            &m_pMesh);
+                         realPath.c_str(),
+                         D3DXMESH_MANAGED,
+                         pDevice,
+                         NULL,
+                         &pBuffer,
+                         NULL,
+                         &numbers,
+                         &m_pMesh);
 
         if (FAILED(hr))
         {
@@ -85,7 +85,7 @@ namespace Lazy
             }
         }
 
-        //     m_pMesh->OptimizeInplace( D3DXMESHOPT_ATTRSORT | D3DXMESHOPT_COMPACT | D3DXMESHOPT_VERTEXCACHE, 
+        //     m_pMesh->OptimizeInplace( D3DXMESHOPT_ATTRSORT | D3DXMESHOPT_COMPACT | D3DXMESHOPT_VERTEXCACHE,
         //         NULL, NULL, NULL, NULL );
 
         DWORD FVF = m_pMesh->GetFVF();
@@ -106,7 +106,7 @@ namespace Lazy
                 m_pMesh->GetNumBytesPerVertex(),
                 &m_aabb.min,
                 &m_aabb.max
-                );
+            );
 
             m_pMesh->UnlockVertexBuffer();
         }

@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-namespace Math
+namespace Lazy
 {
-    class Matrix4x4;
+    class Matrix;
 
     //////////////////////////////////////////////////////////////////////////
     //2维向量
@@ -10,7 +10,7 @@ namespace Math
     class Vector2 : public D3DXVECTOR2
     {
     public:
-        Vector2(){}
+        Vector2() {}
 
         Vector2(float x_, float y_) : D3DXVECTOR2(x_, y_) {}
 
@@ -22,12 +22,12 @@ namespace Math
 
         float dot(const Vector2 & r) const
         {
-            return x*r.x + y*r.y;
+            return x * r.x + y * r.y;
         }
 
         float cross(const Vector2 & r) const
         {
-            return x*r.y - y*r.x;
+            return x * r.y - y * r.x;
         }
 
     public://运算符重载
@@ -158,13 +158,13 @@ namespace Math
             left.z = z;
         }
 
-        void applyMatrix(const Matrix4x4 & mat);
+        void applyMatrix(const Matrix & mat);
 
-        void applyNormalMatrix(const Matrix4x4 & mat);
+        void applyNormalMatrix(const Matrix & mat);
 
-        void applyMatrix(Vector3 & out, const Matrix4x4 & mat) const;
+        void applyMatrix(Vector3 & out, const Matrix & mat) const;
 
-        void applyNormalMatrix(Vector3 & out, const Matrix4x4 & mat) const;
+        void applyNormalMatrix(Vector3 & out, const Matrix & mat) const;
 
         bool tooClose(const Vector3 & v) const
         {
@@ -203,7 +203,7 @@ namespace Math
 
         float operator * (const Vector3& v) const
         {
-            return x*v.x + y*v.y + z*v.z;
+            return x * v.x + y * v.y + z * v.z;
         }
 
         Vector3 operator * (float f) const
@@ -280,4 +280,4 @@ namespace Math
         const Vector3 vec3z = Vector3(0.0f, 0.0f, 1.0f);
     }
 
-}//end namespace Math
+}//end namespace Lazy

@@ -2,7 +2,7 @@
 
 #include "Vector.h"
 
-namespace Math
+namespace Lazy
 {
     class Triangle;
     class Plane;
@@ -43,4 +43,4 @@ namespace Math
         float minDistToPanel(const Plane & panel);
     };
 
-}//end namespace Math
+}//end namespace Lazy

@@ -23,34 +23,34 @@ namespace Lzpy
     ////////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyLazyData);
 
-        LZPY_METHOD(newOne);
+    LZPY_METHOD(newOne);
 
-        LZPY_METHOD(read);
-        LZPY_METHOD(write);
-        LZPY_METHOD(addChild);
-        LZPY_METHOD(getChildren);
-        LZPY_METHOD(getFirstChild);
+    LZPY_METHOD(read);
+    LZPY_METHOD(write);
+    LZPY_METHOD(addChild);
+    LZPY_METHOD(getChildren);
+    LZPY_METHOD(getFirstChild);
 
-        LZPY_METHOD(getTag);
-        LZPY_METHOD(setTag);
+    LZPY_METHOD(getTag);
+    LZPY_METHOD(setTag);
 
-        LZPY_METHOD(getValue);
-        LZPY_METHOD(setValue);
+    LZPY_METHOD(getValue);
+    LZPY_METHOD(setValue);
 
-        LZPY_METHOD(readBool);
-        LZPY_METHOD(writeBool);
+    LZPY_METHOD(readBool);
+    LZPY_METHOD(writeBool);
 
-        LZPY_METHOD(readInt);
-        LZPY_METHOD(writeInt);
+    LZPY_METHOD(readInt);
+    LZPY_METHOD(writeInt);
 
-        LZPY_METHOD(readHex);
-        LZPY_METHOD(writeHex);
+    LZPY_METHOD(readHex);
+    LZPY_METHOD(writeHex);
 
-        LZPY_METHOD(readFloat);
-        LZPY_METHOD(writeFloat);
+    LZPY_METHOD(readFloat);
+    LZPY_METHOD(writeFloat);
 
-        LZPY_METHOD(readString);
-        LZPY_METHOD(writeString);
+    LZPY_METHOD(readString);
+    LZPY_METHOD(writeString);
 
     LZPY_CLASS_END();
 
@@ -149,7 +149,7 @@ namespace Lzpy
         int n = m_data->countChildren();
         if (n > 0)
             return make_object(m_data->getChild(0));
-        
+
         return none_object;
     }
 
@@ -373,9 +373,9 @@ namespace Lzpy
     }
 
     LZPY_MODULE_BEG(lzd)
-        LZPY_REGISTER_CLASS(lzd, PyLazyData);
-        LZPY_FUN(openLzd);
-        LZPY_FUN(openXml);
-        LZPY_FUN(saveSection);
+    LZPY_REGISTER_CLASS(lzd, PyLazyData);
+    LZPY_FUN(openLzd);
+    LZPY_FUN(openXml);
+    LZPY_FUN(saveSection);
     LZPY_MODULE_END();
 }

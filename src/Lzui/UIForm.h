@@ -22,7 +22,7 @@ namespace Lazy
         virtual void render(IUIRender * pDevice) override;
 
         ///子控件超出区域部分，不会被绘制。
-        void enableClip(bool clip){ m_bClip = clip; }
+        void enableClip(bool clip) { m_bClip = clip; }
         bool canClip() const { return m_bClip; }
 
         virtual void setImage(const tstring & image) override;

@@ -5,6 +5,8 @@
 
 namespace Lzpy
 {
+    using namespace Lazy;
+
     class PyEntity;
 
 
@@ -43,10 +45,10 @@ namespace Lzpy
         LZPY_DEF_METHOD(playAction);
         LZPY_DEF_METHOD_0(stopAction);
         LZPY_DEF_METHOD_0(getActionCount);
-        LZPY_DEF_METHOD_1(getActionName); 
+        LZPY_DEF_METHOD_1(getActionName);
         LZPY_DEF_METHOD_1(setAnimSpeed);
         LZPY_DEF_METHOD_1(showAABB);
-        
+
         float getHeight();
         object getAABB();
 
@@ -57,7 +59,7 @@ namespace Lzpy
     //physics
     ////////////////////////////////////////////////////////////////////
 
-    class EntityPhysics : public iPhysics
+    class EntityPhysics : public IPhysics
     {
     public:
         EntityPhysics(PyObject *self);
@@ -117,7 +119,7 @@ namespace Lzpy
     ////////////////////////////////////////////////////////////////////
     //entity
     ////////////////////////////////////////////////////////////////////
-    class Entity : public iEntity
+    class Entity : public IEntity
     {
     public:
         Entity(PyObject * self);

@@ -7,9 +7,9 @@ namespace Lazy
     /** 带纹理颜色顶点*/
     struct UIVertex
     {
-        Math::Vector3 position;
+        Vector3 position;
         uint32 color;
-        Math::Vector2 uv;
+        Vector2 uv;
 
         static DWORD FVF;
         static int SIZE;
@@ -23,7 +23,7 @@ namespace Lazy
         EffectPtr   m_textureShader;
         EffectPtr   m_colorShader;
         EffectPtr   m_fontShader;
-        Math::Matrix4x4 m_matWorldViewProj;
+        Matrix m_matWorldViewProj;
         bool        m_bClip;
         CRect       m_rcClip;
 

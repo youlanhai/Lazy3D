@@ -17,18 +17,11 @@
 #include "../Render/Config.h"
 #include "../Math/Math.h"
 
-class CApp;
-LZDLL_API CApp*  getApp(void);
+namespace Lazy
+{
+    class CApp;
+    LZDLL_API CApp*  getApp(void);
 
-
-//以下内容为兼容旧接口
-
-using Lazy::IBase;
-using Lazy::RefPtr;
-using Lazy::CRect;
-using Lazy::CPoint;
-using Lazy::CSize;
-
-using namespace Math;
+}// end namespace Lazy
 
 #endif //LAZY3D_BASE_H

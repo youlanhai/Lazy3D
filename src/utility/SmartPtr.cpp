@@ -26,8 +26,8 @@ namespace Lazy
         return *this;
     }
 
-    void IBase::addRef(void) 
-    { 
+    void IBase::addRef(void)
+    {
         ++m_nRefCounter_;
     }
 
@@ -40,12 +40,12 @@ namespace Lazy
         }
     }
 
-    int IBase::getRef(void) const 
+    int IBase::getRef(void) const
     {
         return m_nRefCounter_;
     }
 
-    bool IBase::isRefUnique() const 
+    bool IBase::isRefUnique() const
     {
         return m_nRefCounter_ == 1;
     }

@@ -29,7 +29,7 @@ namespace Lazy
 
         /** 向控件发送消息。
             sendEvent要负责过滤消息，将合法的消息传递给messageProc.
-            发送成功，返回true，否则false。 
+            发送成功，返回true，否则false。
         */
         virtual bool sendEvent(const SEvent& event);
 
@@ -56,7 +56,7 @@ namespace Lazy
         virtual void loadFromStream(LZDataPtr root);
         virtual void saveToStream(LZDataPtr root);
 
-        void setName(const tstring & key){ m_name = key; }
+        void setName(const tstring & key) { m_name = key; }
         const tstring & getName() const { return m_name; }
 
     public: //坐标系转换
@@ -86,7 +86,7 @@ namespace Lazy
     public://属性
 
         ///设置ID。
-        void setID(int id){ m_id = id; }
+        void setID(int id) { m_id = id; }
         int  getID(void) const { return m_id; }
 
         ///获取父
@@ -96,23 +96,23 @@ namespace Lazy
         PControl getParent(void) const { return m_parent; }
 
         ///设置文本
-        virtual void setText(const tstring & text){ m_text = text; }
+        virtual void setText(const tstring & text) { m_text = text; }
         virtual const tstring & getText(void) const { return m_text; }
 
         ///设置字体
-        virtual void setFont(const tstring & name){ m_font = name; }
+        virtual void setFont(const tstring & name) { m_font = name; }
         virtual const tstring & getFont(void) const { return m_font; }
 
         ///设置背景图像名称
-        virtual void setImage(const tstring & image){ m_image = image; }
+        virtual void setImage(const tstring & image) { m_image = image; }
         virtual const tstring & getImage(void) const { return m_image; }
 
         ///设置颜色。
-        virtual void setColor(uint32 cr){ m_color = cr; }
+        virtual void setColor(uint32 cr) { m_color = cr; }
         uint32 getColor(void) const { return m_color; }
 
         uint32 getBgColor() const { return m_bgColor; }
-        void setBgColor(uint32 cr){ m_bgColor = cr; }
+        void setBgColor(uint32 cr) { m_bgColor = cr; }
 
         ///设置位置
         virtual void setPosition(int x, int y);
@@ -144,7 +144,7 @@ namespace Lazy
 
         ///设置相对坐标。只有m_bRelative为true，此调用才有效。
         void setRelativePos(float x, float y);
-        const Math::Vector2 & getRelativePos() const { return m_relativePos; }
+        const Vector2 & getRelativePos() const { return m_relativePos; }
 
         ///设置对齐方式
         void setRelativeAlign(DWORD align);
@@ -157,11 +157,11 @@ namespace Lazy
 #ifdef ENABLE_SCRIPT
 
         /** borrw reference */
-        Lzpy::object_base getSelf(){ return m_self; }
-        void setSelf(Lzpy::object_base self){ m_self = self; }
+        Lzpy::object_base getSelf() { return m_self; }
+        void setSelf(Lzpy::object_base self) { m_self = self; }
 
         const tstring & getScript() const { return m_script; }
-        void setScript(const tstring & script){ m_script = script; }
+        void setScript(const tstring & script) { m_script = script; }
 
     protected:
         /** python端脚本，ui类不持有python引用计数。*/
@@ -178,32 +178,32 @@ namespace Lazy
         bool isVisible(void) const { return m_bVisible; }
 
         ///设置是否可用
-        void enable(bool e){ m_bEnable = e; }
+        void enable(bool e) { m_bEnable = e; }
         bool isEnable(void) const { return m_bEnable; }
 
         ///设置是否可拖拽窗体
-        void enableDrag(bool e){ m_bDrag = e; }
+        void enableDrag(bool e) { m_bDrag = e; }
         bool canDrag(void) const { return m_bDrag; }
 
         ///启用/禁用处理自身消息。如果一个ui不处理自己的消息，他就相当于是个消息转发器，将消息转发到子控件
-        void enableSelfMsg(bool e){ m_bEnableSelfMsg = e; }
-        bool isSelfMsgEnable(void) const{ return m_bEnableSelfMsg; }
+        void enableSelfMsg(bool e) { m_bEnableSelfMsg = e; }
+        bool isSelfMsgEnable(void) const { return m_bEnableSelfMsg; }
 
         ///点击是否可移动到上层。
         void enableClickTop(bool e) { m_bClickTop = e; }
         bool canClickTop(void) const { return m_bClickTop; }
 
         ///允许改变子控件的顺序。如果启用，点击子控件，控件的顺序会被提前。
-        void enableChangeChildOrder(bool can){ m_bChangeChildOrder = can; }
+        void enableChangeChildOrder(bool can) { m_bChangeChildOrder = can; }
         bool canChangeChildOrder() const { return m_bChangeChildOrder; }
 
-        void enableLimitInRect(bool enalbe){ m_bLimitInRect = enalbe; }
+        void enableLimitInRect(bool enalbe) { m_bLimitInRect = enalbe; }
         bool canLimitInRect() const { return m_bLimitInRect; }
 
-        void enableDrawSelf(bool enable){ m_bDrawSelf = enable; }
+        void enableDrawSelf(bool enable) { m_bDrawSelf = enable; }
         bool canDrawSelf() const { return m_bDrawSelf; }
 
-        void setEditable(bool enable){ m_bEditable = enable; }
+        void setEditable(bool enable) { m_bEditable = enable; }
         bool getEditable() const { return m_bEditable; }
 
     public: //对子控件操作
@@ -236,17 +236,17 @@ namespace Lazy
         void setManaged(bool managed);
         bool getManaged() const { return m_bManaged; }
 
-        void setChildOrderDirty(){ m_bOrderDirty = true; }
+        void setChildOrderDirty() { m_bOrderDirty = true; }
 
         ///根据坐标查找活动的控件。pos的参考系为当前控件。
         PControl finChildByPos(const CPoint & pos, bool resculy = false);
 
         //遍历children
 
-        VisitControl::iterator childBegin(){ return m_children.begin(); }
-        VisitControl::iterator childEnd(){ return m_children.end(); }
-        void lockChildren(){ m_children.lock(); }
-        void unlockChildren(){ m_children.unlock(); }
+        VisitControl::iterator childBegin() { return m_children.begin(); }
+        VisitControl::iterator childEnd() { return m_children.end(); }
+        void lockChildren() { m_children.lock(); }
+        void unlockChildren() { m_children.unlock(); }
 
     public://静态方法
 
@@ -286,9 +286,9 @@ namespace Lazy
         tstring		    m_font;		    ///<字体名称
         tstring         m_image;        ///<图片名称
         VisitControl    m_children;     ///<子控件列表
-        Math::Vector2   m_relativePos;  ///< 相对坐标系
+        Vector2   m_relativePos;  ///< 相对坐标系
         uint32          m_relativeAlign;///< 相对坐标系下的排版方式
-        
+
         bool            m_bEditable;    ///是否可用于ui编辑器。只有可编辑的控件，才可以保存到ui配置文件中。
         bool            m_bManaged;     ///< 从配置文件中加载出来的ui，需要托管
         bool			m_bVisible;		///< 窗体是否可见

@@ -3,12 +3,12 @@
 #include "Line.h"
 #include "Plane.h"
 
-namespace Math
+namespace Lazy
 {
 
     inline bool inside(const Vector2 & a, const Vector2 & b)
     {
-        return (a.x*b.y - a.y*b.x) >= 0;
+        return (a.x * b.y - a.y * b.x) >= 0;
     }
 
     //分割定理求两个2d三角形相交
@@ -23,16 +23,16 @@ namespace Math
             segmentA = triA[i1] - triA[i2];
             //线段A可以将两个三角形分割开,则不相交
             if (inside(segmentA, triB[0] - triA[i2]) != signA &&
-                inside(segmentA, triB[1] - triA[i2]) != signA &&
-                inside(segmentA, triB[2] - triA[i2]) != signA)
+                    inside(segmentA, triB[1] - triA[i2]) != signA &&
+                    inside(segmentA, triB[2] - triA[i2]) != signA)
             {
                 return false;
             }
 
             segmentB = triB[i1] - triB[i2];
             if (inside(segmentB, triA[0] - triB[i2]) != signB &&
-                inside(segmentB, triA[1] - triB[i2]) != signB &&
-                inside(segmentB, triA[2] - triB[i2]) != signB)
+                    inside(segmentB, triA[1] - triB[i2]) != signB &&
+                    inside(segmentB, triA[2] - triB[i2]) != signB)
             {
                 return false;
             }
@@ -112,7 +112,7 @@ namespace Math
 
     //与三角形划过体碰撞
     bool Triangle::intersect(const Triangle & triangle,
-        const Vector3 & offset) const
+                             const Vector3 & offset) const
     {
         //math3d::addDebugDrawTriangle(*this, 0x3fffffff);
 
@@ -142,9 +142,9 @@ namespace Math
 
         //裁剪三角体得到的三角形
         Triangle clipT(
-            triangle.a + offset*at,
-            triangle.b + offset*bt,
-            triangle.c + offset*ct);
+            triangle.a + offset * at,
+            triangle.b + offset * bt,
+            triangle.c + offset * ct);
 
         //接下来判断当前三角形与裁剪得到的三角形是否相交。
         //将三角形投影到2维空间，判断两个2维三角形是否相交。
@@ -153,14 +153,16 @@ namespace Math
         panel.normal.projectTo2D(indexU, indexV);
 
         //当前三角形的投影
-        Vector2 triA[3] = {
+        Vector2 triA[3] =
+        {
             Vector2(a[indexU], a[indexV]),
             Vector2(b[indexU], b[indexV]),
             Vector2(c[indexU], c[indexV]),
         };
 
         //裁剪三角形的投影
-        Vector2 triB[3] = {
+        Vector2 triB[3] =
+        {
             Vector2(clipT.a[indexU], clipT.a[indexV]),
             Vector2(clipT.b[indexU], clipT.b[indexV]),
             Vector2(clipT.c[indexU], clipT.c[indexV]),
@@ -203,4 +205,4 @@ namespace Math
         return false;
     }
 
-}//end namespace Math
+}//end namespace Lazy

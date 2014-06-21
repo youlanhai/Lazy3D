@@ -14,7 +14,7 @@ namespace Lazy
         ~RenderDevice();
 
         ///创建dx设备
-        bool create(HWND hWnd, HINSTANCE hInstance, bool fullSrc=false);
+        bool create(HWND hWnd, HINSTANCE hInstance, bool fullSrc = false);
         void destroy();
 
         ///设备是否丢失
@@ -22,7 +22,7 @@ namespace Lazy
 
         void clear(DWORD flag, D3DCOLOR cr, float z, DWORD stencil);
         bool beginScene();
-        void endScene(){ m_device->EndScene(); }
+        void endScene() { m_device->EndScene(); }
         void present();
 
         ///改变窗口尺寸
@@ -42,8 +42,8 @@ namespace Lazy
         DWORD getRenderState(dx::RSType type);
 
         //设置变换矩阵
-        void setTransform(dx::TSType type, D3DXMATRIX & matrix);
-        void getWorldViewProj(D3DXMATRIX & mat);
+        void setTransform(dx::TSType type, Matrix & matrix);
+        void getWorldViewProj(Matrix & mat);
 
         HRESULT testCooperativeLevel();
         HRESULT setTexture(DWORD stage, dx::BaseTexture *pTexture);

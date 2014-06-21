@@ -59,7 +59,7 @@ namespace Lazy
     void clearSectionCache()
     {
         g_cacheLocker.lock();
-        
+
         g_cache.clear();
 
         g_cacheLocker.unlock();
@@ -71,7 +71,7 @@ namespace Lazy
 
         ConfigCache::iterator it = g_cache.find(file);
         bool ret = (it != g_cache.end());
-        
+
         if(ret)return it->second;
 
         if (type == DataType::Default)

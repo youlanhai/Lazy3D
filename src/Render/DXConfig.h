@@ -21,7 +21,7 @@ namespace dx
     typedef D3DRENDERSTATETYPE  RSType;
     typedef D3DPRIMITIVETYPE    PTType;
     typedef D3DTRANSFORMSTATETYPE TSType;
-    
+
 }
 
 #define SAFE_ADDREF_COM(p)  if(p){ p->AddRef(); }

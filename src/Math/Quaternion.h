@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Math
+namespace Lazy
 {
     class Vector3;
     class Matrix;
@@ -20,9 +20,9 @@ namespace Math
         void setYawPitchRoll(float yaw, float pitch, float roll);
 
         void setSlerp(const Quaternion & a, const Quaternion & b, float t);
-        void setSquad(const Quaternion & pQ1, 
-            const Quaternion & a, const Quaternion & b, const Quaternion & c,
-            float t);
+        void setSquad(const Quaternion & pQ1,
+                      const Quaternion & a, const Quaternion & b, const Quaternion & c,
+                      float t);
 
         void getRotationAxis(Vector3 & axis, float & angle);
         float getLength() const;
@@ -33,4 +33,4 @@ namespace Math
 
     };
 
-} // end namespace Math
+} // end namespace Lazy

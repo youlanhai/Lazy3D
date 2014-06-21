@@ -4,7 +4,7 @@
 #include "Vector.h"
 #include "Matrix.h"
 
-namespace Math
+namespace Lazy
 {
 
     Quaternion::Quaternion()
@@ -50,8 +50,8 @@ namespace Math
     }
 
     void Quaternion::setSquad(const Quaternion & pQ1,
-        const Quaternion & a, const Quaternion & b, const Quaternion & c,
-        float t)
+                              const Quaternion & a, const Quaternion & b, const Quaternion & c,
+                              float t)
     {
         D3DXQuaternionSquad(this, &pQ1, &a, &b, &c, t);
     }
@@ -84,4 +84,4 @@ namespace Math
         return *this;
     }
 
-}// end namespace Math
+}// end namespace Lazy

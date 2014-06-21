@@ -3,21 +3,25 @@
 #include "Model.h"
 #include "../Render/StaticMesh.h"
 
-class LZDLL_API StaticModel : public iModel
+namespace Lazy
 {
-public:
-    StaticModel(void);
+    class LZDLL_API StaticModel : public IModel
+    {
+    public:
+        StaticModel(void);
 
-    ~StaticModel();
+        ~StaticModel();
 
-    virtual bool isMesh(void) const override { return true; }
+        virtual bool isMesh(void) const override { return true; }
 
-    virtual bool load(const std::wstring & name) override;
+        virtual bool load(const std::wstring & name) override;
 
-    virtual void render(IDirect3DDevice9 * pDevice);
+        virtual void render(IDirect3DDevice9 * pDevice);
 
-    dx::Mesh* getMesh(){ return m_mesh->getMesh(); }
+        dx::Mesh* getMesh() { return m_mesh->getMesh(); }
 
-protected:
-    Lazy::StaticMeshPtr    m_mesh;
-};
+    protected:
+        StaticMeshPtr    m_mesh;
+    };
+
+} // end namespace Lazy

@@ -4,7 +4,7 @@
 
 #include "PhysicsDebug.h"
 
-namespace Physics
+namespace Lazy
 {
     namespace qtree
     {
@@ -35,8 +35,8 @@ namespace Physics
     }
 
     ///最优分隔法
-    int splitRectBest(FRect & rcFront, FRect & rcBack, float & splitPos, const FRect & rect, 
-        QuadTreeBase* tree, const IndicesArray & indices)
+    int splitRectBest(FRect & rcFront, FRect & rcBack, float & splitPos, const FRect & rect,
+                      QuadTreeBase* tree, const IndicesArray & indices)
     {
         rcFront = rcBack = rect;
 
@@ -50,7 +50,7 @@ namespace Physics
         for (size_t x : indices)
         {
             float pos = tree->getRcById(x)[axis];
-                
+
             size_t a = 0;
             size_t b = 0;
 
@@ -94,14 +94,14 @@ namespace Physics
     QuadTreeBase::QuadTreeBase()
     {}
 
-    QuadTreeBase::QuadTreeBase(QuadTreeBase* tree, const Physics::FRect & rc)
+    QuadTreeBase::QuadTreeBase(QuadTreeBase* tree, const FRect & rc)
         : m_rect(rc)
         , m_pTree(tree)
     {
     }
     /////////////////////////////////////////////////////////////////
-    QuadTreeLeaf::QuadTreeLeaf(QuadTreeBase* tree, const Physics::FRect & rc, 
-        const IndicesArray & indices)
+    QuadTreeLeaf::QuadTreeLeaf(QuadTreeBase* tree, const FRect & rc,
+                               const IndicesArray & indices)
         : QuadTreeBase(tree, rc)
         , m_indices(indices)
     {
@@ -149,7 +149,7 @@ namespace Physics
     }
 
     //////////////////////////////////////////////////////////////////
-    QuadTreeNode::QuadTreeNode(QuadTreeBase* tree, const Physics::FRect & rc, int splitAxis, float splitPos)
+    QuadTreeNode::QuadTreeNode(QuadTreeBase* tree, const FRect & rc, int splitAxis, float splitPos)
         : QuadTreeBase(tree, rc)
         , m_splitPos(splitPos)
         , m_splitAxis(splitAxis)
@@ -197,7 +197,7 @@ namespace Physics
     bool QuadTreeNode::build(
         QuadTreeBase* tree,
         QuadTreePtr & child,
-        const Physics::FRect & rect,
+        const FRect & rect,
         const IndicesArray & indices,
         size_t depth)
     {
@@ -231,14 +231,14 @@ namespace Physics
                 {
                     splitAxis = splitRect(rcFront, rcBack, splitPos, newRect);
                 }
-                
+
                 front.clear();
                 back.clear();
 
                 for (auto & x : indices)
                 {
                     int side = wichSide(splitAxis, splitPos, tree->getRcById(x));
-                   
+
                     if (side & SIDE_FRONT) front.push_back(x);
                     if (side & SIDE_BACK) back.push_back(x);
                 }
@@ -336,4 +336,4 @@ namespace Physics
     }
 
 
-}//end namespace Physics
+}//end namespace Lazy

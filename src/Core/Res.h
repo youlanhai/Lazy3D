@@ -2,24 +2,28 @@
 
 #include "RenderRes.h"
 
-
-class LZDLL_API cResFactory : public IResFactory
+namespace Lazy
 {
-public:
-    cResFactory();
-    ~cResFactory();
 
-    /** 创建资源对象。*/
-    virtual RenderResPtr createObj(int type) override;
-};
+    class LZDLL_API ResFactory : public IResFactory
+    {
+    public:
+        ResFactory();
+        ~ResFactory();
 
-
-class LZDLL_API cResMgr : public cRenderResMgr
-{
-public:
-    
-    cResMgr();
-};
+        /** 创建资源对象。*/
+        virtual RenderResPtr createObj(int type) override;
+    };
 
 
-LZDLL_API cResMgr* getResMgr(void);
+    class LZDLL_API ResMgrOld : public cRenderResMgr
+    {
+    public:
+
+        ResMgrOld();
+    };
+
+
+    LZDLL_API ResMgrOld* getResMgr(void);
+
+} // end namespace Lazy

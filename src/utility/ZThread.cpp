@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////////////////////////////////
-/* 
+/*
  * author: youlanhai
  * e-mail: you_lan_hai@foxmail.com
  * blog: http://blog.csdn.net/you_lan_hai
@@ -23,7 +23,7 @@ namespace Lazy
     {
         uint32 flag = 0;
         if (!start) flag = CREATE_SUSPENDED;
-        
+
         m_hThread = (HANDLE) _beginthreadex(NULL, 0, _threadCall, this, flag, NULL);
     }
 

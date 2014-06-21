@@ -13,10 +13,10 @@ namespace Lazy
         ~BoneFrame();
 
         BoneFrame* find(const std::wstring & name);
-        void updateMatrix(const Math::Matrix4x4 & matParent);
+        void updateMatrix(const Matrix & matParent);
 
         std::wstring    BoneName;
-        D3DXMATRIX      CombinedTransformationMatrix;
+        Matrix      CombinedTransformationMatrix;
     };
 
     ///骨骼关联的mesh
@@ -32,8 +32,8 @@ namespace Lazy
         DWORD					NumInfl;		//每个顶点最多受多少骨骼的影响
         DWORD					NumAttributeGroups;		//属性组数量,即子网格的数量
         LPD3DXBUFFER			pBoneCombinationBuf;	//骨骼组合表
-        D3DXMATRIX**			ppBoneMatrixPtrs;		//存放骨骼的组合变换矩阵
-        D3DXMATRIX*				pBoneOffsetMatrices;	//存放骨骼的初始变换矩阵
+        Matrix**			ppBoneMatrixPtrs;		//存放骨骼的组合变换矩阵
+        Matrix*				pBoneOffsetMatrices;	//存放骨骼的初始变换矩阵
         DWORD					NumPaletteEntries;		//骨骼数量上限
         bool					UseSoftwareVP;			//是否使用软件顶点处理
         DWORD					iAttributeSW;
@@ -72,17 +72,17 @@ namespace Lazy
         /** 从X文件中加载骨骼动画。*/
         bool loadFromXFile(const std::wstring & fileName);
 
-        const Math::Matrix4x4 & getWorldMatrix(void) const { return m_worldMatrix; }
+        const Matrix & getWorldMatrix(void) const { return m_worldMatrix; }
 
-        void setWorldMatrix(const Math::Matrix4x4 & mat){ m_worldMatrix = mat; }
+        void setWorldMatrix(const Matrix & mat) { m_worldMatrix = mat; }
 
         int getNbDrawTrangle() const { return m_dwTrangleCnt; }
 
         float getBBRadius(void) const { return m_bbRadius; }
 
-        const Math::Vector3 & getBBCenter(void) const { return m_bbCenter; }
+        const Vector3 & getBBCenter(void) const { return m_bbCenter; }
 
-        const Math::AABB & getAABB() const { return m_aabb; }
+        const AABB & getAABB() const { return m_aabb; }
 
         /** 克隆动画控制器。*/
         dx::AnimController* cloneAnimaCtrl(void);
@@ -97,9 +97,9 @@ namespace Lazy
         int	            m_skinMethod;   ///< 蒙皮类型
         int		        m_dwTrangleCnt; ///< 渲染的三角形数量
         float           m_bbRadius;     ///< 包围盒半径
-        Math::Vector3    m_bbCenter;     ///< 包围盒中心
-        Math::AABB       m_aabb;         ///<aabb包围盒
-        Math::Matrix4x4  m_worldMatrix;  ///<世界矩阵
+        Vector3    m_bbCenter;     ///< 包围盒中心
+        AABB       m_aabb;         ///<aabb包围盒
+        Matrix  m_worldMatrix;  ///<世界矩阵
         dx::AnimController* m_pAnimController;  ///< 动画控制器
 
     protected:
@@ -125,6 +125,6 @@ namespace Lazy
     class SkinMeshMgr : public ResMgr<SkinMeshMgr, SkinMeshPtr>
     {
     public:
-        virtual int getType(){ return rt::skinmesh; }
+        virtual int getType() { return rt::skinmesh; }
     };
 }

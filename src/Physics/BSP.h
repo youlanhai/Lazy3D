@@ -6,7 +6,7 @@
 
 #include "Collision.h"
 
-namespace Physics
+namespace Lazy
 {
     typedef RefPtr<class BspNode> BspNodePtr;
     typedef RefPtr<class BspTree> BspTreePtr;
@@ -20,11 +20,11 @@ namespace Physics
 
     public:
 
-        BspNode(){ }
+        BspNode() { }
 
         explicit BspNode(const Triangle & tri);
 
-        virtual void addTriangle(const Triangle & tri, const Math::Polygon & splitPoly);
+        virtual void addTriangle(const Triangle & tri, const Polygon & splitPoly);
 
         void load(Lazy::DataStream & stream);
         void save(Lazy::DataStream & stream) const;
@@ -32,26 +32,26 @@ namespace Physics
         bool collision(
             const Triangle & triangle,
             const Vector3 & offset,
-            CollisionPrevent & ci, 
-            const Matrix4x4 & world) const;
+            CollisionPrevent & ci,
+            const Matrix & world) const;
 
         bool collisionThis(
             const Triangle & triangle,
             const Vector3 & offset,
-            CollisionPrevent & ci, 
-            const Matrix4x4 & world) const;
+            CollisionPrevent & ci,
+            const Matrix & world) const;
 
-        bool collision(CollisionPrevent & ci, const Matrix4x4 & world) const;
+        bool collision(CollisionPrevent & ci, const Matrix & world) const;
 
-        bool collisionThis(CollisionPrevent & ci, const Matrix4x4 & world) const;
+        bool collisionThis(CollisionPrevent & ci, const Matrix & world) const;
 
         void drawDebug(IDirect3DDevice9 *device) const;
 
     protected:
 
-        virtual void addToChild(BspNodePtr & child, 
-            const Triangle & tri,  
-            const Math::Polygon & poly);
+        virtual void addToChild(BspNodePtr & child,
+                                const Triangle & tri,
+                                const Polygon & poly);
 
     protected:
         Plane           m_panel;    //分割平面
@@ -68,8 +68,8 @@ namespace Physics
         MAKE_UNCOPY(BspTree)
 
     public:
-        BspTree(){}
-        ~BspTree(){}
+        BspTree() {}
+        ~BspTree() {}
 
         bool generateBsp(ID3DXMesh* mesh);
 
@@ -77,11 +77,11 @@ namespace Physics
 
         bool save(const Lazy::tstring & fname) const;
 
-        bool collision(CollisionPrevent & ci, const Matrix4x4 & world) const;
+        bool collision(CollisionPrevent & ci, const Matrix & world) const;
 
-        BspNodePtr root() const { return m_root; } 
+        BspNodePtr root() const { return m_root; }
 
-        void drawDebug(IDirect3DDevice9 *pDevice, const Matrix4x4 * pWorld=NULL) const;
+        void drawDebug(IDirect3DDevice9 *pDevice, const Matrix * pWorld = NULL) const;
 
     protected:
 
@@ -96,7 +96,7 @@ namespace Physics
     //////////////////////////////////////////////////////////////////////////
     //
     //////////////////////////////////////////////////////////////////////////
-    
+
     //设置bsp文件的存贮路径
     void setBspFilePath(const Lazy::tstring & path);
 
@@ -128,14 +128,14 @@ namespace Physics
     class AVLBspNode : public BspNode
     {
     public:
-        AVLBspNode(AVLBspNode * parent) 
+        AVLBspNode(AVLBspNode * parent)
             : m_parent(parent)
             , m_balence(0)
             , m_tree(NULL)
         {
         }
 
-        AVLBspNode(AVLBspTree *tree, AVLBspNode * parent, const Triangle & tri) 
+        AVLBspNode(AVLBspTree *tree, AVLBspNode * parent, const Triangle & tri)
             : BspNode(tri)
             , m_tree(tree)
             , m_parent(parent)
@@ -143,34 +143,34 @@ namespace Physics
         {
         }
 
-        bool isRoot(){ return m_parent==NULL; }
-        bool isLeft(){ return m_parent->left() == this; }
-        bool isRight(){ return m_parent->right() == this; }
+        bool isRoot() { return m_parent == NULL; }
+        bool isLeft() { return m_parent->left() == this; }
+        bool isRight() { return m_parent->right() == this; }
 
         AVLBspNodePtr left()
-        { 
+        {
             //assert(m_front && "no left");
             if (m_front)
             {
-                return (AVLBspNodePtr)m_front; 
+                return (AVLBspNodePtr)m_front;
             }
             return NULL;
         }
         AVLBspNodePtr right()
-        { 
-            //assert(m_back && "no right"); 
+        {
+            //assert(m_back && "no right");
             if(m_back)
             {
-                return (AVLBspNodePtr)m_back; 
+                return (AVLBspNodePtr)m_back;
             }
             return NULL;
         }
 
-        AVLBspNode* parent(){ return m_parent; }
-        void setParent(AVLBspNode* ptr){ m_parent = ptr; }
+        AVLBspNode* parent() { return m_parent; }
+        void setParent(AVLBspNode* ptr) { m_parent = ptr; }
 
         void setLeft(AVLBspNodePtr ptr)
-        { 
+        {
             m_front = ptr;
             if (ptr)
             {
@@ -178,7 +178,7 @@ namespace Physics
             }
         }
         void setRight(AVLBspNodePtr ptr)
-        { 
+        {
             m_back = ptr;
             if (ptr)
             {
@@ -192,9 +192,9 @@ namespace Physics
 
     protected:
 
-        virtual void addToChild(BspNodePtr & child, 
-            const Triangle & tri,  
-            const Math::Polygon & poly);
+        virtual void addToChild(BspNodePtr & child,
+                                const Triangle & tri,
+                                const Polygon & poly);
 
     public:
         int         m_balence;
@@ -202,4 +202,4 @@ namespace Physics
         AVLBspTree  *m_tree;
     };
 
-}//end namespace Physics
+}//end namespace Lazy

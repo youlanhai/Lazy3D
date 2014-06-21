@@ -4,32 +4,32 @@
 #include "LazyConllision.h"
 #include "PhysicsDebug.h"
 
-namespace Physics
+namespace Lazy
 {
 
-	ICollision::ICollision(void)
-	{
-	}
+    ICollision::ICollision(void)
+    {
+    }
 
-	ICollision::~ICollision(void)
-	{
-	}
+    ICollision::~ICollision(void)
+    {
+    }
 
 
-	
-	/*static */CollisionPtr CollisionFactory::create(int type)
-	{
-		if (type == CollisionType::OCTree)
+
+    /*static */CollisionPtr CollisionFactory::create(int type)
+    {
+        if (type == CollisionType::OCTree)
         {
             return new LazyCollision();
         }
 
-		throw(std::invalid_argument("collision type doesn't supported!"));
-	}
+        throw(std::invalid_argument("collision type doesn't supported!"));
+    }
 
     //体碰撞实现
     CollisionPrevent::CollisionPrevent(
-        const Vector3 & oldPos, 
+        const Vector3 & oldPos,
         const Vector3& newPos,
         bool vertical,
         const CollisionConfig & config)
@@ -71,13 +71,13 @@ namespace Physics
         resetPoints();
         resetBounds();
 
-        m_collision = Physics::CollisionFactory::create(Physics::CollisionType::Default);
+        m_collision = CollisionFactory::create(CollisionType::Default);
     }
 
     void CollisionPrevent::resetPoints()
     {
 
-        Vector3 vHalfWidth = m_right * (m_config.modelWidth*0.5f);
+        Vector3 vHalfWidth = m_right * (m_config.modelWidth * 0.5f);
         Vector3 vHeight = m_up * m_config.modelHeight;
 
         if (!m_verticalCheck)
@@ -103,7 +103,7 @@ namespace Physics
         }
 
         m_aabb.zero();
-        for(int i=0; i<8; ++i)
+        for(int i = 0; i < 8; ++i)
         {
             m_aabb.addPoint(m_point8[i]);
         }
@@ -114,9 +114,9 @@ namespace Physics
     void CollisionPrevent::resetFarPoints()
     {
         Vector3 vDeep = m_look * m_distance;
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            m_point8[i+4] = m_point8[i] + vDeep;
+            m_point8[i + 4] = m_point8[i] + vDeep;
         }
     }
 
@@ -131,7 +131,7 @@ namespace Physics
         m_topP.set(-m_up, m_point8[2]);
     }
 
-    bool CollisionPrevent::clip(Math::Polygon & polyInOut)
+    bool CollisionPrevent::clip(Polygon & polyInOut)
     {
         if(!polyInOut.choiceFront(m_leftP))
         {
@@ -157,7 +157,7 @@ namespace Physics
         return true;
     }
 
-    int CollisionPrevent::witchSide(const Triangle & tri, const Matrix4x4 & world)
+    int CollisionPrevent::witchSide(const Triangle & tri, const Matrix & world)
     {
         Triangle triangle(tri);
         triangle.applyMatrix(world);
@@ -168,7 +168,7 @@ namespace Physics
     int CollisionPrevent::witchSide(const Plane & panel)
     {
         int side = 0;
-        for (int i=0; i<8; ++i)
+        for (int i = 0; i < 8; ++i)
         {
             float dist = panel.distToPoint(m_point8[i]);
             if(dist > 0.0f)
@@ -183,7 +183,7 @@ namespace Physics
         return side;
     }
 
-    bool CollisionPrevent::collision(const Triangle & tri, const Matrix4x4 & world)
+    bool CollisionPrevent::collision(const Triangle & tri, const Matrix & world)
     {
         Triangle tempTri = tri;
         tempTri.a.applyMatrix(world);
@@ -198,7 +198,7 @@ namespace Physics
             return false;
         }
 
-        Math::Polygon poly(tempTri);
+        Polygon poly(tempTri);
         if(!clip(poly))
         {
             return false;
@@ -220,22 +220,20 @@ namespace Physics
 
     void CollisionPrevent::drawDebug(IDirect3DDevice9* pDevice) const
     {
-        Matrix4x4 matWorld;
-        D3DXMatrixIdentity(&matWorld);
-        pDevice->SetTransform(D3DTS_WORLD, &matWorld);
+        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
 
         //near
-        Physics::Polygon poly(4);
-        for (int i=0; i<4; ++i)
+        Polygon poly(4);
+        for (int i = 0; i < 4; ++i)
         {
             poly[i] = m_point8[i];
         }
         drawPolygon(pDevice, poly, 0x7f00ffff);
 
         //far
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            poly[i] = m_point8[i+4];
+            poly[i] = m_point8[i + 4];
         }
         drawPolygon(pDevice, poly, 0x7f00ffff);
 
@@ -269,7 +267,7 @@ namespace Physics
         drawPolygon(pDevice, poly, 0x7fff00ff);
 
 #ifdef _DEBUG
-        for (size_t i=0; i<m_debugPolygons.size(); ++i)
+        for (size_t i = 0; i < m_debugPolygons.size(); ++i)
         {
             drawPolygon(pDevice, m_debugPolygons[i], 0xffff0000);
         }
@@ -278,17 +276,17 @@ namespace Physics
 
     }
 
-    bool CollisionPrevent::preventCollision(LPD3DXMESH pMesh, const Matrix4x4 & world)
+    bool CollisionPrevent::preventCollision(LPD3DXMESH pMesh, const Matrix & world)
     {
         CollisionInfo info;
         info.pMesh = pMesh;
 
         //计算mesh的逆矩阵。用于将Player的包围盒转换到mesh空间。
-        Matrix4x4 inverseMat ;
-        D3DXMatrixInverse(&inverseMat, NULL, &world);
+        Matrix inverseMat;
+        world.getInvert(inverseMat);
 
         //计算world矩阵的缩放系数
-        float scale = Physics::getMatrixScale(world);
+        float scale = getMatrixScale(world);
 
         info.newPos = m_end;
         info.oldPos = m_start;
@@ -316,8 +314,8 @@ namespace Physics
 
         if(m_collision->preventCollision(info))
         {
-            for (Physics::TriangleSet::const_iterator it = info.hitTriangles.begin();
-                it != info.hitTriangles.end(); ++it)
+            for (TriangleSet::const_iterator it = info.hitTriangles.begin();
+                    it != info.hitTriangles.end(); ++it)
             {
                 collision(*it, world);
             }
@@ -334,10 +332,10 @@ namespace Physics
         m_collisionPtr = CollisionFactory::create(CollisionType::OCTree);
     }
 
-    bool RayCollision::pick(LPD3DXMESH pMesh, const Matrix4x4 & world)
+    bool RayCollision::pick(LPD3DXMESH pMesh, const Matrix & world)
     {
-        Matrix4x4 invWorld;
-        D3DXMatrixInverse(&invWorld, 0, &world);
+        Matrix invWorld;
+        world.getInvert(invWorld);
 
         RayInfo info;
         info.pMesh = pMesh;
@@ -374,12 +372,10 @@ namespace Physics
             //return;
         }
 
-        Matrix4x4 world;
-        D3DXMatrixIdentity(&world);
-        pDevice->SetTransform(D3DTS_WORLD, &world);
-        
+        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+
         Vector3 end = m_start + m_dir * m_hitDistance;
         drawLine(pDevice, m_start, end, 0xff00ff00);
         drawTriangle(pDevice, m_hitTriangle, 0xffff0000);
     }
-}//namespace Physics
+}//namespace Lazy

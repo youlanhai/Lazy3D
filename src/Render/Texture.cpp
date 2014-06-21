@@ -24,7 +24,7 @@ namespace Lazy
     {
         if (m_texture)
             m_texture->AddRef();
-            
+
         udpateInfo();
     }
 
@@ -72,7 +72,7 @@ namespace Lazy
         }
 
         if ( FAILED(D3DXCreateTextureFromFile(
-            rcDevice()->getDevice(), realPath.c_str(), &m_texture)))
+                        rcDevice()->getDevice(), realPath.c_str(), &m_texture)))
         {
             m_texture = NULL;
             return false;

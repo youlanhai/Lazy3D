@@ -229,7 +229,8 @@ namespace Lzpy
         PyObject *module = helper::getModule(mod_);
         assert(module);
 
-        PyTypeObject t = {
+        PyTypeObject t =
+        {
             PyVarObject_HEAD_INIT(NULL, 0)
             cls_.c_str(),  /* tp_name */
             sizeof(ThisType),
@@ -268,7 +269,7 @@ namespace Lzpy
     ///用于导出模块的函数
     void pyExtenFunction(const char *modulename, const char *funname, PyCFunction func);
     void pyExtenFunction(const char *modulename, const char *funname,
-        PyCFunction func, int argFlag, char *doc);
+                         PyCFunction func, int argFlag, char *doc);
 
 
 
@@ -299,7 +300,7 @@ namespace Lzpy
 inline bool _check_instance(const char * desc, const char * func, const char * file, int line)
 {
     ::Lazy::debugMessageA("Script Error: %s, func: %s, line: %d, file: %s.",
-        desc, func, line, file);
+                          desc, func, line, file);
     return false;
 }
 

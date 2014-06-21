@@ -8,11 +8,11 @@
 
 namespace Lazy
 {
-    void FillPixelData(dx::Texture *pTexture, 
-        const RECT& dest_rect,
-        unsigned char* pPixelBuffer, 
-        int nWidth,
-        int nHeight)
+    void FillPixelData(dx::Texture *pTexture,
+                       const RECT& dest_rect,
+                       unsigned char* pPixelBuffer,
+                       int nWidth,
+                       int nHeight)
     {
         assert(pTexture && pPixelBuffer && "FillPixelData");
 
@@ -58,7 +58,7 @@ namespace Lazy
 
         if (FontConfig::PreloadAscii)
         {
-            for (wchar_t i=0; i<128; ++i)
+            for (wchar_t i = 0; i < 128; ++i)
             {
                 createGlyph(i);
             }
@@ -126,7 +126,7 @@ namespace Lazy
             LOG_ERROR(_T("Font::createGlyph : the char '%c' doesn't found!"), ch);
             return pGLData;
         }
-        
+
         const FT_GlyphSlot& theGlyph = pFace->glyph;
 
         //本类只生成横向排版字形，不处理竖向排版。在非等宽字体下，X方向上的步进是各不相同的。
@@ -154,14 +154,14 @@ namespace Lazy
         {
             int width = bitmap.width;
             int height = bitmap.rows;
-            pPixelBuffer = new unsigned char[width*height];
+            pPixelBuffer = new unsigned char[width * height];
             bShouldDeletePixelBuffer = true;
             int nIndex = 0;
             for (int y = 0; y < height; ++y)
             {
                 for (int x = 0; x < width; ++x)
                 {
-                    if (bitmap.buffer[y*width + x/8] & (0x80 >> (x & 7)))
+                    if (bitmap.buffer[y * width + x / 8] & (0x80 >> (x & 7)))
                     {
                         pPixelBuffer[nIndex] = 0xFF;
                     }
@@ -215,9 +215,9 @@ namespace Lazy
         return pData->advanceX;
     }
 
-    bool Font::fillWordToTexture(dx::Texture *pDestTex, 
-        int dx, int dy, wchar_t ch, D3DXCOLOR color,
-        int & ax, int & ay)
+    bool Font::fillWordToTexture(dx::Texture *pDestTex,
+                                 int dx, int dy, wchar_t ch, D3DXCOLOR color,
+                                 int & ax, int & ay)
     {
         CharGlyphData *pGlyph = getGlyph(ch);
         if (!pGlyph || !pGlyph->valid)
@@ -278,7 +278,7 @@ namespace Lazy
             {
                 unsigned char* src_pixel = ((unsigned char*)srcLockRC.pBits) + srcLockRC.Pitch * y + x;
                 unsigned char* dest_pixel = ((unsigned char*)destLockRC.pBits) + destLockRC.Pitch * y + x * 4;
-                 
+
                 dest_pixel[0] = b;
                 dest_pixel[1] = g;
                 dest_pixel[2] = r;
@@ -291,9 +291,9 @@ namespace Lazy
 
         return true;
     }
-    
+
     bool Font::fillTextToTexture(dx::Texture * pDestTex,
-        int dx, int dy, const std::wstring & text, DWORD color)
+                                 int dx, int dy, const std::wstring & text, DWORD color)
     {
         int ax = 0, ay = 0;
         for (std::wstring::const_iterator it = text.begin(); it != text.end(); ++it)
@@ -312,7 +312,7 @@ namespace Lazy
     /*static*/ FontMgr * FontMgr::instance()
     {
         static FontMgr s_pMgr;
-        
+
         return &s_pMgr;
     }
 

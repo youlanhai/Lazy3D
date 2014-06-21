@@ -61,7 +61,8 @@ namespace Lzpy
         return c;
     }
 
-    static PyNumberMethods PyVector3_numberMethods = {
+    static PyNumberMethods PyVector3_numberMethods =
+    {
         (binaryfunc) PyVector3_add,
         (binaryfunc) PyVector3_sub,
         (binaryfunc) PyVector3_mutiply,
@@ -97,7 +98,7 @@ namespace Lzpy
     {
         if (!arg.parse_tuple(&m_vector.x, &m_vector.y, &m_vector.z))
             return null_object;
-        
+
         return none_object;
     }
 
@@ -107,18 +108,18 @@ namespace Lzpy
 
         std::wstring str;
         Lazy::formatStringW(str, L"%f, %f, %f",
-            pThis->m_vector.x, pThis->m_vector.y, pThis->m_vector.z);
+                            pThis->m_vector.x, pThis->m_vector.y, pThis->m_vector.z);
         return PyUnicode_FromWideChar(str.c_str(), str.size());
     }
 
-    object build_object(const Math::Vector3 & v)
+    object build_object(const Vector3 & v)
     {
         PyVector3 * p = helper::new_instance_ex<PyVector3>();
         p->m_vector = v;
         return new_reference(p);
     }
 
-    bool parse_object(Math::Vector3 & v, object o)
+    bool parse_object(Vector3 & v, object o)
     {
         if (helper::has_instance<PyVector3>(o.get()))
         {

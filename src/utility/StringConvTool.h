@@ -7,15 +7,15 @@ namespace Lazy
         uint32 v;
 
         Bin() {}
-        explicit Bin(uint32 v_) : v(v_){}
+        explicit Bin(uint32 v_) : v(v_) {}
     };
 
     struct Oct
     {
         uint32 v;
 
-        Oct(){}
-        explicit Oct(uint32 v_) : v(v_){}
+        Oct() {}
+        explicit Oct(uint32 v_) : v(v_) {}
     };
 
     struct Hex
@@ -68,7 +68,7 @@ namespace Lazy
 
         std::reverse(str.begin(), str.end());
     }
-    
+
     template<typename Num>
     void buildStringNumSlow(tstring & str, Num v, int base)
     {
@@ -103,12 +103,12 @@ namespace Lazy
         StringConvTool(void)
         {}
 
-        StringConvTool(const tstring & v) 
-            : m_value(v) 
+        StringConvTool(const tstring & v)
+            : m_value(v)
         {}
 
-        StringConvTool(const StringConvTool& st) 
-            : m_value(st.m_value) 
+        StringConvTool(const StringConvTool& st)
+            : m_value(st.m_value)
         {}
 
         virtual ~StringConvTool(void)
@@ -134,8 +134,8 @@ namespace Lazy
         bool asBool() const;
         float asFloat() const;
         double asDouble() const;
-        LPCTSTR asText() const{return m_value.c_str();}
-        const tstring & asString() const{ return m_value; }
+        LPCTSTR asText() const {return m_value.c_str();}
+        const tstring & asString() const { return m_value; }
 
         void setInt(int data);
         void setUint(size_t data);
@@ -143,8 +143,8 @@ namespace Lazy
         void setBool(bool data);
         void setFloat(float data);
         void setDouble(double data);
-        inline void setText(LPCTSTR data){ m_value = data; }
-        inline void setString(const tstring& data){m_value = data;}
+        inline void setText(LPCTSTR data) { m_value = data; }
+        inline void setString(const tstring& data) {m_value = data;}
 
         bool formatFrom(LPCTSTR pFormat, ...);
         bool formatTo(LPCTSTR pFormat, ...);

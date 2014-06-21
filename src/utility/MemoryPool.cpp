@@ -362,10 +362,10 @@ namespace Lazy
     {
         std::wstringstream ss;
         ss << "memory info\n"
-            << "total bytes: " << numTotalBytes() << "\n"
-            << "capacity bytes: " << numCapacity() << "\n"
-            << "used bytes: " << numUsed() << "\n"
-            << "num allocated arena: " << m_nAllocateArena << "\n";
+           << "total bytes: " << numTotalBytes() << "\n"
+           << "capacity bytes: " << numCapacity() << "\n"
+           << "used bytes: " << numUsed() << "\n"
+           << "num allocated arena: " << m_nAllocateArena << "\n";
         info = ss.str();
     }
 

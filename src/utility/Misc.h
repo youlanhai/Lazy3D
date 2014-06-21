@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////////////////////////////////
-/* 
+/*
 * author: youlanhai
 * e-mail: you_lan_hai@foxmail.com
 * blog: http://blog.csdn.net/you_lan_hai
@@ -41,16 +41,16 @@ namespace Lazy
     extern DWORD defaultCodePage;
 
     //多字节字符串转换成宽字符字符串
-    std::wstring charToWChar(const std::string & str, DWORD code=defaultCodePage);
+    std::wstring charToWChar(const std::string & str, DWORD code = defaultCodePage);
 
     //宽字符串转换成多字节字符串
-    std::string wcharToChar(const std::wstring & wstr, DWORD code=defaultCodePage);
+    std::string wcharToChar(const std::wstring & wstr, DWORD code = defaultCodePage);
 
     //多字节字符串转换成宽字符字符串
-    bool charToWChar(std::wstring & dest, const std::string & str, DWORD code=defaultCodePage);
+    bool charToWChar(std::wstring & dest, const std::string & str, DWORD code = defaultCodePage);
 
     //宽字符串转换成多字节字符串
-    bool wcharToChar(std::string & dest, const std::wstring & wstr, DWORD code=defaultCodePage);
+    bool wcharToChar(std::string & dest, const std::wstring & wstr, DWORD code = defaultCodePage);
 
     ///改变工作路径
     bool changeCurDirectory();
@@ -70,10 +70,10 @@ namespace Lazy
     //修整字符串
     //////////////////////////////////////////////////////////////////////////
     //去除string两端空白符。 filter : 要过滤掉的字符集和
-    void trimStringA(std::string & str, const std::string & filter=" \t\r\n");
+    void trimStringA(std::string & str, const std::string & filter = " \t\r\n");
 
     //去除string两端空白符。 filter : 要过滤掉的字符集和
-    void trimStringW(std::wstring & str, const std::wstring & filter=L" \t\r\n");
+    void trimStringW(std::wstring & str, const std::wstring & filter = L" \t\r\n");
 
     //删除ch及其后的所有字符
     template<typename ST>

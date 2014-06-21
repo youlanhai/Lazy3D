@@ -3,7 +3,7 @@
 #include "Triangle.h"
 #include "Plane.h"
 
-namespace Math
+namespace Lazy
 {
     Polygon::Polygon(const Triangle & tri)
     {
@@ -67,7 +67,7 @@ namespace Math
             {
                 //插值求割点
                 float ratio = fabs(lastDist / (dist - lastDist));
-                Vector3 cross = (*pLastPt)*(1 - ratio) + (*it)*ratio;
+                Vector3 cross = (*pLastPt) * (1 - ratio) + (*it) * ratio;
                 frontPoly.addPoint(cross);
                 backPoly.addPoint(cross);
             }
@@ -110,7 +110,7 @@ namespace Math
             {
                 //插值求割点
                 float ratio = fabs(lastDist / (dist - lastDist));
-                Vector3 cross = (*pLastPt)*(1 - ratio) + (*it)*ratio;
+                Vector3 cross = (*pLastPt) * (1 - ratio) + (*it) * ratio;
                 frontPoly.addPoint(cross);
             }
 
@@ -169,4 +169,4 @@ namespace Math
         return minDist;
     }
 
-}//end namespace Math
+}//end namespace Lazy

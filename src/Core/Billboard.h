@@ -3,47 +3,50 @@
 #include "base.h"
 #include "RenderObj.h"
 
-/** 公告板*/
-class LZDLL_API cBillboard : public IBase, public IRenderObj
+namespace Lazy
 {
-public:
-    cBillboard(void);
-    ~cBillboard(void);
+    /** 公告板*/
+    class LZDLL_API Billboard : public IBase, public IRenderObj
+    {
+    public:
+        Billboard(void);
+        ~Billboard(void);
 
-    bool createVertex(IDirect3DDevice9 *pDevice);
+        bool createVertex(IDirect3DDevice9 *pDevice);
 
-    void setSize(float w, float h);
+        void setSize(float w, float h);
 
-    void setImage(const std::wstring & texName);
+        void setImage(const std::wstring & texName);
 
-    void setTexture(IDirect3DTexture9* pTex){ m_pTexture = pTex; }
+        void setTexture(IDirect3DTexture9* pTex) { m_pTexture = pTex; }
 
-    void setPos(D3DXVECTOR3 pos){ m_pos = pos; }
+        void setPos(D3DXVECTOR3 pos) { m_pos = pos; }
 
-    virtual void update(float fElapse);
+        virtual void update(float fElapse);
 
-    virtual void render(IDirect3DDevice9 * pDevice);
+        virtual void render(IDirect3DDevice9 * pDevice);
 
-    void show(bool s){ m_show = s; }
-    bool visible(){ return m_show; }
+        void show(bool s) { m_show = s; }
+        bool visible() { return m_show; }
 
-    void setMaxShowDistance(float s){ m_maxShowDistance = s; }
+        void setMaxShowDistance(float s) { m_maxShowDistance = s; }
 
-    float getShowMaxDistance(){ return m_maxShowDistance; }
+        float getShowMaxDistance() { return m_maxShowDistance; }
 
-    bool isTooFar();
+        bool isTooFar();
 
-protected:
+    protected:
 
-    void updateVertex();
+        void updateVertex();
 
-protected:
-    IDirect3DVertexBuffer9  *m_pVertex;
-    IDirect3DTexture9       *m_pTexture;
-    D3DXVECTOR3             m_pos;
-    float                   m_width;
-    float                   m_height;
-    bool                    m_show;
-    float                   m_maxShowDistance;
-};
+    protected:
+        IDirect3DVertexBuffer9  *m_pVertex;
+        IDirect3DTexture9       *m_pTexture;
+        D3DXVECTOR3             m_pos;
+        float                   m_width;
+        float                   m_height;
+        bool                    m_show;
+        float                   m_maxShowDistance;
+    };
 
+} // end namespace Lazy

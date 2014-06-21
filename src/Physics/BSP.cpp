@@ -4,7 +4,7 @@
 #include "PhysicsDebug.h"
 #include "PhysicsUtil.h"
 
-namespace Physics
+namespace Lazy
 {
     const size_t BspMagic = Lazy::makeMagic('b', 's', 'p', 'x');
     const size_t BspVersion = 0;
@@ -13,7 +13,7 @@ namespace Physics
 
     //bsp文件的存贮路径
     static Lazy::tstring BspFilePath = _T("bsp/");
-    
+
     void setBspFilePath(const Lazy::tstring & path)
     {
         BspFilePath = path;
@@ -40,23 +40,23 @@ namespace Physics
     ///bsp
     //////////////////////////////////////////////////////////////////////////
 
-    BspNode::BspNode(const Physics::Triangle & tri)
+    BspNode::BspNode(const Triangle & tri)
         : m_panel(tri)
     {
         m_triangleSet.push_back(tri);
     }
 
-    void BspNode::addTriangle(const Physics::Triangle & tri, 
-        const Physics::Polygon & splitPoly)
+    void BspNode::addTriangle(const Triangle & tri,
+                              const Polygon & splitPoly)
     {
-        Physics::Plane panel(tri);
+        Plane panel(tri);
         if(panel == m_panel)
         {
             m_triangleSet.push_back(tri);
             return;
         }
 
-        Physics::Polygon poly;
+        Polygon poly;
         if (!splitPoly.empty())
         {
             poly = splitPoly;
@@ -66,7 +66,7 @@ namespace Physics
             poly.addTriangle(tri);
         }
 
-        Physics::Polygon fontP, backP;
+        Polygon fontP, backP;
         poly.split(m_panel, fontP, backP);
         if (!fontP.empty())
         {
@@ -78,12 +78,12 @@ namespace Physics
         }
     }
 
-    bool BspNode::collision(const Physics::Triangle & triangle,
-        const Physics::Vector3 & offset,
-        Physics::CollisionPrevent & ci, 
-        const Matrix4x4 & world) const
+    bool BspNode::collision(const Triangle & triangle,
+                            const Vector3 & offset,
+                            CollisionPrevent & ci,
+                            const Matrix & world) const
     {
-        //Physics::addDebugDrawTriangle(m_triangleSet[0], 0x3fffffff);
+        //addDebugDrawTriangle(m_triangleSet[0], 0x3fffffff);
 
         float epsilon = 0.00001f;
 
@@ -155,14 +155,14 @@ namespace Physics
     }
 
     bool BspNode::collisionThis(
-        const Physics::Triangle & triangle,
-        const Physics::Vector3 & offset,
-        Physics::CollisionPrevent & ci, 
-        const Matrix4x4 & world) const
+        const Triangle & triangle,
+        const Vector3 & offset,
+        CollisionPrevent & ci,
+        const Matrix & world) const
     {
         bool collied = false;
-        for (Physics::TriangleSet::const_iterator it = m_triangleSet.begin();
-            it != m_triangleSet.end(); ++it)
+        for (TriangleSet::const_iterator it = m_triangleSet.begin();
+                it != m_triangleSet.end(); ++it)
         {
             if(it->intersect(triangle, offset))
             {
@@ -172,22 +172,22 @@ namespace Physics
         return collied;
     }
 
-    bool BspNode::collision(Physics::CollisionPrevent & ci, const Matrix4x4 & world) const
+    bool BspNode::collision(CollisionPrevent & ci, const Matrix & world) const
     {
         assert(this && "collision ");
         bool collied = false;
 
         int side = ci.witchSide(m_triangleSet[0], world);
 
-        if (side == Physics::SIDE_FRONT)
+        if (side == SIDE_FRONT)
         {
             if(m_front) return m_front->collision(ci, world);
         }
-        else if (side == Physics::SIDE_BACK)
+        else if (side == SIDE_BACK)
         {
             if(m_back) return m_back->collision(ci, world);
         }
-        else if (side == Physics::SIDE_BOTH)
+        else if (side == SIDE_BOTH)
         {
             collied |= collisionThis(ci, world);
             if(m_front) collied |= m_front->collision(ci, world);
@@ -198,11 +198,11 @@ namespace Physics
         return collied;
     }
 
-    bool BspNode::collisionThis(Physics::CollisionPrevent & ci, const Matrix4x4 & world) const
+    bool BspNode::collisionThis(CollisionPrevent & ci, const Matrix & world) const
     {
         bool collied = false;
-        for (Physics::TriangleSet::const_iterator it = m_triangleSet.begin();
-            it != m_triangleSet.end(); ++it)
+        for (TriangleSet::const_iterator it = m_triangleSet.begin();
+                it != m_triangleSet.end(); ++it)
         {
             collied |= ci.collision(*it, world);
         }
@@ -210,9 +210,9 @@ namespace Physics
     }
 
 
-    void BspNode::addToChild(BspNodePtr & child, 
-        const Physics::Triangle & tri,  
-        const Physics::Polygon & poly)
+    void BspNode::addToChild(BspNodePtr & child,
+                             const Triangle & tri,
+                             const Polygon & poly)
     {
         if (!child)
         {
@@ -224,10 +224,10 @@ namespace Physics
 
     void BspNode::drawDebug(IDirect3DDevice9 *device) const
     {
-        for(Physics::TriangleSet::const_iterator it = m_triangleSet.begin();
-            it != m_triangleSet.end(); ++it)
+        for(TriangleSet::const_iterator it = m_triangleSet.begin();
+                it != m_triangleSet.end(); ++it)
         {
-            Physics::drawTriangle(device, *it, 0x7f7f7f7f);
+            drawTriangle(device, *it, 0x7f7f7f7f);
         }
         if (m_front)
         {
@@ -244,8 +244,8 @@ namespace Physics
         int triangleNum = stream.loadStruct<int>();
         m_triangleSet.resize(triangleNum);
 
-        for (Physics::TriangleSet::iterator it = m_triangleSet.begin(); 
-            it != m_triangleSet.end(); ++it)
+        for (TriangleSet::iterator it = m_triangleSet.begin();
+                it != m_triangleSet.end(); ++it)
         {
             stream.loadStruct(*it);
         }
@@ -265,7 +265,7 @@ namespace Physics
 
             if (type == 0) { m_front = ptr; }
             else if (type == 1) { m_back = ptr; }
-            else{ assert("bsp child type error!"); }
+            else { assert("bsp child type error!"); }
         }
         else if (childCount == 2)
         {
@@ -286,8 +286,8 @@ namespace Physics
         }
         stream.saveStruct(triangleNum);
 
-        for (Physics::TriangleSet::const_iterator it = m_triangleSet.begin(); 
-            it != m_triangleSet.end(); ++it)
+        for (TriangleSet::const_iterator it = m_triangleSet.begin();
+                it != m_triangleSet.end(); ++it)
         {
             stream.saveStruct(*it);
         }
@@ -301,7 +301,7 @@ namespace Physics
         if (m_front)
         {
             //如果孩子数大于2，则不用存贮标示符
-            if (childCount < 2) 
+            if (childCount < 2)
             {
                 stream.saveStruct(0);
             }
@@ -334,7 +334,7 @@ namespace Physics
         MeshExtractor extractor;
         if(!extractor.build(mesh)) return false;
 
-        for(size_t i=0; i<extractor.nbTriangle(); ++i)
+        for(size_t i = 0; i < extractor.nbTriangle(); ++i)
         {
             addTriangle(extractor.getTriangle(i));
         }
@@ -372,7 +372,7 @@ namespace Physics
         stream.saveStruct(BspVersion);
 
         //预留16个字节
-        for(int i=0; i<16; ++i)
+        for(int i = 0; i < 16; ++i)
         {
             stream.append(0);
         }
@@ -383,36 +383,36 @@ namespace Physics
         return Lazy::getfs()->writeBinary(fname, &buffer[0], buffer.size());
     }
 
-    bool BspTree::collision(Physics::CollisionPrevent & ci, const Matrix4x4 & world) const
+    bool BspTree::collision(CollisionPrevent & ci, const Matrix & world) const
     {
         assert(m_root);
 #if 0
         return m_root->collision(ci, world);
 #else
-        Physics::Triangle triangle(
-            ci.m_point8[0], 
-            (ci.m_point8[1] + ci.m_point8[2])/2.0f,
+        Triangle triangle(
+            ci.m_point8[0],
+            (ci.m_point8[1] + ci.m_point8[2]) / 2.0f,
             ci.m_point8[3]);
-        Physics::Vector3 dest(ci.m_point8[4]);
+        Vector3 dest(ci.m_point8[4]);
 
-        Matrix4x4 invWorld;
-        D3DXMatrixInverse(&invWorld, 0, &world);
+        Matrix invWorld;
+        world.getInvert(invWorld);
         triangle.applyMatrix(invWorld);
         dest.applyMatrix(invWorld);
 
-        Physics::addDebugDrawTriangle(triangle, 0xffffffff);
+        addDebugDrawTriangle(triangle, 0xffffffff);
 
         return m_root->collision(triangle, dest - triangle.a, ci, world);
 
 #endif
     }
 
-    BspNodePtr BspTree::createBspNode(const Physics::Triangle & tri)
+    BspNodePtr BspTree::createBspNode(const Triangle & tri)
     {
         return new BspNode(tri);
     }
 
-    void BspTree::addTriangle(const Physics::Triangle & tri)
+    void BspTree::addTriangle(const Triangle & tri)
     {
         if (!m_root)
         {
@@ -420,17 +420,15 @@ namespace Physics
             return;
         }
 
-        Physics::Polygon poly;
+        Polygon poly;
         m_root->addTriangle(tri, poly);
     }
 
-    void BspTree::drawDebug(IDirect3DDevice9 *pDevice, const Matrix4x4 * pWorld/*=NULL*/) const
+    void BspTree::drawDebug(IDirect3DDevice9 *pDevice, const Matrix * pWorld/*=NULL*/) const
     {
         if (!pWorld)
         {
-            Matrix4x4 world;
-            D3DXMatrixIdentity(&world);
-            pDevice->SetTransform(D3DTS_WORLD, &world);
+            pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
         }
         else
         {
@@ -488,7 +486,7 @@ namespace Physics
     //////////////////////////////////////////////////////////////////////////
     //
     //////////////////////////////////////////////////////////////////////////
-    BspNodePtr AVLBspTree::createBspNode(const Physics::Triangle & tri)
+    BspNodePtr AVLBspTree::createBspNode(const Triangle & tri)
     {
         return new AVLBspNode(this, NULL, tri);
     }
@@ -532,9 +530,9 @@ namespace Physics
         }
     }
 
-    void AVLBspNode::addToChild(BspNodePtr & child, 
-        const Physics::Triangle & tri,  
-        const Physics::Polygon & poly)
+    void AVLBspNode::addToChild(BspNodePtr & child,
+                                const Triangle & tri,
+                                const Polygon & poly)
     {
         if (child)
         {
@@ -550,7 +548,7 @@ namespace Physics
         {
             node = node->m_parent;
             node->updateBalence();
-            if(node->m_balence<-1 || node->m_balence>1)
+            if(node->m_balence < -1 || node->m_balence > 1)
             {
                 unbalencedNode = node;
                 break;
@@ -671,4 +669,4 @@ namespace Physics
         }
     }
 
-}//end namespace Physics
+}//end namespace Lazy

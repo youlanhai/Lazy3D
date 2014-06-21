@@ -23,15 +23,15 @@ namespace Lazy
 
     public:
 
-        dx::Mesh * getMesh(void){ return m_pMesh; }
+        dx::Mesh * getMesh(void) { return m_pMesh; }
 
-        const Math::AABB & getAABB(){ return m_aabb; }
+        const AABB & getAABB() { return m_aabb; }
 
     protected:
         std::vector<dx::Texture*>	m_vecTextures;	///< 纹理数组指针
         std::vector<dx::Material>	m_vecMaterials;	///< 材质数组
         dx::Mesh        *m_pMesh;	///< 网格
-        Math::AABB   m_aabb;     ///< aabb包围盒
+        AABB   m_aabb;     ///< aabb包围盒
     };
 
     typedef RefPtr<StaticMesh> StaticMeshPtr;
@@ -39,7 +39,7 @@ namespace Lazy
     class StaticMeshMgr : public ResMgr<StaticMeshMgr, StaticMeshPtr>
     {
     public:
-        virtual int getType(){ return rt::staticmesh; }
+        virtual int getType() { return rt::staticmesh; }
     };
 
 }//end namespace Lazy

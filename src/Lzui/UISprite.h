@@ -45,7 +45,7 @@ namespace Lazy
         ControlSprite();
         ~ControlSprite();
 
-        void setControl(ControlPtr control){ m_control = control; }
+        void setControl(ControlPtr control) { m_control = control; }
         ControlPtr getControl() const { return m_control; }
 
         virtual void update(float elapse);
@@ -59,13 +59,13 @@ namespace Lazy
     class WordSprite : public ISprite
     {
     public:
-        WordSprite(bool grouped=false);
+        WordSprite(bool grouped = false);
         ~WordSprite();
 
         void setWord(wchar_t ch, FontPtr font, uint32 color);
         wchar_t getWord() const { return m_ch; }
 
-        void setColor(uint32 color){ m_color = color; }
+        void setColor(uint32 color) { m_color = color; }
         uint32 getColor() const { return m_color; }
 
         inline void update(float elapse) {}
@@ -102,10 +102,10 @@ namespace Lazy
         void delText(size_t pos, size_t count);
 
         const std::wstring & getText() const { return m_text; }
-        wchar_t getWord(size_t pos) const{ return m_text[pos]; }
+        wchar_t getWord(size_t pos) const { return m_text[pos]; }
 
         uint32 getColor() const { return m_color; }
-        virtual void setColor(uint32 color){ m_color = color; }
+        virtual void setColor(uint32 color) { m_color = color; }
 
         virtual void setMaxWidth(int width);
         int getMaxWidth() const { return m_maxWidth; }
@@ -139,19 +139,19 @@ namespace Lazy
         TextLineSprite(bool grouped = false);
         ~TextLineSprite();
 
-        WordSpritePtr getSprite(size_t pos){ return m_sprites[pos]; }
+        WordSpritePtr getSprite(size_t pos) { return m_sprites[pos]; }
         void insertWord(size_t pos, WordSpritePtr sprite);
 
         virtual void setText(const std::wstring & text, FontPtr font);
         virtual void setColor(uint32 color);
-        virtual size_t getTextLines() const{ return m_text.empty() ? 0 : 1; }
+        virtual size_t getTextLines() const { return m_text.empty() ? 0 : 1; }
 
         virtual void insertWord(size_t pos, wchar_t ch, FontPtr font);
         virtual void delWord(size_t pos);
 
         virtual void onClear();
         virtual void onLayout();
-        
+
         virtual void render(IUIRender * pDevice, const CPoint & world);
 
         virtual bool getCursorByPos(size_t & cursor, int x, int y);
@@ -172,8 +172,8 @@ namespace Lazy
 
         virtual void setText(const std::wstring & text, FontPtr font);
         virtual void setColor(uint32 color);
-        virtual size_t getTextLines() const{ return m_lineSprites.size(); }
-        
+        virtual size_t getTextLines() const { return m_lineSprites.size(); }
+
         virtual void insertWord(size_t pos, wchar_t ch, FontPtr font);
         virtual void delWord(size_t pos);
 
@@ -224,10 +224,10 @@ namespace Lazy
         void layout();
 
         size_t numSprites() const { return m_sprites.size(); }
-        SpritePtr getSprite(size_t i){ return m_sprites[i]; }
+        SpritePtr getSprite(size_t i) { return m_sprites[i]; }
 
         bool empty() const { return m_sprites.empty(); }
-        void clear(){ m_sprites.clear(); }
+        void clear() { m_sprites.clear(); }
 
     private:
         SpritePool m_sprites;

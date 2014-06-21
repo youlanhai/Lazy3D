@@ -370,6 +370,6 @@ namespace Lazy
     std::ostream & operator << (std::ostream & out, const CSize & v);
     std::ostream & operator << (std::ostream & out, const CRect & v);
     std::ostream & operator << (std::ostream & out, const UVRect & v);
-    
+
 
 }//namespace Lazy

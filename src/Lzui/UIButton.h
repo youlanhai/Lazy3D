@@ -28,24 +28,24 @@ namespace Lazy
 
         /** 设置按钮状态。请尽量调用该方法设置按钮状态，而不是给成员变量m_state直接赋值。*/
         virtual void setBtnState(int state);
-        int getBtnState(void){ return m_state; }
+        int getBtnState(void) { return m_state; }
 
         void setStateColor(uint32 state, uint32 cr);
         uint32 getStateColor(uint32 state);
 
         /** 启禁用颜色绘制。*/
-        void setColorFadable(bool e){ m_colorFadable = e; }
+        void setColorFadable(bool e) { m_colorFadable = e; }
         bool getColorFadable() const { return m_colorFadable; }
 
         /** 启禁用位置漂移*/
-        void setPosMovable(bool e){ m_posMovable = e; }
+        void setPosMovable(bool e) { m_posMovable = e; }
         bool getPosMovable() const { return m_posMovable; }
 
         virtual void setText(const tstring & text) override;
         virtual void setFont(const tstring & font) override;
         virtual void setColor(uint32 color) override;
 
-        void setTextAlign(uint32 align){ m_textAlign = align; }
+        void setTextAlign(uint32 align) { m_textAlign = align; }
         uint32 getTextAlign() const { return m_textAlign; }
 
         virtual void loadFromStream(LZDataPtr config) override;

@@ -44,7 +44,7 @@ namespace Lazy
         }
 
         //处理裁剪区域
-        
+
         CRect clipRect = rect;
 
         bool oldClipEnabled = pDevice->isClipEnable();
@@ -58,7 +58,7 @@ namespace Lazy
             if (clipRect.isEmpty())
                 return;//没有交集
         }
-        
+
         pDevice->setClipEnalbe(true);
         pDevice->setClipRect(clipRect);
 

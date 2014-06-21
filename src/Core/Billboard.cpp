@@ -6,197 +6,200 @@
 #include "App.h"
 #include "../Render/Texture.h"
 
-
-
-struct BillboardVertex
+namespace Lazy
 {
-    BillboardVertex(){}
-    BillboardVertex(float x_, float y_, float z_, float u_, float v_) 
-        : x(x_), y(y_), z(z_), u(u_), v(v_)
-    {
-    }
-    float x, y, z;
-    float u, v;
-    static int SIZE ;
-    static DWORD FVF;
-};
 
-int BillboardVertex::SIZE = sizeof(BillboardVertex);
-DWORD BillboardVertex::FVF = D3DFVF_XYZ|D3DFVF_TEX1;
+    struct BillboardVertex
+    {
+        BillboardVertex() {}
+        BillboardVertex(float x_, float y_, float z_, float u_, float v_)
+            : x(x_), y(y_), z(z_), u(u_), v(v_)
+        {
+        }
+        float x, y, z;
+        float u, v;
+        static int SIZE ;
+        static DWORD FVF;
+    };
+
+    int BillboardVertex::SIZE = sizeof(BillboardVertex);
+    DWORD BillboardVertex::FVF = D3DFVF_XYZ | D3DFVF_TEX1;
 
 //////////////////////////////////////////////////////////////////////////
 
-cBillboard::cBillboard(void)
-{
-    m_pVertex = NULL;
-    m_pTexture = NULL;
-    m_pos = D3DXVECTOR3(0, 0, 0);
-    m_width = 100;
-    m_height = 32;
-    m_show = true;
-    m_maxShowDistance = 0;
-}
-
-cBillboard::~cBillboard(void)
-{
-    //getApp()->removeBillboard(this);
-    SafeRelease(m_pVertex);
-}
-
-bool cBillboard::createVertex(IDirect3DDevice9 *pDevice)
-{
-    SafeRelease(m_pVertex);
-
-
-    if (FAILED(pDevice->CreateVertexBuffer(
-        4*BillboardVertex::SIZE, 
-        0,
-        BillboardVertex::FVF,
-        D3DPOOL_MANAGED,
-        &m_pVertex,
-        NULL)))
+    Billboard::Billboard(void)
     {
-        return false;
+        m_pVertex = NULL;
+        m_pTexture = NULL;
+        m_pos = D3DXVECTOR3(0, 0, 0);
+        m_width = 100;
+        m_height = 32;
+        m_show = true;
+        m_maxShowDistance = 0;
     }
 
-    BillboardVertex *pVertex;
-    if (FAILED(m_pVertex->Lock(0, 4*BillboardVertex::SIZE, (void**)&pVertex, 0)))
+    Billboard::~Billboard(void)
     {
-        return false;
+        //getApp()->removeBillboard(this);
+        SafeRelease(m_pVertex);
     }
 
-    pVertex[0] = BillboardVertex(-0.5f,  0.5f, 0.0f, 0.0f, 0.0f);
-    pVertex[1] = BillboardVertex( 0.5f,  0.5f, 0.0f, 1.0f, 0.0f);
-    pVertex[2] = BillboardVertex(-0.5f, -0.5f, 0.0f, 0.0f, 1.0f);
-    pVertex[3] = BillboardVertex( 0.5f, -0.5f, 0.0f, 1.0f, 1.0f);
-
-    m_pVertex->Unlock();
-
-    return true;
-}
-
-
-void cBillboard::setImage(const std::wstring & texName)
-{
-    m_pTexture = Lazy::TextureMgr::instance()->getTexture(texName);
-}
-
-void cBillboard::setSize(float w, float h)
-{
-    m_width = w;
-    m_height = h;
-}
-
-bool cBillboard::isTooFar()
-{
-    if (m_maxShowDistance > 0)
+    bool Billboard::createVertex(IDirect3DDevice9 *pDevice)
     {
-        D3DXVECTOR3 vecDist = m_pos - getCamera()->position();
-        if (D3DXVec3Length(&vecDist) > m_maxShowDistance)
+        SafeRelease(m_pVertex);
+
+
+        if (FAILED(pDevice->CreateVertexBuffer(
+                       4 * BillboardVertex::SIZE,
+                       0,
+                       BillboardVertex::FVF,
+                       D3DPOOL_MANAGED,
+                       &m_pVertex,
+                       NULL)))
         {
-            return true;
+            return false;
         }
-    }
-    return false;
-}
 
-void cBillboard::update(float)
-{
+        BillboardVertex *pVertex;
+        if (FAILED(m_pVertex->Lock(0, 4 * BillboardVertex::SIZE, (void**)&pVertex, 0)))
+        {
+            return false;
+        }
 
-}
+        pVertex[0] = BillboardVertex(-0.5f,  0.5f, 0.0f, 0.0f, 0.0f);
+        pVertex[1] = BillboardVertex( 0.5f,  0.5f, 0.0f, 1.0f, 0.0f);
+        pVertex[2] = BillboardVertex(-0.5f, -0.5f, 0.0f, 0.0f, 1.0f);
+        pVertex[3] = BillboardVertex( 0.5f, -0.5f, 0.0f, 1.0f, 1.0f);
 
-void cBillboard::updateVertex()
-{
-    if (!m_pTexture)
-    {
-        return ;
-    }
-    D3DSURFACE_DESC desc;
-    if (FAILED(m_pTexture->GetLevelDesc(0, &desc)))
-    {
-        return;
+        m_pVertex->Unlock();
+
+        return true;
     }
 
-    BillboardVertex *pVertex;
-    if (FAILED(m_pVertex->Lock(0, 4*BillboardVertex::SIZE, (void**)&pVertex, 0)))
+
+    void Billboard::setImage(const std::wstring & texName)
     {
-        return ;
+        m_pTexture = TextureMgr::instance()->getTexture(texName);
     }
 
-    float u2 = float(m_width) / desc.Width;
-    float v2 = min(1.0f, m_height * 1.2f / desc.Height);
-
-    float halfW = 1.0f;
-    float halfH = 1.0f;
-    pVertex[0] = BillboardVertex( -halfW, halfH, 0, 0.0f, 0.0f);
-    pVertex[1] = BillboardVertex( halfW, halfH, 0, u2, 0.0f);
-    pVertex[2] = BillboardVertex( -halfW, -halfH, 0, 0.0f, v2);
-    pVertex[3] = BillboardVertex( halfW, -halfH, 0, u2, v2);
-
-    m_pVertex->Unlock();
-}
-
-void cBillboard::render(IDirect3DDevice9 * pDevice)
-{
-    if (!m_show || isTooFar())
+    void Billboard::setSize(float w, float h)
     {
-        return;
+        m_width = w;
+        m_height = h;
     }
 
-    if (NULL == m_pVertex)
+    bool Billboard::isTooFar()
     {
-        if(!createVertex(pDevice))
+        if (m_maxShowDistance > 0)
+        {
+            D3DXVECTOR3 vecDist = m_pos - getCamera()->position();
+            if (D3DXVec3Length(&vecDist) > m_maxShowDistance)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void Billboard::update(float)
+    {
+
+    }
+
+    void Billboard::updateVertex()
+    {
+        if (!m_pTexture)
         {
             return ;
         }
+        D3DSURFACE_DESC desc;
+        if (FAILED(m_pTexture->GetLevelDesc(0, &desc)))
+        {
+            return;
+        }
+
+        BillboardVertex *pVertex;
+        if (FAILED(m_pVertex->Lock(0, 4 * BillboardVertex::SIZE, (void**)&pVertex, 0)))
+        {
+            return ;
+        }
+
+        float u2 = float(m_width) / desc.Width;
+        float v2 = min(1.0f, m_height * 1.2f / desc.Height);
+
+        float halfW = 1.0f;
+        float halfH = 1.0f;
+        pVertex[0] = BillboardVertex( -halfW, halfH, 0, 0.0f, 0.0f);
+        pVertex[1] = BillboardVertex( halfW, halfH, 0, u2, 0.0f);
+        pVertex[2] = BillboardVertex( -halfW, -halfH, 0, 0.0f, v2);
+        pVertex[3] = BillboardVertex( halfW, -halfH, 0, u2, v2);
+
+        m_pVertex->Unlock();
     }
 
-    Matrix4x4 mat;
+    void Billboard::render(IDirect3DDevice9 * pDevice)
+    {
+        if (!m_show || isTooFar())
+        {
+            return;
+        }
 
-    D3DXVECTOR3 look = m_pos - getCamera()->position();
-    float dist = D3DXVec3Length(&look);
+        if (NULL == m_pVertex)
+        {
+            if(!createVertex(pDevice))
+            {
+                return ;
+            }
+        }
 
-    float heigth = float(getApp()->getHeight());
+        Matrix mat;
 
-    Matrix4x4 matScale;
-    float dh = tan(D3DX_PI/8.0f) * dist;
+        D3DXVECTOR3 look = m_pos - getCamera()->position();
+        float dist = D3DXVec3Length(&look);
 
-    float sh = m_height / heigth * dh;
-    float sw = m_width / heigth * dh;
+        float heigth = float(getApp()->getHeight());
 
-    D3DXMatrixScaling(&matScale, sw, sh, 1.0f);
+        float dh = tan(D3DX_PI / 8.0f) * dist;
 
-    D3DXMatrixRotationX(&mat, getCamera()->pitch());
-    Matrix4x4 matRot;
-    D3DXMatrixRotationY(&matRot, getCamera()->yaw());
+        float sh = m_height / heigth * dh;
+        float sw = m_width / heigth * dh;
 
-    Matrix4x4 matTrans;
-    D3DXMatrixTranslation(&matTrans, m_pos.x, m_pos.y, m_pos.z);
+        Matrix matScale;
+        matScale.makeScale(sw, sh, 1.0f);
 
-    mat = matScale * mat * matRot * matTrans;
-    pDevice->SetTransform(D3DTS_WORLD, &mat);
+        mat.makeRatateX(getCamera()->pitch());
+        Matrix matRot;
+        matRot.makeRatateY(getCamera()->yaw());
 
-    pDevice->SetRenderState( D3DRS_LIGHTING, FALSE);
-    pDevice->SetRenderState( D3DRS_ZENABLE, TRUE);
-    pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
-    pDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
-    pDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
+        Matrix matTrans;
+        matTrans.makeTranslate(m_pos);
 
-    pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-    pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+        mat = matScale * mat * matRot * matTrans;
+        pDevice->SetTransform(D3DTS_WORLD, &mat);
 
-    pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-    pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-    pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+        pDevice->SetRenderState( D3DRS_LIGHTING, FALSE);
+        pDevice->SetRenderState( D3DRS_ZENABLE, TRUE);
+        pDevice->SetRenderState( D3DRS_ALPHATESTENABLE, TRUE );
+        pDevice->SetRenderState( D3DRS_ALPHAREF, 0 );
+        pDevice->SetRenderState( D3DRS_ALPHAFUNC, D3DCMP_GREATER );
 
-    updateVertex();
-    pDevice->SetTexture(0, m_pTexture);
-    pDevice->SetStreamSource(0, m_pVertex, 0, BillboardVertex::SIZE);
-    pDevice->SetFVF(BillboardVertex::FVF);
-    pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+        pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+        pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
 
-    pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
-    pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-    pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+        pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+        pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
 
-}
+        updateVertex();
+        pDevice->SetTexture(0, m_pTexture);
+        pDevice->SetStreamSource(0, m_pVertex, 0, BillboardVertex::SIZE);
+        pDevice->SetFVF(BillboardVertex::FVF);
+        pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+
+        pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, FALSE );
+        pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+        pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+
+    }
+
+} // end namespace Lazy

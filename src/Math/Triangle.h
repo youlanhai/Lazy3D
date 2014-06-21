@@ -2,7 +2,7 @@
 
 #include "Vector.h"
 
-namespace Math
+namespace Lazy
 {
     class Line;
 
@@ -10,7 +10,7 @@ namespace Math
     class Triangle
     {
     public:
-        Triangle(){}
+        Triangle() {}
         Triangle(const Vector3 & A, const Vector3 & B, const Vector3 & C)
             : a(A), b(B), c(C)
         {}
@@ -45,7 +45,7 @@ namespace Math
 
         bool isSphereIntersect(const Vector3 & center, float radius, Vector3 * cross = NULL) const;
 
-        void applyMatrix(const Matrix4x4 & mat)
+        void applyMatrix(const Matrix & mat)
         {
             a.applyMatrix(mat);
             b.applyMatrix(mat);
@@ -65,4 +65,4 @@ namespace Math
     typedef std::vector<Triangle> TriangleSet;
 
 
-}//namespace Math
+}//namespace Lazy

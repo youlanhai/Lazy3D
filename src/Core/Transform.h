@@ -1,9 +1,14 @@
 #pragma once
 
-class Transform
+namespace Lazy
 {
-public:
-    Transform();
-    ~Transform();
-};
 
+    class Transform
+    {
+    public:
+        Transform();
+        ~Transform();
+    };
+
+
+} // end namespace Lazy

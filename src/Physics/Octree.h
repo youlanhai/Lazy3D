@@ -5,7 +5,7 @@
  */
 
 
-namespace Physics
+namespace Lazy
 {
     typedef std::vector<AABB> AABBArray;
 
@@ -91,7 +91,7 @@ namespace Physics
         virtual void render(LPDIRECT3DDEVICE9 pDevice) = 0;
 
         ///最大深度
-        virtual size_t numMaxDepth() const{ return 1; }
+        virtual size_t numMaxDepth() const { return 1; }
 
         ///结点个数
         virtual size_t numNode() const { return 0; }
@@ -151,8 +151,8 @@ namespace Physics
         virtual bool collidQuery(oc::CubeCollider *pCollider) const override;
 
         ///构造八叉树
-        static bool build(OctreePtr & child, const AABB & aabb, 
-            OctreeBase *pTree, const IndicesArray & indices, size_t depth);
+        static bool build(OctreePtr & child, const AABB & aabb,
+                          OctreeBase *pTree, const IndicesArray & indices, size_t depth);
 
     public://调试
 
@@ -238,4 +238,4 @@ namespace Physics
         OctreePtr m_root;///<八叉树根节点
     };
 
-}//end namespace Physics
+}//end namespace Lazy

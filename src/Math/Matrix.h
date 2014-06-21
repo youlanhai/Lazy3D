@@ -1,22 +1,21 @@
 ﻿#pragma once
 
 
-namespace Math
+namespace Lazy
 {
     class Vector3;
     class Quaternion;
 
-    class Matrix4x4 : public D3DXMATRIX
+    class Matrix : public D3DXMATRIX
     {
     public:
-        Matrix4x4();
-        Matrix4x4(
+        Matrix();
+        Matrix(
             float m11, float m12, float m13, float m14,
             float m21, float m22, float m23, float m24,
             float m31, float m32, float m33, float m34,
             float m41, float m42, float m43, float m44
-            );
-        ~Matrix4x4();
+        );
 
         void makeZero();
         void makeIdentity();
@@ -48,7 +47,8 @@ namespace Math
 
         void transpose();
 
-        void invsert();
+        void invert();
+        void getInvert(Matrix & out) const;
 
         float yaw() const;
         float pitch() const;
@@ -57,58 +57,19 @@ namespace Math
     public://运算符重载
 
         Vector3 & operator [](int i);
+        const Matrix & operator = (const D3DXMATRIX & right);
+        const Matrix & operator = (const Matrix & right);
 
-        Matrix4x4 operator * (const Matrix4x4 & right) const
-        {
-            Matrix4x4 temp;
-            D3DXMatrixMultiply(&temp, this, &right);
-            return temp;
-        }
+        Matrix operator + (const Matrix & right) const;
+        Matrix operator - (const Matrix & right) const;
+        Matrix operator * (const Matrix & right) const;
 
-        const Matrix4x4 & operator *= (const Matrix4x4 & right)
-        {
-            D3DXMatrixMultiply(this, this, &right);
-            return *this;
-        }
-
-        Matrix4x4 operator + (const Matrix4x4 & right) const
-        {
-            Matrix4x4 temp;
-            for (int r = 0; r < 4; ++r)
-                for (int c = 0; c < 4; ++c)
-                    temp.m[r][c] = m[r][c] + right.m[r][c];
-            return temp;
-        }
-
-        const Matrix4x4 & operator += (const Matrix4x4 & right)
-        {
-            for (int r = 0; r < 4; ++r)
-                for (int c = 0; c < 4; ++c)
-                    m[r][c] += right.m[r][c];
-            return *this;
-        }
-
-        Matrix4x4 operator - (const Matrix4x4 & right) const
-        {
-            Matrix4x4 temp;
-            for (int r = 0; r < 4; ++r)
-                for (int c = 0; c < 4; ++c)
-                    temp.m[r][c] = m[r][c] - right.m[r][c];
-            return temp;
-        }
-
-        const Matrix4x4 & operator -= (const Matrix4x4 & right)
-        {
-            for (int r = 0; r < 4; ++r)
-                for (int c = 0; c < 4; ++c)
-                    m[r][c] -= right.m[r][c];
-            return *this;
-        }
+        const Matrix & operator *= (const Matrix & right);
+        const Matrix & operator += (const Matrix & right);
+        const Matrix & operator -= (const Matrix & right);
     };
 
 
-    extern const Matrix4x4 matIdentity;
+    extern const Matrix matIdentity;
 
-    typedef Matrix4x4 Matrix;
-
-}//end namespace Math
+}//end namespace Lazy

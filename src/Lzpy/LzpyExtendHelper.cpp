@@ -62,12 +62,14 @@ namespace Lzpy
 
             //如果module表中不存在，就创建这个module.
 
-            PyModuleDef defModule = {
+            PyModuleDef defModule =
+            {
                 PyModuleDef_HEAD_INIT,
                 cacheName(modulename),
                 NULL,
                 -1,
-                NULL, NULL, NULL, NULL, NULL };
+                NULL, NULL, NULL, NULL, NULL
+            };
 
             ExtenFunArray *pool = getExtenFuns(modulename);
             if (!pool->empty())
@@ -96,7 +98,7 @@ namespace Lzpy
         PyObject* extenModule(const std::string & modulename)
         {
             ExtenClassArray * pool = getExtenClasses(modulename);
-            for (PyExtenInterface* it : (*pool))
+            for (PyExtenInterface * it : (*pool))
             {
                 it->extenMethod();
             }
@@ -172,13 +174,13 @@ namespace Lzpy
 
 
     void pyExtenFunction(const char *modulename,
-        const char *funname, PyCFunction func)
+                         const char *funname, PyCFunction func)
     {
         pyExtenFunction(modulename, funname, func, METH_VARARGS, "");
     }
 
     void pyExtenFunction(const char *modulename, const char *funname,
-        PyCFunction func, int argFlag, char *doc)
+                         PyCFunction func, int argFlag, char *doc)
     {
         Lazy::debugMessageA("Register export function %s.%s", modulename, funname);
 

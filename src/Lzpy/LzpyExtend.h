@@ -20,8 +20,8 @@ namespace Lzpy
         LZPY_DEF_GET(testId, getTestId);
         LZPY_DEF_SET(testId, setTestId, int);
 
-        int getTestId(){ return mydata; }
-        void setTestId(int v){ mydata = v; }
+        int getTestId() { return mydata; }
+        void setTestId(int v) { mydata = v; }
 
         int mydata;
     };

@@ -2,7 +2,7 @@
 
 namespace Lzpy
 {
-
+    using namespace Lazy;
 
     class PyMap : public PyBase
     {

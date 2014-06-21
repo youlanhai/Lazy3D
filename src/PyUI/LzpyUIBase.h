@@ -36,7 +36,7 @@ namespace Lzpy
 
         LZPY_DEF_GET(parent, getParent);
         LZPY_DEF_GET(type, m_control->getType);
-        
+
         LZPY_DEF_GET(id, m_control->getID);
         LZPY_DEF_SET(id, m_control->setID, int);
 

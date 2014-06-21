@@ -5,8 +5,8 @@
 namespace Lzpy
 {
     LZPY_CLASS_BEG(PyOutput);
-        LZPY_METHOD_1(write);
-        LZPY_METHOD_0(flush);
+    LZPY_METHOD_1(write);
+    LZPY_METHOD_0(flush);
     LZPY_CLASS_END();
 
     PyOutput::PyOutput()

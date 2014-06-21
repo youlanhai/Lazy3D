@@ -1,18 +1,18 @@
 ﻿#pragma once
 
 
-namespace Physics
+namespace Lazy
 {
     //计算矩阵的缩放系数，xyz的缩放系数必须相等，否则结果无意义。
-    float getMatrixScale(const Matrix4x4 & matrix);
+    float getMatrixScale(const Matrix & matrix);
 
     void splitAABB(Plane & p, AABB & front, AABB & back, const AABB & aabb, int axis);
 
     void calTrianglesAABB(
-        AABB & aabb, 
-        const TriangleIndices & indices, 
+        AABB & aabb,
+        const TriangleIndices & indices,
         const TriangleSet & triangles
-        );
+    );
 
     //////////////////////////////////////////////////////////////////////////
     //d3dmesh三角形提取
@@ -41,7 +41,7 @@ namespace Physics
             return m_triangles[index];
         }
 
-        const TriangleSet & triangles() const{ return m_triangles; }
+        const TriangleSet & triangles() const { return m_triangles; }
 
         virtual size_t getBytes() const;
     private:

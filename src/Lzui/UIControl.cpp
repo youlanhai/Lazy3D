@@ -208,7 +208,7 @@ namespace Lazy
     bool IControl::sendEvent(const SEvent & event)
     {
         if (!checkCanHandelMsg()) return false;
-        
+
         if (sendEventToChildren(event)) return true;
 
         if (!m_bEnableSelfMsg) return false;
@@ -244,7 +244,7 @@ namespace Lazy
         m_children.lock();
 
         for (VisitControl::iterator it = m_children.begin();
-            it != m_children.end(); ++it)
+                it != m_children.end(); ++it)
         {
             IControl *pChild = *it;
 
@@ -433,7 +433,7 @@ namespace Lazy
     {
         CRect rc = r;
         if (m_parent) m_parent->globalToLocal(rc);
-        
+
         setPosition(rc.left, rc.top);
         setSize(rc.width(), rc.height());
     }
@@ -788,10 +788,10 @@ namespace Lazy
 
     PControl IControl::getChild(const tstring & name)
     {
-        auto fun = [name](PControl p){ return p->getName() == name; };
+        auto fun = [name](PControl p) { return p->getName() == name; };
         VisitControl::iterator it = m_children.find_if(fun);
         if (it != m_children.end()) return *it;
-        
+
         return NULL;
     }
 
@@ -836,7 +836,7 @@ namespace Lazy
     {
         //加锁，防止子控件析构时删除自己。
         for (VisitControl::iterator it = m_children.begin();
-            it != m_children.end(); ++it)
+                it != m_children.end(); ++it)
         {
             (*it)->m_parent = nullptr;
             (*it)->setManaged(false);
@@ -847,7 +847,7 @@ namespace Lazy
     void IControl::destroy()
     {
         for (VisitControl::iterator it = m_children.begin();
-            it != m_children.end(); ++it)
+                it != m_children.end(); ++it)
         {
             (*it)->m_parent = nullptr;
             (*it)->destroy();
@@ -865,7 +865,7 @@ namespace Lazy
     PControl IControl::finChildByPos(const CPoint & pos, bool resculy)
     {
         for (VisitControl::iterator it = m_children.begin();
-            it != m_children.end();  ++it)
+                it != m_children.end();  ++it)
         {
             PControl ptr = *it;
             if (!ptr || !ptr->isVisible()) continue;

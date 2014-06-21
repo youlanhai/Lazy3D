@@ -6,76 +6,77 @@
 
 namespace Lazy
 {
-    void writeVector3(LZDataPtr dataPtr, const Lazy::tstring & tag, const Math::Vector3 & v);
-    void readVector3(LZDataPtr dataPtr, const Lazy::tstring & tag, Math::Vector3 & v);
-}
+    void writeVector3(LZDataPtr dataPtr, const tstring & tag, const Vector3 & v);
+    void readVector3(LZDataPtr dataPtr, const tstring & tag, Vector3 & v);
 
-typedef RefPtr<class TerrainItem> TerrainItemPtr;
+    typedef RefPtr<class TerrainItem> TerrainItemPtr;
 //////////////////////////////////////////////////////////////////////////
 
-class LZDLL_API TerrainItem : public I3DObject
-{
-public:
-    TerrainItem(void);
+    class LZDLL_API TerrainItem : public I3DObject
+    {
+    public:
+        TerrainItem(void);
 
-    ~TerrainItem(void);
+        ~TerrainItem(void);
 
-    //克隆一个副本
-    TerrainItemPtr clone() const;
+        //克隆一个副本
+        TerrainItemPtr clone() const;
 
-    virtual void update(float elapse);
+        virtual void update(float elapse);
 
-    virtual void render(IDirect3DDevice9* pDevice);
-    
-    ModelPtr getModel(void){ return m_model; }
+        virtual void render(IDirect3DDevice9* pDevice);
 
-    void setModel(ModelPtr model);
+        ModelPtr getModel(void) { return m_model; }
 
-    void setChunkId(int id){ m_chunkId = id; }
-    int getChunkId() const { return m_chunkId; }
+        void setModel(ModelPtr model);
 
-public:
-    const Math::Vector3 & getAngle(void) const { return m_angle; }
+        void setChunkId(int id) { m_chunkId = id; }
+        int getChunkId() const { return m_chunkId; }
 
-    void addLookAngle(float angle);	    //绕Look旋转 roll
-    void addUpAngle(float angle);		//绕up旋转 yaw
-    void addRightAngle(float angle);	//绕right旋转 pitch
-    
-    //更新旋转轴
-    void updateRotationAxis(void);
+    public:
+        const Vector3 & getAngle(void) const { return m_angle; }
 
-    bool intersectWithCursor();
+        void addLookAngle(float angle);	    //绕Look旋转 roll
+        void addUpAngle(float angle);		//绕up旋转 yaw
+        void addRightAngle(float angle);	//绕right旋转 pitch
 
-    bool isActive(void);
+        //更新旋转轴
+        void updateRotationAxis(void);
 
-    virtual void focusCursor(UINT msg);
+        bool intersectWithCursor();
 
-    virtual void onFocusCursor(UINT msg);
+        bool isActive(void);
 
-    float distToCamera(void);
+        virtual void focusCursor(UINT msg);
 
-    bool save(Lazy::LZDataPtr dataPtr) const;
-    bool load(Lazy::LZDataPtr dataPtr);
+        virtual void onFocusCursor(UINT msg);
 
-    const Lazy::tstring & uuid() const { return m_uuid; }
-    bool colid() const { return m_collid; }
-    
-    bool isReference() const { return m_isRef; }
-    void setReference(bool ref){ m_isRef = ref; }
+        float distToCamera(void);
 
-    size_t getRefChunk() const { return m_refChunk;}
-    void setRefChunk(size_t id) { m_refChunk = id; }
+        bool save(LZDataPtr dataPtr) const;
+        bool load(LZDataPtr dataPtr);
 
-    //获取真实的模型矩阵
-    void getAbsModelMatrix(Math::Matrix4x4 & mat) const;
+        const tstring & uuid() const { return m_uuid; }
+        bool colid() const { return m_collid; }
 
-protected:
-    int         m_chunkId;
-    ModelPtr    m_model;
-    bool        m_collid;
-    Lazy::tstring m_uuid;
-    Math::Vector3     m_angle;
+        bool isReference() const { return m_isRef; }
+        void setReference(bool ref) { m_isRef = ref; }
 
-    bool        m_isRef;    //是否是引用自其它chunk
-    size_t      m_refChunk; //引用id。
-};
+        size_t getRefChunk() const { return m_refChunk;}
+        void setRefChunk(size_t id) { m_refChunk = id; }
+
+        //获取真实的模型矩阵
+        void getAbsModelMatrix(Matrix & mat) const;
+
+    protected:
+        int         m_chunkId;
+        ModelPtr    m_model;
+        bool        m_collid;
+        tstring m_uuid;
+        Vector3     m_angle;
+
+        bool        m_isRef;    //是否是引用自其它chunk
+        size_t      m_refChunk; //引用id。
+    };
+
+} // end namespace Lazy

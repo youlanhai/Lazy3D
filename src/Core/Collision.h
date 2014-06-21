@@ -5,7 +5,7 @@
 
 #include "../Physics/Physics.h"
 
-namespace Physics
+namespace Lazy
 {
 
     bool preventCollision(CollisionPrevent & ci);

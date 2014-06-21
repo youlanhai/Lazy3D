@@ -14,7 +14,7 @@ namespace Lazy
 
         virtual void doTask(void) = 0;
         virtual void onTaskFinish(void) = 0;
-        virtual bool isReady(void){ return true; }
+        virtual bool isReady(void) { return true; }
     };
 
     typedef RefPtr<TaskInterface> TaskPtr;
@@ -50,7 +50,7 @@ namespace Lazy
         ZFuncPtr    m_pFFinish;
     };
 
-    
+
     template<typename WorkFun, typename FinishFun>
     class TaskWithFun : public TaskInterface
     {

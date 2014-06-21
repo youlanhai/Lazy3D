@@ -2,7 +2,7 @@
 
 #include "Vector.h"
 
-namespace Math
+namespace Lazy
 {
     class Line;
     class Triangle;
@@ -43,5 +43,5 @@ namespace Math
         float distance;
     };
 
-}//end namespace Math
+}//end namespace Lazy
 

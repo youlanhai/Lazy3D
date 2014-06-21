@@ -515,7 +515,7 @@ namespace Lzpy
     Lazy::tstring object_base::repr()
     {
         if (is_null()) return _T("null");
-        
+
         object pyStr = new_reference(PyObject_Repr(m_ptr));
         Lazy::tstring text;
         parse_object(text, pyStr);
@@ -562,7 +562,7 @@ namespace Lzpy
 
 #if 0
     object::object(PyObject *v)
-    { 
+    {
         m_ptr = xincref(v);
     }
 

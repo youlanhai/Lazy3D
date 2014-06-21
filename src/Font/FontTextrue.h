@@ -23,7 +23,7 @@ namespace Lazy
 
         bool valid() const { return m_texture != NULL; }
 
-        int maxSize() const{ return m_rows * m_cols; }
+        int maxSize() const { return m_rows * m_cols; }
 
         bool empty() const { return m_index >= maxSize(); }
 
@@ -33,7 +33,7 @@ namespace Lazy
         int width() const { return m_width; }
         int height() const { return m_height; }
 
-        TexturePtr texture(){ return m_texture; }
+        TexturePtr texture() { return m_texture; }
 
         bool lockOne(int & x, int & y);
 

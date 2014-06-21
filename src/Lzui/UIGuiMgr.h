@@ -35,10 +35,10 @@ namespace Lazy
         ///处理事件。由操作系统调用。
         bool processEvent(const SEvent & event);
 
-        CPoint getCursorPos(void){ return m_cursorPos; }
-        CPoint getLastCursorPos(void){ return m_lastCursorPos; }
-        HWND getHWnd(void){ return m_hWnd; }
-        HINSTANCE getInstance(void){ return m_hInstance; }
+        CPoint getCursorPos(void) { return m_cursorPos; }
+        CPoint getLastCursorPos(void) { return m_lastCursorPos; }
+        HWND getHWnd(void) { return m_hWnd; }
+        HINSTANCE getInstance(void) { return m_hInstance; }
         GUIRender * getUIRender() { return m_render; }
 
     protected:

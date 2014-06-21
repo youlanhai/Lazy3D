@@ -10,55 +10,55 @@ namespace Lzpy
 {
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyControl)
-        LZPY_GET(parent);
-        LZPY_GET(type);
-        LZPY_GET(__dict__);
-        LZPY_GETSET(managed);
-        LZPY_GETSET(id);
-        LZPY_GETSET(size);
-        LZPY_GETSET(position);
-        LZPY_GETSET(zorder);
-        LZPY_GETSET(name);
-        LZPY_GETSET(text);
-        LZPY_GETSET(font);
-        LZPY_GETSET(image);
-        LZPY_GETSET(color);
-        LZPY_GETSET(bgColor);
-        LZPY_GETSET(relative);
-        LZPY_GETSET(relativePos);
-        LZPY_GETSET(relativeAlign);
-        LZPY_GETSET(visible);
-        LZPY_GETSET(enable);
-        LZPY_GETSET(enableDrag);
-        LZPY_GETSET(enableSelfMsg);
-        LZPY_GETSET(enableLimitInRect);
-        LZPY_GETSET(enableClickTop); 
-        LZPY_GETSET(enableChangeChildOrder);
-        LZPY_GETSET(editable);
-        LZPY_GETSET(script);
+    LZPY_GET(parent);
+    LZPY_GET(type);
+    LZPY_GET(__dict__);
+    LZPY_GETSET(managed);
+    LZPY_GETSET(id);
+    LZPY_GETSET(size);
+    LZPY_GETSET(position);
+    LZPY_GETSET(zorder);
+    LZPY_GETSET(name);
+    LZPY_GETSET(text);
+    LZPY_GETSET(font);
+    LZPY_GETSET(image);
+    LZPY_GETSET(color);
+    LZPY_GETSET(bgColor);
+    LZPY_GETSET(relative);
+    LZPY_GETSET(relativePos);
+    LZPY_GETSET(relativeAlign);
+    LZPY_GETSET(visible);
+    LZPY_GETSET(enable);
+    LZPY_GETSET(enableDrag);
+    LZPY_GETSET(enableSelfMsg);
+    LZPY_GETSET(enableLimitInRect);
+    LZPY_GETSET(enableClickTop);
+    LZPY_GETSET(enableChangeChildOrder);
+    LZPY_GETSET(editable);
+    LZPY_GETSET(script);
 
-        LZPY_GETSET(globalRect);
+    LZPY_GETSET(globalRect);
 
-        LZPY_METHOD(addChild);
-        LZPY_METHOD(getChild);
-        LZPY_METHOD(delChild);
-        LZPY_METHOD(getChildByName);
-       
-        LZPY_METHOD(clearChildren);
-        LZPY_METHOD(getChildren);
-        LZPY_METHOD(findChildByPos);
-        LZPY_METHOD(destroy);
+    LZPY_METHOD(addChild);
+    LZPY_METHOD(getChild);
+    LZPY_METHOD(delChild);
+    LZPY_METHOD(getChildByName);
 
-        LZPY_METHOD(localToParent);
-        LZPY_METHOD(parentToLocal);
+    LZPY_METHOD(clearChildren);
+    LZPY_METHOD(getChildren);
+    LZPY_METHOD(findChildByPos);
+    LZPY_METHOD(destroy);
 
-        LZPY_METHOD(localToGlobal);
-        LZPY_METHOD(globalToLocal);
+    LZPY_METHOD(localToParent);
+    LZPY_METHOD(parentToLocal);
 
-        LZPY_METHOD(loadFromFile);
-        LZPY_METHOD(saveToFile);
-        LZPY_LINK_ATTR(tp_weaklistoffset, offsetof(LzpyControl, m_pyWeakreflist));
-        LZPY_LINK_ATTR(tp_dictoffset, offsetof(LzpyControl, m_pyDict));
+    LZPY_METHOD(localToGlobal);
+    LZPY_METHOD(globalToLocal);
+
+    LZPY_METHOD(loadFromFile);
+    LZPY_METHOD(saveToFile);
+    LZPY_LINK_ATTR(tp_weaklistoffset, offsetof(LzpyControl, m_pyWeakreflist));
+    LZPY_LINK_ATTR(tp_dictoffset, offsetof(LzpyControl, m_pyDict));
 
     LZPY_CLASS_END();
     LZPY_IMP_INIT_LUI(LzpyControl, Control);
@@ -174,7 +174,7 @@ namespace Lzpy
             ControlPtr parent = m_control->getParent();
             return parent->getSelf();
         }
-        
+
         return object_base();
     }
 
@@ -220,7 +220,7 @@ namespace Lzpy
 
     object LzpyControl::getRelativePos()
     {
-        const Math::Vector2 & pos = m_control->getRelativePos();
+        const Vector2 & pos = m_control->getRelativePos();
         return build_tuple(pos.x, pos.y);
     }
 
@@ -364,7 +364,7 @@ namespace Lzpy
         list lst;
 
         for (VisitControl::iterator it = m_control->childBegin();
-            it != m_control->childEnd(); ++it)
+                it != m_control->childEnd(); ++it)
         {
             IControl *pctl = *it;
             if (pctl && pctl->getSelf())
@@ -381,7 +381,7 @@ namespace Lzpy
         CPoint pt;
         bool resculy;
         if (!arg.parse_tuple(&pt.x, &pt.y, &resculy)) return null_object;
-        
+
         PControl p = m_control->finChildByPos(pt, resculy);
         if (!p || !p->getSelf()) return none_object;
 

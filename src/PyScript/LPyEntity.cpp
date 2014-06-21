@@ -9,22 +9,22 @@ namespace Lzpy
     ///
     ////////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyModel);
-        LZPY_GETSET(yaw);
-        LZPY_GETSET(pitch);
-        LZPY_GETSET(roll);
-        LZPY_GETSET(scale);
-        LZPY_GET(resource);
-        LZPY_GET(isSkeleton);
-        LZPY_GET(isMesh);
-        LZPY_GET(aabb);
-        LZPY_GET(height);
-        LZPY_GETSET(aabbVisible);
+    LZPY_GETSET(yaw);
+    LZPY_GETSET(pitch);
+    LZPY_GETSET(roll);
+    LZPY_GETSET(scale);
+    LZPY_GET(resource);
+    LZPY_GET(isSkeleton);
+    LZPY_GET(isMesh);
+    LZPY_GET(aabb);
+    LZPY_GET(height);
+    LZPY_GETSET(aabbVisible);
 
-        LZPY_METHOD(playAction);
-        LZPY_METHOD_0(stopAction);
-        LZPY_METHOD_0(getActionCount);
-        LZPY_METHOD_1(getActionName);
-        LZPY_METHOD_1(setAnimSpeed);
+    LZPY_METHOD(playAction);
+    LZPY_METHOD_0(stopAction);
+    LZPY_METHOD_0(getActionCount);
+    LZPY_METHOD_1(getActionName);
+    LZPY_METHOD_1(setAnimSpeed);
     LZPY_CLASS_END();
 
     PyModel::PyModel()
@@ -75,13 +75,13 @@ namespace Lzpy
 
     float PyModel::getHeight()
     {
-        Physics::AABB aabb = m_model->getAABB();
+        AABB aabb = m_model->getAABB();
         return aabb.max.y - aabb.min.y;
     }
 
     object PyModel::getAABB()
     {
-        Physics::AABB aabb = m_model->getAABB();
+        AABB aabb = m_model->getAABB();
         return build_tuple(aabb.min, aabb.max);
     }
 
@@ -121,18 +121,18 @@ namespace Lzpy
     ///
     ////////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyEntityPhysics);
-        LZPY_GET(source);
-        LZPY_GETSET(state);
-        LZPY_GETSET(enable);
-        LZPY_GETSET(aiEnble);
-        LZPY_GETSET(aiInterval);
+    LZPY_GET(source);
+    LZPY_GETSET(state);
+    LZPY_GETSET(enable);
+    LZPY_GETSET(aiEnble);
+    LZPY_GETSET(aiInterval);
 
-        LZPY_METHOD_1(searchPath);
-        LZPY_METHOD_1(faceTo);
-        LZPY_METHOD_1(faceToDir);
-        LZPY_METHOD_1(moveTo);
-        LZPY_METHOD_1(moveToEntity);
-        LZPY_METHOD_0(breakAutoMove);
+    LZPY_METHOD_1(searchPath);
+    LZPY_METHOD_1(faceTo);
+    LZPY_METHOD_1(faceToDir);
+    LZPY_METHOD_1(moveTo);
+    LZPY_METHOD_1(moveToEntity);
+    LZPY_METHOD_0(breakAutoMove);
     LZPY_CLASS_END();
 
     PyEntityPhysics::PyEntityPhysics()
@@ -152,8 +152,8 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, searchPath)
     {
-        Physics::Vector3 vec;
-        if (!parse_object(vec, value)) 
+        Vector3 vec;
+        if (!parse_object(vec, value))
             return null_object;
 
         return build_object(m_physics->searchPath(vec));
@@ -161,7 +161,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, faceTo)
     {
-        Physics::Vector3 vec;
+        Vector3 vec;
         if (!parse_object(vec, value))
             return null_object;
 
@@ -171,7 +171,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, faceToDir)
     {
-        Physics::Vector3 vec;
+        Vector3 vec;
         if (!parse_object(vec, value))
             return null_object;
 
@@ -181,7 +181,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, moveTo)
     {
-        Physics::Vector3 vec;
+        Vector3 vec;
         if (!parse_object(vec, value))
             return null_object;
 
@@ -215,14 +215,14 @@ namespace Lzpy
     {}
 
     ///是否可以被鼠标选择
-    bool Entity::canSelect(void) const 
+    bool Entity::canSelect(void) const
     {
         object ret = const_cast<object_base &>(m_self).call_method_quiet("canSelect");
 
         return parse_object<bool>(ret);
     }
 
-    bool Entity::isPlayer(void) 
+    bool Entity::isPlayer(void)
     {
         if (!m_self.hasattr("isPlayer")) return false;
 
@@ -230,25 +230,25 @@ namespace Lzpy
         return parse_object<bool>(ret);
     }
 
-    void Entity::onFocusCursor(UINT msg) 
+    void Entity::onFocusCursor(UINT msg)
     {
         m_self.call_method_quiet("onFocusCursor", msg);
     }
 
     LZPY_CLASS_BEG(PyEntity);
-        LZPY_GET(id);
-        LZPY_GETSET(position);
-        LZPY_GETSET(speed);
-        LZPY_GETSET(scale);
-        LZPY_GETSET(model);
-        LZPY_GETSET(physics);
-        LZPY_GETSET(fadeDistance);
-        LZPY_GETSET(lockHeight);
-        LZPY_GETSET(visible);
-        LZPY_GET(distToCamera);
-        LZPY_GET(distToPlayer);
+    LZPY_GET(id);
+    LZPY_GETSET(position);
+    LZPY_GETSET(speed);
+    LZPY_GETSET(scale);
+    LZPY_GETSET(model);
+    LZPY_GETSET(physics);
+    LZPY_GETSET(fadeDistance);
+    LZPY_GETSET(lockHeight);
+    LZPY_GETSET(visible);
+    LZPY_GET(distToCamera);
+    LZPY_GET(distToPlayer);
 
-        LZPY_METHOD_1(lookAtPosition);
+    LZPY_METHOD_1(lookAtPosition);
     LZPY_CLASS_END();
 
 
@@ -329,7 +329,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyEntity, lookAtPosition)
     {
-        Physics::Vector3 vec;
+        Vector3 vec;
         if (!parse_object(vec, value))
             return null_object;
 
@@ -341,9 +341,9 @@ namespace Lzpy
     ///
     ////////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyEntityMgr);
-        LZPY_METHOD_1(addEntity);
-        LZPY_METHOD_1(delEntity);
-        LZPY_METHOD_1(getEntity);
+    LZPY_METHOD_1(addEntity);
+    LZPY_METHOD_1(delEntity);
+    LZPY_METHOD_1(getEntity);
     LZPY_CLASS_END();
 
     PyEntityMgr::PyEntityMgr()
@@ -404,7 +404,7 @@ namespace Lzpy
             return false;
 
         entity.call_method_quiet("leaveWorld");
-        
+
         PyEntity *pEnt = entity.cast<PyEntity>();
         EntityMgr::instance()->remove(pEnt->m_entity);
 
@@ -445,9 +445,9 @@ namespace Lzpy
         //实例化对象
         object entity = new_reference(PyObject_CallObject(pClass, NULL));
         if (!entity) return NULL;
-        
+
         s_pEntityMgr->addEntity(entity);
-        
+
         int id = entity.cast<PyEntity>()->getId();
         return xincref(build_object(id));
     }
@@ -482,7 +482,7 @@ namespace Lzpy
         if (s_pPlayer == value)
             Py_RETURN_NONE;
 
-        iEntity *player = nullptr;
+        IEntity *player = nullptr;
         if (value == Py_None)
         {
         }

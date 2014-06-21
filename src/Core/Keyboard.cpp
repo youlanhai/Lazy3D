@@ -1,55 +1,60 @@
-﻿//Keyboard.cpp 
+﻿//Keyboard.cpp
 #include "stdafx.h"
 #include "Keyboard.h"
 
-CKeyboard::CKeyboard(void)
+namespace Lazy
 {
-	memset(m_keyboard,0,sizeof(m_keyboard));
-    memset(m_oldKeyboard,0,sizeof(m_oldKeyboard));
-}
 
-CKeyboard::~CKeyboard(void)
-{
-}
+    CKeyboard::CKeyboard(void)
+    {
+        memset(m_keyboard, 0, sizeof(m_keyboard));
+        memset(m_oldKeyboard, 0, sizeof(m_oldKeyboard));
+    }
 
-void CKeyboard::update(float)
-{
-    memcpy(m_oldKeyboard,m_keyboard,sizeof(m_keyboard));
-	GetKeyboardState(m_keyboard);
-}
+    CKeyboard::~CKeyboard(void)
+    {
+    }
 
-bool CKeyboard::isKeyDown(DWORD vk)
-{
-    if((m_keyboard[vk]&0x80)!=0 &&(m_oldKeyboard[vk]&0x80)==0)
+    void CKeyboard::update(float)
     {
-        return true;
+        memcpy(m_oldKeyboard, m_keyboard, sizeof(m_keyboard));
+        GetKeyboardState(m_keyboard);
     }
-    else
-    {
-        return false;
-    }
-}
 
-bool CKeyboard::isKeyPress(DWORD vk)
-{
-    if((m_keyboard[vk]&0x80)!=0 &&(m_oldKeyboard[vk]&0x80)!=0)
+    bool CKeyboard::isKeyDown(DWORD vk)
     {
-        return true;
+        if((m_keyboard[vk] & 0x80) != 0 && (m_oldKeyboard[vk] & 0x80) == 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    else
-    {
-        return false;
-    }
-}
 
-bool CKeyboard::isKeyUp(DWORD vk)
-{
-    if((m_keyboard[vk]&0x80)==0 &&(m_oldKeyboard[vk]&0x80)!=0)
+    bool CKeyboard::isKeyPress(DWORD vk)
     {
-        return true;
+        if((m_keyboard[vk] & 0x80) != 0 && (m_oldKeyboard[vk] & 0x80) != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-    else
+
+    bool CKeyboard::isKeyUp(DWORD vk)
     {
-        return false;
+        if((m_keyboard[vk] & 0x80) == 0 && (m_oldKeyboard[vk] & 0x80) != 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
-}
+
+} // end namespace Lazy

@@ -15,7 +15,7 @@
 
 
 ///数学库命名空间
-namespace Math
+namespace Lazy
 {
     const float MAX_FLOAT = 1e30f;
     const float MIN_FLOAT = -MAX_FLOAT;
@@ -57,4 +57,4 @@ namespace Math
         return d > -epsilon && d < epsilon;
     }
 
-}//end namespace Math
+}//end namespace Lazy

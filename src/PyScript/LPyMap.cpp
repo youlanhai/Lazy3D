@@ -9,18 +9,18 @@ namespace Lzpy
 
     LZPY_CLASS_BEG(PyMap);
 
-        LZPY_GET(name);
-        LZPY_GET(width);
-        LZPY_GET(height);
-        LZPY_GET(isUsefull);
-        LZPY_GET(boundry);
+    LZPY_GET(name);
+    LZPY_GET(width);
+    LZPY_GET(height);
+    LZPY_GET(isUsefull);
+    LZPY_GET(boundry);
 
-        LZPY_GETSET(showLevel);
-        LZPY_GETSET(showRadius);
+    LZPY_GETSET(showLevel);
+    LZPY_GETSET(showRadius);
 
-        LZPY_METHOD_1(loadMap);
-        LZPY_METHOD_1(saveMap);
-        LZPY_METHOD_1(setSource);
+    LZPY_METHOD_1(loadMap);
+    LZPY_METHOD_1(saveMap);
+    LZPY_METHOD_1(setSource);
 
     LZPY_CLASS_END();
 
@@ -77,10 +77,10 @@ namespace Lzpy
 
     object PyMap::getBoundry()
     {
-        return build_tuple(m_map->xMin(), m_map->zMin(), 
-            m_map->xMax(), m_map->zMax());
+        return build_tuple(m_map->xMin(), m_map->zMin(),
+                           m_map->xMax(), m_map->zMax());
     }
- 
+
     ////////////////////////////////////////////////////////////////////
     static PyMap * s_pMap = nullptr;
 

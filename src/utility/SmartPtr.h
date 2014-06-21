@@ -1,5 +1,5 @@
 ﻿//SmartPtr.h 智能指针
-// author: 游蓝海  
+// author: 游蓝海
 // blog: http://blog.csdn.net/you_lan_hai
 
 #ifndef LAZY3D_SMARTPTR_H
@@ -30,7 +30,7 @@ namespace Lazy
 
         bool isRefUnique() const;
 
-        virtual void destroyThis(void){ delete this; }
+        virtual void destroyThis(void) { delete this; }
 
     private:
         int     m_nRefCounter_;//引用计数

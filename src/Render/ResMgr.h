@@ -13,13 +13,13 @@ namespace Lazy
     public:
         typedef std::map<tstring, ResType> ResPool;
 
-        ResMgr(){}
+        ResMgr() {}
 
         ///单例
         static T * instance();
 
-        void setResFacotry(ResourceFactoryPtr factory){ m_resFactory = factory; }
-        ResourceFactoryPtr getResFacotry(){ return m_resFactory; }
+        void setResFacotry(ResourceFactoryPtr factory) { m_resFactory = factory; }
+        ResourceFactoryPtr getResFacotry() { return m_resFactory; }
 
         ///获取资源
         ResType get(const tstring & name);

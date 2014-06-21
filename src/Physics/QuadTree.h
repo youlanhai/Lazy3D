@@ -6,10 +6,10 @@
  */
 
 
-namespace Physics
+namespace Lazy
 {
 
-    typedef std::vector<Math::FRect> RectArray;
+    typedef std::vector<FRect> RectArray;
 
     ///构造四叉树配置参数
     struct QTConfig
@@ -34,8 +34,8 @@ namespace Physics
         Vector2 origin;
         Vector2 dir;
 
-        RayCollider(){}
-        ~RayCollider(){}
+        RayCollider() {}
+        ~RayCollider() {}
 
         ///是否与四叉树叶结点碰撞
         virtual bool doQuery(QuadTreeBase* pTree, const IndicesArray & indices) = 0;
@@ -56,7 +56,7 @@ namespace Physics
     {
     public:
         QuadTreeBase();
-        QuadTreeBase(QuadTreeBase* tree, const Math::FRect & rc);
+        QuadTreeBase(QuadTreeBase* tree, const FRect & rc);
 
         ///是否是叶结点
         virtual bool isLeaf() const { return false; }
@@ -68,7 +68,7 @@ namespace Physics
         virtual bool queryRect(RectCollider *collider) const = 0;
 
         ///根据索引获取区域
-        virtual const Math::FRect & getRcById(size_t i) const = 0;
+        virtual const FRect & getRcById(size_t i) const = 0;
 
     public://debug 接口
 
@@ -79,7 +79,7 @@ namespace Physics
         virtual void output(Lazy::LZDataPtr stream) const = 0;
 
     protected:
-        Math::FRect m_rect;///<此结点所占据的区域
+        FRect m_rect;///<此结点所占据的区域
         QuadTreeBase* m_pTree;///<所属的树
     };
 
@@ -91,15 +91,15 @@ namespace Physics
     class QuadTreeLeaf : public QuadTreeBase
     {
     public:
-        QuadTreeLeaf(QuadTreeBase* tree, 
-            const Math::FRect & rc,
-            const IndicesArray & m_indices);
+        QuadTreeLeaf(QuadTreeBase* tree,
+                     const FRect & rc,
+                     const IndicesArray & m_indices);
 
         virtual bool isLeaf() const override { return true; }
 
-        virtual const Math::FRect & getRcById(size_t i) const override 
-        { 
-            return m_pTree->getRcById(i); 
+        virtual const FRect & getRcById(size_t i) const override
+        {
+            return m_pTree->getRcById(i);
         }
 
         virtual bool pick(RayCollider *collider) const override;
@@ -122,20 +122,20 @@ namespace Physics
     class QuadTreeNode : public QuadTreeBase
     {
     public:
-        QuadTreeNode(QuadTreeBase* tree, const Math::FRect & rc, int splitAxis, float splitPos);
+        QuadTreeNode(QuadTreeBase* tree, const FRect & rc, int splitAxis, float splitPos);
 
         ~QuadTreeNode();
 
         ///构造四叉树
-        static bool build(QuadTreeBase* tree, 
-            QuadTreePtr & child,
-            const Math::FRect & rect, 
-            const IndicesArray & indices,
-            size_t depth);
+        static bool build(QuadTreeBase* tree,
+                          QuadTreePtr & child,
+                          const FRect & rect,
+                          const IndicesArray & indices,
+                          size_t depth);
 
-        virtual const Math::FRect & getRcById(size_t i) const override 
-        { 
-            return m_pTree->getRcById(i); 
+        virtual const FRect & getRcById(size_t i) const override
+        {
+            return m_pTree->getRcById(i);
         }
 
         virtual bool pick(RayCollider *collider) const override;
@@ -174,7 +174,7 @@ namespace Physics
         ///构造四叉树
         bool build(const RectArray &  rects);
 
-        virtual const Math::FRect & getRcById(size_t i) const override
+        virtual const FRect & getRcById(size_t i) const override
         {
             return m_rects[i];
         }
@@ -214,4 +214,4 @@ namespace Physics
         QuadTreePtr m_root;///<根结点
     };
 
-}//end namespace Physics
+}//end namespace Lazy

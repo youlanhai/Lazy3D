@@ -2,10 +2,10 @@
 
 #include "Vector.h"
 
-namespace Math
+namespace Lazy
 {
     class Triangle;
-    class Matrix4x4;
+    class Matrix;
 
     class AABB
     {
@@ -52,11 +52,11 @@ namespace Math
         bool clipLine(Vector3 & start, Vector3 & end) const;
 
 
-        void applyMatrix(const Matrix4x4 & mat);
-        void applyMatrix(AABB & out, const Matrix4x4 & mat) const;
+        void applyMatrix(const Matrix & mat);
+        void applyMatrix(AABB & out, const Matrix & mat) const;
     };
 
 
 
 
-}//end namespace Math
+}//end namespace Lazy

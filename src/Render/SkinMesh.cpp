@@ -1,4 +1,4 @@
-﻿//SkinMesh.cpp 
+﻿//SkinMesh.cpp
 #include "stdafx.h"
 #include "SkinMesh.h"
 #include "Texture.h"
@@ -23,9 +23,10 @@ namespace Lazy
         pMeshContainer = nullptr;
         pFrameSibling = nullptr;
         pFrameFirstChild = nullptr;
+
+
         D3DXMatrixIdentity(&TransformationMatrix);
         D3DXMatrixIdentity(&CombinedTransformationMatrix);
-
     }
 
     BoneFrame::~BoneFrame()
@@ -68,7 +69,7 @@ namespace Lazy
         return pNode;
     }
 
-    void BoneFrame::updateMatrix(const Math::Matrix4x4 & matParent)
+    void BoneFrame::updateMatrix(const Matrix & matParent)
     {
         D3DXMatrixMultiply(&CombinedTransformationMatrix, &TransformationMatrix, &matParent);
 
@@ -79,7 +80,7 @@ namespace Lazy
 
         if (pFrameFirstChild != NULL)
         {
-            ((BoneFrame*) pFrameFirstChild)->updateMatrix(static_cast<Math::Matrix4x4&>(CombinedTransformationMatrix));
+            ((BoneFrame*) pFrameFirstChild)->updateMatrix(static_cast<Matrix&>(CombinedTransformationMatrix));
         }
     }
 
@@ -211,10 +212,10 @@ namespace Lazy
             pMesh->GetDevice(&pd3dDevice);
 
             hr = pMesh->CloneMeshFVF(
-                pMesh->GetOptions(),
-                pMesh->GetFVF() | D3DFVF_NORMAL,
-                pd3dDevice,
-                &pClone);
+                     pMesh->GetOptions(),
+                     pMesh->GetFVF() | D3DFVF_NORMAL,
+                     pd3dDevice,
+                     &pClone);
 
             SafeRelease(pd3dDevice);
 
@@ -296,7 +297,7 @@ namespace Lazy
 
             //复制骨骼信息
             DWORD nBones = pSkinInfo->GetNumBones();
-            pMeshContainer->pBoneOffsetMatrices = new D3DXMATRIX[nBones];
+            pMeshContainer->pBoneOffsetMatrices = new Matrix[nBones];
             for (DWORD i = 0; i < nBones; ++i)
             {
                 pMeshContainer->pBoneOffsetMatrices[i] = *(pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(i));
@@ -335,6 +336,7 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////
     SkinMesh::SkinMesh(const tstring & source)
         : IResource(source)
+        , m_worldMatrix(matIdentity)
     {
 
         m_pAnimController = NULL;
@@ -342,7 +344,6 @@ namespace Lazy
         m_skinMethod = SkinMethod::indexed;
 
         m_dwTrangleCnt = 0;
-        D3DXMatrixIdentity(&m_worldMatrix);
         m_bbCenter.set(0.0f, 0.0f, 0.0f);
         m_bbRadius = 10.0f;
 
@@ -379,18 +380,18 @@ namespace Lazy
 
         CAllocateHierarchy Alloc(this);
         HRESULT hr = D3DXLoadMeshHierarchyFromX(
-            fileName.c_str(),
-            D3DXMESH_MANAGED,
-            Lazy::rcDevice()->getDevice(),
-            &Alloc,
-            NULL,
-            (LPD3DXFRAME*) &m_bone,
-            &m_pAnimController);
+                         fileName.c_str(),
+                         D3DXMESH_MANAGED,
+                         Lazy::rcDevice()->getDevice(),
+                         &Alloc,
+                         NULL,
+                         (LPD3DXFRAME*) &m_bone,
+                         &m_pAnimController);
 
         if (FAILED(hr))
         {
             LOG_ERROR(L"Load SkinMesh '%s' failed! hr=0x%x, code=0x%x",
-                fileName.c_str(), hr, GetLastError());
+                      fileName.c_str(), hr, GetLastError());
 
             return false;
         }
@@ -401,7 +402,7 @@ namespace Lazy
         }
 
         //更新包围盒
-        Math::Matrix4x4 matIdentity;
+        Matrix matIdentity;
         matIdentity.makeIdentity();
         m_bone->updateMatrix(matIdentity);
 
@@ -412,8 +413,8 @@ namespace Lazy
         }
 
         float r = sin(D3DX_PI / 4.0f) * m_bbRadius;
-        
-        Math::Vector3 extend(r, r, r);
+
+        Vector3 extend(r, r, r);
         m_aabb.min = m_bbCenter - extend;
         m_aabb.max = m_bbCenter + extend;
 
@@ -444,11 +445,11 @@ namespace Lazy
         /*  克隆原始AC。克隆对象用来操作这个mesh，原始AC除了用来克隆外不做其余用途。*/
         dx::AnimController* pControl = NULL;
         if (FAILED(m_pAnimController->CloneAnimationController(
-            m_pAnimController->GetMaxNumAnimationOutputs(),
-            m_pAnimController->GetMaxNumAnimationSets(),
-            m_pAnimController->GetMaxNumTracks(),
-            m_pAnimController->GetMaxNumEvents(),
-            &pControl)))
+                       m_pAnimController->GetMaxNumAnimationOutputs(),
+                       m_pAnimController->GetMaxNumAnimationSets(),
+                       m_pAnimController->GetMaxNumTracks(),
+                       m_pAnimController->GetMaxNumEvents(),
+                       &pControl)))
         {
             return NULL;
         }
@@ -465,14 +466,14 @@ namespace Lazy
         const D3DCAPS9 * pCaps = Lazy::rcDevice()->getCaps();
 
         HRESULT hr = pMeshContainer->pSkinInfo->ConvertToBlendedMesh(
-            pMeshContainer->pOrigMesh,
-            D3DXMESH_MANAGED | D3DXMESHOPT_VERTEXCACHE,
-            pMeshContainer->pAdjacency,
-            NULL, NULL, NULL,
-            &pMeshContainer->NumInfl,
-            &pMeshContainer->NumAttributeGroups,
-            &pMeshContainer->pBoneCombinationBuf,
-            &pMeshContainer->MeshData.pMesh);
+                         pMeshContainer->pOrigMesh,
+                         D3DXMESH_MANAGED | D3DXMESHOPT_VERTEXCACHE,
+                         pMeshContainer->pAdjacency,
+                         NULL, NULL, NULL,
+                         &pMeshContainer->NumInfl,
+                         &pMeshContainer->NumAttributeGroups,
+                         &pMeshContainer->pBoneCombinationBuf,
+                         &pMeshContainer->MeshData.pMesh);
 
         if (FAILED(hr)) return hr;
 
@@ -499,8 +500,8 @@ namespace Lazy
         {
             LPD3DXMESH pMeshTmp;
             hr = pMeshContainer->MeshData.pMesh->CloneMeshFVF(D3DXMESH_SOFTWAREPROCESSING | pMeshContainer->MeshData.pMesh->GetOptions(),
-                pMeshContainer->MeshData.pMesh->GetFVF(),
-                pDevice, &pMeshTmp);
+                    pMeshContainer->MeshData.pMesh->GetFVF(),
+                    pDevice, &pMeshTmp);
             if (FAILED(hr))
             {
                 return hr;
@@ -530,7 +531,7 @@ namespace Lazy
         }
         //影响一个面的矩阵不会超过12个，自己画就晓得了
         hr = pMeshContainer->pSkinInfo->GetMaxFaceInfluences(pIB, pMeshContainer->pOrigMesh->GetNumFaces(),
-            &NumMaxFaceInfl);
+                &NumMaxFaceInfl);
         pIB->Release();
         if (FAILED(hr))
         {
@@ -552,14 +553,14 @@ namespace Lazy
 
         //生成蒙皮网格模型
         hr = pMeshContainer->pSkinInfo->ConvertToIndexedBlendedMesh(pMeshContainer->pOrigMesh,
-            Flags,
-            pMeshContainer->NumPaletteEntries,
-            pMeshContainer->pAdjacency,
-            NULL, NULL, NULL,
-            &pMeshContainer->NumInfl,
-            &pMeshContainer->NumAttributeGroups,
-            &pMeshContainer->pBoneCombinationBuf,
-            &pMeshContainer->MeshData.pMesh);
+                Flags,
+                pMeshContainer->NumPaletteEntries,
+                pMeshContainer->pAdjacency,
+                NULL, NULL, NULL,
+                &pMeshContainer->NumInfl,
+                &pMeshContainer->NumAttributeGroups,
+                &pMeshContainer->pBoneCombinationBuf,
+                &pMeshContainer->MeshData.pMesh);
 
         return hr;
     }
@@ -569,10 +570,10 @@ namespace Lazy
         LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
 
         HRESULT hr = pMeshContainer->pOrigMesh->CloneMeshFVF(
-            D3DXMESH_MANAGED,
-            pMeshContainer->pOrigMesh->GetFVF(),
-            pDevice,
-            &pMeshContainer->MeshData.pMesh);
+                         D3DXMESH_MANAGED,
+                         pMeshContainer->pOrigMesh->GetFVF(),
+                         pDevice,
+                         &pMeshContainer->MeshData.pMesh);
 
         if (FAILED(hr)) return hr;
 
@@ -663,7 +664,7 @@ namespace Lazy
 
         //得到骨骼数量
         DWORD nBones = pSkinInfo->GetNumBones();
-        pMeshContainer->ppBoneMatrixPtrs = new D3DXMATRIX*[nBones];
+        pMeshContainer->ppBoneMatrixPtrs = new Matrix*[nBones];
 
         std::wstring tempName;
         for (DWORD i = 0; i < nBones; ++i)
@@ -733,7 +734,7 @@ namespace Lazy
         DWORD AttribIdPrev = UNUSED32;
         DWORD NumBlend = 0;
         DWORD iMatrixIndex = 0;
-        D3DXMATRIX matTemp;
+        Matrix matTemp;
 
         LPD3DXBONECOMBINATION pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
         for (DWORD iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
@@ -813,7 +814,7 @@ namespace Lazy
     void SkinMesh::drawMeshContainerIndex(MeshContainer *pMeshContainer, BoneFrame *)
     {
         LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
-        D3DXMATRIX matTemp;
+        Matrix matTemp;
 
         if (pMeshContainer->UseSoftwareVP)
         {
@@ -839,8 +840,8 @@ namespace Lazy
                 if (iMatrix != UINT_MAX)
                 {
                     D3DXMatrixMultiply(&matTemp,
-                        &pMeshContainer->pBoneOffsetMatrices[iMatrix],
-                        pMeshContainer->ppBoneMatrixPtrs[iMatrix]);
+                                       &pMeshContainer->pBoneOffsetMatrices[iMatrix],
+                                       pMeshContainer->ppBoneMatrixPtrs[iMatrix]);
                     pDevice->SetTransform(D3DTS_WORLDMATRIX(iPaletteEntry), &matTemp);
                 }
             }
@@ -864,7 +865,7 @@ namespace Lazy
 
         DWORD nBones = pMeshContainer->pSkinInfo->GetNumBones();
 
-        static std::vector<D3DXMATRIX> s_matrixCache;
+        static std::vector<Matrix> s_matrixCache;
         s_matrixCache.resize(nBones);
 
         for (DWORD i = 0; i < nBones; ++i)
@@ -873,10 +874,10 @@ namespace Lazy
                 &s_matrixCache[i],
                 &pMeshContainer->pBoneOffsetMatrices[i],
                 pMeshContainer->ppBoneMatrixPtrs[i]
-                );
+            );
         }
 
-        D3DXMATRIX  Identity;
+        Matrix  Identity;
         D3DXMatrixIdentity(&Identity);
         pDevice->SetTransform(D3DTS_WORLD, &Identity);
 

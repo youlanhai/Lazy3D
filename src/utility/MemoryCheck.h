@@ -64,7 +64,7 @@ namespace Lazy
         {
             ZLockHolder holder(&m_lock);
 
-            auto cmpFun = [p](ITypeProxy * v)->bool{ return v->get() == p; };
+            auto cmpFun = [p](ITypeProxy * v)->bool { return v->get() == p; };
 
             auto it = std::find_if(m_objects.begin(), m_objects.end(), cmpFun);
             if (it != m_objects.end())

@@ -1,5 +1,5 @@
 ﻿//////////////////////////////////////////////////////////////////////////
-/* 
+/*
  * author: youlanhai
  * e-mail: you_lan_hai@foxmail.com
  * blog: http://blog.csdn.net/you_lan_hai
@@ -15,7 +15,7 @@
 #       define LZDATA_API __declspec(dllexport)
 #   else
 #       define LZDATA_API __declspec(dllimport)
-#   endif 
+#   endif
 #else
 #   define LZDATA_API
 #endif

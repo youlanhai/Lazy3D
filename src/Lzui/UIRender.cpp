@@ -26,8 +26,8 @@ namespace Lazy
         DWORD op0AlphaArg2;
         DWORD op1Color;
         DWORD op1Alpha;
-        D3DXMATRIX view;
-        D3DXMATRIX projection;
+        Matrix view;
+        Matrix projection;
         dx::Material material;
         dx::PixelShader *pixelShader;
         dx::VertexShader *vertexShader;
@@ -43,7 +43,7 @@ namespace Lazy
         EffectPtr   m_shader;
         std::vector<UIVertex> m_vertices;
         dx::Device  *m_device;
-        Math::Matrix4x4   m_matWorldViewProj;
+        Matrix   m_matWorldViewProj;
 
     public:
         SpiritBatcher()
@@ -58,7 +58,7 @@ namespace Lazy
             m_device = pDevice;
         }
 
-        void setMatrix(const Math::Matrix4x4 & mat)
+        void setMatrix(const Matrix & mat)
         {
             m_matWorldViewProj = mat;
         }
@@ -97,8 +97,8 @@ namespace Lazy
                     if (m_shader->beginPass(i))
                     {
                         m_device->SetFVF(UIVertex::FVF);
-                        m_device->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 
-                            m_vertices.size() / 3, &m_vertices[0], UIVertex::SIZE);
+                        m_device->DrawPrimitiveUP(D3DPT_TRIANGLELIST,
+                                                  m_vertices.size() / 3, &m_vertices[0], UIVertex::SIZE);
 
                         m_shader->endPass();
                     }
@@ -254,7 +254,7 @@ namespace Lazy
 
     void GUIRender::renderBegin()
     {
-        Math::Matrix4x4 matrix;
+        Matrix matrix;
         matrix.makeIdentity();
         m_device->SetTransform(D3DTS_WORLD, &matrix);
         m_device->SetTransform(D3DTS_VIEW, &matrix);

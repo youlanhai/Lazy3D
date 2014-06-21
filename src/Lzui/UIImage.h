@@ -3,28 +3,28 @@
 namespace Lazy
 {
 
-/** 图像控件。*/
-class LZUI_API CImage : public IControl
-{
-public:
-    MAKE_UI_HEADER(CImage, uitype::Image)
-    CImage(void);
-    
-    ~CImage(void);
+    /** 图像控件。*/
+    class LZUI_API CImage : public IControl
+    {
+    public:
+        MAKE_UI_HEADER(CImage, uitype::Image)
+        CImage(void);
 
-    void create(
-        int id, 
-        const tstring & image, 
-        int x, 
-        int y, 
-        int w, 
-        int h);
+        ~CImage(void);
 
-    virtual void render(IUIRender * pDevice) override;
-    virtual void setImage(const tstring & image) override;
+        void create(
+            int id,
+            const tstring & image,
+            int x,
+            int y,
+            int w,
+            int h);
 
-protected:
-    TexturePtr m_texture;
-};
+        virtual void render(IUIRender * pDevice) override;
+        virtual void setImage(const tstring & image) override;
+
+    protected:
+        TexturePtr m_texture;
+    };
 
 }//namespace Lazy

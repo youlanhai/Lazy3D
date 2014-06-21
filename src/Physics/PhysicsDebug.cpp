@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "PhysicsDebug.h"
 
-namespace Physics
+namespace Lazy
 {
 
     struct CustomVertex
@@ -13,13 +13,13 @@ namespace Physics
         static DWORD FVF;
         static DWORD SIZE;
     };
-    DWORD CustomVertex::FVF = D3DFVF_XYZ|D3DFVF_DIFFUSE;
+    DWORD CustomVertex::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
     DWORD CustomVertex::SIZE = sizeof(CustomVertex);
 
-    void drawLine(IDirect3DDevice9* pDevice, 
-        const Vector3 & a, 
-        const Vector3 & b, 
-        DWORD color/*=0xffff0000*/)
+    void drawLine(IDirect3DDevice9* pDevice,
+                  const Vector3 & a,
+                  const Vector3 & b,
+                  DWORD color/*=0xffff0000*/)
     {
         CustomVertex vertex [2];
         vertex[0].pos = a;
@@ -32,12 +32,12 @@ namespace Physics
         pDevice->DrawPrimitiveUP(D3DPT_LINELIST, 1, vertex, CustomVertex::SIZE);
     }
 
-    void drawTriangle(LPDIRECT3DDEVICE9 pDevice, 
-        const Vector3 point[3], 
-        DWORD color/*=0xffff0000*/)
+    void drawTriangle(LPDIRECT3DDEVICE9 pDevice,
+                      const Vector3 point[3],
+                      DWORD color/*=0xffff0000*/)
     {
         CustomVertex vertex [3];
-        for(int i=0; i<3; ++i)
+        for(int i = 0; i < 3; ++i)
         {
             vertex[i].pos = point[i];
             vertex[i].color = color;
@@ -47,27 +47,27 @@ namespace Physics
         pDevice->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, vertex, CustomVertex::SIZE);
     }
 
-    void drawTriangle(LPDIRECT3DDEVICE9 pDevice, 
-        const Vector3 & a,
-        const Vector3 & b,
-        const Vector3 & c,
-        DWORD color/*=0xffff0000*/)
+    void drawTriangle(LPDIRECT3DDEVICE9 pDevice,
+                      const Vector3 & a,
+                      const Vector3 & b,
+                      const Vector3 & c,
+                      DWORD color/*=0xffff0000*/)
     {
         Vector3 point[3] = {a, b, c};
         drawTriangle(pDevice, point, color);
     }
 
-    void drawTriangle(LPDIRECT3DDEVICE9 pDevice, 
-        const Triangle & tri, 
-        DWORD color/*=0xffff0000*/)
+    void drawTriangle(LPDIRECT3DDEVICE9 pDevice,
+                      const Triangle & tri,
+                      DWORD color/*=0xffff0000*/)
     {
         drawTriangle(pDevice, tri.a, tri.b, tri.c, color);
     }
 
     void drawFRect(LPDIRECT3DDEVICE9 pDevice,
-        const FRect & rc,
-        float y /*= 0.0f*/,
-        DWORD color/*=0xffffffff*/)
+                   const FRect & rc,
+                   float y /*= 0.0f*/,
+                   DWORD color/*=0xffffffff*/)
     {
         CustomVertex vertex [5];
         vertex[0].pos.set(rc.left, y, rc.top);
@@ -75,8 +75,8 @@ namespace Physics
         vertex[2].pos.set(rc.right, y, rc.bottom);
         vertex[3].pos.set(rc.left, y, rc.bottom);
         vertex[4].pos = vertex[0].pos;
-        
-        for (int i=0; i<5; ++i)
+
+        for (int i = 0; i < 5; ++i)
         {
             vertex[i].color = color;
         }
@@ -87,15 +87,15 @@ namespace Physics
     }
 
     void drawFRectSolid(LPDIRECT3DDEVICE9 pDevice,
-        const FRect & rc,  float y, DWORD color)
+                        const FRect & rc,  float y, DWORD color)
     {
         CustomVertex vertex[4];
         vertex[0].pos.set(rc.left, y, rc.top);
         vertex[1].pos.set(rc.right, y, rc.top);
         vertex[2].pos.set(rc.left, y, rc.bottom);
         vertex[3].pos.set(rc.right, y, rc.bottom);
-        
-        for (int i=0; i<4; ++i)
+
+        for (int i = 0; i < 4; ++i)
         {
             vertex[i].color = color;
         }
@@ -105,27 +105,27 @@ namespace Physics
         pDevice->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, 2, vertex, CustomVertex::SIZE);
     }
 
-    void drawCollisionInfoTri(LPDIRECT3DDEVICE9 pDevice, 
-        const Physics::CollisionInfo & info)
+    void drawCollisionInfoTri(LPDIRECT3DDEVICE9 pDevice,
+                              const CollisionInfo & info)
     {
-        for (Physics::TriangleSet::const_iterator it = info.hitTriangles.begin();
-            it != info.hitTriangles.end(); ++it)
+        for (TriangleSet::const_iterator it = info.hitTriangles.begin();
+                it != info.hitTriangles.end(); ++it)
         {
             drawTriangle(pDevice, it->a, it->b, it->c);
         }
     }
 
-    void drawCollisionInfoOBB(LPDIRECT3DDEVICE9 pDevice, 
-        const Physics::CollisionInfo & info, bool withRotation/*=true*/)
+    void drawCollisionInfoOBB(LPDIRECT3DDEVICE9 pDevice,
+                              const CollisionInfo & info, bool withRotation/*=true*/)
     {
         if (withRotation)
         {
             Vector3 dir = info.newPos - info.oldPos;
 
             float angle = -atan2(dir.z, dir.x);
-            Matrix4x4 matWord, matTrans;
-            D3DXMatrixRotationY(&matWord, angle);
-            D3DXMatrixTranslation(&matTrans, info.center.x, info.center.y, info.center.z);
+            Matrix matWord, matTrans;
+            matWord.makeRatateY(angle);
+            matTrans.makeTranslate(info.center);
             matWord *= matTrans;
             pDevice->SetTransform(D3DTS_WORLD, &matWord);
         }
@@ -155,30 +155,30 @@ namespace Physics
         pt[3] = pt[0];
         pt[3].z += dz;
 
-        for(int i=0; i<4; ++i)
+        for(int i = 0; i < 4; ++i)
         {
-            pt[i+4] = pt[i];
-            pt[i+4].x += dx;
+            pt[i + 4] = pt[i];
+            pt[i + 4].x += dx;
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            drawLine(pDevice, pt[i], pt[(i+1) % 4], 0xff00ff00);
+            drawLine(pDevice, pt[i], pt[(i + 1) % 4], 0xff00ff00);
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            drawLine(pDevice, pt[i+4], pt[(i+1) % 4 + 4], 0xff00ff00);
+            drawLine(pDevice, pt[i + 4], pt[(i + 1) % 4 + 4], 0xff00ff00);
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             drawLine(pDevice, pt[i], pt[i + 4], 0xff00ff00);
         }
     }
 
     void drawAABB(LPDIRECT3DDEVICE9 pDevice,
-        const AABB & aabb, DWORD color)
+                  const AABB & aabb, DWORD color)
     {
         //drawLine(pDevice, aabb.min, aabb.max, 0xffff0000);
 
@@ -197,23 +197,23 @@ namespace Physics
         pt[3] = pt[0];
         pt[3].z += diameter.z;
 
-        for(int i=0; i<4; ++i)
+        for(int i = 0; i < 4; ++i)
         {
-            pt[i+4] = pt[i];
-            pt[i+4].x += diameter.x;
+            pt[i + 4] = pt[i];
+            pt[i + 4].x += diameter.x;
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            drawLine(pDevice, pt[i], pt[(i+1) % 4], color);
+            drawLine(pDevice, pt[i], pt[(i + 1) % 4], color);
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
-            drawLine(pDevice, pt[i+4], pt[(i+1) % 4 + 4], color);
+            drawLine(pDevice, pt[i + 4], pt[(i + 1) % 4 + 4], color);
         }
 
-        for (int i=0; i<4; ++i)
+        for (int i = 0; i < 4; ++i)
         {
             drawLine(pDevice, pt[i], pt[i + 4], color);
         }
@@ -227,7 +227,7 @@ namespace Physics
             return;
         }
         std::vector<CustomVertex> vertex(n);
-        for (size_t i=0; i<n; ++i)
+        for (size_t i = 0; i < n; ++i)
         {
             vertex[i].pos = poly[i];
             vertex[i].color = color;
@@ -235,7 +235,7 @@ namespace Physics
 
         pDevice->SetTexture(0, NULL);
         pDevice->SetFVF(CustomVertex::FVF);
-        pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, n-2, (void*)&vertex[0], CustomVertex::SIZE);
+        pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, n - 2, (void*)&vertex[0], CustomVertex::SIZE);
     }
 
 
@@ -255,11 +255,9 @@ namespace Physics
     }
     void drawDebugTriangle(IDirect3DDevice9 *pDevice)
     {
-        Matrix4x4 world;
-        D3DXMatrixIdentity(&world);
-        pDevice->SetTransform(D3DTS_WORLD, &world);
+        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
 
-        for (size_t i=0; i<g_debugTriangles.size(); ++i)
+        for (size_t i = 0; i < g_debugTriangles.size(); ++i)
         {
             drawTriangle(pDevice, g_debugTriangles[i].triangle, g_debugTriangles[i].color);
         }

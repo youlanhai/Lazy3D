@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Physics
+namespace Lazy
 {
     ///导航网格配置参数
     struct NagenConfig
@@ -28,7 +28,7 @@ namespace Physics
         extern NagenConfig Config;
 
         ///设置配置参数
-        inline void setConfig(const NagenConfig & config){ Config = config;}
+        inline void setConfig(const NagenConfig & config) { Config = config;}
 
         ///获取配置参数
         inline const NagenConfig & config()  { return Config; }
@@ -36,7 +36,7 @@ namespace Physics
         ///路点文件路径
         extern Lazy::tstring WpPath;
     }
-    
+
     const int MaxWpAdj = 8; ///<路点最大邻接点数。以后会扩展成8方向搜索，最多拥有8个邻接点。
     const int InvalidWp = -1;//无效id
 
@@ -57,13 +57,13 @@ namespace Physics
         pos.z = (rect.top + rect.bottom) * 0.5f;
     }
 
-    
+
     typedef std::vector<int> WpIdArray;
 
     ///////////////////////////////////////////////////////////////////
     //
     ///////////////////////////////////////////////////////////////////
-    
+
     ///路点数据
     class WayPoint: public IBase
     {
@@ -78,23 +78,23 @@ namespace Physics
         explicit WayPoint(int id_);
         ~WayPoint();
 
-        void render(LPDIRECT3DDEVICE9 pDevice, DWORD color=0xff00ffff) const;
+        void render(LPDIRECT3DDEVICE9 pDevice, DWORD color = 0xff00ffff) const;
 
         ///获得路点的中心位置
         inline void getCenter(Vector3 & center) const
         {
             getRectCenter(rect, yMin, center);
         }
-        
+
         ///路点中心到pos的距离
         float distTo(const Vector3 & pos) const;
-        
+
         ///加载数据。
         bool load(Lazy::DataStream & stream);
 
         ///保存数据。
         bool save(Lazy::DataStream & stream) const;
-        
+
         //申明内存池
         DEC_MEMORY_ALLOCATER()
 
@@ -108,7 +108,7 @@ namespace Physics
 
         ///邻接点个数
         inline int numNeighbour() const { return numAdj; }
-        
+
         ///获取邻接点
         inline int getNeighbour(int i) const { return adjPoints[i]; }
 
@@ -123,7 +123,7 @@ namespace Physics
     ///////////////////////////////////////////////////////////////////
     //
     ///////////////////////////////////////////////////////////////////
-    
+
     ///路点连接
     struct WpLinker
     {
@@ -142,15 +142,15 @@ namespace Physics
         FRect   rect; //set的范围
 //        float   yMax;
         float   yMin;
-        
+
     public:
         WaySet(int id_, int chunkID_);
         ~WaySet();
 
         void render(LPDIRECT3DDEVICE9 pDevice) const;
-    
+
         //查找最接近目标点的路点。
-        int findWpByPos(const Vector3 &pos, float *distance=NULL) const;
+        int findWpByPos(const Vector3 &pos, float *distance = NULL) const;
 
         ///搜索selfWpId距离下一个set最近的一个路点。
         ///@param[in]   destPos     最终的目标位置
@@ -160,10 +160,10 @@ namespace Physics
         ///@param[out]  nextDestWp  下一个路点（selfDestWp的另一端），位于nextSet中
         ///@return 如果成功，返回本true，否则返回false。
         bool findEdgeWp(const Vector3 & destPos, int selfWpId, int nextSetId, int & selfDestWp, int & nextDestWp) const;
-        
+
         ///自动寻路
         bool findWayById(WpPtrArray & way, int start, int end) const;
-        
+
         ///自动寻路
         bool findWay(WpPtrArray & way, const Vector3 & start, const Vector3 & end) const;
 
@@ -173,8 +173,8 @@ namespace Physics
         int numWp() const { return (int)m_wayPoints.size(); }
 
         ///路点迭代器
-        WpPtrArray::iterator begin(){ return m_wayPoints.begin(); }
-        WpPtrArray::iterator end(){ return m_wayPoints.end(); }
+        WpPtrArray::iterator begin() { return m_wayPoints.begin(); }
+        WpPtrArray::iterator end() { return m_wayPoints.end(); }
 
         ///记录一个连通的邻居
         void addNeighbour(int setId);
@@ -197,16 +197,16 @@ namespace Physics
 
         ///邻接点个数
         inline int numNeighbour() const { return int(adjSets.size()); }
-        
+
         ///获取邻接点
         inline int getNeighbour(int i) const { return adjSets[i]; }
 
     public://存档相关
-        
+
         ///保存到文件。
         ///@param[in] fname 目标文件名
         bool save(const Lazy::tstring & fname) const;
-    
+
         ///从文件加载
         ///@param[in] fname 目标文件名
         bool load(const Lazy::tstring & fname);
@@ -244,21 +244,21 @@ namespace Physics
     public:
         ///单例
         static WaySetMgr * instance();
-        
+
         ///清空数据
         void clear();
-        
+
         ///保存到文件。
         ///@param[in] fname 目标路径
         bool save(const Lazy::tstring & path) const;
-    
+
         ///从文件加载
         ///@param[in] fname 目标路径
         bool load(const Lazy::tstring & path);
-    
-        ///添加一个wayset，返回新添加wayset的id。    
+
+        ///添加一个wayset，返回新添加wayset的id。
         int addWaySet(WaySetPtr ptr);
-        
+
         ///根据编号获取wayset
         WaySetPtr getWaySet(int i) const { return m_waySets[i]; }
 
@@ -290,13 +290,13 @@ namespace Physics
 
         ///从文件流中加载。
         bool load(Lazy::LZDataPtr stream);
-        
+
         ///保存到文件流。一个地图的所有chunk信息，都保存到一个文件。
         bool save(Lazy::LZDataPtr stream) const;
 
         void render(LPDIRECT3DDEVICE9 pDevice) const;
 
-        void addWaySet(int id){ m_waySets.push_back(id); }
+        void addWaySet(int id) { m_waySets.push_back(id); }
         int numWaySet()const { return m_waySets.size(); }
         int numWayPoint() const;
 
@@ -310,11 +310,11 @@ namespace Physics
 
         //在一个waySet中寻路
         bool findWay(WpPtrArray & way, const Vector3 & start, const Vector3 & end) const;
-        
+
         //在一个waySet中寻路
         bool findWay(WpPtrArray & way, int waySetId, const Vector3 & start, const Vector3 & end) const;
-        
-        WpIdArray::iterator begin(){ return m_waySets.begin(); }
+
+        WpIdArray::iterator begin() { return m_waySets.begin(); }
         WpIdArray::iterator end() { return m_waySets.end(); }
 
     private:
@@ -341,11 +341,11 @@ namespace Physics
         ///获取寻路chunk
         ///@param[in] id chunk索引id
         ///@param[in] urgent 如果urgent=false，且此chunk还未加载时，返回值为null。
-        WayChunkPtr getChunk(int id, bool urgent=true);
+        WayChunkPtr getChunk(int id, bool urgent = true);
 
         ///根据位置获取寻路chunk
-        WayChunkPtr getChunkByPos(float x, float z, bool urgent=true);
-        
+        WayChunkPtr getChunkByPos(float x, float z, bool urgent = true);
+
         ///跨chunk寻路
         bool findWay(WpPtrArray & way, const Vector3 & start, const Vector3 & end);
 
@@ -356,7 +356,7 @@ namespace Physics
 
         ///重置waychunk用于计算寻路数据
         void resetWayChunk(int rows, int cols, float x0, float z0, float size);
-        
+
         ///保存寻路地图
         ///@param[in] path 目标路径
         bool save(const Lazy::tstring & path) const;
@@ -373,7 +373,7 @@ namespace Physics
     private:
         int m_rows;///<chunk行数
         int m_cols;///<chunk列数
-        
+
         float m_x0;///<地图原点x坐标
         float m_z0;///<地图原点z坐标
         float m_chunkSize;///<每个chunk的尺寸
