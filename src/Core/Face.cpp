@@ -1,7 +1,6 @@
 ﻿
 #include "stdafx.h"
 #include "Face.h"
-#include "Res.h"
 #include "../Render/Texture.h"
 
 namespace Lazy

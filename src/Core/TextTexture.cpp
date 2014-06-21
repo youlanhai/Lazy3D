@@ -1,6 +1,5 @@
 ﻿
 #include "stdafx.h"
-#include "Res.h"
 
 #include "../Render/Texture.h"
 #include "../Font/Font.h"

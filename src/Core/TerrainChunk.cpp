@@ -1,7 +1,6 @@
 ﻿
 
 #include "stdafx.h"
-#include "Res.h"
 #include "Entity.h"
 #include "TerrainChunk.h"
 #include "App.h"

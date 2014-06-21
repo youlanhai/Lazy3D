@@ -1,6 +1,5 @@
 ﻿
 #include "stdafx.h"
-#include "Res.h"
 #include "Model.h"
 #include "Pick.h"
 

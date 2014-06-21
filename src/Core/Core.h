@@ -31,7 +31,6 @@
 #include "Physics.h"
 
 #include "RenderObj.h"
-#include "Res.h"
 #include "RenderTask.h"
 
 #include "SceneFog.h"

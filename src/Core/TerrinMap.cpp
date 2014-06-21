@@ -1,7 +1,6 @@
 ﻿
 #include "stdafx.h"
 #include "Pick.h"
-#include "Res.h"
 #include "Entity.h"
 
 #include "../Physics/Physics.h"

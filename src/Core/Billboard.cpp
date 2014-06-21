@@ -1,6 +1,5 @@
 ﻿
 #include "stdafx.h"
-#include "Res.h"
 #include "CursorCamera.h"
 #include "Billboard.h"
 #include "App.h"

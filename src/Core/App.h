@@ -4,7 +4,6 @@
 #include "Keyboard.h"
 
 #include "RenderObj.h"
-#include "Res.h"
 #include "RenderTask.h"
 #include "../Render/RenderDevice.h"
 
@@ -151,8 +150,6 @@ namespace Lazy
 
         CRenderTask* getBillboardMgr(void) { return m_pBillboardMgr.get(); }
 
-        ResMgrOld* getResMgr(void) { return m_pResMgr.get();}
-
         CKeyboard* getKeyboard(void) { return m_pKeyboard.get(); }
 
         RefPtr<SkyBox> getSkyBox(void) { return m_pSkyBox; }
@@ -214,7 +211,6 @@ namespace Lazy
 
     protected:
         //公共资源
-        RefPtr<ResMgrOld>         m_pResMgr;
         RenderTaskPtr           m_pRenderTaskMgr;   //< 渲染队列
         RenderTaskPtr           m_pUpdateTaskMgr;   //< 更新队列
         RenderTaskPtr           m_pBillboardMgr;

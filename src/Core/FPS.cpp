@@ -2,9 +2,7 @@
 #include "stdafx.h"
 #include "FPS.h"
 
-#include "Res.h"
 #include "../utility/Utility.h"
-
 #include "../Lzui/Lzui.h"
 
 namespace Lazy

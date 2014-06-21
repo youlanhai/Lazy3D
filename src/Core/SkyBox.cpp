@@ -1,7 +1,6 @@
 ﻿//SkyBox.cpp
 #include "stdafx.h"
 
-#include "Res.h"
 #include "SkyBox.h"
 
 #include "../utility/Utility.h"

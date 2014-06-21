@@ -26,7 +26,6 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pick.cpp" />
     <ClCompile Include="RenderRes.cpp" />
-    <ClCompile Include="Res.cpp" />
     <ClCompile Include="SceneFog.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Snow.cpp" />
@@ -74,7 +73,6 @@
     <ClInclude Include="RenderObj.h" />
     <ClInclude Include="RenderRes.h" />
     <ClInclude Include="RenderTask.h" />
-    <ClInclude Include="Res.h" />
     <ClInclude Include="SceneFog.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Snow.h" />

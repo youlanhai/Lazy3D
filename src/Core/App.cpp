@@ -25,7 +25,7 @@ namespace Lazy
         return g_pApp;
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     LRESULT CALLBACK app_defWndProc_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         if (msg == WM_DESTROY)
@@ -40,7 +40,7 @@ namespace Lazy
         return DefWindowProc(hWnd, msg, wParam, lParam);
     }
 
-///////////////////class CApp start/////////////////////////
+    ///////////////////class CApp start/////////////////////////
     CApp::CApp()
         : m_isLoading(false)
         , m_isLoadingOK(false)
@@ -166,7 +166,7 @@ namespace Lazy
         clear();//释放资源
     }
 
-///处理消息。返回false，表示程序退出。
+    ///处理消息。返回false，表示程序退出。
     bool CApp::processMessage()
     {
         static MSG msg = {0};
@@ -209,7 +209,7 @@ namespace Lazy
     }
 
 
-//初始化Direct3D对象及设备对象
+    //初始化Direct3D对象及设备对象
     bool CApp::createDevice()
     {
         if (!rcDevice()->create(m_hWnd, m_hInstance, m_bFullScreen))
@@ -222,7 +222,7 @@ namespace Lazy
     }
 
 
-//创建窗口
+    //创建窗口
     bool CApp::createWindow()
     {
         DWORD dwStyle ;
@@ -267,7 +267,7 @@ namespace Lazy
         return (m_hWnd != NULL);
     }
 
-//注册窗口类
+    //注册窗口类
     void CApp::registerClass()
     {
         WNDCLASSEX wc;
@@ -299,9 +299,6 @@ namespace Lazy
 
         FontMgr::instance()->init();
         FontMgr::instance()->registerFontFile(L"C:/Windows/Fonts/simhei.ttf", L"def");
-
-        m_pResMgr = new ResMgrOld();
-        m_pResMgr->setFactory(new ResFactory());
 
         m_pKeyboard = new CKeyboard();
         addUpdater(m_pKeyboard.get());
@@ -336,7 +333,6 @@ namespace Lazy
         m_pRenderTaskMgr = NULL;
         m_pUpdateTaskMgr = NULL;
         m_pBillboardMgr = NULL;
-        m_pResMgr = NULL;
         m_pKeyboard = NULL;
 
         TerrainMap::instance()->fini();

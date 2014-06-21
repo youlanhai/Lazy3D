@@ -1,6 +1,5 @@
 ﻿#include "stdafx.h"
 #include "Model.h"
-#include "Res.h"
 #include "../Physics/PhysicsDebug.h"
 #include "../utility/MemoryCheck.h"
 
