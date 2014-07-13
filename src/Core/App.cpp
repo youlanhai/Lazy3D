@@ -74,12 +74,14 @@ namespace Lazy
         MemoryChecker::initInstance();
         MemoryPool::init();
         TerrainMap::initInstance();
+        Pick::initInstance();
     }
 
     void CApp::releaseSingleton()
     {
         cSoundMgr::instance()->release();
         TerrainMap::finiInstance();
+        Pick::finiInstance();
 
         //////////////////////////////////////////////////////////////////////////
         clearSectionCache();

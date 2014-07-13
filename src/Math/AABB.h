@@ -14,24 +14,17 @@ namespace Lazy
         Vector3 min;
         Vector3 max;
 
-        void zero()
-        {
-            min = MathConst::vec3Max;
-            max = MathConst::vec3Min;
-        }
+        AABB();
+        AABB(const Vector3 & mi, const Vector3 & mx);
+
+        void zero();
 
         //正规化。aabb经过变换后，min可能要大于max。
         void normalization();
 
-        void getCenter(Vector3 & center) const
-        {
-            center = (max + min) * 0.5f;
-        }
+        void getCenter(Vector3 & center) const;
 
-        void getDiameter(Vector3 & diameter) const
-        {
-            diameter = max - min;
-        }
+        void getDiameter(Vector3 & diameter) const;
 
         ///包围盒求交集
         void sub(const AABB & aabb);

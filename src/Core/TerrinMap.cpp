@@ -277,8 +277,17 @@ namespace Lazy
             return false;
         }
 
-        m_mapName = path;
-        formatDirName(m_mapName);
+        if (!path.empty())
+        {
+            m_mapName = path;
+            formatDirName(m_mapName);
+        }
+
+        if (m_mapName.empty())
+        {
+            LOG_ERROR(L"Need mapPath.");
+            return false;
+        }
 
         tstring filename = m_mapName + L"map.lzd";
         LZDataPtr root = openSection(filename, true);
@@ -559,8 +568,7 @@ namespace Lazy
 
     bool TerrainMap::intersect(Vector3 & position)
     {
-        Pick *pick = getPick();
-        if (NULL == pick) return false;
+        Pick *pick = Pick::instance();
 
         MapRayCollider collider(pick->rayPos(), pick->rayDir());
         if (m_quadTree.pick(&collider))
@@ -576,35 +584,41 @@ namespace Lazy
         return false;
     }
 
-    void TerrainMap::handeMouseEvent(UINT msg, WPARAM, LPARAM)
+    bool TerrainMap::handeEvent(const SEvent & event)
     {
-        if (!m_usefull) return;
+        if (!m_usefull) return false;
 
         if (!Pick::instance()->isTerrainObjEnable())
         {
-            return;
+            return false;
         }
 
         if (getActiveObj())
         {
-            if (msg == WM_LBUTTONDOWN)
+            switch (event.mouseEvent.event)
             {
+            case EME_LMOUSE_DOWN:
                 getActiveObj()->focusCursor(CM_LDOWN);
-            }
-            else if (msg == WM_LBUTTONUP)
-            {
+                break;
+
+            case EME_LMOUSE_UP:
                 getActiveObj()->focusCursor(CM_LUP);
-            }
-            else if (msg == WM_RBUTTONDOWN)
-            {
+                break;
+
+            case EME_RMOUSE_DOWN:
                 getActiveObj()->focusCursor(CM_RDOWN);
-            }
-            else if (msg == WM_RBUTTONUP)
-            {
+                break;
+
+            case EME_RMOUSE_UP:
                 getActiveObj()->focusCursor(CM_RUP);
                 m_pSelectObj = getActiveObj();
-            }
+                break;
+
+            default:
+                return false;
+            };
         }
+        return false;
     }
 
     bool TerrainMap::intersectWithCursor()

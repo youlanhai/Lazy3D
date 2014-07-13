@@ -419,7 +419,8 @@ namespace Lazy
 
         TerrainItemPtr item = m_pMap->createTerrainItem();
         item->load(ptr);
-
+        
+        bool isAdded = false;
         tstring chunkIDs = ptr->readString(L"chunks");
         std::wistringstream ss(chunkIDs);
         while (!item && ss.good())
@@ -429,8 +430,14 @@ namespace Lazy
             if (id == 0xffffffff)
                 break;
 
+            isAdded = true;
             ChunkPtr chunk = m_pMap->getChunkByID(id);
             chunk->addItem(item);
+        }
+
+        if (!isAdded)
+        {
+            m_pMap->addTerrainItem(item);
         }
     }
 

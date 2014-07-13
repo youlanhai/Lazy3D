@@ -27,7 +27,7 @@ namespace Lazy
         void update(float elapse);
 
         bool loadMap(const tstring & mapName);
-        bool saveMap(const tstring & mapName);
+        bool saveMap(const tstring & mapName = _T(""));
         /** create a new map*/
         bool createMap(const tstring & nameName, int rows, int cols);
 
@@ -114,7 +114,7 @@ namespace Lazy
 
     public://拾取相关
 
-        void handeMouseEvent(UINT msg, WPARAM wParam, LPARAM lParam );
+        bool handeEvent(const SEvent & event);
 
         bool intersectWithCursor();
 

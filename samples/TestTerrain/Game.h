@@ -3,6 +3,7 @@
 
 #include "Core/Core.h"
 
+using namespace Lazy;
 
 //游戏类
 class CGame : public CApp
@@ -31,9 +32,9 @@ public:
 
 	void renderText();
 	void updateCamera(float fElapse);
-	
-    /**窗口过程。不需要调用默认窗口处理过程，如果未处理消息请返回0，否则请返回非0。*/
-    virtual LRESULT wndProc(HWND ,UINT ,WPARAM ,LPARAM );
+
+    virtual bool onEvent(const SEvent & event) override;
+
 public:
 	/*注意：所有指针成员，需在构造函数中进行赋空值初始化。*/
 	bool		            m_bGameStart;

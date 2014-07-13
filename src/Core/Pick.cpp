@@ -9,19 +9,7 @@
 
 namespace Lazy
 {
-
-//////////////////////////////////////////////////////////////////////////
-    LZDLL_API Pick* getPick(void)
-    {
-        return Pick::instance();
-    }
-
-//////////////////////////////////////////////////////////////////////////
-    /*static*/ Pick* Pick::instance()
-    {
-        static Pick s_pick;
-        return &s_pick;
-    }
+    IMPLEMENT_SINGLETON(Pick);
 
     Pick::Pick(void)
         : m_pos(0, 0, 0)
@@ -35,28 +23,30 @@ namespace Lazy
     {
     }
 
-    UINT Pick::handleMouseEvent(UINT msg, WPARAM , LPARAM lParam)
+    bool Pick::handeEvent(const SEvent & event)
     {
-        if (msg == WM_MOUSEMOVE)
+        if (event.isMouseEvent())
         {
-            CPoint pt(lParam);
-            convertCursor(pt.x, pt.y);
-
-            queryWithEntity();
-
-            if (m_terrainObjEnable)
+            CPoint pt(event.mouseEvent.x, event.mouseEvent.y);
+            if (event.mouseEvent.event == EME_MOUSE_MOVE)
             {
-                queryWithTerrainObj();
+                convertCursor(pt.x, pt.y);
+
+                queryWithEntity();
+                if (m_terrainObjEnable)
+                {
+                    queryWithTerrainObj();
+                }
+            }
+            else if (event.mouseEvent.event == EME_LMOUSE_UP)
+            {
+                convertCursor(pt.x, pt.y);
+
+                m_intersectWithTerrain = queryWithTerrain();
             }
         }
-        else if(msg == WM_LBUTTONUP)
-        {
-            CPoint pt(lParam);
-            convertCursor(pt.x, pt.y);
 
-            m_intersectWithTerrain = queryWithTerrain();
-        }
-        return 0;
+        return false;
     }
 
     void Pick::convertCursor(int x, int y)

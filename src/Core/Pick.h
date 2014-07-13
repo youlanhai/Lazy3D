@@ -6,19 +6,16 @@ namespace Lazy
 {
 
     /** 鼠标拾取*/
-    class LZDLL_API Pick : public IBase
+    class LZDLL_API Pick :
+        public IBase,
+        public Singleton<Pick>
     {
     public:
-        ///单例
-        static Pick* instance();
-
         Pick();
         ~Pick();
 
-    public:
-
         ///处理windows消息
-        UINT handleMouseEvent(UINT msg, WPARAM wParam, LPARAM lParam);
+        bool handeEvent(const SEvent & event);
 
         ///获得与地图的交点坐标
         const Vector3 & getPosOnTerrain(void) const { return m_posOnTerrain; }
@@ -69,7 +66,5 @@ namespace Lazy
         bool                m_intersectWithTerrain;
         bool                m_terrainObjEnable;
     };
-
-    LZDLL_API Pick* getPick(void);
 
 } // end namespace Lazy

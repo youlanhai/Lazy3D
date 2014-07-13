@@ -2,8 +2,41 @@
 #include "AABB.h"
 #include "Triangle.h"
 
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
+
 namespace Lazy
 {
+    AABB::AABB()
+    {}
+
+    AABB::AABB(const Vector3 & mi, const Vector3 & mx)
+        : min(mi)
+        , max(mx)
+    {}
+
+    void AABB::zero()
+    {
+        min = MathConst::vec3Max;
+        max = MathConst::vec3Min;
+    }
+
+    void AABB::getCenter(Vector3 & center) const
+    {
+        center = (max + min) * 0.5f;
+    }
+
+
+    void AABB::getDiameter(Vector3 & diameter) const
+    {
+        diameter = max - min;
+    }
+
 
     bool AABB::intersectsRay(const Vector3 & origin, const Vector3 & dir) const
     {

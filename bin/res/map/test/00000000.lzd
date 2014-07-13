@@ -1,4 +1,15 @@
 #coding = utf-8
 
 savetime = [2014.7.13][20.19.27][109]
-items = ""
+items
+{
+	item
+	{
+		id = 1
+		path = model/arena/Arena.x
+		type = 0
+		scale = 0.01 0.01 0.01
+		pos = 1 1 1
+		angle = 0.000000 0.000000 0.000000
+	}
+}

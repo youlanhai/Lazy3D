@@ -36,6 +36,7 @@ namespace Lazy
     }
 
 
+    static AABB s_defaultAABB(Vector3(-0.5, 0.0f, 0.5f), Vector3(0.5f, 1.0f, 0.5f));
     //////////////////////////////////////////////////////////////////////////
     ///
     //////////////////////////////////////////////////////////////////////////
@@ -44,8 +45,7 @@ namespace Lazy
         , m_isCollid(true)
         , m_angle(0, 0, 0)
     {
-        m_aabb.min.set(-0.5, 0.0f, 0.5f);
-        m_aabb.max.set(0.5f, 1.0f, 0.5f);
+        m_aabb = s_defaultAABB;
     }
 
     TerrainItem::~TerrainItem(void)
@@ -110,8 +110,7 @@ namespace Lazy
         }
         else
         {
-            m_aabb.min.set(-10, -10, -10);
-            m_aabb.max.set(10, 10, 10);
+            m_aabb = s_defaultAABB;
         }
     }
 
@@ -213,8 +212,6 @@ namespace Lazy
 
     bool TerrainItem::load(LZDataPtr dataPtr)
     {
-        if (dataPtr->readBool(_T("refrence"), false)) return false;
-
         m_id = dataPtr->readUint(_T("id"));
 
         readVector3(dataPtr, _T("scale"), m_vScale);
