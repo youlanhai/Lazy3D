@@ -367,9 +367,9 @@ namespace Lazy
 
         tstring chunkname;
         formatString(chunkname, _T("%8.8x.lzd"), m_id);
-        chunkname += m_pMap->getMapName() + chunkname;
+        chunkname = m_pMap->getMapName() + chunkname;
 
-        LOG_DEBUG(_T("TRACE: load node(%d %d) path='%s'"),
+        LOG_DEBUG(_T("Load chunk(%d %d) path='%s'"),
             getRowID(), getColID(), chunkname.c_str());
 
         LZDataPtr root = openSection(chunkname);
@@ -396,7 +396,7 @@ namespace Lazy
                 getRowID(), getColID(), chunkname.c_str());
         }
 
-        LOG_DEBUG(_T("TRACE: finish load node(%d %d) path='%s'"),
+        LOG_DEBUG(_T("Finish load node(%d %d) path='%s'"),
             getRowID(), getColID(), chunkname.c_str());
     }
 
@@ -444,7 +444,7 @@ namespace Lazy
 
     bool TerrainChunk::loadHeightMap(const tstring & filename)
     {
-        m_heightMap.resize(getRowID() * getColID(), 0.0f);
+        m_heightMap.resize(MapConfig::NbChunkVertexSq, 0.0f);
 
         FILE *pFile = getfs()->openFile(filename, L"rb");
         if (pFile)
@@ -610,7 +610,11 @@ namespace Lazy
 
         for (TerrainItemPtr item : m_items)
         {
-            item->render(pDevice);
+            //一个item可以横跨多个chunk，只有中心坐标所在的chunk才负责渲染。
+            if (m_rect.isIn(item->getPos().x, item->getPos().z))
+            {
+                item->render(pDevice);
+            }
         }
 
         //调试渲染当前场景的八叉树

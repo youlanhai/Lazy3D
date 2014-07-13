@@ -18,7 +18,7 @@ namespace Lazy
 
         bool ShowAllItemAABB = false;
 
-        bool UseMultiThread = true;
+        bool UseMultiThread = false;
 
         bool ShowTerrain = true;
     }

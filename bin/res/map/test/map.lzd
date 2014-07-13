@@ -1,8 +1,7 @@
 #coding = utf-8
 
-rows = 10
-cols = 10
-texture     = map/f.jpg
-useOneTex   = true
-searchData  = waypoint/test
-onGround    = true
+rows = 5
+cols = 5
+idAllocator = 0
+texture = map/f.jpg
+onGround = true

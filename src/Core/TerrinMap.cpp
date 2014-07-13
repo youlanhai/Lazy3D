@@ -398,7 +398,7 @@ namespace Lazy
                 rc.top = r * m_nodeSize + m_rect.top;
                 rc.right = rc.left + m_nodeSize;
                 rc.bottom = rc.top + m_nodeSize;
-                m_mapNodes.push_back(new TerrainChunk(this, r << 16 || c, rc));
+                m_mapNodes.push_back(new TerrainChunk(this, r << 16 | c, rc));
             }
         }
 

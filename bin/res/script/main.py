@@ -26,13 +26,17 @@ def init() :
 		player = Lazy.entity(playerID)
 		Lazy.setPlayer(player)
 		
-		Lazy.map().createMap("map/abc", 5, 5)
-
 		sky = Lazy.getSkyBox()
 		size = 200
 		sky.setRange((-size, -size, -size), (size, size, size))
 		sky.source = player
 		sky.image = "gui/sky/01/%d.jpg"
+
+		if True:
+			Lazy.map().loadMap("map/test")
+		else:
+			Lazy.map().createMap("map/abc", 5, 5)
+			Lazy.map().saveMap("map/abc")
 
 	except:
 		print(traceback.print_exc())
