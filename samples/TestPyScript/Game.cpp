@@ -236,6 +236,8 @@ void CGame::clear()
     LOG_INFO(L"Release resource start...");
     Lazy::LoadingMgr::instance()->fini();
 
+    m_pFPS = nullptr;
+
     finiPython();
 
     m_pGUIMgr->destroy();

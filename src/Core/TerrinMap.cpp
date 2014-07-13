@@ -62,7 +62,7 @@ namespace Lazy
             float dist;
             for (const auto & x : indices)
             {
-                ChunkPtr chunk = TerrainMap::instance()->getNodeByIndex(x);
+                ChunkPtr chunk = TerrainMap::instance()->getChunkByIndex(x);
                 if (!chunk) continue;
 
                 if (chunk->intersect(v3Origin, v3Dir, dist))
@@ -106,7 +106,7 @@ namespace Lazy
         {
             for (const auto & x : indices)
             {
-                ChunkPtr chunk = TerrainMap::instance()->getNodeByIndex(x);
+                ChunkPtr chunk = TerrainMap::instance()->getChunkByIndex(x);
                 if (!chunk) continue;
 
                 m_obj = chunk->pickItem(v3Origin, v3Dir);
@@ -459,7 +459,7 @@ namespace Lazy
             {
                 return NULL;
             }
-            return getNodeByPos(pos.x, pos.z);
+            return getChunkByPos(pos.x, pos.z);
         }
         return NULL;
     }
@@ -471,8 +471,13 @@ namespace Lazy
         return m_mapNodes[r * m_nodeC + c];
     }
 
+    ChunkPtr TerrainMap::getChunkByIndex(size_t index) const
+    {
+        return m_mapNodes[index]; 
+    }
+
     /** 根据坐标取得地图结点。*/
-    ChunkPtr TerrainMap::getNodeByPos(float x, float z) const
+    ChunkPtr TerrainMap::getChunkByPos(float x, float z) const
     {
         size_t index = position2chunk(x, z);
         assert(index < m_mapNodes.size() && "TerrainMap::getNode");

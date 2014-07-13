@@ -94,8 +94,8 @@ namespace Lazy
         int position2chunk(float x, float z) const;
 
         ChunkPtr getChunkByID(uint32 id) const;
-        ChunkPtr getNodeByIndex(size_t index) const { return m_mapNodes[index]; }
-        ChunkPtr getNodeByPos(float x, float z) const;
+        ChunkPtr getChunkByIndex(size_t index) const;
+        ChunkPtr getChunkByPos(float x, float z) const;
 
         ///加载所有的chunk。如果MapConfig::UseMultiThread为true，此函数会立即返回。
         void loadAllChunks();
