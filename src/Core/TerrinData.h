@@ -32,7 +32,7 @@ namespace Lazy
         ///最大chunk个数
         const int MaxNbChunks = 1024 * 1024;
 
-        const int NbChunkGrid = 100;
+        const int NbChunkGrid = 50;
 
         ///chunk行（列）顶点个数
         const int NbChunkVertex = NbChunkGrid + 1;

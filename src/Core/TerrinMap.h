@@ -35,12 +35,10 @@ namespace Lazy
         ///保存地图。
         void saveMap(const tstring & mapName);
 
-        void createMap(int rows, int cols);
-
+        bool createMap(const tstring & nameName, int rows, int cols);
 
         void addTerrainItem(TerrainItemPtr item);
         void delTerrainItem(TerrainItemPtr item);
-
 
         /** 获得物理高度*/
         float getHeight(float x, float z) const;
@@ -93,14 +91,11 @@ namespace Lazy
         int nodeCols() const { return m_nodeC; }
         float nodeSize() const { return m_nodeSize; }
 
-        ChunkPtr getChunkByID(uint32 id);
-        ChunkPtr getNode(size_t index) const { return m_mapNodes[index]; }
+        int position2chunk(float x, float z) const;
 
-        /** 根据索引获得地图结点。*/
-        TerrainChunk* getNode(int r, int c);
-
-        /** 根据坐标取得地图结点。*/
-        TerrainChunk* getNode(float x, float z);
+        ChunkPtr getChunkByID(uint32 id) const;
+        ChunkPtr getNodeByIndex(size_t index) const { return m_mapNodes[index]; }
+        ChunkPtr getNodeByPos(float x, float z) const;
 
         ///加载所有的chunk。如果MapConfig::UseMultiThread为true，此函数会立即返回。
         void loadAllChunks();

@@ -62,7 +62,7 @@ namespace Lazy
             float dist;
             for (const auto & x : indices)
             {
-                ChunkPtr chunk = TerrainMap::instance()->getNode(x);
+                ChunkPtr chunk = TerrainMap::instance()->getNodeByIndex(x);
                 if (!chunk) continue;
 
                 if (chunk->intersect(v3Origin, v3Dir, dist))
@@ -106,7 +106,7 @@ namespace Lazy
         {
             for (const auto & x : indices)
             {
-                ChunkPtr chunk = TerrainMap::instance()->getNode(x);
+                ChunkPtr chunk = TerrainMap::instance()->getNodeByIndex(x);
                 if (!chunk) continue;
 
                 m_obj = chunk->pickItem(v3Origin, v3Dir);
@@ -183,22 +183,33 @@ namespace Lazy
 
         m_pActiveObj = NULL;
         m_pSelectObj = NULL;
+
+        m_rect.zero();
     }
 
-    void TerrainMap::createMap(int rows, int cols)
+    bool TerrainMap::createMap(const tstring & nameName, int rows, int cols)
     {
-        m_nodeR = rows;
-        m_nodeC = cols;
-        m_nodeSize = MapConfig::ChunkSize;
+        tstring filename = nameName;
+        formatDirName(filename);
+        filename += L"map.lzd";
 
-        float w = m_nodeC * m_nodeSize;
-        float h = m_nodeR * m_nodeSize;
-        m_rect.set(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
+        LZDataPtr root = openSection(filename, true, DataType::Lzd);
+        if (!root)
+        {
+            LOG_ERROR(L"Can't openSection '%s'", filename.c_str());
+            return false;
+        }
 
-        LOG_DEBUG(_T("CreateMap rows=%d, cols=%d, node size=%f"),
-            m_nodeR, m_nodeC, m_nodeSize);
+        root->writeInt(L"rows", rows);
+        root->writeInt(L"cols", cols);
 
-        initChunks();
+        if (!saveSection(root, filename))
+        {
+            LOG_ERROR(L"Can't saveSection '%s'", filename.c_str());
+            return false;
+        }
+
+        return loadMap(nameName);
     }
 
     /** 根据地图文件名，加载地图。地图文件包含地图的高度图，行列等信息。*/
@@ -220,10 +231,23 @@ namespace Lazy
             return false;
         }
 
+        m_nodeR = ptr->readInt(L"rows");
+        m_nodeC = ptr->readInt(L"cols");
+        if (m_nodeR < 0 || m_nodeC < 0)
+        {
+            LOG_ERROR(L"Load map, Invalid size.");
+            return false;
+        }
+
+        m_nodeSize = MapConfig::ChunkSize;
+        float w = m_nodeC * m_nodeSize;
+        float h = m_nodeR * m_nodeSize;
+        m_rect.set(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
+
         m_objOnGround = ptr->readBool(L"onGround", true);
         m_textureName = ptr->readString(L"texture");
 
-        createMap(ptr->readInt(L"rows"), ptr->readInt(L"cols"));
+        initChunks();
 
         //加载路点
         tstring wpPath = ptr->readString(L"searchData");
@@ -232,16 +256,18 @@ namespace Lazy
             LOG_ERROR(L"Load way point failed!");
         }
 
+        LOG_INFO(L"Load map finished.");
+
         m_loadingProgress = 1.0f;
         m_usefull = true;
-
-        LOG_INFO(L"Load map finished.");
         return true;
     }
 
     void TerrainMap::saveMap(const tstring & path)
     {
         m_mapName = path;
+        formatDirName(m_mapName);
+
         if (MapConfig::UseMultiThread && !isAllChunkLoaded())
         {
             LOG_ERROR(L"In muti thread mode, you must load all the chunk first!");
@@ -275,11 +301,19 @@ namespace Lazy
         item->removeFromChunks();
     }
 
+    int TerrainMap::position2chunk(float x, float z) const
+    {
+        int row = int((z - m_rect.top) / MapConfig::ChunkSize);
+        int col = int((x - m_rect.left) / MapConfig::ChunkSize);
+        return row * m_nodeC + col;
+    }
+
     float TerrainMap::getHeight(float x, float z) const
     {
-        int row = int(z / MapConfig::ChunkSize);
-        int col = int(x / MapConfig::ChunkGridSize);
-        return m_mapNodes[row * m_nodeC + col]->getPhysicalHeight(x, z);
+        size_t index = position2chunk(x, z);
+        if (index >= m_mapNodes.size()) return 0.0f;
+
+        return m_mapNodes[index]->getPhysicalHeight(x, z);
     }
 
     void TerrainMap::loadAllChunks()
@@ -321,8 +355,8 @@ namespace Lazy
                 m_loadingProgress = (r * m_nodeC + c) / totalNode * 0.5f;
 
                 FRect rc;
-                rc.left = c * m_nodeSize - m_rect.left;
-                rc.top = r * m_nodeSize - m_rect.top;
+                rc.left = c * m_nodeSize + m_rect.left;
+                rc.top = r * m_nodeSize + m_rect.top;
                 rc.right = rc.left + m_nodeSize;
                 rc.bottom = rc.top + m_nodeSize;
                 m_mapNodes.push_back(new TerrainChunk(this, r << 16 || c, rc));
@@ -378,7 +412,7 @@ namespace Lazy
         pDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 
         dx::Texture *pTex = TextureMgr::instance()->getTexture(m_textureName);
-        pDevice->SetTexture(0, pTex);
+        if (pTex) pDevice->SetTexture(0, pTex);
         for (size_t i = 0; i < m_renderNodes.size(); ++i)
         {
             m_renderNodes[i]->renderTerrain(pDevice);
@@ -425,33 +459,25 @@ namespace Lazy
             {
                 return NULL;
             }
-            return getNode(pos.x, pos.z);
+            return getNodeByPos(pos.x, pos.z);
         }
         return NULL;
     }
 
-    ChunkPtr TerrainMap::getChunkByID(uint32 id)
+    ChunkPtr TerrainMap::getChunkByID(uint32 id) const
     {
         uint32 r = (id >> 16) & 0xffff;
         uint32 c = id & 0xffff;
         return m_mapNodes[r * m_nodeC + c];
     }
 
-    /** 根据索引获得地图结点。*/
-    TerrainChunk* TerrainMap::getNode(int r, int c)
-    {
-        assert(r >= 0 && r < m_nodeR && c >= 0 && c < m_nodeC && "TerrainMap::getNode: index out of range!");
-
-        int index = r * m_nodeC + c;
-        return m_mapNodes[index].get();
-    }
-
     /** 根据坐标取得地图结点。*/
-    TerrainChunk* TerrainMap::getNode(float x, float z)
+    ChunkPtr TerrainMap::getNodeByPos(float x, float z) const
     {
-        int c = int(x / m_nodeSize);
-        int r = int(z / m_nodeSize);
-        return getNode(r, c);
+        size_t index = position2chunk(x, z);
+        assert(index < m_mapNodes.size() && "TerrainMap::getNode");
+
+        return m_mapNodes[index];
     }
 
     /** 生成邻接的8个结点。*/
@@ -602,63 +628,5 @@ namespace Lazy
     {
         return m_rect.height();
     }
-
-#if USE_NEW_CHUNK_STYLE
-
-    bool TerrainMap::createMap(float width, float height, const tstring & mapName)
-    {
-        int rows = int(std::ceil(width / MapConfig::ChunkSize));
-        int cols = int(std::ceil(height / MapConfig::ChunkSize));
-
-        return createMap(mapName, rows, cols);
-    }
-
-    bool TerrainMap::createMap(const tstring & mapName, int rows, int cols)
-    {
-        if (rows <= 0) rows = 1;
-        if (cols <= 0) cols = 1;
-
-        if (rows * cols > MapConfig::MaxChunks)
-        {
-            LOG_ERROR(L"Map size is too large! rows=%d, cols=%d", rows, cols);
-            return false;
-        }
-
-        release();
-
-        m_mapName = mapName;
-
-
-        //生成一个长方形的地图
-
-        float halfWidth = rows * MapConfig::ChunkSize * 0.5f;
-        float halfHeight = cols * MapConfig::ChunkSize * 0.5f;
-
-        for (int r = 0; r < rows; ++r)
-        {
-            for (int c = 0; c < cols; ++c)
-            {
-                int id = m_idAllocator++;
-
-                float x = c * MapConfig::ChunkSize - halfWidth;
-                float y = halfHeight - r * MapConfig::ChunkSize;
-
-                ChunkPtr chunk = new TerrainChunk();
-                chunk->create(id, x, y);
-
-                m_chunks[id] = chunk;
-            }
-        }
-
-        //生成4叉树
-
-
-
-        return true;
-    }
-
-
-
-#endif
 
 } // end namespace Lazy

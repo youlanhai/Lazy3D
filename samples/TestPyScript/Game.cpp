@@ -373,7 +373,7 @@ void CGame::render()
         m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWord);
         
         //渲染地面
-        m_pSquare->render(m_pd3dDevice);
+        //m_pSquare->render(m_pd3dDevice);
 
         //设置材质
         CMaterial::setMaterial(m_pd3dDevice,

@@ -436,7 +436,10 @@ namespace Lazy
 
     float TerrainChunk::getHeight(int r, int c) const
     {
-        return m_heightMap[r * MapConfig::NbChunkVertex + c];
+        size_t index = r * MapConfig::NbChunkVertex + c;
+        if (index >= m_heightMap.size()) return 0.0f;
+
+        return m_heightMap.at(index);
     }
 
     bool TerrainChunk::loadHeightMap(const tstring & filename)

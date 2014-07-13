@@ -18,11 +18,11 @@ namespace Lazy
 
     namespace MapConfig
     {
-        const int NbChunkGridSq = NbChunkGridSq * NbChunkGridSq;
+        const int NbChunkGridSq = NbChunkGrid * NbChunkGrid;
 
         const int NbChunkVertexSq = NbChunkVertex * NbChunkVertex;
 
-        const int NbChunkGridFace = NbChunkGrid * 2;
+        const int NbChunkGridFace = NbChunkGridSq * 2;
         const int NbChunkIndices = NbChunkGridFace * 3;
 
         const int MaxNbChunkMesh = 64;

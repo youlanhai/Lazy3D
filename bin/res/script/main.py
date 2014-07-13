@@ -26,7 +26,7 @@ def init() :
 		player = Lazy.entity(playerID)
 		Lazy.setPlayer(player)
 		
-		Lazy.map().createMap(5, 5)
+		Lazy.map().createMap("map/abc", 5, 5)
 
 		sky = Lazy.getSkyBox()
 		size = 200

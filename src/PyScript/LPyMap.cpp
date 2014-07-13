@@ -20,6 +20,7 @@ namespace Lzpy
 
     LZPY_METHOD_1(loadMap);
     LZPY_METHOD_1(saveMap);
+    LZPY_METHOD(createMap);
     LZPY_METHOD_1(setSource);
 
     LZPY_CLASS_END();
@@ -83,11 +84,12 @@ namespace Lzpy
 
     LZPY_IMP_METHOD(PyMap, createMap)
     {
+        tstring name;
         int row, col;
-        if (!arg.parse_tuple(&row, &col))
+        if (!arg.parse_tuple(&name, &row, &col))
             return null_object;
         
-        m_map->createMap(row, col);
+        m_map->createMap(name, row, col);
         return none_object;
     }
 
