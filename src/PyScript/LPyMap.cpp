@@ -81,6 +81,16 @@ namespace Lzpy
                            m_map->xMax(), m_map->zMax());
     }
 
+    LZPY_IMP_METHOD(PyMap, createMap)
+    {
+        int row, col;
+        if (!arg.parse_tuple(&row, &col))
+            return null_object;
+        
+        m_map->createMap(row, col);
+        return none_object;
+    }
+
     ////////////////////////////////////////////////////////////////////
     static PyMap * s_pMap = nullptr;
 

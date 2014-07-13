@@ -7,6 +7,7 @@
 #include "TerrinMap.h"
 
 #include "../Physics/Physics.h"
+#include <sstream>
 
 namespace Lazy
 {
@@ -43,7 +44,7 @@ namespace Lazy
 
             for (size_t i : indices)
             {
-                TerrainItemPtr obj = m_pMapNode->getObjByIndex(i);
+                TerrainItemPtr obj = m_pMapNode->getItemByIndex(i);
                 if (!obj) continue;
 
                 AABB aabb;
@@ -73,12 +74,12 @@ namespace Lazy
 
             bool build(TerrainChunk* pMapNode)
             {
-                size_t n = pMapNode->getNumObj();
+                size_t n = pMapNode->getNbItems();
                 m_aabbs.resize(n);
 
                 for (size_t i = 0; i < n; ++i)
                 {
-                    pMapNode->getObjByIndex(i)->getWorldAABB(m_aabbs[i]);
+                    pMapNode->getItemByIndex(i)->getWorldAABB(m_aabbs[i]);
                 }
 
                 bool ret = doBuild();
@@ -92,9 +93,16 @@ namespace Lazy
         };
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+
+    /** 线性插值*/
+    static float lerp(float a, float b, float t)
+    {
+        return a - (a * t) + (b * t);
+    }
+
     template<typename T>
-    bool updateIndices(VIBHolder * hoder, int nVertices)
+    static bool updateIndices(TerrainMesh * hoder, int nVertices)
     {
         T *pIndex;
         if(!hoder->lockIB((void**)&pIndex)) return false;
@@ -123,26 +131,52 @@ namespace Lazy
         return true;
     }
 
-    bool VIBHolder::create(LPDIRECT3DDEVICE9 pDevice, int vertices)
-    {
-        //const int grid = vertices - 1;
-        const int numFace = TerrainConfig::MapNodeFace;
-        //const int numIndices = numFace * 3;
 
-        if(FAILED(D3DXCreateMeshFVF(numFace,
-                                    TerrainConfig::MaxMapNodeVerticesSq,
+    //////////////////////////////////////////////////////////////////////////
+    /// TerrainMesh
+    //////////////////////////////////////////////////////////////////////////
+
+    TerrainMesh::TerrainMesh()
+        : m_pMesh(NULL)
+    {}
+
+    bool TerrainMesh::lockVB(void** pp, DWORD flag) const
+    {
+        return SUCCEEDED(m_pMesh->LockVertexBuffer(flag, pp));
+    }
+
+    void TerrainMesh::unlockVB() const
+    { 
+        m_pMesh->UnlockVertexBuffer();
+    }
+
+    bool TerrainMesh::lockIB(void**pp, DWORD flag) const
+    {
+        return SUCCEEDED(m_pMesh->LockIndexBuffer(flag, pp));
+    }
+
+    void TerrainMesh::unlockIB() const
+    {
+        m_pMesh->UnlockIndexBuffer();
+    }
+
+    bool TerrainMesh::create(LPDIRECT3DDEVICE9 pDevice)
+    {
+
+        if (FAILED(D3DXCreateMeshFVF(MapConfig::NbChunkGridFace,
+                                    MapConfig::NbChunkVertexSq,
                                     D3DXMESH_MANAGED,
                                     TerrinVertex::FVF, pDevice, &m_pMesh)))
         {
-            LOG_ERROR(L"Create VIBHolder Mesh failed");
+            LOG_ERROR(L"Create TerrainMesh Mesh failed");
             return false;
         }
 
         bool ret;
         if (m_pMesh->GetOptions() & D3DXMESH_32BIT)
-            ret = updateIndices<DWORD>(this, vertices);
+            ret = updateIndices<DWORD>(this, MapConfig::NbChunkVertex);
         else
-            ret = updateIndices<WORD>(this, vertices);
+            ret = updateIndices<WORD>(this, MapConfig::NbChunkVertex);
 
         if(!ret)
         {
@@ -154,7 +188,7 @@ namespace Lazy
         return ret;
     }
 
-    void VIBHolder::optimize()
+    void TerrainMesh::optimize()
     {
         if(!m_pMesh) return;
 
@@ -162,18 +196,25 @@ namespace Lazy
     }
 
 
-    void VIBHolder::release()
+    void TerrainMesh::release()
     {
         MEMORY_CHECK_DEST(this);
         SafeRelease(m_pMesh);
     }
 
-    void VIBHolder::render(LPDIRECT3DDEVICE9)
+    void TerrainMesh::clear()
+    {
+        m_pMesh = NULL;
+    }
+
+    void TerrainMesh::render(LPDIRECT3DDEVICE9)
     {
         m_pMesh->DrawSubset(0);
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    /// TerrainMesh cache
+    //////////////////////////////////////////////////////////////////////////
     /*static*/ VIBCache* VIBCache::instance()
     {
         static VIBCache s_instance;
@@ -193,35 +234,35 @@ namespace Lazy
     {
         ZLockHolder lockHolder(&m_locker);
 
-        m_pool.push_back(VIBHolder());
-        m_pool.back().create(getApp()->getDevice(), TerrainConfig::MaxMapNodeVertices);
+        m_pool.push_back(TerrainMesh());
+        m_pool.back().create(getApp()->getDevice());
     }
 
-    VIBHolder VIBCache::get()
+    TerrainMesh VIBCache::get()
     {
         ZLockHolder lockHolder(&m_locker);
 
         if (m_pool.empty())
         {
-            VIBHolder holder;
-            holder.create(getApp()->getDevice(), TerrainConfig::MaxMapNodeVertices);
+            TerrainMesh holder;
+            holder.create(getApp()->getDevice());
             return holder;
         }
         else
         {
-            VIBHolder holder = m_pool.front();
+            TerrainMesh holder = m_pool.front();
             m_pool.pop_front();
             return holder;
         }
     }
 
-    void VIBCache::release(VIBHolder & holder)
+    void VIBCache::release(TerrainMesh & holder)
     {
         ZLockHolder lockHolder(&m_locker);
 
         if(!holder.valid()) return ;
 
-        if (m_pool.size() < TerrainConfig::MaxMapNodeCacheSize)
+        if (m_pool.size() < MapConfig::MaxNbChunkMesh)
         {
             m_pool.push_back(holder);
             holder.clear();
@@ -245,9 +286,9 @@ namespace Lazy
         m_pool.clear();
     }
 
-//////////////////////////////////////////////////////////////////////////
-
-///后台加载任务
+    //////////////////////////////////////////////////////////////////////////
+    /// 后台加载任务
+    //////////////////////////////////////////////////////////////////////////
     class ChunkLoader : public TaskInterface
     {
         TerrainChunk * m_pChunk;
@@ -274,108 +315,30 @@ namespace Lazy
     };
 
 
-//////////////////////////////////////////////////////////////////////////
-
-    TerrainChunk::TerrainChunk(TerrinData* pData, int rID, int cID)
-        : m_pTerrin(pData)
-        , m_loaded(false)
-        , m_rID(rID)
-        , m_cID(cID)
+    //////////////////////////////////////////////////////////////////////////
+    /// TerrainChunk
+    //////////////////////////////////////////////////////////////////////////
+    TerrainChunk::TerrainChunk(TerrainMap *pMap, uint32 id, const FRect & rect)
+        : m_id(id)
+        , m_pMap(pMap)
+        , m_isLoaded(false)
+        , m_isLoading(false)
         , m_octreeDirty(true)
-        , m_loadRunning(false)
+        , m_rect(rect)
     {
-
-        m_id = TerrainMap::instance()->nodeCols() * rID + cID;
-
-        m_gridSize = pData->squareSize();
-        m_size = m_gridSize * TerrainConfig::MaxMapNodeGrid;
-        m_z0 = m_rID * m_size;
-        m_x0 = m_cID * m_size;
-
-        m_rect.left = xToMap(0);
-        m_rect.top = zToMap(0);
-        m_rect.right = xToMap(m_size);
-        m_rect.bottom = zToMap(m_size);
-        m_rect.normalization();
-
+        m_gridSize = MapConfig::ChunkGridSize;
     }
 
     TerrainChunk::~TerrainChunk(void)
     {
         release();
-
     }
 
-    float TerrainChunk::xToMap(float x) const
+    bool TerrainChunk::load()
     {
-        return x + m_x0 - m_pTerrin->width() / 2.0f;
-    }
+        if (m_isLoaded || m_isLoading) return false;
 
-    float TerrainChunk::zToMap(float z) const
-    {
-        return m_pTerrin->height() / 2.0f - (z + m_z0);
-    }
-
-
-    float TerrainChunk::rToMapZ(int r) const
-    {
-#if USE_NEW_CHUNK_STYLE
-        return m_rect.bottom - r * m_gridSize;
-#else
-        return m_pTerrin->height() / 2.0f - (r * m_gridSize + m_z0);
-#endif
-    }
-
-    float TerrainChunk::cToMapX(int c) const
-    {
-#if USE_NEW_CHUNK_STYLE
-        return m_rect.left + c * m_gridSize;
-#else
-        return c * m_gridSize + m_x0 - m_pTerrin->width() / 2.0f;
-#endif
-    }
-
-    float TerrainChunk::getHeight(int r, int c) const
-    {
-#if USE_NEW_CHUNK_STYLE
-        return m_heightMap[r * MapConfig::ChunkVertices + c];
-#else
-        return m_pTerrin->getHeight(r + int(m_z0 / m_gridSize), c + int(m_x0 / m_gridSize));
-#endif
-    }
-
-    Square2 TerrainChunk::squareToMap(int r, int c)
-    {
-        return Square2(r + int(m_z0 / m_gridSize), c + int(m_x0 / m_gridSize));
-    }
-
-    void TerrainChunk::getPos(int index, D3DXVECTOR3 & pos)
-    {
-        int c = index % TerrainConfig::MaxMapNodeGrid;
-        int r = index / TerrainConfig::MaxMapNodeGrid;
-
-        Square2 sq = squareToMap(r, c);
-
-        if (sq.r < 0 ||
-                sq.r >= m_pTerrin->vrows() ||
-                sq.c < 0 ||
-                sq.c >= m_pTerrin->vcols())
-        {
-            ZeroMemory(&pos, sizeof(pos));
-            return ;
-        }
-
-        pos.x = xToMap(c * m_gridSize);
-        pos.y = m_pTerrin->getHeight(r, c);
-        pos.z = zToMap(r * m_gridSize);
-    }
-
-    void TerrainChunk::load()
-    {
-        if(m_loaded) return;
-        if(m_loadRunning) return;
-
-        m_loadRunning = true;
+        m_isLoading = true;
         if (MapConfig::UseMultiThread)
         {
             LoadingMgr::instance()->addTask(new ChunkLoader(this));
@@ -385,152 +348,194 @@ namespace Lazy
             doLoading();
             onLoadingFinish();
         }
+
+        return true;
     }
 
-///加载场景
     void TerrainChunk::doLoading()
     {
-        if (m_loaded) return;
+        if (m_isLoaded) return;
 
-        updateVertices();
-
-        tstring path = getFilePath(TerrainMap::instance()->getMapName());
-
-        tstring name;
-        formatString(name, _T("%4.4d%4.4d.lzd"), m_rID, m_cID);
-        path += name;
-
-        debugMessage(_T("TRACE: load node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
-
-        LZDataPtr root = openSection(path);
-        if (!root)
+        tstring heightmap;
+        formatString(heightmap, _T("%8.8x.raw"), m_id);
+        heightmap = m_pMap->getMapName() + heightmap;
+        if (!loadHeightMap(heightmap))
         {
-            LOG_ERROR(L"Load failed! node(%d %d) path='%s'", m_rID, m_cID, path.c_str());
-            return;
+            LOG_ERROR(L"Load heightmap '%s' failed! node(%d %d)",
+                heightmap.c_str(), getRowID(), getColID());
         }
 
-        m_objPool.clear();
-        LZDataPtr itemsDatas = root->read(_T("items"));
-        if (itemsDatas)
-        {
-            for (LZDataPtr ptr : (*itemsDatas))
-            {
-                if (!m_loadRunning) return;
+        tstring chunkname;
+        formatString(chunkname, _T("%8.8x.lzd"), m_id);
+        chunkname += m_pMap->getMapName() + chunkname;
 
-                if (ptr->tag() == L"item" && ptr->countChildren() > 0)
+        LOG_DEBUG(_T("TRACE: load node(%d %d) path='%s'"),
+            getRowID(), getColID(), chunkname.c_str());
+
+        LZDataPtr root = openSection(chunkname);
+        if (root)
+        {
+            LZDataPtr itemsDatas = root->read(_T("items"));
+            if (itemsDatas)
+            {
+                for (LZDataPtr ptr : (*itemsDatas))
                 {
-                    TerrainItemPtr item = new TerrainItem();
-                    item->load(ptr);
-                    addItem(item);
+                    if (!m_isLoading)//加载结束
+                        return;
+
+                    if (ptr->tag() == L"item" && ptr->countChildren() > 0)
+                    {
+                        loadItem(ptr);
+                    }
                 }
             }
         }
-
-        debugMessage(_T("TRACE: finish load node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
-    }
-
-///场景加载完毕
-    void TerrainChunk::onLoadingFinish()
-    {
-        ZLockHolder lockHoder(&m_objLocker);
-
-        m_loaded = true;
-        m_loadRunning = false;
-
-        //合并外部引用
-        if (!m_externalItems.empty())
+        else
         {
-            m_objPool.insert(m_objPool.end(), m_externalItems.begin(), m_externalItems.end());
-            m_externalItems.clear();
+            LOG_ERROR(L"Load failed! node(%d %d) path='%s'",
+                getRowID(), getColID(), chunkname.c_str());
         }
 
-        LOG_DEBUG(L"Chunk(%d %d) load finish.", m_rID, m_cID);
+        LOG_DEBUG(_T("TRACE: finish load node(%d %d) path='%s'"),
+            getRowID(), getColID(), chunkname.c_str());
     }
 
+    ///场景加载完毕
+    void TerrainChunk::onLoadingFinish()
+    {
+        ZLockHolder lockHoder(&m_itemLocker);
 
+        m_isLoaded = true;
+        m_isLoading = false;
+
+        LOG_DEBUG(L"Chunk(%d %d) load finish.", getRowID(), getColID());
+    }
+
+    void TerrainChunk::loadItem(LZDataPtr ptr)
+    {
+        uint32 itemID = ptr->readUint(L"id");
+        if (findItem(itemID))
+            return;
+
+        TerrainItemPtr item = new TerrainItem();
+        item->load(ptr);
+
+        tstring chunkIDs = ptr->readString(L"chunks");
+        std::wistringstream ss(chunkIDs);
+        while (!item && ss.good())
+        {
+            uint32 id = 0xffffffff;
+            ss >> id;
+            if (id == 0xffffffff)
+                break;
+
+            ChunkPtr chunk = m_pMap->getChunkByID(id);
+            chunk->addItem(item);
+        }
+    }
+
+    float TerrainChunk::getHeight(int r, int c) const
+    {
+        return m_heightMap[r * MapConfig::NbChunkVertex + c];
+    }
+
+    bool TerrainChunk::loadHeightMap(const tstring & filename)
+    {
+        m_heightMap.resize(getRowID() * getColID(), 0.0f);
+
+        FILE *pFile = getfs()->openFile(filename, L"rb");
+        if (pFile)
+        {
+            fread(&m_heightMap[0], 1, m_heightMap.size(), pFile);
+            fclose(pFile);
+        }
+
+        updateVertices();
+        return true;
+    }
+
+    bool TerrainChunk::saveHeightMap(const tstring & filename)
+    {
+        FILE *pFile = getfs()->openFile(filename, L"wb");
+        if (!pFile) return false;
+
+        fwrite(&m_heightMap[0], 1, m_heightMap.size(), pFile);
+        fclose(pFile);        
+        return true;
+    }
 
     void TerrainChunk::updateVertices()
     {
-        if (!m_vibHolder.valid())
+        if (!m_mesh.valid())
         {
-            m_vibHolder = VIBCache::instance()->get();
-            if (!m_vibHolder.valid())
+            m_mesh = VIBCache::instance()->get();
+            if (!m_mesh.valid())
             {
                 LOG_ERROR(_T("TerrainChunk::load get vib failed!"));
                 return;
             }
         }
 
-        float su = 1.0f / m_size;
-        float sv = 1.0f / m_size;
-        bool onTex = m_pTerrin->useOneTex();
-
         TerrinVertex* pVertex = NULL;
-        if (!m_vibHolder.lockVB((void**) &pVertex, 0))
+        if (!m_mesh.lockVB((void**) &pVertex, 0))
         {
             LOG_ERROR(_T("TerrainChunk::load lock vertexbuffer faild"));
             return;
         }
 
         //以下是创建网格数据
-#if USE_NEW_CHUNK_STYLE
-        const int vertices = MapConfig::ChunkVertices;
-#else
-        const int vertices = TerrainConfig::MaxMapNodeVertices;
-#endif
-
+        const int vertices = MapConfig::NbChunkVertex;
         for (int r = 0; r < vertices; ++r)
         {
             for (int c = 0; c < vertices; ++c)
             {
                 int i = r * vertices + c;//顶点索引
 
-#if 1// USE_NEW_CHUNK_STYLE
-                pVertex[i].pos.x = cToMapX(c);
-                pVertex[i].pos.z = rToMapZ(r);
+                pVertex[i].pos.x = m_rect.left + c * m_gridSize;
+                pVertex[i].pos.z = m_rect.top + r * m_gridSize;
                 pVertex[i].pos.y = getHeight(r, c);
-#else
-                float mx = xToMap(c * m_gridSize);
-                float mz = zToMap(r * m_gridSize);
-                pVertex[i].pos.x = mx;
-                pVertex[i].pos.z = mz;
-                pVertex[i].pos.y = m_pTerrin->getPhysicalHeight(mx, mz);
-#endif
 
-                if (onTex)
-                {
-                    pVertex[i].u = c * m_gridSize * su * 4;
-                    pVertex[i].v = r * m_gridSize * sv * 4;
-                }
-                else
-                {
-                    pVertex[i].u = float(r % 2);
-                    pVertex[i].v = float(c % 2);
-                }
+                pVertex[i].u = pVertex[i].pos.z;
+                pVertex[i].v = pVertex[i].pos.x;
             }
         }
 
-        m_vibHolder.unlockVB();
-
+        m_mesh.unlockVB();
         updateNormal();
     }
 
-    void TerrainChunk::save()
+    bool TerrainChunk::save()
     {
-        if(!m_loaded)
+        if(!m_isLoaded)
         {
-            return;
+            LOG_ERROR(L"The chunk(%d, %d) does't loaded.", getRowID(), getColID());
+            return false;
         }
 
-        tstring path = getFilePath(TerrainMap::instance()->getMapName());
+        if (m_isLoading)
+        {
+            LOG_ERROR(L"The chunk(%d, %d) is loading now.", getRowID(), getColID());
+            return false;
+        }
 
-        tstring name;
-        formatString(name, _T("%4.4d%4.4d.lzd"), m_rID, m_cID);
-        path += name;
+        //save height map
+        tstring heightmap;
+        formatString(heightmap, _T("%8.8x.raw"), m_id);
+        heightmap = m_pMap->getMapName() + heightmap;
+        if (!saveHeightMap(heightmap))
+        {
+            LOG_ERROR(L"Failed to save heightmap '%s'", heightmap.c_str());
+            //return false;
+        }
 
-        debugMessage(_T("TRACE: save node(%d %d) path='%s'"), m_rID, m_cID, path.c_str());
+        //save chunkdata.
+        tstring chunkfile;
+        formatString(chunkfile, _T("%8.8x.lzd"), m_id);
+        chunkfile = m_pMap->getMapName() + chunkfile;
 
-        LZDataPtr root = openSection(path, true);
+        LOG_DEBUG(_T("save node(%d %d) path='%s'"), getRowID(), getColID(), chunkfile.c_str());
+
+        LZDataPtr root = openSection(chunkfile, true);
         root->clearChildren();
 
 #if 1
@@ -550,10 +555,8 @@ namespace Lazy
         LZDataPtr items = root->write(_T("items"));
         items->clearChildren();
 
-        for(TerrainItemPtr item : m_objPool)
+        for(TerrainItemPtr item : m_items)
         {
-            if (item->isReference()) continue;
-
             LZDataPtr itemData = items->newOne(L"item", L"");
             if (item->save(itemData))
             {
@@ -561,45 +564,46 @@ namespace Lazy
             }
         }
 
-        if(!saveSection(root, path))
+        if (!saveSection(root, chunkfile))
         {
-            LOG_ERROR(L"Save failed! node(%d %d) path='%s'", m_rID, m_cID, path.c_str());
+            LOG_ERROR(L"Save failed! node(%d %d) path='%s'", getRowID(), getColID(), chunkfile.c_str());
+            return false;
         }
+
+        return true;
     }
 
-    void TerrainChunk::render(IDirect3DDevice9* pDevice)
+    void TerrainChunk::renderTerrain(IDirect3DDevice9* pDevice)
     {
-        if (!m_loaded)
+        if (!m_isLoaded)
         {
             load();
             return;
         }
 
-        if (!m_vibHolder.valid()) return ;
+        if (!m_mesh.valid()) return ;
 
-        Matrix matWord;
-        matWord.makeIdentity();
-        pDevice->SetTransform(D3DTS_WORLD, &matWord);
-        m_vibHolder.render(pDevice);
+        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+        m_mesh.render(pDevice);
     }
 
     void TerrainChunk::update(float elapse)
     {
-        if (!m_loaded) return;
+        if (!m_isLoaded) return;
 
         if (m_octreeDirty) buildOctree();
 
-        for (TerrainItemPtr item : m_objPool)
+        for (TerrainItemPtr item : m_items)
         {
             item->update(elapse);
         }
     }
 
-    void TerrainChunk::renderObj(IDirect3DDevice9* pDevice)
+    void TerrainChunk::renderItems(IDirect3DDevice9* pDevice)
     {
-        if (!m_loaded) return;
+        if (!m_isLoaded) return;
 
-        for (TerrainItemPtr item : m_objPool)
+        for (TerrainItemPtr item : m_items)
         {
             item->render(pDevice);
         }
@@ -618,31 +622,22 @@ namespace Lazy
 
     void TerrainChunk::release(void)
     {
-        clearObj();
+        clearItems();
 
-        if (m_loaded)
+        if (m_isLoaded)
         {
-            VIBCache::instance()->release(m_vibHolder);
-            m_loaded = false;
+            VIBCache::instance()->release(m_mesh);
+            m_isLoaded = false;
         }
 
-        m_loadRunning = false;
+        m_isLoading = false;
     }
 
-    void TerrainChunk::clearObj()
-    {
-        m_objPool.clear();
-        m_externalItems.clear();
-
-        m_octree = nullptr;
-        m_octreeDirty = true;
-    }
-
-//鼠标是否与当前地形相交。
+    //鼠标是否与当前地形相交。
     bool TerrainChunk::intersect(Vector3 & position) const
     {
-        if(!m_loaded) return false;
-        if (!m_vibHolder.valid()) return false;
+        if(!m_isLoaded || m_isLoading) return false;
+        if (!m_mesh.valid()) return false;
 
         float distance;
         if (!intersect(Pick::instance()->rayPos(), Pick::instance()->rayDir(), distance)) return false;
@@ -654,15 +649,15 @@ namespace Lazy
         return true;
     }
 
-///射线是否与当前地表相交
+    ///射线是否与当前地表相交
     bool TerrainChunk::intersect(const Vector3 & origin, const Vector3 & dir, float & distance) const
     {
-        if (!m_loaded) return false;
-        if (!m_vibHolder.valid()) return false;
+        if (!m_isLoaded || m_isLoading) return false;
+        if (!m_mesh.valid()) return false;
 
         RayCollision collider(origin, dir);
 
-        if (!collider.pick(m_vibHolder.getMesh(), matIdentity)) return false;
+        if (!collider.pick(m_mesh.getMesh(), matIdentity)) return false;
 
         distance = collider.m_hitDistance;
         return true;
@@ -670,16 +665,16 @@ namespace Lazy
 
     bool TerrainChunk::intersect(const AABB & aabb) const
     {
-        if(m_x0 > aabb.max.x) return false;
-        if(m_x0 + m_size < aabb.min.x) return false;
-        if(m_z0 > aabb.max.z) return false;
-        if(m_z0 + m_size < aabb.min.z) return false;
+        if(m_rect.right > aabb.max.x) return false;
+        if(m_rect.left < aabb.min.x) return false;
+        if(m_rect.bottom > aabb.max.z) return false;
+        if(m_rect.top < aabb.min.z) return false;
 
         return true;
     }
 
-///射线拾取
-    TerrainItemPtr TerrainChunk::pickObj(const Vector3 & origin, const Vector3 & dir)
+    ///射线拾取
+    TerrainItemPtr TerrainChunk::pickItem(const Vector3 & origin, const Vector3 & dir)
     {
         if (!m_octree) return nullptr;
 
@@ -693,48 +688,59 @@ namespace Lazy
 
     void TerrainChunk::updateNormal(void)
     {
-        m_vibHolder.optimize();
+        m_mesh.optimize();
+    }
+
+    TerrainItemPtr TerrainChunk::findItem(uint32 id)
+    {
+        ZLockHolder hodler(&m_itemLocker);
+
+        ItemCatalogue::iterator it = m_itemCatalogue.find(id);
+        if (it == m_itemCatalogue.end())
+            return nullptr;
+        return it->second;
+    }
+
+    void TerrainChunk::delItem(TerrainItemPtr item)
+    {
+        ZLockHolder hodler(&m_itemLocker);
+
+        ItemCatalogue::iterator it = m_itemCatalogue.find(item->getID());
+        if (it == m_itemCatalogue.end())
+            return; //doesn't found.
+
+        m_itemCatalogue.erase(item->getID());
+        m_items.erase(std::find(m_items.begin(), m_items.end(), item));
+        m_octreeDirty = true;
     }
 
     void TerrainChunk::addItem(TerrainItemPtr item)
     {
-        item->setChunkId(m_id);
-        m_objPool.push_back(item);
+        ZLockHolder hodler(&m_itemLocker);
 
-        AABB aabb;
-        item->getWorldAABB(aabb);
-
-        if (aabb.min.x >= m_rect.left &&
-                aabb.max.x <= m_rect.right &&
-                aabb.min.z >= m_rect.top &&
-                aabb.max.z <= m_rect.bottom)
-        {
+        auto it = m_itemCatalogue.insert(std::make_pair(item->getID(), item));
+        if (!it.second) //has been added.
             return;
-        }
 
-        TerrainMap::instance()->processExternalItem(item);
+        m_items.push_back(item);
+        item->addChunk(this);
+        m_octreeDirty = true;
     }
 
-    void TerrainChunk::addExternal(TerrainItemPtr item)
+    void TerrainChunk::clearItems()
     {
-        if (item->getChunkId() == m_id) return;
+        ZLockHolder hodler(&m_itemLocker);
 
-        ZLockHolder lockHoder(&m_objLocker);
+        m_items.clear();
+        m_itemCatalogue.clear();
 
-        TerrainItemPtr clone = item->clone();
-        clone->setChunkId(m_id);
-        clone->setReference(true);
-        clone->setRefChunk(item->getChunkId());
-
-        if (m_loaded) m_objPool.push_back(clone);
-        else m_externalItems.push_back(clone);
-
+        m_octree = nullptr;
         m_octreeDirty = true;
     }
 
     void TerrainChunk::buildOctree()
     {
-        if (!m_loaded) return;
+        if (!m_isLoaded || m_isLoading) return;
         if (!m_octreeDirty) return;
         m_octreeDirty = false;
 
@@ -760,104 +766,52 @@ namespace Lazy
         }
     }
 
-#if USE_NEW_CHUNK_STYLE
-
-    TerrainChunk::TerrainChunk()
-        : m_id(0)
+    /** 获得物理高度*/
+    float TerrainChunk::getPhysicalHeight(float x, float z) const
     {
+        if (!m_rect.isIn(x, z)) return getHeight(0, 0);
 
-    }
+        //将地图移动到原点,方便计算
+        x = (x - m_rect.left) / m_gridSize;
+        z = (z - m_rect.top) / m_gridSize;
 
+        //计算x,z坐标所在的行列值
+        int col = int(x);//向下取整
+        int row = int(z);
 
-    bool TerrainChunk::load(const tstring & mapPath, int id)
-    {
-        tstring path = mapPath;
-        formatDirName(path);
+        // 获取如下图4个顶点的高度
+        //
+        //  A   B
+        //  *---*
+        //  | / |
+        //  *---*
+        //  C   D
 
-        tstring name;
-        formatString(name, L"%d.mdat", id);
-        path += name;
+        float A = getHeight(row, col);
+        float B = getHeight(row, col + 1);
+        float C = getHeight(row + 1, col);
+        float D = getHeight(row + 1, col + 1);
 
-        FileHoder file = getfs()->openFile(path, L"r");
-        if (!file) return false;
+        float dx = x - col;
+        float dz = z - row;
 
-        MapConfig::ChunkHeader header;
-        fread(&header, sizeof(header), 1, file.ptr());
-        if (header.magic != MapConfig::MagicNumber) return false;
-
-        DataStream stream;
-        if (!stream.readFromFile(file.ptr(), header.sizeInfo)) return false;
-
-        stream.loadStruct(m_id);
-        stream.loadStruct(m_gridSize);
-        stream.loadStruct(m_rect);
-
-        size_t n;
-        stream.loadStruct(n);
-        m_heightMap.resize(n);
-        fread(&m_heightMap[0], n * sizeof(float) , 1, file.ptr());
-        return true;
-    }
-
-    bool TerrainChunk::save(const tstring & mapPath)
-    {
-        tstring path = getfs()->defaultPath();
-        path += mapPath;
-        formatDirName(path);
-
-        tstring name;
-        formatString(name, L"%d.mdat", m_id);
-        path += name;
-
-        FileHoder file = getfs()->openFile(path, L"wb");
-        if (!file) return false;
-
-        DataStream stream;
-        stream.saveStruct(m_id);
-        stream.saveStruct(m_gridSize);
-        stream.saveStruct(m_rect);
-
-        size_t n = m_heightMap.size();
-        stream.saveStruct(n);
-
-        MapConfig::ChunkHeader header =
+        float height;
+        if (dz < 1.0f - dx)//(x,z)点在ABC三角形上
         {
-            MapConfig::MagicNumber,
-            MapConfig::Version,
-            stream.pos(),
-        };
+            float uy = B - A;
+            float vy = C - A;
 
-        fwrite(&header, sizeof(header), 1, file.ptr());
-        stream.writeToFile(file.ptr());
-        fwrite(&m_heightMap[0], n * sizeof(float), 1, file.ptr());
-        return true;
-    }
-
-    void TerrainChunk::create(int id, float x0, float y0)
-    {
-        release();
-
-        m_id = id;
-
-        m_size = MapConfig::ChunkSize;
-        m_gridSize = MapConfig::ChunkGridSize;
-
-        m_rect.left = x0;
-        m_rect.right = x0 + m_size;
-        m_rect.bottom = y0;
-        m_rect.top = y0 - m_size;
-
-        int n = MapConfig::ChunkVertices * MapConfig::ChunkVertices;
-        m_heightMap.resize(n);
-        for (int i = 0; i < n; ++i)
+            height = A + lerp(0.0f, uy, dx) + lerp(0.0f, vy, dz);//线形插值得到高度
+        }
+        else//(x,z)点在BCD三角形上
         {
-            m_heightMap[i] = 1.0f;
+            float uy = C - D;
+            float vy = B - D;
+
+            height = D + lerp(0.0f, uy, 1.0f - dx) + lerp(0.0f, vy, 1.0f - dz);
         }
 
-        updateVertices();
+        return height;
     }
-
-
-#endif
 
 } // end namespace Lazy

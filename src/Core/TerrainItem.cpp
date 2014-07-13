@@ -245,7 +245,7 @@ namespace Lazy
         return true;
     }
 
-//获取真实的模型矩阵
+    //获取真实的模型矩阵
     void TerrainItem::getAbsModelMatrix(Matrix & mat) const
     {
         getWorldMatrix(mat);
@@ -254,6 +254,26 @@ namespace Lazy
 
         m_model->setWorldMatrix(mat);
         m_model->getCombinedMatrix(mat);
+    }
+
+    /** 从chunk中删除自己。*/
+    void TerrainItem::removeFromChunks()
+    {
+        for (TerrainChunk* p : m_chunks)
+        {
+            p->delItem(this);
+        }
+
+        m_chunks.clear();
+    }
+
+    void TerrainItem::addChunk(TerrainChunk *pChunk)
+    {
+        std::vector<TerrainChunk*>::iterator it = std::find(
+            m_chunks.begin(), m_chunks.end(), pChunk );
+
+        if (it == m_chunks.end())
+            m_chunks.push_back(pChunk);
     }
 
 } // end namespace Lazy

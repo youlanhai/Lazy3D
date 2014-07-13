@@ -22,7 +22,11 @@ namespace Lazy
      *  射线拾取
      */
 
-    const int direct8[][2] = {{ -1, -1}, {1, -1}, {1, 1}, { -1, 1}, {0, -1}, { -1, 0}, {0, 1}, {1, 0}};
+    const int direct8 [][2] = {
+        { -1, -1 }, { 1, -1 }, { 1, 1 },
+        { -1, 1 }, { 0, -1 }, 
+        { -1, 0 }, { 0, 1 }, { 1, 0 }
+    };
 
     ///地图射线拾取碰撞点
     class MapRayCollider : public RayCollider
@@ -105,7 +109,7 @@ namespace Lazy
                 ChunkPtr chunk = TerrainMap::instance()->getNode(x);
                 if (!chunk) continue;
 
-                m_obj = chunk->pickObj(v3Origin, v3Dir);
+                m_obj = chunk->pickItem(v3Origin, v3Dir);
 
                 if (m_obj) return true;
             }
@@ -138,35 +142,13 @@ namespace Lazy
     };
 
 
-//////////////////////////////////////////////////////////////////////////
-    /*static*/ TerrainMap * TerrainMap::instance()
-    {
-        static TerrainMap s_map;
-        return &s_map;
-    }
-
-    bool TerrainMap::init()
-    {
-        LOG_INFO(L"TerrainMap::init.");
-
-        return true;
-    }
-
-    void TerrainMap::fini()
-    {
-        clearCurMap();
-        VIBCache::instance()->clear();
-
-        m_pTData = NULL;
-
-        LOG_INFO(L"TerrainMap::fini.");
-    }
-
+    //////////////////////////////////////////////////////////////////////////
+    /// TerrainMap
+    //////////////////////////////////////////////////////////////////////////
+    IMPLEMENT_SINGLETON(TerrainMap);
 
     TerrainMap::TerrainMap()
     {
-        m_pTData = new TerrinData();
-
         m_nodeSize = 0;         //< 每个格子的尺寸。
         m_nodeR = 0;        //< 结点行数
         m_nodeC = 0;        //< 结点列数
@@ -180,20 +162,20 @@ namespace Lazy
         m_loadingProgress = 0.0f;
 
         m_showRadius = 5000.0f;
-        m_idAllocator = 10000;
+        m_rect.zero();
     }
 
     TerrainMap::~TerrainMap(void)
     {
+        clearCurMap();
+        VIBCache::instance()->clear();
     }
-
 
     void TerrainMap::clearCurMap(void)
     {
         m_usefull = false;
         m_loadingProgress = 0.0f;
 
-        m_chunks.clear();
         m_mapNodes.clear();
         m_renderNodes.clear();
 
@@ -203,52 +185,49 @@ namespace Lazy
         m_pSelectObj = NULL;
     }
 
-
-    /** 根据地图文件名，加载地图。地图文件包含地图的高度图，行列等信息。*/
-    bool TerrainMap::loadMap(const tstring & mapName)
+    void TerrainMap::createMap(int rows, int cols)
     {
-        if (m_mapName == mapName) return false;
+        m_nodeR = rows;
+        m_nodeC = cols;
+        m_nodeSize = MapConfig::ChunkSize;
 
-        LOG_INFO(L"TerrainMap::loadMap %s", mapName.c_str());
-        clearCurMap();
+        float w = m_nodeC * m_nodeSize;
+        float h = m_nodeR * m_nodeSize;
+        m_rect.set(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
 
-        m_mapName = mapName;
-
-        LZDataPtr ptr = openSection(mapName);
-        if (!ptr)
-        {
-            LOG_ERROR(L"Load map config '%s' failed!", mapName.c_str());
-            return false;
-        }
-
-        if (!m_pTData->loadHeightMap(
-                    ptr->readString(L"mapName"),
-                    ptr->readInt(L"vrows"),
-                    ptr->readInt(L"vcols"),
-                    ptr->readFloat(L"squareSize"),
-                    ptr->readFloat(L"heightScale"),
-                    ptr->readBool(L"useOneTex")))
-        {
-            LOG_ERROR(L"ERROR: load the height map failed!");
-            return false;
-        }
-
-
-        m_objOnGround = ptr->readBool(L"onGround", true);
-        m_nodeSize = m_pTData->squareSize() * TerrainConfig::MaxMapNodeGrid;
-        m_nodeR = (int)ceil(m_pTData->height() / (float)m_nodeSize);
-        m_nodeC = (int)ceil(m_pTData->width() / (float)m_nodeSize);
-
-        debugMessage(_T("INFO: map rows=%d, cols=%d, node size=%f"),
-                     m_nodeR, m_nodeC, m_nodeSize);
-
-        m_textureName = ptr->readString(L"texture");
+        LOG_DEBUG(_T("CreateMap rows=%d, cols=%d, node size=%f"),
+            m_nodeR, m_nodeC, m_nodeSize);
 
         initChunks();
+    }
+
+    /** 根据地图文件名，加载地图。地图文件包含地图的高度图，行列等信息。*/
+    bool TerrainMap::loadMap(const tstring & path)
+    {
+        if (m_mapName == path) return false;
+
+        LOG_INFO(L"TerrainMap::loadMap %s", path.c_str());
+        clearCurMap();
+
+        m_mapName = path;
+        formatDirName(m_mapName);
+
+        tstring filename = m_mapName + L"map.lzd";
+        LZDataPtr ptr = openSection(filename);
+        if (!ptr)
+        {
+            LOG_ERROR(L"Load map config '%s' failed!", m_mapName.c_str());
+            return false;
+        }
+
+        m_objOnGround = ptr->readBool(L"onGround", true);
+        m_textureName = ptr->readString(L"texture");
+
+        createMap(ptr->readInt(L"rows"), ptr->readInt(L"cols"));
 
         //加载路点
         tstring wpPath = ptr->readString(L"searchData");
-        if(!WayChunkMgr::instance()->load(wpPath))
+        if (!WayChunkMgr::instance()->load(wpPath))
         {
             LOG_ERROR(L"Load way point failed!");
         }
@@ -260,25 +239,47 @@ namespace Lazy
         return true;
     }
 
-    void TerrainMap::saveMap(const tstring &)
+    void TerrainMap::saveMap(const tstring & path)
     {
-        doDataConvert();
-    }
-
-//数据类型转换
-    void TerrainMap::doDataConvert()
-    {
-        if (MapConfig::UseMultiThread)
+        m_mapName = path;
+        if (MapConfig::UseMultiThread && !isAllChunkLoaded())
         {
-            LOG_ERROR(L"Only single thread mode can do save!");
+            LOG_ERROR(L"In muti thread mode, you must load all the chunk first!");
             return;
         }
 
-        for(ChunkPtr chunk : m_mapNodes)
+        for (ChunkPtr chunk : m_mapNodes)
         {
             chunk->load();
             chunk->save();
         }
+    }
+
+    void TerrainMap::addTerrainItem(TerrainItemPtr item)
+    {
+        AABB aabb;
+        item->getWorldAABB(aabb);
+
+        MapRectCollider collider(false);
+        collider.rect.fromAABBXZ(aabb);
+        m_quadTree.queryRect(&collider);
+
+        for (size_t i : collider.m_chunkIds)
+        {
+            m_mapNodes[i]->addItem(item);
+        }
+    }
+
+    void TerrainMap::delTerrainItem(TerrainItemPtr item)
+    {
+        item->removeFromChunks();
+    }
+
+    float TerrainMap::getHeight(float x, float z) const
+    {
+        int row = int(z / MapConfig::ChunkSize);
+        int col = int(x / MapConfig::ChunkGridSize);
+        return m_mapNodes[row * m_nodeC + col]->getPhysicalHeight(x, z);
     }
 
     void TerrainMap::loadAllChunks()
@@ -293,7 +294,7 @@ namespace Lazy
     {
         for (ChunkPtr chunk : m_mapNodes)
         {
-            if (!chunk->isLoaded()) return false;
+            if (!chunk->ifLoaded()) return false;
         }
 
         return true;
@@ -318,7 +319,13 @@ namespace Lazy
             for (int c = 0; c < m_nodeC; ++c)
             {
                 m_loadingProgress = (r * m_nodeC + c) / totalNode * 0.5f;
-                m_mapNodes.push_back(new TerrainChunk(m_pTData.get(), r, c));
+
+                FRect rc;
+                rc.left = c * m_nodeSize - m_rect.left;
+                rc.top = r * m_nodeSize - m_rect.top;
+                rc.right = rc.left + m_nodeSize;
+                rc.bottom = rc.top + m_nodeSize;
+                m_mapNodes.push_back(new TerrainChunk(this, r << 16 || c, rc));
             }
         }
 
@@ -341,31 +348,15 @@ namespace Lazy
 
     }
 
-
-    void TerrainMap::processExternalItem(TerrainItemPtr item)
-    {
-        AABB aabb;
-        item->getWorldAABB(aabb);
-
-        MapRectCollider collider(false);
-        collider.rect.fromAABBXZ(aabb);
-        m_quadTree.queryRect(&collider);
-
-        for (size_t i : collider.m_chunkIds)
-        {
-            m_mapNodes[i]->addExternal(item);
-        }
-    }
-
     void TerrainMap::render(IDirect3DDevice9* pDevice)
     {
-        if (!m_usefull) return ;
+        if (!m_usefull) return;
 
         if (!MapConfig::ShowTerrain) return;
 
         pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
         pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE );
+        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         pDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
         pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -378,11 +369,11 @@ namespace Lazy
         pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
         CMaterial::setMaterial(pDevice,
-                               D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-                               D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
-                               D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
-                               D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f),
-                               1.0f);
+            D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
+            D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
+            D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
+            D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f),
+            1.0f);
 
         pDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 
@@ -390,17 +381,17 @@ namespace Lazy
         pDevice->SetTexture(0, pTex);
         for (size_t i = 0; i < m_renderNodes.size(); ++i)
         {
-            m_renderNodes[i]->render(pDevice);
+            m_renderNodes[i]->renderTerrain(pDevice);
         }
         pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
 
         pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-        pDevice->SetRenderState( D3DRS_ALPHABLENDENABLE, TRUE );
+        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
 
         //绘制地图物体
         for (size_t i = 0; i < m_renderNodes.size(); ++i)
         {
-            m_renderNodes[i]->renderObj(pDevice);
+            m_renderNodes[i]->renderItems(pDevice);
         }
 
 #if 0
@@ -415,7 +406,7 @@ namespace Lazy
 
     void TerrainMap::update(float elapse)
     {
-        if (!m_usefull)  return ;
+        if (!m_usefull)  return;
 
         genVisibleChunks();
 
@@ -439,6 +430,13 @@ namespace Lazy
         return NULL;
     }
 
+    ChunkPtr TerrainMap::getChunkByID(uint32 id)
+    {
+        uint32 r = (id >> 16) & 0xffff;
+        uint32 c = id & 0xffff;
+        return m_mapNodes[r * m_nodeC + c];
+    }
+
     /** 根据索引获得地图结点。*/
     TerrainChunk* TerrainMap::getNode(int r, int c)
     {
@@ -451,26 +449,10 @@ namespace Lazy
     /** 根据坐标取得地图结点。*/
     TerrainChunk* TerrainMap::getNode(float x, float z)
     {
-        Square2 sq = getNodeIndex(x, z);
-        return getNode(sq.r, sq.c);
+        int c = int(x / m_nodeSize);
+        int r = int(z / m_nodeSize);
+        return getNode(r, c);
     }
-
-    /** 根据真实位置得到子结点索引。x:为列，y:为行。*/
-    Square2 TerrainMap::getNodeIndex(float x, float z)
-    {
-        x += m_pTData->width() / 2.0f;
-        z = m_pTData->height() / 2.0f - z;
-        return Square2(int(z / m_nodeSize), int(x / m_nodeSize));
-    }
-
-
-    Square2 TerrainMap::getSquareIndex(float x, float z)
-    {
-        x += m_pTData->width() / 2.0f;
-        z = m_pTData->height() / 2.0f - z;
-        return Square2(int(z / m_pTData->squareSize()), int(x / m_pTData->squareSize()));
-    }
-
 
     /** 生成邻接的8个结点。*/
     void TerrainMap::genVisibleChunks(void)
@@ -522,8 +504,7 @@ namespace Lazy
         return false;
     }
 
-//////////////////////////////////////////////////////////////////////////
-    void TerrainMap::handeMouseEvent(UINT msg, WPARAM, LPARAM )
+    void TerrainMap::handeMouseEvent(UINT msg, WPARAM, LPARAM)
     {
         if (!m_usefull) return;
 
@@ -582,15 +563,9 @@ namespace Lazy
     }
 
 
-//////////////////////////////////////////////////////////////////////////
     bool TerrainMap::isInBound(float x, float z)
     {
-        return m_pTData->isInBound(x, z);
-    }
-
-    float TerrainMap::getHeight(float x, float z)
-    {
-        return m_pTData->getPhysicalHeight(x, z);
+        return m_rect.isIn(x, z);
     }
 
     void TerrainMap::setShowLevel(int level)
@@ -598,35 +573,34 @@ namespace Lazy
         m_showLevel = level;
     }
 
-
-    float TerrainMap::xMin()
+    float TerrainMap::xMin() const
     {
-        return -width() / 2.0f;
+        return m_rect.left;
     }
 
-    float TerrainMap::xMax()
+    float TerrainMap::xMax() const
     {
-        return width() / 2.0f;
+        return m_rect.right;
     }
 
-    float TerrainMap::zMin()
+    float TerrainMap::zMin() const
     {
-        return -height() / 2.0f;
+        return m_rect.top;
     }
 
-    float TerrainMap::zMax()
+    float TerrainMap::zMax() const
     {
-        return height() / 2.0f;
+        return m_rect.bottom;
     }
 
-    float TerrainMap::width()
+    float TerrainMap::width() const
     {
-        return (float)m_pTData->width();
+        return m_rect.width();
     }
 
-    float TerrainMap::height()
+    float TerrainMap::height() const
     {
-        return (float)m_pTData->height();
+        return m_rect.height();
     }
 
 #if USE_NEW_CHUNK_STYLE

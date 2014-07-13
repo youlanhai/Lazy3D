@@ -9,43 +9,27 @@
 #include "TerrainItem.h"
 #include "../Physics/Octree.h"
 
+#include <hash_map>
+
 #define USE_MESH 1
 
 namespace Lazy
 {
 
-    namespace TerrainConfig
+    namespace MapConfig
     {
+        const int NbChunkGridSq = NbChunkGridSq * NbChunkGridSq;
 
-        const int MaxMapNodeVertices = 51;
-        const int MaxMapNodeVerticesSq = MaxMapNodeVertices * MaxMapNodeVertices;
+        const int NbChunkVertexSq = NbChunkVertex * NbChunkVertex;
 
-        const int MaxMapNodeGrid = MaxMapNodeVertices - 1;
-        const int MaxMapNodeGridSq = MaxMapNodeGrid * MaxMapNodeGrid;
+        const int NbChunkGridFace = NbChunkGrid * 2;
+        const int NbChunkIndices = NbChunkGridFace * 3;
 
-        const int MapNodeFace = MaxMapNodeGridSq * 2;
-        const int MapNodeIndices = MapNodeFace * 3;
-
-        const int MaxMapNodeCacheSize = 64;
-
-        const int NumVertexSharedTex = 4;
+        const int MaxNbChunkMesh = 64;
     }
 
-
-    struct Square2
-    {
-        Square2() : r(0), c(0) {}
-        Square2(int r_, int c_) : r(r_), c(c_) { }
-
-        void set(int r_, int c_)
-        {
-            r = r_; c = c_;
-        }
-        int r;
-        int c;
-    };
-
     class TerrainChunk;
+    class TerrainMap;
 
     namespace mapnode
     {
@@ -65,58 +49,50 @@ namespace Lazy
         };
     }
 
-//////////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////////
-    class VIBHolder
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////
+    class TerrainMesh
     {
     public:
 
-        VIBHolder() : m_pMesh(NULL) { }
+        TerrainMesh();
+
+        bool create(LPDIRECT3DDEVICE9 pDevice);
+
+        void optimize();
 
         bool valid() const { return m_pMesh != NULL; }
 
-        bool lockVB(void** pp, DWORD flag = 0) const
-        {
-            return SUCCEEDED(m_pMesh->LockVertexBuffer(flag, pp));
-        }
+        bool lockVB(void** pp, DWORD flag = 0) const;
+        void unlockVB() const;
 
-        void unlockVB() const {  m_pMesh->UnlockVertexBuffer(); }
-
-        bool lockIB(void**pp, DWORD flag = 0) const
-        {
-            return SUCCEEDED(m_pMesh->LockIndexBuffer(flag, pp));
-        }
-
-        void unlockIB() const { m_pMesh->UnlockIndexBuffer(); }
-
-        bool create(LPDIRECT3DDEVICE9 pDevice, int vertices);
-
-        void optimize();
+        bool lockIB(void**pp, DWORD flag = 0) const;
+        void unlockIB() const;
 
         void render(LPDIRECT3DDEVICE9 pDevice);
 
         LPD3DXMESH getMesh() const { return m_pMesh; }
+
     private:
 
         //释放资源。不允许显示释放。
         void release();
-        void clear() { m_pMesh = NULL; }
-
-        friend class VIBCache;
+        void clear();
 
         LPD3DXMESH m_pMesh; //将高度图生成mesh
+
+        friend class VIBCache;
     };
 
-
-//////////////////////////////////////////////////////////////////////////
-//
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////
     class VIBCache
     {
-        VIBCache() ;
+        VIBCache();
 
-        ~VIBCache() ;
+        ~VIBCache();
 
     public:
 
@@ -124,92 +100,70 @@ namespace Lazy
 
         void preLoadOne();
 
-        VIBHolder get();
+        TerrainMesh get();
 
-        void release(VIBHolder & holder);
+        void release(TerrainMesh & holder);
 
         void clear();
 
         static VIBCache* instance();
 
     private:
-        typedef std::list<VIBHolder> CachePool;
+        typedef std::list<TerrainMesh> CachePool;
 
         CachePool   m_pool;
         ZCritical m_locker;
     };
 
-    typedef std::vector<TerrainItemPtr>  ObjectPool;
-    typedef ObjectPool::iterator    ObjectIter;
-    typedef ObjectPool::const_iterator    ObjectConstIter;
-
-
-//////////////////////////////////////////////////////////////////////////
-//地图结点
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    ///地图子块
+    //////////////////////////////////////////////////////////////////////////
     class TerrainChunk : public IBase
     {
     public:
-        TerrainChunk(TerrinData* pData, int rID, int cID);
+        typedef std::vector<TerrainItemPtr>     ItemPool;
+        typedef ItemPool::iterator              ItemIter;
+        typedef ItemPool::const_iterator        ItemConstIter;
+        typedef std::hash_map<uint32, TerrainItemPtr>   ItemCatalogue;
 
+        TerrainChunk(TerrainMap *pMap, uint32 id, const FRect & rect);
         ~TerrainChunk(void);
 
-        void render(IDirect3DDevice9* pDevice);
+        void renderTerrain(IDirect3DDevice9* pDevice);
+        void renderItems(IDirect3DDevice9* pDevice);
         void update(float elapse);
 
-        void load();
-        void save();
+        bool load();
+        bool save();
 
-        bool isLoaded() const { return m_loaded; }
+        bool ifLoaded() const { return m_isLoaded; }
+        bool ifLoading() const { return m_isLoading; }
 
-#if USE_NEW_CHUNK_STYLE
+        int getRowID() const { return (m_id >> 16) & 0xffff; }
+        int getColID() const { return m_id & 0xffff; }
 
-    public:
-
-        TerrainChunk();
-
-        int getId() const { return m_id; }
-        void setId(int id) { m_id = id; }
-
-        bool load(const tstring & mapPath, int id);
-        bool save(const tstring & mapPath);
-
-        void create(int id, float x0, float y0);
-
-#endif
-
-    public://地图物体相关
-
-        void renderObj(IDirect3DDevice9* pDevice);
-
-        ///情况所有物体
-        void clearObj();
-
-        ObjectIter begin() { return m_objPool.begin(); }
-        ObjectIter end() { return m_objPool.end(); }
-        ObjectConstIter begin() const { return m_objPool.begin(); }
-        ObjectConstIter end() const { return m_objPool.end(); }
-
-        TerrainItemPtr getObjByIndex(size_t i) const { return m_objPool[i]; }
-        size_t getNumObj() const { return m_objPool.size(); }
-
-        int rowID() const { return m_rID; }
-        int colID() const { return m_cID; }
-
-        float size() const { return m_size; }
-        LPD3DXMESH getTerrainMesh() const { return m_vibHolder.getMesh(); }
-
-        ///获得结点在世界坐标下的区域
         const FRect & getRect() const { return m_rect; }
+        float getSize() const { return m_rect.width(); }
+        LPD3DXMESH getTerrainMesh() const { return m_mesh.getMesh(); }
 
-        ///添加一个物体。如果物体的包围盒超出chunk边界，此物体将作为外部链接添加到相交的chunk里。
+        float getPhysicalHeight(float x, float z) const;
+
+    public://地图物件相关
+
+        ItemIter begin() { return m_items.begin(); }
+        ItemIter end() { return m_items.end(); }
+        ItemConstIter begin() const { return m_items.begin(); }
+        ItemConstIter end() const { return m_items.end(); }
+
+        TerrainItemPtr getItemByIndex(size_t i) const { return m_items[i]; }
+        size_t getNbItems() const { return m_items.size(); }
+
+        TerrainItemPtr findItem(uint32 id);
+        void clearItems();
+        //{ don't call the following method, unless you know what you did.
         void addItem(TerrainItemPtr item);
-
-        ///添加外部引用
-        void addExternal(TerrainItemPtr item);
-
-        ///刷新外部引用。当外部引用的坐标、旋转、缩放变化时，调用。
-        //void refreshExternal(TerrainItemPtr item);
+        void delItem(TerrainItemPtr item);
+        //}
 
     public://拾取与碰撞检测
 
@@ -223,31 +177,18 @@ namespace Lazy
         bool intersect(const AABB & aabb) const;
 
         ///射线拾取
-        TerrainItemPtr pickObj(const Vector3 & origin, const Vector3 & dir);
+        TerrainItemPtr pickItem(const Vector3 & origin, const Vector3 & dir);
 
     protected:
 
-        ///将结点内的x坐标，转换为世界坐标
-        float xToMap(float x) const;
-
-        ///将结点内的z坐标，转换为世界坐标
-        float zToMap(float z) const;
-
-        float rToMapZ(int r) const;
-        float cToMapX(int c) const;
+        void loadItem(LZDataPtr ptr);
+        bool loadHeightMap(const tstring & filename);
+        bool saveHeightMap(const tstring & filename);
         float getHeight(int r, int c) const;
-
-        float x0() const { return m_x0; }
-        float z0() const { return m_z0; }
-
-        Square2 squareToMap(int r, int c);
 
         void release(void);
 
         void updateNormal();
-
-        void getPos(int index, D3DXVECTOR3 & pos);
-
         void updateVertices();
 
         ///构造八叉树
@@ -260,36 +201,21 @@ namespace Lazy
         void onLoadingFinish();
 
     protected:
-        int         m_id;
+        uint32          m_id;
+        TerrainMesh     m_mesh;
+        TerrainMap *    m_pMap;
+        bool            m_isLoaded;       ///< 场景是否已经加载完成
+        bool            m_isLoading;    ///< 正在加载中
 
-        bool        m_loaded; ///< 场景是否已经加载完成
-        bool        m_loadRunning; ///< 正在加载中
+        float           m_gridSize;
+        FRect           m_rect;         ///<地图x，z坐标区域
+        OctreePtr       m_octree;       ///<地图物件包围盒构成的八叉树，用于快速拾取aabb
+        bool            m_octreeDirty;  ///<八叉树重构标记
 
-        ZCritical m_objLocker; ///< 使用m_objPool和m_externalItems需要加锁
-        ObjectPool  m_objPool;
-        ObjectPool  m_externalItems;    ///<如果地形还未加载，使用此缓冲池记录外部引用
-
-        VIBHolder   m_vibHolder;
-
-        bool        m_octreeDirty;      ///<八叉树重构标记
-
-        float       m_size;
-        float       m_gridSize;
-
-        FRect   m_rect;///<地图x，z坐标区域
-        OctreePtr m_octree;///<地图物件包围盒构成的八叉树，用于快速拾取aabb
-
-        std::vector<float> m_heightMap;
-
-
-        //旧数据
-
-        TerrinData *m_pTerrin;
-
-        float   m_x0;       //原点坐标
-        float   m_z0;
-        int     m_rID;
-        int     m_cID;
+        std::vector<float>      m_heightMap;
+        ZCritical               m_itemLocker;
+        ItemPool                m_items;
+        ItemCatalogue           m_itemCatalogue;
 
         friend class ChunkLoader;
     };

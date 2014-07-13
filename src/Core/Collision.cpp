@@ -53,7 +53,7 @@ namespace Lazy
         ChunkPtr node = TerrainMap::instance()->currentNode();
         if(!node) return;
 
-        ObjectConstIter it;
+        TerrainChunk::ItemConstIter it;
         FOR_EACH((*node), it)
         {
             check2WithObj(ci, *it);
@@ -98,7 +98,7 @@ namespace Lazy
             _pickRay(rc, *it);
         }
 #else
-        TerrainItemPtr obj = node->pickObj(rc.m_start, rc.m_dir);
+        TerrainItemPtr obj = node->pickItem(rc.m_start, rc.m_dir);
         _pickRay(rc, obj);
 #endif
 

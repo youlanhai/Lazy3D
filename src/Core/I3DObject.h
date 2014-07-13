@@ -98,4 +98,5 @@ namespace Lazy
         float   m_lockHeight;
     };
 
+
 } // end namespace Lazy

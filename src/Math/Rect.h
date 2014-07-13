@@ -21,6 +21,8 @@ namespace Lazy
         {
         }
 
+        void set(float l, float t, float r, float b);
+
         float width() const { return right - left; }
         float height() const { return bottom - top; }
 

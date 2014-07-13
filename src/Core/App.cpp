@@ -73,12 +73,13 @@ namespace Lazy
     {
         MemoryChecker::initInstance();
         MemoryPool::init();
+        TerrainMap::initInstance();
     }
 
     void CApp::releaseSingleton()
     {
         cSoundMgr::instance()->release();
-
+        TerrainMap::finiInstance();
 
         //////////////////////////////////////////////////////////////////////////
         MemoryPool::fini();
@@ -303,7 +304,6 @@ namespace Lazy
         m_pKeyboard = new CKeyboard();
         addUpdater(m_pKeyboard.get());
 
-        TerrainMap::instance()->init();
         addUpdateRender(TerrainMap::instance());
 
         addUpdateRender(EntityMgr::instance());
@@ -335,7 +335,6 @@ namespace Lazy
         m_pBillboardMgr = NULL;
         m_pKeyboard = NULL;
 
-        TerrainMap::instance()->fini();
         FontMgr::instance()->fini();
         EntityMgr::instance()->clear();
     }

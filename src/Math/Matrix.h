@@ -39,6 +39,8 @@ namespace Lazy
         void makeOrthoOffCenter(float left, float right, float bottom, float top, float zn, float zf);
         void makePerspective(float fovy, float aspect, float zn, float zf);
 
+        void decompose(Vector3 & scale, Quaternion & rotation, Vector3 & position) const;
+
         void getRow(int i, Vector3 & v) const;
         void setRow(int i, const Vector3 & v);
 

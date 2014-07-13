@@ -1,5 +1,7 @@
 #pragma once
 
+//#include "../Lzpy/LzpyExtend.h"
+
 namespace Lzpy
 {
     using namespace Lazy;
@@ -27,6 +29,7 @@ namespace Lzpy
 
         LZPY_DEF_METHOD_1(loadMap);
         LZPY_DEF_METHOD_1(saveMap);
+        LZPY_DEF_METHOD(createMap);
 
         LZPY_DEF_METHOD_1(setSource);
 

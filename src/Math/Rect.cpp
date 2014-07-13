@@ -7,6 +7,14 @@
 
 namespace Lazy
 {
+    void FRect::set(float l, float t, float r, float b)
+    {
+        left = l;
+        top = t;
+        right = r;
+        bottom = b;
+    }
+
     void FRect::zero()
     {
         left = top = MAX_FLOAT;

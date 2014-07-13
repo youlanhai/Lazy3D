@@ -14,6 +14,8 @@ namespace Lazy
         virtual void update(float) = 0;
     };
 
+    typedef IRenderObj IRenderable;
+
 
     struct LZDLL_API IUpdate : public IRenderObj
     {

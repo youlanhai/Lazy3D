@@ -277,4 +277,9 @@ namespace Lazy
         return *this;
     }
 
+    void Matrix::decompose(Vector3 & scale, Quaternion & rotation, Vector3 & position) const
+    {
+        D3DXMatrixDecompose(&scale, &rotation, &position, this);
+    }
+
 }//end namespace Lazy
