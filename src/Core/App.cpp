@@ -82,6 +82,7 @@ namespace Lazy
         TerrainMap::finiInstance();
 
         //////////////////////////////////////////////////////////////////////////
+        clearSectionCache();
         MemoryPool::fini();
         MemoryChecker::finiInstance();
     }
