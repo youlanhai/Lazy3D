@@ -165,6 +165,7 @@ namespace Lazy
         m_rect.zero();
 
         m_itemIDAllocator = 0;
+        m_uvScale = 1.0f;
     }
 
     TerrainMap::~TerrainMap(void)
@@ -248,8 +249,9 @@ namespace Lazy
         m_rect.set(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
 
         m_objOnGround = ptr->readBool(L"onGround", true);
-        m_textureName = ptr->readString(L"texture");
+        m_textureName = ptr->readString(L"texture", L"map/f.jpg");
         m_itemIDAllocator = ptr->readInt(L"idAllocator", 0);
+        m_uvScale = ptr->readFloat(L"uvScale", 0.05f);
 
         initChunks();
 
@@ -289,6 +291,8 @@ namespace Lazy
         root->writeInt(L"rows", m_nodeR);
         root->writeInt(L"cols", m_nodeC);
         root->writeUint(L"idAllocator", m_itemIDAllocator);
+        root->writeString(L"texture", m_textureName);
+        root->writeBool(L"onGround", m_objOnGround);
 
         if (!saveSection(root, filename))
         {
@@ -419,23 +423,22 @@ namespace Lazy
 
     void TerrainMap::render(IDirect3DDevice9* pDevice)
     {
-        if (!m_usefull) return;
-
-        if (!MapConfig::ShowTerrain) return;
+        if (!m_usefull || !MapConfig::ShowTerrain) return;
 
         pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
         pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         pDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
         pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
         pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
-        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
+        pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
-        pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
         pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-        pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+        //pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
         CMaterial::setMaterial(pDevice,
             D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
@@ -447,7 +450,7 @@ namespace Lazy
         pDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 
         dx::Texture *pTex = TextureMgr::instance()->getTexture(m_textureName);
-        if (pTex) pDevice->SetTexture(0, pTex);
+        pDevice->SetTexture(0, pTex);
         for (size_t i = 0; i < m_renderNodes.size(); ++i)
         {
             m_renderNodes[i]->renderTerrain(pDevice);
@@ -455,7 +458,10 @@ namespace Lazy
         pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
 
         pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+        //pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+        pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
         //绘制地图物体
         for (size_t i = 0; i < m_renderNodes.size(); ++i)

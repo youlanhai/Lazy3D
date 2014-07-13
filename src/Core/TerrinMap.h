@@ -23,18 +23,12 @@ namespace Lazy
         TerrainMap();
         ~TerrainMap(void);
 
-        ///更新
         void render(IDirect3DDevice9* pDevice);
-
-        ///渲染
         void update(float elapse);
 
-        ///加载地图。
         bool loadMap(const tstring & mapName);
-
-        ///保存地图。
         bool saveMap(const tstring & mapName);
-
+        /** create a new map*/
         bool createMap(const tstring & nameName, int rows, int cols);
 
         uint32 allocateTerrainItemID();
@@ -49,6 +43,8 @@ namespace Lazy
 
         ///地图是否可用
         bool isUserfull() const { return m_usefull; }
+
+        float getUVScale() const { return m_uvScale; }
 
     public:
         /** 地图将以该source进行优化绘制。source往往是玩家。*/
@@ -123,7 +119,6 @@ namespace Lazy
         bool intersectWithCursor();
 
         TerrainItemPtr getActiveObj() { return m_pActiveObj; }
-
         void setActiveObj(TerrainItemPtr pObj);
 
         TerrainItemPtr getSelectObj() { return m_pSelectObj; }
@@ -138,17 +133,18 @@ namespace Lazy
         tstring             m_textureName;
         tstring             m_mapName;
 
-        float               m_nodeSize;     //< 每个结点的尺寸。
-        int                 m_nodeR;        //< 结点行数
-        int                 m_nodeC;        //< 结点列数
+        float               m_nodeSize;     ///< 每个结点的尺寸。
+        int                 m_nodeR;        ///< 结点行数
+        int                 m_nodeC;        ///< 结点列数
         float               m_showRadius;   ///<以玩家为中心的，显示范围半径
-        int                 m_showLevel;    //< 显示级别
-        bool                m_usefull;      //< 是否可使用
+        int                 m_showLevel;    ///< 显示级别
+        bool                m_usefull;      ///< 是否可使用
         FRect               m_rect;
 
-        TerrainItemPtr      m_pActiveObj;   //<活动的OBJ，即拥有鼠标焦点
-        TerrainItemPtr      m_pSelectObj;   //<被选择的Obj
-        bool                m_objOnGround;  //< 物体是否贴地
+        TerrainItemPtr      m_pActiveObj;   ///<活动的OBJ，即拥有鼠标焦点
+        TerrainItemPtr      m_pSelectObj;   ///<被选择的Obj
+        bool                m_objOnGround;  ///< 物体是否贴地
+        float               m_uvScale;      ///< 纹理坐标缩放系数
 
         float               m_loadingProgress;
         QuadTree            m_quadTree;     ///<四叉树

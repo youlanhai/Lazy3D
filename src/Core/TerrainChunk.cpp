@@ -486,6 +486,8 @@ namespace Lazy
             return;
         }
 
+        float uvScale = m_pMap->getUVScale();
+
         //以下是创建网格数据
         const int vertices = MapConfig::NbChunkVertex;
         for (int r = 0; r < vertices; ++r)
@@ -498,8 +500,8 @@ namespace Lazy
                 pVertex[i].pos.z = m_rect.top + r * m_gridSize;
                 pVertex[i].pos.y = getHeight(r, c);
 
-                pVertex[i].u = pVertex[i].pos.z;
-                pVertex[i].v = pVertex[i].pos.x;
+                pVertex[i].u = pVertex[i].pos.z * uvScale;
+                pVertex[i].v = pVertex[i].pos.x * uvScale;
             }
         }
 
