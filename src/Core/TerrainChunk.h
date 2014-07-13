@@ -139,6 +139,7 @@ namespace Lazy
         bool ifLoaded() const { return m_isLoaded; }
         bool ifLoading() const { return m_isLoading; }
 
+        uint32 getID() const { return m_id; }
         int getRowID() const { return (m_id >> 16) & 0xffff; }
         int getColID() const { return m_id & 0xffff; }
 

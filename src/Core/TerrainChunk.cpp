@@ -417,7 +417,7 @@ namespace Lazy
         if (findItem(itemID))
             return;
 
-        TerrainItemPtr item = new TerrainItem();
+        TerrainItemPtr item = m_pMap->createTerrainItem();
         item->load(ptr);
 
         tstring chunkIDs = ptr->readString(L"chunks");

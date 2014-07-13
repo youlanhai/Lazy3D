@@ -33,10 +33,12 @@ namespace Lazy
         bool loadMap(const tstring & mapName);
 
         ///保存地图。
-        void saveMap(const tstring & mapName);
+        bool saveMap(const tstring & mapName);
 
         bool createMap(const tstring & nameName, int rows, int cols);
 
+        uint32 allocateTerrainItemID();
+        TerrainItemPtr createTerrainItem();
         void addTerrainItem(TerrainItemPtr item);
         void delTerrainItem(TerrainItemPtr item);
 
@@ -127,6 +129,9 @@ namespace Lazy
         TerrainItemPtr getSelectObj() { return m_pSelectObj; }
 
     protected:
+        uint32              m_itemIDAllocator;
+        ZCritical           m_itemIDLocker;
+
         NodeContainer       m_mapNodes;
         NodeContainer       m_renderNodes;  ///9格
         I3DObject*          m_pSource;

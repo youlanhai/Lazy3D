@@ -163,6 +163,8 @@ namespace Lazy
 
         m_showRadius = 5000.0f;
         m_rect.zero();
+
+        m_itemIDAllocator = 0;
     }
 
     TerrainMap::~TerrainMap(void)
@@ -185,6 +187,7 @@ namespace Lazy
         m_pSelectObj = NULL;
 
         m_rect.zero();
+        m_itemIDAllocator = 0;
     }
 
     bool TerrainMap::createMap(const tstring & nameName, int rows, int cols)
@@ -246,6 +249,7 @@ namespace Lazy
 
         m_objOnGround = ptr->readBool(L"onGround", true);
         m_textureName = ptr->readString(L"texture");
+        m_itemIDAllocator = ptr->readInt(L"idAllocator", 0);
 
         initChunks();
 
@@ -263,15 +267,33 @@ namespace Lazy
         return true;
     }
 
-    void TerrainMap::saveMap(const tstring & path)
+    bool TerrainMap::saveMap(const tstring & path)
     {
-        m_mapName = path;
-        formatDirName(m_mapName);
-
         if (MapConfig::UseMultiThread && !isAllChunkLoaded())
         {
             LOG_ERROR(L"In muti thread mode, you must load all the chunk first!");
-            return;
+            return false;
+        }
+
+        m_mapName = path;
+        formatDirName(m_mapName);
+
+        tstring filename = m_mapName + L"map.lzd";
+        LZDataPtr root = openSection(filename, true);
+        if (!root)
+        {
+            LOG_ERROR(L"Load map config '%s' failed!", m_mapName.c_str());
+            return false;
+        }
+
+        root->writeInt(L"rows", m_nodeR);
+        root->writeInt(L"cols", m_nodeC);
+        root->writeUint(L"idAllocator", m_itemIDAllocator);
+
+        if (!saveSection(root, filename))
+        {
+            LOG_ERROR(L"Save map config '%s' failed.", filename.c_str());
+            return false;
         }
 
         for (ChunkPtr chunk : m_mapNodes)
@@ -279,6 +301,19 @@ namespace Lazy
             chunk->load();
             chunk->save();
         }
+
+        return true;
+    }
+
+    uint32 TerrainMap::allocateTerrainItemID()
+    {
+        ZLockHolder holder(&m_itemIDLocker);
+        return ++m_itemIDAllocator;
+    }
+
+    TerrainItemPtr TerrainMap::createTerrainItem()
+    {
+        return new TerrainItem(allocateTerrainItemID());
     }
 
     void TerrainMap::addTerrainItem(TerrainItemPtr item)

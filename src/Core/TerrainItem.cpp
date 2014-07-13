@@ -11,6 +11,7 @@
 #include "../Physics/LazyConllision.h"
 #include "ModelFactory.h"
 
+#include <sstream>
 
 namespace Lazy
 {
@@ -25,7 +26,7 @@ namespace Lazy
     void readVector3(LZDataPtr dataPtr, const tstring & tag, Vector3 & v)
     {
         tstring str = dataPtr->readString(tag);
-        if(str.empty())
+        if (str.empty())
         {
             v.zero();
             return;
@@ -35,24 +36,16 @@ namespace Lazy
     }
 
 
-//////////////////////////////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////////////////////////////
-    TerrainItem::TerrainItem(void)
-        : m_collid(true)
+    //////////////////////////////////////////////////////////////////////////
+    ///
+    //////////////////////////////////////////////////////////////////////////
+    TerrainItem::TerrainItem(uint32 id)
+        : m_id(id)
+        , m_isCollid(true)
         , m_angle(0, 0, 0)
-        , m_isRef(false)
-        , m_refChunk(0)
     {
-        generateGUID32(m_uuid);
-        m_aabb.min.set(-10, -10, -10);
-        m_aabb.max.set(10, 10, 10);
-    }
-
-//克隆一个副本，此副本必定是引用的。
-    TerrainItemPtr TerrainItem::clone() const
-    {
-        return new TerrainItem(*this);
+        m_aabb.min.set(-0.5, 0.0f, 0.5f);
+        m_aabb.max.set(0.5f, 1.0f, 0.5f);
     }
 
     TerrainItem::~TerrainItem(void)
@@ -72,7 +65,7 @@ namespace Lazy
     void TerrainItem::render(IDirect3DDevice9* pDevice)
     {
         //绘制物体本身
-        if (visible() && !m_isRef && m_model)
+        if (visible() && m_model)
         {
             Matrix matWorld;
             getWorldMatrix(matWorld);
@@ -81,7 +74,7 @@ namespace Lazy
         }
 
         //绘制物体AABB
-        if(!m_isRef && MapConfig::ShowAllItemAABB)
+        if (MapConfig::ShowAllItemAABB)
         {
             AABB aabb;
             getWorldAABB(aabb);
@@ -192,16 +185,14 @@ namespace Lazy
     {
         assert(dataPtr && "TerrainItem::save");
 
-        if(m_isRef) return false;
-
-        dataPtr->writeString(_T("uuid"), m_uuid);
+        dataPtr->writeUint(_T("id"), m_id);
         tstring temp;
-        if(m_model)
+        if (m_model)
         {
             dataPtr->writeString(_T("path"), m_model->source());
 
             int type = ModelType::StaticModel;
-            if(m_model->isSkeleton()) type = ModelType::SkinModel;
+            if (m_model->isSkeleton()) type = ModelType::SkinModel;
             dataPtr->writeInt(_T("type"), type);
         }
 
@@ -211,6 +202,12 @@ namespace Lazy
         writeVector3(dataPtr, _T("aabb/min"), m_aabb.min);
         writeVector3(dataPtr, _T("aabb/max"), m_aabb.max);
 
+        std::wostringstream ss;
+        for (TerrainChunk *p : m_chunks)
+        {
+            ss << p->getID() << L" ";
+        }
+        dataPtr->writeString(L"chunks", ss.str());
         return true;
     }
 
@@ -218,9 +215,7 @@ namespace Lazy
     {
         if (dataPtr->readBool(_T("refrence"), false)) return false;
 
-        m_uuid = dataPtr->readString(_T("uuid"));
-        m_isRef = false;
-        m_refChunk = 0;
+        m_id = dataPtr->readUint(_T("id"));
 
         readVector3(dataPtr, _T("scale"), m_vScale);
         readVector3(dataPtr, _T("pos"), m_vPos);
@@ -230,7 +225,7 @@ namespace Lazy
 
         tstring temp;
         temp = dataPtr->readString(_T("path"));
-        if(!temp.empty())
+        if (!temp.empty())
         {
             int type = dataPtr->readInt(_T("type"));
             setModel(ModelFactory::loadModel(temp, type));
@@ -270,7 +265,7 @@ namespace Lazy
     void TerrainItem::addChunk(TerrainChunk *pChunk)
     {
         std::vector<TerrainChunk*>::iterator it = std::find(
-            m_chunks.begin(), m_chunks.end(), pChunk );
+            m_chunks.begin(), m_chunks.end(), pChunk);
 
         if (it == m_chunks.end())
             m_chunks.push_back(pChunk);

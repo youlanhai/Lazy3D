@@ -89,8 +89,7 @@ namespace Lzpy
         if (!arg.parse_tuple(&name, &row, &col))
             return null_object;
         
-        m_map->createMap(name, row, col);
-        return none_object;
+        return build_object(m_map->createMap(name, row, col));
     }
 
     ////////////////////////////////////////////////////////////////////

@@ -17,11 +17,8 @@ namespace Lazy
     class LZDLL_API TerrainItem : public I3DObject
     {
     public:
-        TerrainItem(void);
+        explicit TerrainItem(uint32 id);
         ~TerrainItem(void);
-
-        //克隆一个副本
-        TerrainItemPtr clone() const;
 
         uint32 getID() const { return m_id; }
 
@@ -30,9 +27,6 @@ namespace Lazy
 
         ModelPtr getModel(void) { return m_model; }
         void setModel(ModelPtr model);
-
-        void setChunkId(int id) { m_chunkId = id; }
-        int getChunkId() const { return m_chunkId; }
 
     public:
         const Vector3 & getAngle(void) const { return m_angle; }
@@ -57,14 +51,7 @@ namespace Lazy
         bool save(LZDataPtr dataPtr) const;
         bool load(LZDataPtr dataPtr);
 
-        const tstring & uuid() const { return m_uuid; }
-        bool colid() const { return m_collid; }
-
-        bool isReference() const { return m_isRef; }
-        void setReference(bool ref) { m_isRef = ref; }
-
-        size_t getRefChunk() const { return m_refChunk;}
-        void setRefChunk(size_t id) { m_refChunk = id; }
+        bool colid() const { return m_isCollid; }
 
         //获取真实的模型矩阵
         void getAbsModelMatrix(Matrix & mat) const;
@@ -76,18 +63,10 @@ namespace Lazy
         //}
 
     private:
-
-
         uint32      m_id;
-    
-        int         m_chunkId;
         ModelPtr    m_model;
-        bool        m_collid;
-        tstring     m_uuid;
+        bool        m_isCollid;
         Vector3     m_angle;
-
-        bool        m_isRef;    //是否是引用自其它chunk
-        size_t      m_refChunk; //引用id。
 
         /** item所属的chunk。一个item可能横跨多个chunk。*/
         std::vector<TerrainChunk*>  m_chunks;
