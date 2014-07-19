@@ -149,9 +149,9 @@ namespace Lazy
 
         m_device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
         m_device->SetRenderState(D3DRS_ZENABLE, TRUE);
+        m_device->SetRenderState(D3DRS_LIGHTING, TRUE);
         m_device->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(100, 100, 100));
 
-        m_device->SetRenderState(D3DRS_LIGHTING, TRUE);
         m_device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         m_device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
         m_device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
@@ -160,7 +160,7 @@ namespace Lazy
 
         m_device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
         m_device->SetRenderState(D3DRS_ALPHAREF, 10);
-        m_device->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+        m_device->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATER);
 
         m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         m_device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);

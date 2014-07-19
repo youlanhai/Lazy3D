@@ -768,9 +768,6 @@ namespace Lazy
                     pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
                     AttribIdPrev = pBoneComb[iAttrib].AttribId;
                 }
-                pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-                pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-                pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
                 pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
             }
         }

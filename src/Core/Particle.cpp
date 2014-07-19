@@ -48,7 +48,6 @@ namespace Lazy
     void cParticleSystem::setRenderState(IDirect3DDevice9 *pDevice)
     {
         pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-        pDevice->SetRenderState(D3DRS_ZENABLE, FALSE);
 
         pDevice->SetRenderState(D3DRS_POINTSPRITEENABLE, TRUE);
         pDevice->SetRenderState(D3DRS_POINTSCALEENABLE, TRUE);
@@ -74,7 +73,6 @@ namespace Lazy
         pDevice->SetRenderState(D3DRS_POINTSCALEENABLE, FALSE);
 
         pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-        pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
     }
 
     void cParticleSystem::addParticle()
