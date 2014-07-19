@@ -22,7 +22,7 @@ items
 		path = model/arena/Arena.x
 		type = 0
 		scale = 0.01 0.01 0.01
-		pos = 100 1 1
+		pos = 40 1 1
 		angle = 0.000000 0.000000 0.000000
 	}
 }
