@@ -41,6 +41,17 @@ namespace Lazy
         AXIS_Z = 2
     };
 
+    template<typename T>
+    inline T min2(T a, T b)
+    {
+        return a < b ? a : b;
+    }
+
+    template<typename T>
+    inline T max2(T a, T b)
+    {
+        return a > b ? a : b;
+    }
 
     inline float min2(float a, float b)
     {
@@ -56,5 +67,6 @@ namespace Lazy
     {
         return d > -epsilon && d < epsilon;
     }
+
 
 }//end namespace Lazy

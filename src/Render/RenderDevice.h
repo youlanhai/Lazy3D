@@ -47,6 +47,7 @@ namespace Lazy
         //设置变换矩阵
         void pushWorld(const Matrix & matrix);
         void popWorld();
+        const Matrix & getWorld() const;
 
         void setView(const Matrix & matrix);
         const Matrix & getView() const;

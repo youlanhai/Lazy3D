@@ -387,6 +387,12 @@ namespace Lazy
         m_matDirty |= DirtyWorldViewProj;
     }
 
+    const Matrix & RenderDevice::getWorld() const
+    {
+        assert(!m_matWorlds.empty());
+        return m_matWorlds.back();
+    }
+
     void RenderDevice::setView(const Matrix & matrix)
     {
         m_matView = matrix;

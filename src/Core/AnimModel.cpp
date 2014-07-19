@@ -54,8 +54,10 @@ namespace Lazy
             getCombinedMatrix(mat);
 
             advanceAnimation();
-            m_pSkinMesh->setWorldMatrix(mat);
+           
+            rcDevice()->pushWorld(mat);
             m_pSkinMesh->render();
+            rcDevice()->popWorld();
         }
 
         IModel::render(pDevice);
@@ -64,31 +66,31 @@ namespace Lazy
     /** 步进动画*/
     void AnimalModel::advanceAnimation(void)
     {
-        if (m_pAnimControler)
+        if (!m_pAnimControler)
+            return;
+
+        if (m_loop)
         {
-            if (m_loop)
+            m_pAnimControler->AdvanceTime(m_elapse, NULL);
+        }
+        else
+        {
+            LPD3DXANIMATIONSET pASTrack;
+            m_pAnimControler->GetTrackAnimationSet(0, &pASTrack);
+            float dt = (float)pASTrack->GetPeriod();
+            //DebugMsg("(%f, %f, %lf)", m_elapsedTime, m_elapse, dt);
+            if (m_elapsedTime <= dt)
             {
-                m_pAnimControler->AdvanceTime(m_elapse, NULL);
-            }
-            else
-            {
-                LPD3DXANIMATIONSET pASTrack;
-                m_pAnimControler->GetTrackAnimationSet(0, &pASTrack);
-                float dt = (float)pASTrack->GetPeriod();
-                //DebugMsg("(%f, %f, %lf)", m_elapsedTime, m_elapse, dt);
-                if (m_elapsedTime <= dt)
+                if (m_elapsedTime + m_elapse > dt)
                 {
-                    if (m_elapsedTime + m_elapse > dt)
-                    {
-                        m_elapse = dt - m_elapsedTime;
-                        m_elapsedTime = dt;
-                    }
-                    else
-                    {
-                        m_elapsedTime += m_elapse;
-                    }
-                    m_pAnimControler->AdvanceTime(m_elapse, NULL);
+                    m_elapse = dt - m_elapsedTime;
+                    m_elapsedTime = dt;
                 }
+                else
+                {
+                    m_elapsedTime += m_elapse;
+                }
+                m_pAnimControler->AdvanceTime(m_elapse, NULL);
             }
         }
     }

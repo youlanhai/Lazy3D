@@ -69,18 +69,7 @@ namespace Lazy
 
     public:
 
-        /** 从X文件中加载骨骼动画。*/
-        bool loadFromXFile(const std::wstring & fileName);
-
-        const Matrix & getWorldMatrix(void) const { return m_worldMatrix; }
-
-        void setWorldMatrix(const Matrix & mat) { m_worldMatrix = mat; }
-
         int getNbDrawTrangle() const { return m_dwTrangleCnt; }
-
-        float getBBRadius(void) const { return m_bbRadius; }
-
-        const Vector3 & getBBCenter(void) const { return m_bbCenter; }
 
         const AABB & getAABB() const { return m_aabb; }
 
@@ -93,16 +82,13 @@ namespace Lazy
         HRESULT generateSkinnedMesh(MeshContainer *pMeshContainer);
 
     protected:
-        BoneFrame	    *m_bone;		///< 根骨节点
+        BoneFrame*      m_bone;		///< 根骨节点
         int	            m_skinMethod;   ///< 蒙皮类型
         int		        m_dwTrangleCnt; ///< 渲染的三角形数量
-        float           m_bbRadius;     ///< 包围盒半径
-        Vector3    m_bbCenter;     ///< 包围盒中心
-        AABB       m_aabb;         ///<aabb包围盒
-        Matrix  m_worldMatrix;  ///<世界矩阵
+        AABB            m_aabb;         ///<aabb包围盒
         dx::AnimController* m_pAnimController;  ///< 动画控制器
 
-    protected:
+
         void drawFrame(LPD3DXFRAME pFrame);
 
         HRESULT setupBoneMatrixPointers(LPD3DXFRAME pFrame);
