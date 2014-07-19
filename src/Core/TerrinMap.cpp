@@ -626,34 +626,4 @@ namespace Lazy
         m_showLevel = level;
     }
 
-    float TerrainMap::xMin() const
-    {
-        return m_rect.left;
-    }
-
-    float TerrainMap::xMax() const
-    {
-        return m_rect.right;
-    }
-
-    float TerrainMap::zMin() const
-    {
-        return m_rect.top;
-    }
-
-    float TerrainMap::zMax() const
-    {
-        return m_rect.bottom;
-    }
-
-    float TerrainMap::width() const
-    {
-        return m_rect.width();
-    }
-
-    float TerrainMap::height() const
-    {
-        return m_rect.height();
-    }
-
 } // end namespace Lazy

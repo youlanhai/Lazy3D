@@ -59,15 +59,6 @@ namespace Lazy
         /** 是否在地图范围。*/
         bool isInBound(float x, float z);
 
-        float xMin() const;
-        float xMax() const;
-
-        float zMin() const;
-        float zMax() const;
-
-        float width() const;
-        float height() const;
-
         const FRect getRect() const { return m_rect; }
 
         ChunkPtr getFocusChunk();

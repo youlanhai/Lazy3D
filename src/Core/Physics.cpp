@@ -324,23 +324,24 @@ namespace Lazy
         }
 
         Vector3 start = m_pSource->getPos();
+        const FRect & rect = pMap->getRect();
 
-        if (start.x < pMap->xMin())
+        if (start.x < rect.left)
         {
-            start.x = pMap->xMin();
+            start.x = rect.left;
         }
-        else if (start.x > pMap->xMax())
+        else if (start.x >= rect.right)
         {
-            start.x = pMap->xMax();
+            start.x = rect.right;
         }
 
-        if (start.z < pMap->zMin())
+        if (start.z < rect.top)
         {
-            start.z = pMap->zMin();
+            start.z = rect.top;
         }
-        else if (start.z > pMap->zMax())
+        else if (start.z > rect.bottom)
         {
-            start.z = pMap->zMax();
+            start.z = rect.bottom;
         }
 
         float mh = pMap->getHeight(start.x, start.z);
