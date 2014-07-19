@@ -41,6 +41,9 @@ namespace Lazy
         void getRenderState(dx::RSType type, DWORD & value);
         DWORD getRenderState(dx::RSType type);
 
+        void pushRS(dx::RSType type, DWORD value);
+        void popRS(dx::RSType type);
+
         //设置变换矩阵
         void pushWorld(const Matrix & matrix);
         void popWorld();
@@ -87,6 +90,8 @@ namespace Lazy
         D3DPRESENT_PARAMETERS m_d3dpp;
         D3DDISPLAYMODE m_d3dmm;
         D3DCAPS9    m_d3dcaps;
+
+        std::vector<std::pair<DWORD, DWORD>>  m_rsStack;
 
         std::vector<Matrix> m_matWorlds;
         Matrix              m_matView;

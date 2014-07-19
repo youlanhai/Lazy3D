@@ -34,13 +34,8 @@ namespace Lazy
         pDevice->SetTransform(D3DTS_WORLD, &mat);
         pDevice->SetTexture(0, NULL);
 
-        DWORD oldLight;
-        pDevice->GetRenderState(D3DRS_LIGHTING, &oldLight);
-        pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-
+        RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
         drawAABB(pDevice, m_aabb, 0xffffffff);
-
-        pDevice->SetRenderState(D3DRS_LIGHTING, oldLight);
     }
 
 

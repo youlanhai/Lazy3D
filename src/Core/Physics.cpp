@@ -94,14 +94,10 @@ namespace Lazy
     {
         if(isPlayers() && g_drawCollision)
         {
-            DWORD oldLight;
-            pDevice->GetRenderState(D3DRS_LIGHTING, &oldLight);
-            pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+            RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
 
             g_debugCP.drawDebug(pDevice);
             g_debugCP2.drawDebug(pDevice);
-
-            pDevice->SetRenderState(D3DRS_LIGHTING, oldLight);
         }
     }
 

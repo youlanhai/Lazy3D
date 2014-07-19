@@ -137,8 +137,8 @@ namespace Lazy
             world.makeIdentity();
         }
 
-        pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+        RSHolder rsHolder1(pDevice, D3DRS_LIGHTING, FALSE);
+        RSHolder rsHolder2(pDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 
         pDevice->SetTransform(D3DTS_WORLD, &world);
         pDevice->SetStreamSource(0, m_pVertexBuffer, 0, SkyVertex::SIZE);
@@ -157,9 +157,6 @@ namespace Lazy
                 pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, i * 4, 2);
             }
         }
-
-        pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     }
 
 } // end namespace Lazy

@@ -734,12 +734,10 @@ namespace Lazy
         //调试渲染当前场景的八叉树
         if (MapConfig::ShowChunkOctree && TerrainMap::instance()->currentNode() == this)
         {
-            pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+            RSHolder rsHolder1(pDevice, D3DRS_LIGHTING, FALSE);
 
             pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
             if (m_octree) m_octree->render(pDevice);
-
-            pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
         }
     }
 

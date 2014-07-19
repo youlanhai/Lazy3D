@@ -49,10 +49,6 @@ namespace Lazy
         if (!Lazy::rcDevice()->create(hWnd, hInstance))
             return false;
 
-        //设置部分环境光
-        Lazy::rcDevice()->setRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(100, 100, 100));
-
-
         return onInit();
     }
 

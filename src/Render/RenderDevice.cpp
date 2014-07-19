@@ -12,10 +12,8 @@
 namespace Lazy
 {
 
-
     DWORD VertexXYZColorUV::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
     int VertexXYZColorUV::SIZE = sizeof(VertexXYZColorUV);
-
 
     DWORD VertexXYZColor::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
     int VertexXYZColor::SIZE = sizeof(VertexXYZColor);
@@ -29,6 +27,26 @@ namespace Lazy
         const uint32 DirtyAll = 0xff;
     }
 
+    RSHolder::RSHolder(dx::Device *pDevice, dx::RSType rsType, DWORD rsValue)
+        : m_pDevice(pDevice)
+        , m_rsType(rsType)
+    {
+        m_pDevice->GetRenderState(m_rsType, &m_rsOriginValue);
+        
+        if (m_rsOriginValue != rsValue)
+            m_pDevice->SetRenderState(m_rsType, rsValue);
+        else
+            m_pDevice = nullptr;
+    }
+
+    RSHolder::~RSHolder()
+    {
+        if (m_pDevice)
+            m_pDevice->SetRenderState(m_rsType, m_rsOriginValue);
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    ///
     ///////////////////////////////////////////////////////////////////
     static RenderDevice * s_oneInstance = NULL;
 
@@ -330,8 +348,34 @@ namespace Lazy
         return value;
     }
 
+    void RenderDevice::pushRS(dx::RSType type, DWORD value)
+    {
+        assert(m_rsStack.size() < 0xffff);
+
+        DWORD oldV;
+        m_device->GetRenderState(type, &oldV);
+        m_device->SetRenderState(type, value);
+
+        m_rsStack.push_back(std::pair<DWORD, DWORD>(type, oldV));
+    }
+
+    void RenderDevice::popRS(dx::RSType type)
+    {
+        for (int i = int(m_rsStack.size()) - 1; i > 0; --i)
+        {
+            if (m_rsStack[i].first == type)
+            {
+                m_device->SetRenderState(type, m_rsStack[i].second);
+                m_rsStack.erase(m_rsStack.begin() + i);
+                break;
+            }
+        }
+    }
+
     void RenderDevice::pushWorld(const Matrix & matrix)
     {
+        assert(m_matWorlds.size() < 0xffff);
+
         m_matWorlds.push_back(matrix);
         m_matDirty |= DirtyWorldViewProj;
     }

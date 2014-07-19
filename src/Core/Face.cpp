@@ -97,7 +97,7 @@ namespace Lazy
     }
     void ProgressBar::render(LPDIRECT3DDEVICE9 pDevice) const
     {
-        pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
+        RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
 
         {
             VertexRHWColorUV vertexB[4] =
@@ -146,8 +146,6 @@ namespace Lazy
             pDevice->SetFVF(VertexRHWColorUV::FVF);
             pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, vertexF, VertexRHWColorUV_SIZE);
         }
-
-        pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
     }
 
     void ProgressBar::setForeImage(const std::wstring & image)

@@ -176,15 +176,13 @@ namespace Lazy
         mat = matScale * mat * matRot * matTrans;
         pDevice->SetTransform(D3DTS_WORLD, &mat);
 
-        pDevice->SetRenderState( D3DRS_LIGHTING, FALSE);
+        RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
 
         updateVertex();
         pDevice->SetTexture(0, m_pTexture);
         pDevice->SetStreamSource(0, m_pVertex, 0, BillboardVertex::SIZE);
         pDevice->SetFVF(BillboardVertex::FVF);
         pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
-
-        pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
     }
 
 } // end namespace Lazy

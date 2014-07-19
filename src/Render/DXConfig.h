@@ -22,7 +22,22 @@ namespace dx
     typedef D3DPRIMITIVETYPE    PTType;
     typedef D3DTRANSFORMSTATETYPE TSType;
 
-}
+}// end namespace dx
 
 #define SAFE_ADDREF_COM(p)  if(p){ p->AddRef(); }
 #define SAFE_DELREF_COM(p) if(p){p->Release(); }
+
+namespace Lazy
+{
+
+    class RSHolder
+    {
+        dx::Device *m_pDevice;
+        dx::RSType  m_rsType;
+        DWORD       m_rsOriginValue;
+    public:
+        RSHolder(dx::Device *pDevice, dx::RSType rsType, DWORD rsValue);
+        ~RSHolder();
+    };
+
+}// end namespace Lazy
