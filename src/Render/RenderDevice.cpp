@@ -20,6 +20,15 @@ namespace Lazy
     DWORD VertexXYZColor::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
     int VertexXYZColor::SIZE = sizeof(VertexXYZColor);
 
+    namespace
+    {
+        const uint32 DirtyWorldViewProj = 1 << 0;
+        const uint32 DirtyInView = 1 << 1;
+        const uint32 DirtyViewProj = 1 << 2;
+
+        const uint32 DirtyAll = 0xff;
+    }
+
     ///////////////////////////////////////////////////////////////////
     static RenderDevice * s_oneInstance = NULL;
 
@@ -38,14 +47,16 @@ namespace Lazy
         , m_windowHeight(480)
         , m_fullScreen(false)
         , m_oldStyle(0)
+        , m_matDirty(0)
     {
         assert(s_oneInstance == NULL && "initialize more tha once!");
 
         s_oneInstance = this;
         ZeroMemory(&m_d3dmm, sizeof(m_d3dmm));
         ZeroMemory(&m_d3dcaps, sizeof(m_d3dcaps));
-    }
 
+        pushWorld(matIdentity);
+    }
 
     RenderDevice::~RenderDevice()
     {
@@ -296,22 +307,84 @@ namespace Lazy
         return value;
     }
 
-    void RenderDevice::getWorldViewProj(Matrix & mat)
+    void RenderDevice::pushWorld(const Matrix & matrix)
     {
-        m_device->GetTransform(D3DTS_WORLD, &mat);
-
-        Matrix temp;
-        m_device->GetTransform(D3DTS_VIEW, &temp);
-        mat *= temp;
-
-        m_device->GetTransform(D3DTS_PROJECTION, &temp);
-        mat *= temp;
+        m_matWorlds.push_back(matrix);
+        m_matDirty |= DirtyWorldViewProj;
     }
 
-
-    void RenderDevice::setTransform(dx::TSType type, Matrix & matrix)
+    void RenderDevice::popWorld()
     {
-        m_device->SetTransform(type, &matrix);
+        assert(!m_matWorlds.empty());
+        m_matWorlds.pop_back();
+        m_matDirty |= DirtyWorldViewProj;
+    }
+
+    void RenderDevice::setView(const Matrix & matrix)
+    {
+        m_matView = matrix;
+        m_matDirty |= (DirtyWorldViewProj | DirtyViewProj | DirtyInView);
+    }
+
+    const Matrix & RenderDevice::getView() const
+    {
+        return m_matView;
+    }
+
+    void RenderDevice::setProj(const Matrix & matrix)
+    {
+        m_matProj = matrix;
+        m_matDirty |= (DirtyWorldViewProj | DirtyViewProj);
+    }
+
+    const Matrix & RenderDevice::getProj() const
+    {
+        return m_matProj;
+    }
+
+    const Matrix & RenderDevice::getInvView() const
+    {
+        if (m_matDirty & DirtyInView)
+        {
+            m_matView.getInvert(m_matInvView);
+            m_matDirty &= ~DirtyInView;
+        }
+        return m_matInvView;
+    }
+
+    const Matrix & RenderDevice::getViewProj() const
+    {
+        if (m_matDirty & DirtyViewProj)
+        {
+            m_matViewProj = m_matView * m_matProj;
+            m_matDirty &= ~DirtyViewProj;
+        }
+        return m_matViewProj;
+    }
+
+    const Matrix & RenderDevice::getWorldViewProj() const
+    {
+        if (m_matDirty & DirtyWorldViewProj)
+        {
+            m_matWorldViewProj = m_matWorlds.back() * m_matView * m_matProj;
+            m_matDirty &= ~DirtyWorldViewProj;
+        }
+        return m_matWorldViewProj;
+    }
+
+    void RenderDevice::applyWorld()
+    {
+        m_device->SetTransform(D3DTS_WORLD, &m_matWorlds.back());
+    }
+    
+    void RenderDevice::applyView()
+    {
+        m_device->SetTransform(D3DTS_VIEW, &m_matView);
+    }
+
+    void RenderDevice::applyProj()
+    {
+        m_device->SetTransform(D3DTS_PROJECTION, &m_matProj);
     }
 
     HRESULT RenderDevice::testCooperativeLevel()

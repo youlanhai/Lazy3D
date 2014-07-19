@@ -30,8 +30,8 @@ namespace Lazy
 
         const int MaxNbChunkMesh = 64;
         
-        const int MaxNbChunkLayer = 4;
-        const int MaxNbChunkTexture = MaxNbChunkLayer + 2;
+        extern int MaxNbChunkLayer;
+        const int MaxNbChunkTexture = 6;
     }
 
     class TerrainChunk;
@@ -224,6 +224,7 @@ namespace Lazy
         ItemPool                m_items;
         ItemCatalogue           m_itemCatalogue;
 
+        float                   m_uvScale;
         TexturePtr              m_textures[MapConfig::MaxNbChunkTexture];
         EffectPtr               m_shader;
 

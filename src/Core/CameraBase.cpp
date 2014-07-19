@@ -40,6 +40,9 @@ namespace Lazy
 
     void CameraBase::render(IDirect3DDevice9 * pDevice)
     {
+        rcDevice()->setView(m_matView);
+        rcDevice()->setProj(m_projection);
+
         pDevice->SetTransform(D3DTS_VIEW, &m_matView);
         pDevice->SetTransform(D3DTS_PROJECTION, &m_projection);
     }

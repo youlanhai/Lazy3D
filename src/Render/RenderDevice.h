@@ -42,8 +42,23 @@ namespace Lazy
         DWORD getRenderState(dx::RSType type);
 
         //设置变换矩阵
-        void setTransform(dx::TSType type, Matrix & matrix);
-        void getWorldViewProj(Matrix & mat);
+        void pushWorld(const Matrix & matrix);
+        void popWorld();
+
+        void setView(const Matrix & matrix);
+        const Matrix & getView() const;
+
+        void setProj(const Matrix & matrix);
+        const Matrix & getProj() const;
+
+        const Matrix & getInvView() const;
+        const Matrix & getViewProj() const;
+        const Matrix & getWorldViewProj() const;
+
+        void applyWorld();
+        void applyView();
+        void applyProj();
+
 
         HRESULT testCooperativeLevel();
         HRESULT setTexture(DWORD stage, dx::BaseTexture *pTexture);
@@ -72,6 +87,14 @@ namespace Lazy
         D3DPRESENT_PARAMETERS m_d3dpp;
         D3DDISPLAYMODE m_d3dmm;
         D3DCAPS9    m_d3dcaps;
+
+        std::vector<Matrix> m_matWorlds;
+        Matrix              m_matView;
+        Matrix              m_matProj;
+        mutable Matrix      m_matInvView;
+        mutable Matrix      m_matViewProj;
+        mutable Matrix      m_matWorldViewProj;
+        mutable uint32      m_matDirty;
     };
 
     ///获取渲染设备

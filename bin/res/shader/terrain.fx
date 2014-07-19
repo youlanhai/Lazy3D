@@ -68,80 +68,91 @@ sampler samplerBlend = sampler_state
     AddressV  = CLAMP;
 };
 
+struct VS_INPUT
+{
+    float4 pos : POSITION;
+    float3 nml : NORMAL;
+    float2 uv1 : TEXCOORD0;
+    float2 uv2 : TEXCOORD1;
+};
 
 struct VS_OUTPUT
 {
-    float4 position : POSITION;
-    float2 uv1    : TEXCOORD0;
-    float2 uv2    : TEXCOORD1;
+    float4 pos : POSITION;
+    float2 uv1 : TEXCOORD0;
+    float2 uv2 : TEXCOORD1;
 };
 
 //////////////////////////////////////////////////
 /// vertex shader
 //////////////////////////////////////////////////
-VS_OUTPUT vsMain(
-    float4 pos : POSITION,
-    float2 uv1 : TEXCOORD0,
-    float2 uv2 : TEXCOORD1)
+VS_OUTPUT vsMain(VS_INPUT input)
 {
     VS_OUTPUT output;
-    output.position = mul(pos, g_worldViewProj);
-    output.uv1 = uv1;
-    output.uv2 = uv2;
-    
+    output.pos = mul(input.pos, g_worldViewProj);
+    output.uv1 = input.uv1;
+    output.uv2 = input.uv2;
     return output;
 }
 
 //////////////////////////////////////////////////
 /// pixel shader
 //////////////////////////////////////////////////
-float4 psMain_0(VS_OUTPUT In) : COLOR0
+float4 psMain_0(VS_OUTPUT input) : COLOR0
 { 
-    float4 cr0 = tex2D(sampler0, In.uv1);
-    float4 crDiffuse = tex2D(samplerDiffuse, In.uv2);
+    float4 cr0 = tex2D(sampler0, input.uv1);
+    float4 crDiffuse = tex2D(samplerDiffuse, input.uv2);
 
-    return cr0 * crDiffuse;
+    float4 color = cr0 * crDiffuse;
+    color.a = cr0.a;
+    return color;
 }
 
-float4 psMain_1(VS_OUTPUT In) : COLOR0
+float4 psMain_1(VS_OUTPUT input) : COLOR0
 { 
-    float4 cr0 = tex2D(sampler0, In.uv1);
-    float4 cr1 = tex2D(sampler1, In.uv1);
+    float4 cr0 = tex2D(sampler0, input.uv1);
+    float4 cr1 = tex2D(sampler1, input.uv1);
 
-    float4 crBlend = tex2D(samplerBlend, In.uv2);
-    float4 crDiffuse = tex2D(samplerDiffuse, In.uv2);
+    float4 crBlend = tex2D(samplerBlend, input.uv2);
+    float4 crDiffuse = tex2D(samplerDiffuse, input.uv2);
 
-    return (cr0 * crBlend.r + cr1 * crBlend.g) * crDiffuse;
+    float4 color = (cr0 * crBlend.r + cr1 * crBlend.g) * crDiffuse;
+    color.a = cr0.a;
+    return color;
 }
 
-float4 psMain_2(VS_OUTPUT In) : COLOR0
+float4 psMain_2(VS_OUTPUT input) : COLOR0
 { 
-    float4 cr0 = tex2D(sampler0, In.uv1);
-    float4 cr1 = tex2D(sampler1, In.uv1);
-    float4 cr2 = tex2D(sampler2, In.uv1);
+    float4 cr0 = tex2D(sampler0, input.uv1);
+    float4 cr1 = tex2D(sampler1, input.uv1);
+    float4 cr2 = tex2D(sampler2, input.uv1);
 
-    float4 crBlend = tex2D(samplerBlend, In.uv2);
-    float4 crDiffuse = tex2D(samplerDiffuse, In.uv2);
+    float4 crBlend = tex2D(samplerBlend, input.uv2);
+    float4 crDiffuse = tex2D(samplerDiffuse, input.uv2);
 
-    return (cr0 * crBlend.r + \
+    float4 color = (cr0 * crBlend.r + \
         cr1 * crBlend.g + \
         cr2 * crBlend.b) * crDiffuse;
+    color.a = cr0.a;
+    return color;
 }
 
-float4 psMain_3(VS_OUTPUT In) : COLOR0
+float4 psMain_3(VS_OUTPUT input) : COLOR0
 { 
-    float4 cr0 = tex2D(sampler0, In.uv1);
-    float4 cr1 = tex2D(sampler1, In.uv1);
-    float4 cr2 = tex2D(sampler2, In.uv1);
-    float4 cr3 = tex2D(sampler3, In.uv1);
+    float4 cr0 = tex2D(sampler0, input.uv1);
+    float4 cr1 = tex2D(sampler1, input.uv1);
+    float4 cr2 = tex2D(sampler2, input.uv1);
+    float4 cr3 = tex2D(sampler3, input.uv1);
 
-    float4 crBlend = tex2D(samplerBlend, In.uv2);
-    float4 crDiffuse = tex2D(samplerDiffuse, In.uv2);
+    float4 crBlend = tex2D(samplerBlend, input.uv2);
+    float4 crDiffuse = tex2D(samplerDiffuse, input.uv2);
 
-    return (cr0 * crBlend.r + \
+    float4 color = (cr0 * crBlend.r + \
         cr1 * crBlend.g + \
         cr2 * crBlend.b + \
         cr3 * crBlend.a) * crDiffuse;
+    color.a = cr0.a;
+    return color;
 }
 
 technique tech_0

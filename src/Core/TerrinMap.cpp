@@ -9,6 +9,7 @@
 #include "TerrinMap.h"
 
 #include "../Render/Texture.h"
+#include "../Render/RenderDevice.h"
 
 namespace Lazy
 {
@@ -434,29 +435,12 @@ namespace Lazy
     {
         if (!m_usefull || !MapConfig::ShowTerrain) return;
 
-        pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-        pDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
+        rcDevice()->pushWorld(matIdentity);
 
-        pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-        pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
-        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-        pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
-
-        //pDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
-
-        dx::Texture *pTex = TextureMgr::instance()->getTexture(m_textureName);
-        pDevice->SetTexture(0, pTex);
         for (size_t i = 0; i < m_renderNodes.size(); ++i)
         {
             m_renderNodes[i]->renderTerrain(pDevice);
         }
-        //pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
-
-        pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-        pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
-        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
-        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
 
         //绘制地图物体
         for (size_t i = 0; i < m_renderNodes.size(); ++i)
@@ -464,6 +448,7 @@ namespace Lazy
             m_renderNodes[i]->renderItems(pDevice);
         }
 
+        rcDevice()->popWorld();
 #if 0
 
         Matrix matWorld;

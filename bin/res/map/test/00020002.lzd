@@ -1,4 +1,28 @@
 #coding = utf-8
 
 savetime = [2014.7.13][20.19.27][316]
-items = ""
+
+uvscale = 0.1
+shader = shader/terrain.fx
+textures
+{
+	layer0 = map/a.bmp
+	layer1 = map/d.bmp
+	layer2 = map/c.bmp
+	#layer3 = map/b.bmp
+	blend = map/blend.png
+	diffuse = map/diffuse.png
+}
+
+items
+{
+	item
+	{
+		id = 1
+		path = model/arena/Arena.x
+		type = 0
+		scale = 0.01 0.01 0.01
+		pos = 100 1 1
+		angle = 0.000000 0.000000 0.000000
+	}
+}

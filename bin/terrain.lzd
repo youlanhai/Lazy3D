@@ -11,5 +11,5 @@ camera
 		y = 0.0f
 		z = 0.0f
 	}
-	speed = 5
+	speed = 10
 }

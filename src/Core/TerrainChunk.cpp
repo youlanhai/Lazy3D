@@ -14,6 +14,8 @@ namespace Lazy
 {
     namespace MapConfig
     {
+        int MaxNbChunkLayer = 4;
+
         const size_t MagicNumber = makeMagic('m', 'd', 'a', 't');
         const size_t Version = 0;
 
@@ -326,6 +328,7 @@ namespace Lazy
         , m_isLoading(false)
         , m_octreeDirty(true)
         , m_rect(rect)
+        , m_uvScale(1.0f)
     {
         m_gridSize = MapConfig::ChunkGridSize;
     }
@@ -357,6 +360,7 @@ namespace Lazy
     {
         if (m_isLoaded) return;
 
+        // load terrain heightmap.
         tstring heightmap;
         formatString(heightmap, _T("%8.8x.raw"), m_id);
         heightmap = m_pMap->getMapName() + heightmap;
@@ -376,7 +380,10 @@ namespace Lazy
         LZDataPtr root = openSection(chunkname);
         if (root)
         {
-            tstring tempName = root->readString(_T("shader"), _T("shader/terrain.fx"));
+            // load terrain basic information.
+            m_uvScale = root->readFloat(_T("uvscale"), 1.0f);
+
+            tstring tempName = root->readString(_T("shader"));
             m_shader = EffectMgr::instance()->get(tempName);
 
             LZDataPtr textureDatas = root->read(_T("textures"));
@@ -399,6 +406,7 @@ namespace Lazy
                 m_textures[i++] = TextureMgr::instance()->get(textureName);
             }
 
+            // load terrain items
             LZDataPtr itemsDatas = root->read(_T("items"));
             if (itemsDatas)
             {
@@ -419,6 +427,8 @@ namespace Lazy
             LOG_ERROR(L"Load failed! node(%d %d) path='%s'",
                 getRowID(), getColID(), chunkname.c_str());
         }
+
+        updateVertices();
 
         LOG_DEBUG(_T("Finish load node(%d %d) path='%s'"),
             getRowID(), getColID(), chunkname.c_str());
@@ -484,7 +494,6 @@ namespace Lazy
             fclose(pFile);
         }
 
-        updateVertices();
         return true;
     }
 
@@ -517,8 +526,6 @@ namespace Lazy
             return;
         }
 
-        float uvScale = m_pMap->getUVScale();
-
         //以下是创建网格数据
         const int nVertices = MapConfig::NbChunkVertex;
         TerrinVertex *p;
@@ -537,8 +544,8 @@ namespace Lazy
                 p->nml.y = 1.0f;
                 p->nml.z = 0.0f;
 
-                p->uv1.x = pVertex[i].pos.z * uvScale;
-                p->uv1.y = pVertex[i].pos.x * uvScale;
+                p->uv1.x = p->pos.x * m_uvScale;
+                p->uv1.y = p->pos.z * m_uvScale;
 
                 p->uv2.x = float(c) / nVertices;
                 p->uv2.y = float(r) / nVertices;
@@ -680,9 +687,7 @@ namespace Lazy
         else
             m_shader->setTexture("g_textureDiffuse", NULL);
 
-        Matrix matrix;
-        rcDevice()->getWorldViewProj(matrix);
-        m_shader->setMatrix("g_worldViewProj", matrix);
+        m_shader->setMatrix("g_worldViewProj", rcDevice()->getWorldViewProj());
 
         sprintf(buffer, "tech_%d", maxTexIndex);
         if (!m_shader->setTechnique(buffer))
