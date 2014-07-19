@@ -434,9 +434,7 @@ namespace Lazy
     {
         if (!m_usefull || !MapConfig::ShowTerrain) return;
 
-        pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
         pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         pDevice->SetRenderState(D3DRS_SHADEMODE, D3DSHADE_GOURAUD);
 
         pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
@@ -445,18 +443,7 @@ namespace Lazy
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
         pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
 
-        pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_SELECTARG1);
-        pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-        //pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
-
-        CMaterial::setMaterial(pDevice,
-            D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f),
-            D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
-            D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f),
-            D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f),
-            1.0f);
-
-        pDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
+        //pDevice->SetRenderState(D3DRS_SPECULARENABLE, TRUE);
 
         dx::Texture *pTex = TextureMgr::instance()->getTexture(m_textureName);
         pDevice->SetTexture(0, pTex);
@@ -464,10 +451,9 @@ namespace Lazy
         {
             m_renderNodes[i]->renderTerrain(pDevice);
         }
-        pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
+        //pDevice->SetRenderState(D3DRS_SPECULARENABLE, FALSE);
 
         pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-        //pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
         pDevice->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_NONE);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);

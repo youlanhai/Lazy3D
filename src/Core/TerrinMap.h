@@ -74,9 +74,6 @@ namespace Lazy
 
         const FRect getRect() const { return m_rect; }
 
-        ///求鼠标射线与地表交点
-        bool intersect(Vector3 & position);
-
         ChunkPtr currentNode();
 
         void setLoadingProgress(float p) {m_loadingProgress = p; }
@@ -115,6 +112,9 @@ namespace Lazy
     public://拾取相关
 
         bool handeEvent(const SEvent & event);
+
+        ///求鼠标射线与地表交点
+        bool intersect(Vector3 & position);
 
         bool intersectWithCursor();
 

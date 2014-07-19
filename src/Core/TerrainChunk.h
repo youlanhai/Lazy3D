@@ -9,6 +9,9 @@
 #include "TerrainItem.h"
 #include "../Physics/Octree.h"
 
+#include "../Render/Effect.h"
+#include "../Render/Texture.h"
+
 #include <hash_map>
 
 #define USE_MESH 1
@@ -26,6 +29,9 @@ namespace Lazy
         const int NbChunkIndices = NbChunkGridFace * 3;
 
         const int MaxNbChunkMesh = 64;
+        
+        const int MaxNbChunkLayer = 4;
+        const int MaxNbChunkTexture = MaxNbChunkLayer + 2;
     }
 
     class TerrainChunk;
@@ -217,6 +223,9 @@ namespace Lazy
         ZCritical               m_itemLocker;
         ItemPool                m_items;
         ItemCatalogue           m_itemCatalogue;
+
+        TexturePtr              m_textures[MapConfig::MaxNbChunkTexture];
+        EffectPtr               m_shader;
 
         friend class ChunkLoader;
     };

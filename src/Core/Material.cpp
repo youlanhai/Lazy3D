@@ -45,7 +45,7 @@ namespace Lazy
         D3DCOLORVALUE d    //Diffuse，漫反射颜色
     )
     {
-        setMaterial(device, d, D3DXCOLOR(d) * 0.2f);
+        setMaterial(device, d, D3DXCOLOR(d) * 0.8f);
     }
 
     /*设置白色材质，s为衰减系数*/

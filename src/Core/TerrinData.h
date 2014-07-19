@@ -45,13 +45,15 @@ namespace Lazy
 
     }
 
-    ///自定义顶点格式
+    ///地形顶点格式
     struct TerrinVertex
     {
-        D3DXVECTOR3 pos;	//< 未经过坐标变换后的点
-        D3DXVECTOR3 nml;	//< 顶点法向量
-        float u, v;		//< 纹理坐标
-        static DWORD FVF;//<灵活顶点格式
+        Vector3 pos;
+        Vector3 nml;
+        Vector2 uv1;
+        Vector2 uv2;
+
+        static DWORD FVF;
         static int SIZE;
     };
 

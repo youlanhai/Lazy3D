@@ -7,6 +7,7 @@
 #include "TerrinMap.h"
 
 #include "../Physics/Physics.h"
+
 #include <sstream>
 
 namespace Lazy
@@ -192,7 +193,7 @@ namespace Lazy
     {
         if(!m_pMesh) return;
 
-        D3DXComputeNormals(m_pMesh, NULL);
+       // D3DXComputeNormals(m_pMesh, NULL);
     }
 
 
@@ -375,6 +376,29 @@ namespace Lazy
         LZDataPtr root = openSection(chunkname);
         if (root)
         {
+            tstring tempName = root->readString(_T("shader"));
+            m_shader = EffectMgr::instance()->get(tempName);
+
+            LZDataPtr textureDatas = root->read(_T("textures"));
+            if (textureDatas)
+            {
+                tstring tagName;
+                tstring textureName;
+                int i = 0;
+                for (; i < MapConfig::MaxNbChunkLayer; ++i)
+                {
+                    formatString(tagName, _T("layer%d"), i);
+                    textureName = textureDatas->readString(tagName);
+                    m_textures[i] = TextureMgr::instance()->get(textureName);
+                }
+
+                textureName = textureDatas->readString(_T("blend"));
+                m_textures[i++] = TextureMgr::instance()->get(textureName);
+
+                textureName = textureDatas->readString(_T("diffuse"));
+                m_textures[i++] = TextureMgr::instance()->get(textureName);
+            }
+
             LZDataPtr itemsDatas = root->read(_T("items"));
             if (itemsDatas)
             {
@@ -496,19 +520,28 @@ namespace Lazy
         float uvScale = m_pMap->getUVScale();
 
         //以下是创建网格数据
-        const int vertices = MapConfig::NbChunkVertex;
-        for (int r = 0; r < vertices; ++r)
+        const int nVertices = MapConfig::NbChunkVertex;
+        TerrinVertex *p;
+        for (int r = 0; r < nVertices; ++r)
         {
-            for (int c = 0; c < vertices; ++c)
+            for (int c = 0; c < nVertices; ++c)
             {
-                int i = r * vertices + c;//顶点索引
+                int i = r * nVertices + c;//顶点索引
 
-                pVertex[i].pos.x = m_rect.left + c * m_gridSize;
-                pVertex[i].pos.z = m_rect.top + r * m_gridSize;
-                pVertex[i].pos.y = getHeight(r, c);
+                p = pVertex + i;
+                p->pos.x = m_rect.left + c * m_gridSize;
+                p->pos.z = m_rect.top + r * m_gridSize;
+                p->pos.y = getHeight(r, c);
 
-                pVertex[i].u = pVertex[i].pos.z * uvScale;
-                pVertex[i].v = pVertex[i].pos.x * uvScale;
+                p->nml.x = 0.0f;
+                p->nml.y = 1.0f;
+                p->nml.z = 0.0f;
+
+                p->uv1.x = pVertex[i].pos.z * uvScale;
+                p->uv1.y = pVertex[i].pos.x * uvScale;
+
+                p->uv2.x = float(c) / nVertices;
+                p->uv2.y = float(r) / nVertices;
             }
         }
 
@@ -518,7 +551,7 @@ namespace Lazy
 
     bool TerrainChunk::save()
     {
-        if(!m_isLoaded)
+        if (!m_isLoaded)
         {
             LOG_ERROR(L"The chunk(%d, %d) does't loaded.", getRowID(), getColID());
             return false;
@@ -551,28 +584,53 @@ namespace Lazy
         root->clearChildren();
 
 #if 1
-        {
-            //save time.juse for test
+        {//save time.juse for test
             tstring strTime;
             SYSTEMTIME sysTime;
             GetLocalTime(&sysTime);
 
             formatString(strTime, _T("[%d.%d.%d][%d.%d.%d][%d]"),
-                         sysTime.wYear, sysTime.wMonth, sysTime.wDay,
-                         sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds);
+                sysTime.wYear, sysTime.wMonth, sysTime.wDay,
+                sysTime.wHour, sysTime.wMinute, sysTime.wSecond, sysTime.wMilliseconds);
             root->writeString(_T("savetime"), strTime);
         }
 #endif
 
-        LZDataPtr items = root->write(_T("items"));
-        items->clearChildren();
+        if (m_shader)
+            root->writeString(_T("shader"), m_shader->source());
 
-        for(TerrainItemPtr item : m_items)
-        {
-            LZDataPtr itemData = items->newOne(L"item", L"");
-            if (item->save(itemData))
+        {// save textures
+            LZDataPtr textures = root->write(_T("textures"));
+            int i = 0;
+            tstring tagName;
+            for (; i < MapConfig::MaxNbChunkLayer; ++i)
             {
-                items->addChild(itemData);
+                if (m_textures[i])
+                {
+                    formatString(tagName, _T("layer%d"), i);
+                    textures->writeString(tagName, m_textures[i]->source());
+                }
+            }
+
+            if (m_textures[i])
+                textures->writeString(_T("blend"), m_textures[i]->source());
+
+            ++i;
+            if (m_textures[i])
+                textures->writeString(_T("diffuse"), m_textures[i]->source());
+        }
+
+        {// save items
+            LZDataPtr items = root->write(_T("items"));
+            items->clearChildren();
+
+            for (TerrainItemPtr item : m_items)
+            {
+                LZDataPtr itemData = items->newOne(L"item", L"");
+                if (item->save(itemData))
+                {
+                    items->addChild(itemData);
+                }
             }
         }
 
@@ -593,10 +651,54 @@ namespace Lazy
             return;
         }
 
-        if (!m_mesh.valid()) return ;
+        if (!m_mesh.valid() || !m_shader) return;
 
-        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
-        m_mesh.render(pDevice);
+        int maxNbTextures = 0;
+        int i = 0;
+        char buffer[64];
+        for (; i < MapConfig::MaxNbChunkLayer; ++i)
+        {
+            sprintf(buffer, "g_texture%d", i);
+            if (m_textures[i])
+            {
+                m_shader->setTexture(buffer, m_textures[i]->getTexture());
+                maxNbTextures = i;
+            }
+            else m_shader->setTexture(buffer, NULL);
+        }
+
+        if (maxNbTextures == 0) return;
+
+        if (m_textures[i])
+            m_shader->setTexture("g_textureBlend", m_textures[i]->getTexture());
+        else
+            m_shader->setTexture("g_textureBlend", NULL);
+
+        ++i;
+        if (m_textures[i])
+            m_shader->setTexture("g_textureDiffuse", m_textures[i]->getTexture());
+        else
+            m_shader->setTexture("g_textureDiffuse", NULL);
+
+        sprintf(buffer, "tech_%d", maxNbTextures);
+        if (!m_shader->setTechnique(buffer))
+            return;
+
+        Matrix matrix;
+        rcDevice()->getWorldViewProj(matrix);
+        m_shader->setMatrix("g_worldViewProj", matrix);
+
+        uint32 nPass;
+        if (m_shader->begin(nPass))
+        {
+            for (uint32 i = 0; i < nPass; ++i)
+            {
+                m_shader->beginPass(i);
+                m_mesh.render(pDevice);
+                m_shader->endPass();
+            }
+            m_shader->end();
+        }
     }
 
     void TerrainChunk::update(float elapse)
