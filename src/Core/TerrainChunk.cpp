@@ -376,7 +376,7 @@ namespace Lazy
         LZDataPtr root = openSection(chunkname);
         if (root)
         {
-            tstring tempName = root->readString(_T("shader"));
+            tstring tempName = root->readString(_T("shader"), _T("shader/terrain.fx"));
             m_shader = EffectMgr::instance()->get(tempName);
 
             LZDataPtr textureDatas = root->read(_T("textures"));
@@ -653,7 +653,7 @@ namespace Lazy
 
         if (!m_mesh.valid() || !m_shader) return;
 
-        int maxNbTextures = 0;
+        int maxTexIndex = -1;
         int i = 0;
         char buffer[64];
         for (; i < MapConfig::MaxNbChunkLayer; ++i)
@@ -662,12 +662,12 @@ namespace Lazy
             if (m_textures[i])
             {
                 m_shader->setTexture(buffer, m_textures[i]->getTexture());
-                maxNbTextures = i;
+                maxTexIndex = i;
             }
             else m_shader->setTexture(buffer, NULL);
         }
 
-        if (maxNbTextures == 0) return;
+        if (maxTexIndex < 0) return;
 
         if (m_textures[i])
             m_shader->setTexture("g_textureBlend", m_textures[i]->getTexture());
@@ -680,13 +680,13 @@ namespace Lazy
         else
             m_shader->setTexture("g_textureDiffuse", NULL);
 
-        sprintf(buffer, "tech_%d", maxNbTextures);
-        if (!m_shader->setTechnique(buffer))
-            return;
-
         Matrix matrix;
         rcDevice()->getWorldViewProj(matrix);
         m_shader->setMatrix("g_worldViewProj", matrix);
+
+        sprintf(buffer, "tech_%d", maxTexIndex);
+        if (!m_shader->setTechnique(buffer))
+            return;
 
         uint32 nPass;
         if (m_shader->begin(nPass))
