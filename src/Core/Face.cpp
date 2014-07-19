@@ -98,9 +98,6 @@ namespace Lazy
     void ProgressBar::render(LPDIRECT3DDEVICE9 pDevice) const
     {
         pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-        pDevice->SetRenderState( D3DRS_SRCBLEND , D3DBLEND_SRCALPHA );
-        pDevice->SetRenderState( D3DRS_DESTBLEND , D3DBLEND_INVSRCALPHA);
 
         {
             VertexRHWColorUV vertexB[4] =
@@ -150,7 +147,6 @@ namespace Lazy
             pDevice->DrawPrimitiveUP(D3DPT_TRIANGLEFAN, 2, vertexF, VertexRHWColorUV_SIZE);
         }
 
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
         pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
     }
 

@@ -120,27 +120,8 @@ namespace Lazy
 
         dx::Device * pDevice = rcDevice()->getDevice();
 
-        pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_MIRROR);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_MIRROR);
-        pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
-        pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
-
-        pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-        pDevice->SetRenderState(D3DRS_ALPHAREF, 10);
-        pDevice->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
-
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-        pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-        pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
-        pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
-        pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
-        pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
-
-        pDevice->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
-        pDevice->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
-        pDevice->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
         for (DWORD i = 0; i < m_vecMaterials.size(); ++i)
         {
@@ -149,8 +130,8 @@ namespace Lazy
             m_pMesh->DrawSubset(i);//绘制
         }
 
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
-        pDevice->SetRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
     }
 
 }

@@ -39,7 +39,7 @@ namespace Lazy
         DWORD flag = (DWORD)m_ftType;
         bool bPixel = ((flag & (DWORD)FT_PIXEL) != 0);
 
-        m_pDevice->SetRenderState(D3DRS_FOGENABLE, true);
+        m_pDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
         m_pDevice->SetRenderState(D3DRS_FOGCOLOR, m_crColor);
 
         if (bPixel)//像素雾化
@@ -81,7 +81,7 @@ namespace Lazy
 
     void CSceneFog::closeFog(void)
     {
-        m_pDevice->SetRenderState(D3DRS_FOGENABLE, false);
+        m_pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);
     }
 
     void CSceneFog::setFogType(DWORD ft)

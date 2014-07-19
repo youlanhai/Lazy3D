@@ -140,9 +140,6 @@ namespace Lazy
         pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
         pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-        pDevice->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-        pDevice->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
-
         pDevice->SetTransform(D3DTS_WORLD, &world);
         pDevice->SetStreamSource(0, m_pVertexBuffer, 0, SkyVertex::SIZE);
         pDevice->SetFVF(SkyVertex::FVF);
@@ -162,6 +159,7 @@ namespace Lazy
         }
 
         pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
+        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
     }
 
 } // end namespace Lazy

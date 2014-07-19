@@ -379,16 +379,7 @@ namespace Lazy
 
     void OCTree::render(LPDIRECT3DDEVICE9 pDevice) const
     {
-        pDevice->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-        pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-
-        pDevice->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
-        pDevice->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
-
         m_root->render(pDevice);
-
-        pDevice->SetRenderState(D3DRS_ZENABLE, TRUE);
-
     }
 
     size_t OCTree::getBytes() const

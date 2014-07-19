@@ -151,6 +151,29 @@ namespace Lazy
         m_device->SetRenderState(D3DRS_ZENABLE, TRUE);
         m_device->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(100, 100, 100));
 
+        m_device->SetRenderState(D3DRS_LIGHTING, TRUE);
+        m_device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        m_device->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
+        m_device->SetSamplerState(0, D3DSAMP_MIPFILTER, D3DTEXF_LINEAR);
+        m_device->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_LINEAR);
+        m_device->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_LINEAR);
+
+        m_device->SetRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+        m_device->SetRenderState(D3DRS_ALPHAREF, 10);
+        m_device->SetRenderState(D3DRS_ALPHAFUNC, D3DCMP_GREATEREQUAL);
+
+        m_device->SetRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+        m_device->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_SRCALPHA);
+        m_device->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_INVSRCALPHA);
+
+        m_device->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
+        m_device->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
+        m_device->SetTextureStageState(0, D3DTSS_ALPHAARG2, D3DTA_DIFFUSE);
+
+        m_device->SetTextureStageState(0, D3DTSS_COLOROP, D3DTOP_MODULATE);
+        m_device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
+        m_device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
+
         ResourceFactoryPtr factory = new ResFactory();
         TextureMgr::instance()->setResFacotry(factory);
         StaticMeshMgr::instance()->setResFacotry(factory);

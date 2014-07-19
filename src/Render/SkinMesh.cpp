@@ -435,6 +435,9 @@ namespace Lazy
 
         m_bone->updateMatrix(m_worldMatrix);
         drawFrame(m_bone);
+
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
+        pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
     }
 
     /** 克隆动画控制器。*/

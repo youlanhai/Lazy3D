@@ -49,19 +49,6 @@ namespace Lazy
         if (!Lazy::rcDevice()->create(hWnd, hInstance))
             return false;
 
-        //启用深度测试
-        //     g_pd3dDevice->SetRenderState( D3DRS_ZENABLE, true );
-        //     g_pd3dDevice->SetRenderState( D3DRS_ZFUNC, D3DCMP_LESS );
-        //     g_pd3dDevice->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
-
-        //设置Alpha测试
-        //     g_pd3dDevice->SetRenderState(D3DRS_ALPHATESTENABLE,true);
-        //     g_pd3dDevice->SetRenderState(D3DRS_ALPHAREF,0x00000081);
-        //     g_pd3dDevice->SetRenderState(D3DRS_ALPHAFUNC,D3DCMP_GREATER);
-
-        Lazy::rcDevice()->setRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-        Lazy::rcDevice()->setRenderState(D3DRS_ZENABLE, TRUE);
-
         //设置部分环境光
         Lazy::rcDevice()->setRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(100, 100, 100));
 
