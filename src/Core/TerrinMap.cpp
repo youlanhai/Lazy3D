@@ -150,9 +150,9 @@ namespace Lazy
 
     TerrainMap::TerrainMap()
     {
-        m_nodeSize = 0;         //< 每个格子的尺寸。
-        m_nodeR = 0;        //< 结点行数
-        m_nodeC = 0;        //< 结点列数
+        m_chunkSize = 0;         //< 每个格子的尺寸。
+        m_chunkRows = 0;        //< 结点行数
+        m_chunkCols = 0;        //< 结点列数
 
         m_showLevel = 1;
         m_usefull = false;
@@ -166,7 +166,6 @@ namespace Lazy
         m_rect.zero();
 
         m_itemIDAllocator = 0;
-        m_uvScale = 1.0f;
     }
 
     TerrainMap::~TerrainMap(void)
@@ -180,8 +179,8 @@ namespace Lazy
         m_usefull = false;
         m_loadingProgress = 0.0f;
 
-        m_mapNodes.clear();
-        m_renderNodes.clear();
+        m_chunks.clear();
+        m_visibleChunks.clear();
 
         m_mapName.clear();
 
@@ -236,23 +235,21 @@ namespace Lazy
             return false;
         }
 
-        m_nodeR = ptr->readInt(L"rows");
-        m_nodeC = ptr->readInt(L"cols");
-        if (m_nodeR < 0 || m_nodeC < 0)
+        m_chunkRows = ptr->readInt(L"rows");
+        m_chunkCols = ptr->readInt(L"cols");
+        if (m_chunkRows < 0 || m_chunkCols < 0)
         {
             LOG_ERROR(L"Load map, Invalid size.");
             return false;
         }
 
-        m_nodeSize = MapConfig::ChunkSize;
-        float w = m_nodeC * m_nodeSize;
-        float h = m_nodeR * m_nodeSize;
+        m_chunkSize = MapConfig::ChunkSize;
+        float w = m_chunkCols * m_chunkSize;
+        float h = m_chunkRows * m_chunkSize;
         m_rect.set(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
 
         m_objOnGround = ptr->readBool(L"onGround", true);
-        m_textureName = ptr->readString(L"texture", L"map/f.jpg");
         m_itemIDAllocator = ptr->readInt(L"idAllocator", 0);
-        m_uvScale = ptr->readFloat(L"uvScale", 0.05f);
 
         initChunks();
 
@@ -298,10 +295,9 @@ namespace Lazy
             return false;
         }
 
-        root->writeInt(L"rows", m_nodeR);
-        root->writeInt(L"cols", m_nodeC);
+        root->writeInt(L"rows", m_chunkRows);
+        root->writeInt(L"cols", m_chunkCols);
         root->writeUint(L"idAllocator", m_itemIDAllocator);
-        root->writeString(L"texture", m_textureName);
         root->writeBool(L"onGround", m_objOnGround);
 
         if (!saveSection(root, filename))
@@ -310,7 +306,7 @@ namespace Lazy
             return false;
         }
 
-        for (ChunkPtr chunk : m_mapNodes)
+        for (ChunkPtr chunk : m_chunks)
         {
             chunk->load();
             chunk->save();
@@ -341,7 +337,7 @@ namespace Lazy
 
         for (size_t i : collider.m_chunkIds)
         {
-            m_mapNodes[i]->addItem(item);
+            m_chunks[i]->addItem(item);
         }
     }
 
@@ -354,20 +350,20 @@ namespace Lazy
     {
         int row = int((z - m_rect.top) / MapConfig::ChunkSize);
         int col = int((x - m_rect.left) / MapConfig::ChunkSize);
-        return row * m_nodeC + col;
+        return row * m_chunkCols + col;
     }
 
     float TerrainMap::getHeight(float x, float z) const
     {
         size_t index = position2chunk(x, z);
-        if (index >= m_mapNodes.size()) return 0.0f;
+        if (index >= m_chunks.size()) return 0.0f;
 
-        return m_mapNodes[index]->getPhysicalHeight(x, z);
+        return m_chunks[index]->getPhysicalHeight(x, z);
     }
 
     void TerrainMap::loadAllChunks()
     {
-        for (ChunkPtr chunk : m_mapNodes)
+        for (ChunkPtr chunk : m_chunks)
         {
             chunk->load();
         }
@@ -375,7 +371,7 @@ namespace Lazy
 
     bool TerrainMap::isAllChunkLoaded()
     {
-        for (ChunkPtr chunk : m_mapNodes)
+        for (ChunkPtr chunk : m_chunks)
         {
             if (!chunk->ifLoaded()) return false;
         }
@@ -394,21 +390,21 @@ namespace Lazy
             VIBCache::instance()->preLoadOne();
         }
 
-        float totalNode = float(m_nodeR * m_nodeC);
+        float totalNode = float(m_chunkRows * m_chunkCols);
 
-        //将地图分成m_nodeR*m_nodeC块
-        for (int r = 0; r < m_nodeR; ++r)
+        //将地图分成m_chunkRows*m_chunkCols块
+        for (int r = 0; r < m_chunkRows; ++r)
         {
-            for (int c = 0; c < m_nodeC; ++c)
+            for (int c = 0; c < m_chunkCols; ++c)
             {
-                m_loadingProgress = (r * m_nodeC + c) / totalNode * 0.5f;
+                m_loadingProgress = (r * m_chunkCols + c) / totalNode * 0.5f;
 
                 FRect rc;
-                rc.left = c * m_nodeSize + m_rect.left;
-                rc.top = r * m_nodeSize + m_rect.top;
-                rc.right = rc.left + m_nodeSize;
-                rc.bottom = rc.top + m_nodeSize;
-                m_mapNodes.push_back(new TerrainChunk(this, r << 16 | c, rc));
+                rc.left = c * m_chunkSize + m_rect.left;
+                rc.top = r * m_chunkSize + m_rect.top;
+                rc.right = rc.left + m_chunkSize;
+                rc.bottom = rc.top + m_chunkSize;
+                m_chunks.push_back(new TerrainChunk(this, r << 16 | c, rc));
             }
         }
 
@@ -417,7 +413,7 @@ namespace Lazy
 
         qtree::Config = { 14, 1, 1000.0f, true };
         RectArray rects;
-        for (auto it = m_mapNodes.begin(); it != m_mapNodes.end(); ++it)
+        for (auto it = m_chunks.begin(); it != m_chunks.end(); ++it)
         {
             rects.push_back((*it)->getRect());
         }
@@ -437,15 +433,15 @@ namespace Lazy
 
         rcDevice()->pushWorld(matIdentity);
 
-        for (size_t i = 0; i < m_renderNodes.size(); ++i)
+        for (size_t i = 0; i < m_visibleChunks.size(); ++i)
         {
-            m_renderNodes[i]->renderTerrain(pDevice);
+            m_visibleChunks[i]->renderTerrain(pDevice);
         }
 
         //绘制地图物体
-        for (size_t i = 0; i < m_renderNodes.size(); ++i)
+        for (size_t i = 0; i < m_visibleChunks.size(); ++i)
         {
-            m_renderNodes[i]->renderItems(pDevice);
+            m_visibleChunks[i]->renderItems(pDevice);
         }
 
         rcDevice()->popWorld();
@@ -465,13 +461,13 @@ namespace Lazy
 
         genVisibleChunks();
 
-        for (ChunkPtr chunk : m_renderNodes)
+        for (ChunkPtr chunk : m_visibleChunks)
         {
             chunk->update(elapse);
         }
     }
 
-    ChunkPtr TerrainMap::currentNode()
+    ChunkPtr TerrainMap::getFocusChunk()
     {
         if (m_pSource)
         {
@@ -489,21 +485,21 @@ namespace Lazy
     {
         uint32 r = (id >> 16) & 0xffff;
         uint32 c = id & 0xffff;
-        return m_mapNodes[r * m_nodeC + c];
+        return m_chunks[r * m_chunkCols + c];
     }
 
     ChunkPtr TerrainMap::getChunkByIndex(size_t index) const
     {
-        return m_mapNodes[index]; 
+        return m_chunks[index]; 
     }
 
     /** 根据坐标取得地图结点。*/
     ChunkPtr TerrainMap::getChunkByPos(float x, float z) const
     {
         size_t index = position2chunk(x, z);
-        assert(index < m_mapNodes.size() && "TerrainMap::getNode");
+        assert(index < m_chunks.size() && "TerrainMap::getNode");
 
-        return m_mapNodes[index];
+        return m_chunks[index];
     }
 
     /** 生成邻接的8个结点。*/
@@ -518,7 +514,7 @@ namespace Lazy
                 return;
             }
         }
-        m_renderNodes.clear();
+        m_visibleChunks.clear();
 
         if (m_showRadius < 0) m_showRadius = 10.0f;
 
@@ -532,7 +528,7 @@ namespace Lazy
         if (collider.empty()) return;
         for (size_t i : collider.m_chunkIds)
         {
-            m_renderNodes.push_back(m_mapNodes[i]);
+            m_visibleChunks.push_back(m_chunks[i]);
         }
     }
 

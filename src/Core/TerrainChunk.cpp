@@ -732,7 +732,7 @@ namespace Lazy
         }
 
         //调试渲染当前场景的八叉树
-        if (MapConfig::ShowChunkOctree && TerrainMap::instance()->currentNode() == this)
+        if (MapConfig::ShowChunkOctree && TerrainMap::instance()->getFocusChunk() == this)
         {
             RSHolder rsHolder1(pDevice, D3DRS_LIGHTING, FALSE);
 

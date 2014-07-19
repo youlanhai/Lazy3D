@@ -50,7 +50,7 @@ namespace Lazy
 
     void collisionInSpace(CollisionPrevent & ci)
     {
-        ChunkPtr node = TerrainMap::instance()->currentNode();
+        ChunkPtr node = TerrainMap::instance()->getFocusChunk();
         if(!node) return;
 
         TerrainChunk::ItemConstIter it;
@@ -88,7 +88,7 @@ namespace Lazy
 
     bool pickRay(RayCollision & rc)
     {
-        ChunkPtr node = TerrainMap::instance()->currentNode();
+        ChunkPtr node = TerrainMap::instance()->getFocusChunk();
         if (!node) return false;
 
 #if 0
