@@ -6,10 +6,10 @@ namespace Lazy
     class CEdit;
 
     /** UI管理器基类。*/
-    class LZUI_API CGUIManager : public IControl
+    class LZUI_API CGUIManager : public Widget
     {
     public:
-        MAKE_UI_HEADER(CGUIManager, uitype::GuiMgr)
+        MAKE_UI_HEADER(CGUIManager)
 
 
         CGUIManager();
@@ -27,10 +27,10 @@ namespace Lazy
         bool isEditActive(const CEdit *pEdit) const { return pEdit == s_pActiveEdit; }
 
         ///添加一个托管的child，child将以guimgr为父。
-        void addChildManage(ControlPtr child);
+        void addChildManage(WidgetPtr child);
 
         ///将ui添加到托管，其父由外部指定。
-        void addToManagePool(ControlPtr ui);
+        void addToManagePool(WidgetPtr ui);
 
         ///处理事件。由操作系统调用。
         bool processEvent(const SEvent & event);
@@ -50,7 +50,7 @@ namespace Lazy
         HINSTANCE       m_hInstance;
         CPoint          m_cursorPos;    //< 当前鼠标位置
         CPoint          m_lastCursorPos;    //< 上一次鼠标位置
-        std::list<ControlPtr> m_managePool;
+        std::list<WidgetPtr> m_managePool;
 
         static CEdit*   s_pActiveEdit;
     };

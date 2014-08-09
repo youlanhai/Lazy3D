@@ -15,7 +15,7 @@ namespace Lazy
 
     void UIProxy::loadFromStream(LZDataPtr config)
     {
-        IControl::loadFromStream(config);
+        Widget::loadFromStream(config);
 
         loadHost(config->readString(L"hostFile"));
     }

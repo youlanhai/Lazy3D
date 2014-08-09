@@ -13,7 +13,7 @@ namespace Lazy
     struct PredIfIDEqual
     {
         PredIfIDEqual(int id) : m_id(id) { }
-        bool operator()(PControl pc)
+        bool operator()(Widget* pc)
         {
             return pc->getID() == m_id;
         }
@@ -24,7 +24,7 @@ namespace Lazy
     struct PredIfID2Equal
     {
         PredIfID2Equal(int id) : m_id(id) { }
-        bool operator()(RefPtr<IControl> pc)
+        bool operator()(RefPtr<Widget> pc)
         {
             return pc->getID() == m_id;
         }
@@ -32,7 +32,7 @@ namespace Lazy
         int m_id;
     };
 
-    bool sortCompare(IControl * x, IControl * y)
+    bool sortCompare(Widget * x, Widget * y)
     {
         return x->getPositionZ() < y->getPositionZ();
     }
@@ -124,16 +124,16 @@ namespace Lazy
     //
     //////////////////////////////////////////////////////////////////////////
 
-    /*static*/ PControl IControl::m_pFocus = nullptr;
-    /*static*/ PControl IControl::m_pSelected = nullptr;
-    /*static*/ PControl IControl::m_pActived = nullptr;
+    /*static*/ Widget* Widget::m_pFocus = nullptr;
+    /*static*/ Widget* Widget::m_pSelected = nullptr;
+    /*static*/ Widget* Widget::m_pActived = nullptr;
 
-    /*static*/ bool IControl::isVKDown(DWORD vk)
+    /*static*/ bool Widget::isVKDown(DWORD vk)
     {
         return (::GetAsyncKeyState(vk) & 0x8000) != 0;
     }
 
-    /*static*/ void IControl::setFocus(PControl pFocus)
+    /*static*/ void Widget::setFocus(Widget* pFocus)
     {
         if (m_pFocus == pFocus)  return;
 
@@ -142,7 +142,7 @@ namespace Lazy
         if (m_pFocus) m_pFocus->sendUIEvent(GuiMsg::mouseEnter, 0, 0);
     }
 
-    /*static*/ void IControl::setSeleced(PControl pSelected)
+    /*static*/ void Widget::setSeleced(Widget* pSelected)
     {
         if (m_pSelected == pSelected) return;
 
@@ -152,7 +152,7 @@ namespace Lazy
 
     }
 
-    /*static*/ void IControl::setActived(PControl pActived)
+    /*static*/ void Widget::setActived(Widget* pActived)
     {
         if (m_pActived == pActived) return;
 
@@ -162,7 +162,7 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////////
-    IControl::IControl(void)
+    Widget::Widget(void)
         : m_id(0)
         , m_color(0xffffffff)
         , m_bgColor(0x7fffffff)
@@ -187,7 +187,7 @@ namespace Lazy
     {
     }
 
-    IControl::~IControl(void)
+    Widget::~Widget(void)
     {
         removeFromParent();
 
@@ -199,13 +199,13 @@ namespace Lazy
 
     }
 
-    bool IControl::checkCanHandelMsg()
+    bool Widget::checkCanHandelMsg()
     {
         return m_bVisible && m_bEnable;
     }
 
     ///向控件发送消息。发送成功，返回true，否则false。
-    bool IControl::sendEvent(const SEvent & event)
+    bool Widget::sendEvent(const SEvent & event)
     {
         if (!checkCanHandelMsg()) return false;
 
@@ -221,14 +221,14 @@ namespace Lazy
         return onEvent(event);
     }
 
-    bool IControl::sendUIEvent(uint32 msg, uint32 wparam, uint32 lparam)
+    bool Widget::sendUIEvent(uint32 msg, uint32 wparam, uint32 lparam)
     {
         SEvent event;
         fillGuiEvent(event, msg, wparam, lparam);
         return sendEvent(event);
     }
 
-    bool IControl::sendEventToChildren(const SEvent & event)
+    bool Widget::sendEventToChildren(const SEvent & event)
     {
         if (event.eventType == EET_GUI_EVENT)
         {
@@ -246,7 +246,7 @@ namespace Lazy
         for (VisitControl::iterator it = m_children.begin();
                 it != m_children.end(); ++it)
         {
-            IControl *pChild = *it;
+            Widget *pChild = *it;
 
             if (event.isMouseEvent())
             {
@@ -268,7 +268,7 @@ namespace Lazy
         return processed;
     }
 
-    bool IControl::onEvent(const SEvent & event)
+    bool Widget::onEvent(const SEvent & event)
     {
         bool processed = false;
         if (event.eventType == EET_MOUSE_EVENT)
@@ -311,7 +311,7 @@ namespace Lazy
     }
 
 
-    void IControl::show(bool bShow)
+    void Widget::show(bool bShow)
     {
         m_bVisible = bShow;
 
@@ -319,28 +319,28 @@ namespace Lazy
         onShow(bShow);
     }
 
-    void IControl::toggle(void)
+    void Widget::toggle(void)
     {
         show(!isVisible());
     }
 
-    void IControl::onShow(bool show)
+    void Widget::onShow(bool show)
     {
     }
 
-    void IControl::active(void)
+    void Widget::active(void)
     {
         topmost();
         onActive();
     }
 
-    void IControl::onActive(void)
+    void Widget::onActive(void)
     {
 
     }
 
     /** 将控件至于顶层*/
-    void IControl::topmost()
+    void Widget::topmost()
     {
         if (canClickTop() && m_parent)
         {
@@ -350,7 +350,7 @@ namespace Lazy
         }
     }
 
-    void IControl::removeFromParent()
+    void Widget::removeFromParent()
     {
         if (m_parent == nullptr) return;
 
@@ -359,77 +359,77 @@ namespace Lazy
 
 
     /** 移动控件*/
-    void IControl::onDrag(const CPoint & delta, const CPoint & point)
+    void Widget::onDrag(const CPoint & delta, const CPoint & point)
     {
         setPosition(m_position.x + delta.x, m_position.y + delta.y);
     }
 
-    CRect IControl::getControlRect(void) const
+    CRect Widget::getControlRect(void) const
     {
         return CRect(m_position, m_size);
     }
 
-    CRect IControl::getClientRect(void) const
+    CRect Widget::getClientRect(void) const
     {
         return CRect(0, 0, m_size.cx, m_size.cy);
     }
 
     //坐标系转换
-    void IControl::localToParent(CPoint & pt) const
+    void Widget::localToParent(CPoint & pt) const
     {
         pt += m_position;
     }
 
-    void IControl::localToParent(CRect & rc) const
+    void Widget::localToParent(CRect & rc) const
     {
         rc.offset(m_position.x, m_position.y);
     }
 
-    void IControl::localToGlobal(CPoint & pt) const
+    void Widget::localToGlobal(CPoint & pt) const
     {
         localToParent(pt);
         if (m_parent) m_parent->localToGlobal(pt);
     }
 
-    void IControl::localToGlobal(CRect & rc) const
+    void Widget::localToGlobal(CRect & rc) const
     {
         localToParent(rc);
         if (m_parent) m_parent->localToGlobal(rc);
     }
 
 
-    void IControl::parentToLocal(CPoint & pt) const
+    void Widget::parentToLocal(CPoint & pt) const
     {
         pt -= m_position;
     }
 
-    void IControl::parentToLocal(CRect & rc) const
+    void Widget::parentToLocal(CRect & rc) const
     {
         rc.offset(-m_position.x, -m_position.y);
     }
 
-    void IControl::globalToLocal(CPoint & pt) const
+    void Widget::globalToLocal(CPoint & pt) const
     {
         if (m_parent)  m_parent->globalToLocal(pt);
 
         parentToLocal(pt);
     }
 
-    void IControl::globalToLocal(CRect & rc) const
+    void Widget::globalToLocal(CRect & rc) const
     {
         if (m_parent) m_parent->globalToLocal(rc);
 
         parentToLocal(rc);
     }
 
-    CRect IControl::getGlobalRect() const
+    CRect Widget::getGlobalRect() const
     {
         CRect rc = getClientRect();
         localToGlobal(rc);
         return rc;
     }
 
-    void IControl::setGlobalRect(const CRect & r)
+    void Widget::setGlobalRect(const CRect & r)
     {
         CRect rc = r;
         if (m_parent) m_parent->globalToLocal(rc);
@@ -438,7 +438,7 @@ namespace Lazy
         setSize(rc.width(), rc.height());
     }
 
-    bool IControl::isPointIn(int x, int y) const
+    bool Widget::isPointIn(int x, int y) const
     {
         if (x < 0 || y < 0) return false;
         if (x > m_size.cx || y > m_size.cy) return false;
@@ -446,7 +446,7 @@ namespace Lazy
         return true;
     }
 
-    bool IControl::isPointInRefParent(int x, int y) const
+    bool Widget::isPointInRefParent(int x, int y) const
     {
         if (x < m_position.x || y < m_position.y) return false;
         if (x > m_position.x + m_size.cx) return false;
@@ -455,41 +455,41 @@ namespace Lazy
         return true;
     }
 
-    void IControl::setPosition(int x, int y)
+    void Widget::setPosition(int x, int y)
     {
         m_position.set(x, y);
 
         if (m_bRelative) applyReal2Relative();
     }
 
-    void IControl::setPositionX(int x)
+    void Widget::setPositionX(int x)
     {
         setPosition(x, m_position.y);
     }
 
-    void IControl::setPositionY(int y)
+    void Widget::setPositionY(int y)
     {
         setPosition(m_position.x, y);
     }
 
-    void IControl::setPositionZ(int z)
+    void Widget::setPositionZ(int z)
     {
         m_zorder = z;
         if (m_parent) m_parent->setChildOrderDirty();
     }
 
-    void IControl::setWidth(int width)
+    void Widget::setWidth(int width)
     {
         setSize(width, m_size.cy);
     }
 
-    void IControl::setHeight(int height)
+    void Widget::setHeight(int height)
     {
         setSize(m_size.cx, height);
     }
 
     ///相对坐标系
-    void IControl::setRelative(bool relative)
+    void Widget::setRelative(bool relative)
     {
         m_bRelative = relative;
 
@@ -497,21 +497,21 @@ namespace Lazy
     }
 
     ///设置相对坐标。只有m_bRelative为true，此调用才有效。
-    void IControl::setRelativePos(float x, float y)
+    void Widget::setRelativePos(float x, float y)
     {
         m_relativePos.set(x, y);
 
         if (m_bRelative) applyRelative2Real();
     }
 
-    void IControl::setRelativeAlign(DWORD align)
+    void Widget::setRelativeAlign(DWORD align)
     {
         m_relativeAlign = align;
 
         if (m_bRelative) applyRelative2Real();
     }
 
-    void IControl::applyRelative2Real()
+    void Widget::applyRelative2Real()
     {
         if (nullptr == m_parent) return;
 
@@ -540,7 +540,7 @@ namespace Lazy
         }
     }
 
-    void IControl::applyReal2Relative()
+    void Widget::applyReal2Relative()
     {
         if (nullptr == m_parent) return;
 
@@ -591,7 +591,17 @@ namespace Lazy
 
     }
 
-    bool IControl::loadFromFile(const tstring & file)
+    void Widget::setSkin(const tstring & skin)
+    {
+        if (skin == m_skin) return;
+
+        clearSkin();
+
+        m_skin = skin;
+        createSkin();
+    }
+
+    bool Widget::loadFromFile(const tstring & file)
     {
         setEditable(false);
 
@@ -606,7 +616,7 @@ namespace Lazy
         return true;
     }
 
-    void IControl::loadFromStream(LZDataPtr config)
+    void Widget::loadFromStream(LZDataPtr config)
     {
         assert(config);
 
@@ -646,7 +656,7 @@ namespace Lazy
             {
                 int type = childPtr->readInt(L"type");
 
-                PControl child = createEditorUI(childPtr);
+                Widget* child = createEditorUI(childPtr);
                 if (!child)
                 {
                     LOG_ERROR(L"createChildUI '%d' failed!", type);
@@ -668,7 +678,7 @@ namespace Lazy
     }
 
 
-    bool IControl::saveToFile(const tstring & file)
+    bool Widget::saveToFile(const tstring & file)
     {
         LZDataPtr root = openSection(file, true);
         if (!root)
@@ -686,11 +696,14 @@ namespace Lazy
         return saveSection(root, file);
     }
 
-    void IControl::saveToStream(LZDataPtr config)
+    void Widget::saveToStream(LZDataPtr config)
     {
         assert(config);
 
-        config->writeInt(L"type", getType());
+        tstring tmp;
+        charToWChar(tmp, getType());
+        config->writeString(L"type", tmp);
+
         config->writeInt(L"id", getID());
 
         if (!getText().empty())
@@ -729,7 +742,7 @@ namespace Lazy
 
         //保存子控件的简略数据
         lockChildren();
-        for (PControl child : m_children)
+        for (Widget* child : m_children)
         {
             if (!child->getEditable()) continue;
 
@@ -745,13 +758,13 @@ namespace Lazy
 #endif
     }
 
-    void IControl::setSize(int w, int h)
+    void Widget::setSize(int w, int h)
     {
         m_size.set(w, h);
 
         if (!m_children.empty())
         {
-            for (IControl * child : m_children)
+            for (Widget * child : m_children)
             {
                 if (child->getRelative()) child->applyRelative2Real();
             }
@@ -764,19 +777,19 @@ namespace Lazy
 
 
     //添加控件，获得控件
-    void IControl::addChild(PControl pCtrl)
+    void Widget::addChild(Widget* pCtrl)
     {
-        assert(pCtrl && "IControl::addChild");
+        assert(pCtrl && "Widget::addChild");
 
         if (pCtrl->m_parent != NULL)
-            throw(std::logic_error("IControl::addChild, control has been added to a Panel list!"));
+            throw(std::logic_error("Widget::addChild, control has been added to a Panel list!"));
 
         pCtrl->m_parent = this;
         m_children.addFront(pCtrl);
         setChildOrderDirty();
     }
 
-    PControl IControl::getChild(int id)
+    Widget* Widget::getChild(int id)
     {
         VisitControl::iterator it = m_children.find_if(PredIfIDEqual(id));
         if (it != m_children.end())
@@ -786,27 +799,27 @@ namespace Lazy
         return NULL;
     }
 
-    PControl IControl::getChild(const tstring & name)
+    Widget* Widget::getChild(const tstring & name)
     {
-        auto fun = [name](PControl p) { return p->getName() == name; };
+        auto fun = [name](Widget* p) { return p->getName() == name; };
         VisitControl::iterator it = m_children.find_if(fun);
         if (it != m_children.end()) return *it;
 
         return NULL;
     }
 
-    PControl IControl::getChildDeep(const tstring & name)
+    Widget* Widget::getChildDeep(const tstring & name)
     {
         size_t pos = name.find('/');
         if (pos == name.npos) return getChild(name);
 
-        PControl child = getChild(name.substr(0, pos));
+        Widget* child = getChild(name.substr(0, pos));
         if (!child) return nullptr;
 
         return child->getChildDeep(name.substr(pos + 1));
     }
 
-    void IControl::delChild(PControl pCtrl)
+    void Widget::delChild(Widget* pCtrl)
     {
         assert(pCtrl && "CPanel::delChild");
         if (pCtrl->m_parent != this)
@@ -818,7 +831,7 @@ namespace Lazy
     }
 
     ///将子空间至于最顶层。
-    void IControl::topmostChild(PControl ctrl)
+    void Widget::topmostChild(Widget* ctrl)
     {
         if (!m_bChangeChildOrder) return;
 
@@ -832,7 +845,7 @@ namespace Lazy
     }
 
     ///清除子控件
-    void IControl::clearChildren()
+    void Widget::clearChildren()
     {
         //加锁，防止子控件析构时删除自己。
         for (VisitControl::iterator it = m_children.begin();
@@ -844,7 +857,7 @@ namespace Lazy
         m_children.destroy();
     }
 
-    void IControl::destroy()
+    void Widget::destroy()
     {
         for (VisitControl::iterator it = m_children.begin();
                 it != m_children.end(); ++it)
@@ -862,12 +875,12 @@ namespace Lazy
     }
 
     ///根据坐标查找控件。
-    PControl IControl::finChildByPos(const CPoint & pos, bool resculy)
+    Widget* Widget::finChildByPos(const CPoint & pos, bool resculy)
     {
         for (VisitControl::iterator it = m_children.begin();
                 it != m_children.end();  ++it)
         {
-            PControl ptr = *it;
+            Widget* ptr = *it;
             if (!ptr || !ptr->isVisible()) continue;
 
             CPoint pt = pos;
@@ -876,7 +889,7 @@ namespace Lazy
             //如果子控件是panel，则先进入panel
             if (resculy)
             {
-                PControl temp = ptr->finChildByPos(pt, resculy);
+                Widget* temp = ptr->finChildByPos(pt, resculy);
                 if (temp) return temp;
             }
 
@@ -890,23 +903,23 @@ namespace Lazy
         return NULL;
     }
 
-    IControl* IControl::createEditorUI(LZDataPtr config)
+    Widget* Widget::createEditorUI(LZDataPtr config)
     {
         if (g_pUICreateFun)
         {
             return g_pUICreateFun(this, config);
         }
 
-        int type = config->readInt(L"type", -1);
-        if (type < 0) return nullptr;
+        tstring type = config->readString(L"type");
+        if (type.empty()) return nullptr;
 
-        IControl *p = uiFactory()->create(type);
+        Widget *p = uiFactory()->create(wcharToChar(type));
         if (p) setManaged(true);
 
         return p;
     }
 
-    void IControl::update(float elapse)
+    void Widget::update(float elapse)
     {
         if (m_bOrderDirty)
         {
@@ -917,12 +930,12 @@ namespace Lazy
         m_children.update(elapse);
     }
 
-    void IControl::render(IUIRender * pDevice)
+    void Widget::render(IUIRender * pDevice)
     {
         m_children.render(pDevice);
     }
 
-    void IControl::setManaged(bool managed)
+    void Widget::setManaged(bool managed)
     {
         if (m_bManaged == managed) return;
 
@@ -934,9 +947,20 @@ namespace Lazy
         m_bManaged = managed;
     }
 
+
+    void Widget::clearSkin()
+    {
+        m_skin.clear();
+    }
+
+    void Widget::createSkin()
+    {
+
+    }
+
     ////////////////////////////////////////////////////////////////////
 
-    ControlPtr loadUIFromFile(const tstring & layoutFile)
+    WidgetPtr loadUIFromFile(const tstring & layoutFile)
     {
         if (layoutFile.empty()) return nullptr;
 
@@ -948,9 +972,11 @@ namespace Lazy
         }
 
         LZDataPtr config = root->getChild(0);
-        int type = config->readInt(L"type");
+        const tstring & type = config->readString(L"type");
+        if (type.empty())
+            return nullptr;
 
-        ControlPtr child = uiFactory()->create(type);
+        WidgetPtr child = uiFactory()->create(wcharToChar(type));
         child->loadFromStream(config);
         return child;
     }

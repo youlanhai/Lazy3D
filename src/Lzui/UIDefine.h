@@ -13,18 +13,17 @@
 namespace Lazy
 {
 
-    class IControl;
-    typedef IControl* PControl;
+    class Widget;
 
-    typedef RefPtr<IControl> ControlPtr;
+    typedef RefPtr<Widget> WidgetPtr;
 
     typedef RefPtr<class ITextSprite> TextSpritePtr;
 
-    typedef IControl* (*UICreateFun)(void) ;
+    typedef Widget* (*UICreateFun)(void) ;
 
-#define MAKE_UI_HEADER(CLASS, TYPE)   \
-    static IControl * createSelf(){ return new CLASS(); }   \
-    virtual int getType(void) const { return TYPE; }
+#define MAKE_UI_HEADER(CLASS)   \
+    static Widget * createSelf(){ return new CLASS(); }   \
+    virtual const char * getType(void) const { return #CLASS; }
 
 
     class CGUIManager;
@@ -35,7 +34,7 @@ namespace Lazy
     const tstring & getDefaultFont();
     FontPtr getDefaultFontPtr();
 
-    typedef IControl * (*EditorUICreateFun) (IControl * parent, LZDataPtr config);
+    typedef Widget * (*EditorUICreateFun) (Widget * parent, LZDataPtr config);
     void setEditorUICreateFun(EditorUICreateFun fun);
 
     /** 按钮状态*/
@@ -60,23 +59,6 @@ namespace Lazy
         const uint32 lostSelected = 13;
         const uint32 getActived = 15;
         const uint32 lostActived = 16;
-    }
-
-    ///ui类型
-    namespace uitype
-    {
-        const int Control = 1;
-        const int Form = 3;
-        const int Button = 4;
-        const int Label = 5;
-        const int Image = 6;
-        const int Edit = 7;
-        const int Check = 8;
-        const int Slidebar = 9;
-        const int Slider = 12;
-        const int GuiMgr = 13;
-        const int EditorCtl = 14;
-        const int Proxy = 15;
     }
 
     ///相对坐标系下使用的对齐方式
@@ -207,7 +189,7 @@ namespace Lazy
     };
 
 
-    class VisitControl : public VisitPool<PControl>
+    class VisitControl : public VisitPool<Widget*>
     {
     public:
 
@@ -216,7 +198,7 @@ namespace Lazy
         void render(IUIRender * pDevice);
     };
 
-    typedef std::list<ControlPtr>  ManagedControl;
+    typedef std::list<WidgetPtr>  ManagedControl;
 
     namespace misc
     {

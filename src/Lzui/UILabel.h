@@ -3,10 +3,10 @@
 namespace Lazy
 {
 
-    class LZUI_API CLabel : public IControl
+    class LZUI_API CLabel : public Widget
     {
     public:
-        MAKE_UI_HEADER(CLabel, uitype::Label)
+        MAKE_UI_HEADER(CLabel)
 
         CLabel(void);
         ~CLabel(void);

@@ -150,7 +150,7 @@ namespace Lazy
         }
 
 
-        return IControl::onEvent(event);
+        return Widget::onEvent(event);
     }
 
     void CButton::setBtnState(int state)
@@ -184,14 +184,14 @@ namespace Lazy
     {
         if (m_text == text) return;
 
-        IControl::setText(text);
+        Widget::setText(text);
 
         m_textSprite->setText(m_text, m_fontPtr);
     }
 
     void CButton::setFont(const tstring & font)
     {
-        IControl::setFont(font);
+        Widget::setFont(font);
         m_fontPtr = FontMgr::instance()->getFont(m_font);
 
         m_textSprite->setText(m_text, m_fontPtr);
@@ -199,14 +199,14 @@ namespace Lazy
 
     void CButton::setColor(uint32 color)
     {
-        IControl::setColor(color);
+        Widget::setColor(color);
         m_textSprite->setColor(color);
     }
 
     ///加载布局。
     void CButton::loadFromStream(LZDataPtr config)
     {
-        IControl::loadFromStream(config);
+        Widget::loadFromStream(config);
 
         setTextAlign(config->readInt(L"textAlign", RelativeAlign::center));
         setPosMovable(config->readBool(L"posMovable", m_posMovable));
@@ -216,7 +216,7 @@ namespace Lazy
     ///保存布局
     void CButton::saveToStream(LZDataPtr config)
     {
-        IControl::saveToStream(config);
+        Widget::saveToStream(config);
 
         config->writeInt(L"textAlign", m_textAlign);
         config->writeBool(L"posMovable", m_posMovable);

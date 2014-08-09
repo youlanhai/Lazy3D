@@ -2,7 +2,7 @@
 
 MainView
 {
-	type = 3
+	type = CForm
 	id = 2
 	image = gui/login.png
 	font = def|17
@@ -22,7 +22,7 @@ MainView
 	{
 		noname
 		{
-			type = 7
+			type = CEdit
 			id = 3
 			font = def|17
 			color = ffffffff
@@ -42,7 +42,7 @@ MainView
 		}
 		noname
 		{
-			type = 9
+			type = CSlidebar
 			id = 2
 			font = def|17
 			color = ffffffff
@@ -64,7 +64,7 @@ MainView
 		}
 		noname
 		{
-			type = 4
+			type = CButton
 			id = 1
 			text = OK
 			font = def|17

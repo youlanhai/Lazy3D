@@ -38,6 +38,10 @@ namespace Lazy
     typedef __int64             int64;
     typedef unsigned __int64    uint64;
 
+
+    const std::string   EmptyStrA;
+    const std::wstring  EmptyStrW;
+
 #ifdef _UNICODE
 
     typedef wchar_t         tchar;

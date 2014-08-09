@@ -13,7 +13,7 @@ namespace Lazy
     class LZUI_API CSlider : public CButton
     {
     public:
-        MAKE_UI_HEADER(CSlider, uitype::Slider);
+        MAKE_UI_HEADER(CSlider);
 
         CSlider();
 
@@ -36,7 +36,7 @@ namespace Lazy
     class LZUI_API CSlidebar : public CForm
     {
     public: 
-        MAKE_UI_HEADER(CSlidebar, uitype::Slidebar);
+        MAKE_UI_HEADER(CSlidebar);
 
         CSlidebar();
 

@@ -36,44 +36,48 @@ namespace Lazy
     {
     }
 
+    //////////////////////////////////////////////////////////////////////
+    ///
+    //////////////////////////////////////////////////////////////////////
 
     NormalUIFactor::NormalUIFactor()
     {
-#define UIREG(TYPE, CLASS) registerCreateFun(uitype::TYPE, CLASS::createSelf)
+#define UIREG(CLASS) registerCreateFun(#CLASS, CLASS::createSelf)
 
-        UIREG(Control, IControl);
-        UIREG(Label, CLabel);
-        UIREG(Image, CImage);
-        UIREG(Edit, CEdit);
-        UIREG(Form, CForm);
-        UIREG(Button, CButton);
-        UIREG(Check, CCheckBox);
-        UIREG(Slider, CSlider);
-        UIREG(Slidebar, CSlidebar);
-        UIREG(EditorCtl, CEditorCtl);
-        UIREG(Proxy, UIProxy);
+        UIREG(Widget);
+        UIREG(CLabel);
+        UIREG(CImage);
+        UIREG(CEdit);
+        UIREG(CForm);
+        UIREG(CButton);
+        UIREG(CCheckBox);
+        UIREG(CSlider);
+        UIREG(CSlidebar);
+        UIREG(CEditorCtl);
+        UIREG(UIProxy);
 
 #undef UIREG
     }
 
-    IControl * NormalUIFactor::create(int type)
+    Widget * NormalUIFactor::create(const std::string & type)
     {
-        std::map < int, UICreateFun>::iterator it = m_funMap.find(type);
+        std::map<std::string, UICreateFun>::iterator it = m_funMap.find(type);
         if (it == m_funMap.end())
         {
-            throw(std::invalid_argument("NormalUIFactor::create - This ui type doesn't found!"));
+            LOG_ERROR(L"NormalUIFactor::create - ui type '%S' doesn't found!",
+                type.c_str());
             return nullptr;
         }
 
         return (it->second)();
     }
 
-    void NormalUIFactor::release(PControl ptr)
+    void NormalUIFactor::release(Widget* ptr)
     {
 
     }
 
-    void NormalUIFactor::registerCreateFun(int type, UICreateFun fun)
+    void NormalUIFactor::registerCreateFun(const std::string & type, UICreateFun fun)
     {
         m_funMap[type] = fun;
     }

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 namespace Lazy
 {
@@ -22,7 +22,7 @@ namespace Lazy
         TexturePtr  m_texture;
     };
 
-    //Ò»ÕÅÍ¼Æ¬
+    //ä¸€å¼ å›¾ç‰‡
     class ImageSprite : public TextureSprite
     {
     public:
@@ -38,24 +38,24 @@ namespace Lazy
         tstring     m_image;
     };
 
-    //Ò»¸ö¿Ø¼ş
+    //ä¸€ä¸ªæ§ä»¶
     class ControlSprite : public ISprite
     {
     public:
         ControlSprite();
         ~ControlSprite();
 
-        void setControl(ControlPtr control) { m_control = control; }
-        ControlPtr getControl() const { return m_control; }
+        void setControl(WidgetPtr control) { m_control = control; }
+        WidgetPtr getControl() const { return m_control; }
 
         virtual void update(float elapse);
         virtual void render(IUIRender * pDevice, const CPoint & world);
 
     private:
-        ControlPtr m_control;
+        WidgetPtr m_control;
     };
 
-    //Ò»¸öÎÄ×Ö
+    //ä¸€ä¸ªæ–‡å­—
     class WordSprite : public ISprite
     {
     public:
@@ -128,11 +128,11 @@ namespace Lazy
         uint32          m_color;
         std::wstring    m_text;
         bool            m_layoutDirty;
-        int             m_lineSpace;    ///ĞĞ¾à
-        int             m_maxWidth;     ///×î´ó¿í¶È
+        int             m_lineSpace;    ///è¡Œè·
+        int             m_maxWidth;     ///æœ€å¤§å®½åº¦
     };
 
-    ///¼¯ÖĞäÖÈ¾Ò»ĞĞÎÄ±¾£¬ÒÔÌá¸ßäÖÈ¾Ğ§ÂÊ
+    ///é›†ä¸­æ¸²æŸ“ä¸€è¡Œæ–‡æœ¬ï¼Œä»¥æé«˜æ¸²æŸ“æ•ˆç‡
     class TextLineSprite : public ITextSprite
     {
     public:
@@ -163,7 +163,7 @@ namespace Lazy
     };
     typedef RefPtr<TextLineSprite> TextLineSpritePtr;
 
-    ///Ö§³Ö¶àĞĞÎÄ×ÖäÖÈ¾
+    ///æ”¯æŒå¤šè¡Œæ–‡å­—æ¸²æŸ“
     class TextViewSprite : public ITextSprite
     {
     public:
@@ -208,7 +208,7 @@ namespace Lazy
         static ISprite * createTexture(TexturePtr tex, const UVRect & srcRc = IdentityUVRect);
         static ISprite * createWord(wchar_t ch, FontPtr font);
         static ISprite * createText(const tstring & text, FontPtr font);
-        static ISprite * createControl(IControl * pctl);
+        static ISprite * createControl(Widget * pctl);
 
 
         void addSprite(SpritePtr sprite);
@@ -217,7 +217,7 @@ namespace Lazy
         void addWord(wchar_t ch, FontPtr font);
         void addWord(wchar_t ch, const tstring & fontname);
         void addText(const std::wstring & str, FontPtr font);
-        void addControl(ControlPtr control);
+        void addControl(WidgetPtr control);
 
         void insertSprite(size_t pos, SpritePtr sprite);
 

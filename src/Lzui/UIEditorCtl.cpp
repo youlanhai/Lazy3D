@@ -69,7 +69,7 @@ namespace Lazy
             m_dragType = DragType::none;
         }
 
-        return IControl::onEvent(event);
+        return Widget::onEvent(event);
     }
 
     void CEditorCtl::onDrag(const CPoint & dp, const CPoint & pt)
@@ -84,7 +84,7 @@ namespace Lazy
 
         if (m_dragType == DragType::center)
         {
-            IControl::onDrag(dp, pt);
+            Widget::onDrag(dp, pt);
         }
         else
         {

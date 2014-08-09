@@ -87,21 +87,21 @@ namespace Lazy
             setImage(L"gui/login.png");
             setBgColor(0xffffffff);
 
-            CButton *button = (CButton*)Lazy::uiFactory()->create(Lazy::uitype::Button);
+            CButton *button = (CButton*)Lazy::uiFactory()->create("CButton");
             button->create(1, _T("OK"), _T(""), 0, 0, 100, 40);
             button->setEditable(true);
             button->setManaged(true);
             addChild(button);
 
 
-            CSlidebar* scroll = (CSlidebar*) Lazy::uiFactory()->create(Lazy::uitype::Slidebar);
+            CSlidebar* scroll = (CSlidebar*) Lazy::uiFactory()->create("CSlidebar");
             scroll->create(2, _T(""), 0, 50);
             scroll->setSize(100, 20);
             scroll->setEditable(true);
             scroll->setManaged(true);
             addChild(scroll);
 
-            CEdit *edit = (CEdit*) Lazy::uiFactory()->create(Lazy::uitype::Edit);
+            CEdit *edit = (CEdit*) Lazy::uiFactory()->create("CEdit");
             edit->setID(3);
             edit->setPosition(120, 20);
             edit->setSize(100, 50);
@@ -177,7 +177,7 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
     g_guiMgr = new Lazy::CGUIManager(Lazy::rcDevice()->getDevice(), hWnd, hInstance);
 
     //添加一个标签
-    Lazy::CLabel *pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create(Lazy::uitype::Label);
+    Lazy::CLabel *pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create("CLabel");
     pLabel->create(1, _T("haha你好啊ABCDEFGHIGKLMN\r\n哈哈哈\n"), 20, 100);
     pLabel->setAlign(Lazy::RelativeAlign::right | Lazy::RelativeAlign::vcenter);
     pLabel->enableMutiLine(true);
@@ -185,7 +185,7 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
     pLabel->setColor(0xffff0000);
     g_guiMgr->addChildManage(pLabel);
 
-    pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create(Lazy::uitype::Label);
+    pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create("CLabel");
     pLabel->create(1, _T("测试中文标签abcd\n哈哈哈\n"), 20, 20);
     pLabel->setAlign(Lazy::RelativeAlign::center);
     pLabel->setSize(500, 40);

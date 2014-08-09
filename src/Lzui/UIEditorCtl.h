@@ -13,10 +13,10 @@ namespace Lazy
     }
 
     ///ui编辑器用的控件
-    class CEditorCtl : public IControl
+    class CEditorCtl : public Widget
     {
     public:
-        MAKE_UI_HEADER(CEditorCtl, uitype::EditorCtl);
+        MAKE_UI_HEADER(CEditorCtl);
 
         CEditorCtl();
         ~CEditorCtl();

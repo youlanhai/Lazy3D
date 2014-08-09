@@ -2,11 +2,11 @@
 
 namespace Lazy
 {
-    ///维持了一个外部的ui
-    class UIProxy : public IControl
+    ///缁存寔浜嗕竴涓閮ㄧ殑ui
+    class UIProxy : public Widget
     {
     public:
-        MAKE_UI_HEADER(UIProxy, uitype::Proxy);
+        MAKE_UI_HEADER(UIProxy);
 
         UIProxy();
         ~UIProxy();
@@ -16,11 +16,11 @@ namespace Lazy
 
         bool loadHost(const tstring & layoutFile);
 
-        ControlPtr getHost() const { return m_host; }
+        WidgetPtr getHost() const { return m_host; }
 
     private:
         tstring     m_layoutFile;
-        ControlPtr  m_host;
+        WidgetPtr  m_host;
     };
 
 }//end namespace Lazy

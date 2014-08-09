@@ -207,7 +207,7 @@ namespace Lazy
             return onSysKey(event.keyEvent.down, event.keyEvent.key);
         }
 
-        return IControl::onEvent(event);
+        return Widget::onEvent(event);
     }
 
     void CEdit::onFocusGet()
@@ -282,14 +282,14 @@ namespace Lazy
 
     void CEdit::setColor(uint32 color)
     {
-        IControl::setColor(color);
+        Widget::setColor(color);
         if (m_textSprite)
             m_textSprite->setColor(color);
     }
 
     void CEdit::setSize(int w, int h)
     {
-        IControl::setSize(w, h);
+        Widget::setSize(w, h);
 
         if (m_textSprite)
             m_textSprite->setMaxWidth(w);
@@ -297,14 +297,14 @@ namespace Lazy
 
     void CEdit::loadFromStream(LZDataPtr root)
     {
-        IControl::loadFromStream(root);
+        Widget::loadFromStream(root);
 
         setMutiLine(root->readBool(L"mutiline", false));
     }
 
     void CEdit::saveToStream(LZDataPtr root)
     {
-        IControl::saveToStream(root);
+        Widget::saveToStream(root);
 
         root->writeBool(L"mutiline", m_bMutiLine);
     }

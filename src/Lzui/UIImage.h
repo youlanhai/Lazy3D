@@ -4,10 +4,10 @@ namespace Lazy
 {
 
     /** 图像控件。*/
-    class LZUI_API CImage : public IControl
+    class LZUI_API CImage : public Widget
     {
     public:
-        MAKE_UI_HEADER(CImage, uitype::Image)
+        MAKE_UI_HEADER(CImage)
         CImage(void);
 
         ~CImage(void);

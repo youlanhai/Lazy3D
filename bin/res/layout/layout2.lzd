@@ -1,10 +1,10 @@
 #coding = utf-8
 
-root
+MainView
 {
 	type = 3
-	id = 1
-	image = gui/goods.bmp
+	id = 2
+	image = gui/login.png
 	font = def|17
 	color = ffffffff
 	bgcolor = ffffffff
@@ -16,18 +16,15 @@ root
 	limitInRect = true
 	changeChildOrder = true
 	drawSelf = true
-	position = 214 88
-	size = 216 306
-	relative = true
-	relativeAlign = 18
-	relativePos = 0.503125 0.502083
+	position = 100 100
+	size = 300 200
 	children
 	{
-		btn_ok
+		noname
 		{
 			type = 4
-			id = 2
-			text = 确定
+			id = 1
+			text = OK
 			font = def|17
 			color = ffffffff
 			bgcolor = af808080
@@ -39,142 +36,54 @@ root
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 53 263
-			size = 100 30
+			position = 0 0
+			size = 100 40
 			children = ""
 			textAlign = 18
 			posMovable = true
 			colorFadable = true
 		}
-		lbl_title
+		noname
 		{
-			type = 5
-			id = 0
-			text = 你好哈\naaaaaaaaaa
+			type = 9
+			id = 2
 			font = def|17
-			color = ff00ff00
+			color = ffffffff
+			bgcolor = 7f000000
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 0 50
+			size = 100 20
+			children = ""
+			vertical = false
+			slideStep = 0.050000
+			sliderSize = 80 30
+		}
+		noname
+		{
+			type = 7
+			id = 3
+			font = def|17
+			color = ffffffff
 			bgcolor = 7fffffff
 			visible = true
 			enable = true
 			enableSelfMsg = true
 			enalbeDrag = false
-			clickTop = true
+			clickTop = false
 			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
-			position = 15 16
-			size = 177 54
+			position = 120 20
+			size = 100 50
 			children = ""
-			textAlign = 17
-			mutiline = true
-		}
-		edt_msg
-		{
-			type = 7
-			id = 0
-			text = edit\nfdsf
-			font = def|30
-			color = ffffffff
-			bgcolor = ffffffff
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 14 76
-			size = 129 71
-			children = ""
-			mutiline = true
-		}
-		ComboBox
-		{
-			type = 3
-			id = 0
-			font = def|17
-			color = ffffffff
-			bgcolor = ff7f7f7f
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = true
-			changeChildOrder = true
-			drawSelf = true
-			position = 9 167
-			size = 120 20
-			children
-			{
-				button
-				{
-					type = 4
-					id = 0
-					text = combobox
-					font = def|17
-					color = ffffffff
-					bgcolor = af808080
-					visible = true
-					enable = true
-					enableSelfMsg = true
-					enalbeDrag = false
-					clickTop = true
-					limitInRect = false
-					changeChildOrder = true
-					drawSelf = true
-					position = 0 0
-					size = 120 20
-					children = ""
-					textAlign = 18
-					posMovable = false
-					colorFadable = true
-				}
-				menu
-				{
-					type = 3
-					id = 0
-					font = def|17
-					color = ffffffff
-					bgcolor = ffafafaf
-					visible = true
-					enable = true
-					enableSelfMsg = true
-					enalbeDrag = false
-					clickTop = true
-					limitInRect = true
-					changeChildOrder = true
-					drawSelf = true
-					position = 0 20
-					size = 120 58
-					children
-					{
-						slidebar
-						{
-							type = 9
-							id = 0
-							font = def|17
-							color = ffffffff
-							bgcolor = 7f000000
-							visible = true
-							enable = true
-							enableSelfMsg = true
-							enalbeDrag = false
-							clickTop = true
-							limitInRect = false
-							changeChildOrder = true
-							drawSelf = true
-							position = 100 0
-							size = 20 58
-							children = ""
-							vertical = true
-							slideStep = 0.050000
-							sliderSize = 80 30
-						}
-					}
-				}
-			}
+			mutiline = false
 		}
 	}
 }

@@ -39,7 +39,7 @@ namespace Lazy
 
         if (!m_bClip)
         {
-            IControl::render(pDevice);
+            Widget::render(pDevice);
             return;
         }
 
@@ -70,7 +70,7 @@ namespace Lazy
 
     void CForm::setImage(const tstring & image)
     {
-        IControl::setImage(image);
+        Widget::setImage(image);
         m_texture = TextureMgr::instance()->get(image);
 
         if (m_texture) setBgColor(0xffffffff);
@@ -84,14 +84,14 @@ namespace Lazy
 
     void CForm::loadFromStream(LZDataPtr root)
     {
-        IControl::loadFromStream(root);
+        Widget::loadFromStream(root);
 
         root->writeBool(L"clip", m_bClip);
     }
 
     void CForm::saveToStream(LZDataPtr root)
     {
-        IControl::saveToStream(root);
+        Widget::saveToStream(root);
 
         enableClip(root->readBool(L"clip", false));
     }

@@ -4,10 +4,10 @@ namespace Lazy
 {
 
     ///按钮类
-    class LZUI_API CButton : public IControl
+    class LZUI_API CButton : public Widget
     {
     public:
-        MAKE_UI_HEADER(CButton, uitype::Button)
+        MAKE_UI_HEADER(CButton)
 
         CButton(void);
 

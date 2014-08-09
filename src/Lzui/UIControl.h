@@ -8,13 +8,13 @@ namespace Lazy
         GUIMgr，管理了整个UI系统，将所有的UI关联起来，形成一颗UI树。实现了UI消息传递，
         以及统一更新和渲染。详见CGUIManager。
     */
-    class LZUI_API IControl : public IBase
+    class LZUI_API Widget : public IBase
     {
     public:
-        MAKE_UI_HEADER(IControl, uitype::Control);
+        MAKE_UI_HEADER(Widget);
 
-        IControl(void);
-        virtual ~IControl(void);
+        Widget(void);
+        virtual ~Widget(void);
 
         ///释放资源。打破循环引用，释放资源。不要在构造函数中调用。
         virtual void destroy();
@@ -90,10 +90,10 @@ namespace Lazy
         int  getID(void) const { return m_id; }
 
         ///获取父
-        PControl getParent(void) { return m_parent; }
+        Widget* getParent(void) { return m_parent; }
 
         ///获取父
-        PControl getParent(void) const { return m_parent; }
+        Widget* getParent(void) const { return m_parent; }
 
         ///设置文本
         virtual void setText(const tstring & text) { m_text = text; }
@@ -154,6 +154,9 @@ namespace Lazy
         void applyRelative2Real();
         void applyReal2Relative();
 
+        const tstring & getSkin() const { return m_skin; }
+        void setSkin(const tstring & skin);
+
 #ifdef ENABLE_SCRIPT
 
         /** borrw reference */
@@ -212,22 +215,22 @@ namespace Lazy
         void removeFromParent();
 
         ///添加子控件
-        virtual void addChild(PControl pCtrl);
+        virtual void addChild(Widget* pCtrl);
 
         ///根据id查找子控件
-        virtual PControl getChild(int id);
+        virtual Widget* getChild(int id);
 
-        PControl getChild(const tstring & name);
+        Widget* getChild(const tstring & name);
 
-        PControl getChildDeep(const tstring & name);
+        Widget* getChildDeep(const tstring & name);
 
         const VisitControl & getChildren() const { return m_children; }
 
         ///删除子控件
-        virtual void delChild(PControl pCtrl);
+        virtual void delChild(Widget* pCtrl);
 
         ///将子空间至于最顶层。
-        virtual void topmostChild(PControl ctrl);
+        virtual void topmostChild(Widget* ctrl);
 
         ///清除子控件
         void clearChildren();
@@ -239,7 +242,7 @@ namespace Lazy
         void setChildOrderDirty() { m_bOrderDirty = true; }
 
         ///根据坐标查找活动的控件。pos的参考系为当前控件。
-        PControl finChildByPos(const CPoint & pos, bool resculy = false);
+        Widget* finChildByPos(const CPoint & pos, bool resculy = false);
 
         //遍历children
 
@@ -251,9 +254,9 @@ namespace Lazy
     public://静态方法
 
         static bool isVKDown(DWORD vk);
-        static void setFocus(PControl focus);
-        static void setSeleced(PControl pSelected);
-        static void setActived(PControl pActived);
+        static void setFocus(Widget* focus);
+        static void setSeleced(Widget* pSelected);
+        static void setActived(Widget* pActived);
 
     protected:
 
@@ -271,12 +274,15 @@ namespace Lazy
         /** 拖拽消息*/
         virtual void onDrag(const CPoint & delta, const CPoint & point);
 
-        virtual IControl* createEditorUI(LZDataPtr config);
+        virtual Widget* createEditorUI(LZDataPtr config);
+
+        void clearSkin();
+        void createSkin();
 
     protected:
         int				m_id;			///< 编号。
         tstring         m_name;         ///< 名称，跟id是相似的作用。
-        PControl        m_parent;       ///< 父控件
+        Widget*        m_parent;       ///< 父控件
         uint32		    m_color;	    ///< 前景颜色
         uint32          m_bgColor;      ///< 背景色
         CPoint          m_position;     ///< 位置
@@ -285,8 +291,12 @@ namespace Lazy
         tstring         m_text;         ///<文本
         tstring		    m_font;		    ///<字体名称
         tstring         m_image;        ///<图片名称
-        VisitControl    m_children;     ///<子控件列表
-        Vector2   m_relativePos;  ///< 相对坐标系
+        tstring         m_skin;
+
+        VisitControl    m_children;     ///< 子控件列表
+        VisitControl    m_skinChildren; ///< 皮肤控件
+
+        Vector2         m_relativePos;  ///< 相对坐标系
         uint32          m_relativeAlign;///< 相对坐标系下的排版方式
 
         bool            m_bEditable;    ///是否可用于ui编辑器。只有可编辑的控件，才可以保存到ui配置文件中。
@@ -303,11 +313,11 @@ namespace Lazy
         bool            m_bOrderDirty;
 
     protected:
-        static PControl        m_pFocus;       ///< 当前鼠标所在位置的控件
-        static PControl        m_pSelected;    ///< 当前鼠标按下被选中的控件。
-        static PControl        m_pActived;     ///< 当前鼠标抬起后激活的控件。
+        static Widget*        m_pFocus;       ///< 当前鼠标所在位置的控件
+        static Widget*        m_pSelected;    ///< 当前鼠标按下被选中的控件。
+        static Widget*        m_pActived;     ///< 当前鼠标抬起后激活的控件。
     };
 
-    ControlPtr loadUIFromFile(const tstring & layoutFile);
+    WidgetPtr loadUIFromFile(const tstring & layoutFile);
 
 }//namespace Lazy

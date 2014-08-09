@@ -7,7 +7,7 @@ namespace Lazy
     class LZUI_API CCheckBox : public CButton
     {
     public:
-        MAKE_UI_HEADER(CCheckBox, uitype::Check);
+        MAKE_UI_HEADER(CCheckBox);
 
         CCheckBox(void);
         ~CCheckBox(void);

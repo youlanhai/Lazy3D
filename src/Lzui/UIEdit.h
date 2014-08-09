@@ -3,10 +3,10 @@
 namespace Lazy
 {
     /**编辑框*/
-    class CEdit : public IControl
+    class CEdit : public Widget
     {
     public:
-        MAKE_UI_HEADER(CEdit, uitype::Edit)
+        MAKE_UI_HEADER(CEdit)
 
         CEdit(void);
         virtual ~CEdit(void);

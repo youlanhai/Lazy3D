@@ -43,20 +43,20 @@ namespace Lazy
         delete m_render;
     }
 
-    void CGUIManager::addChildManage(RefPtr<IControl> child)
+    void CGUIManager::addChildManage(RefPtr<Widget> child)
     {
         addToManagePool(child);
         addChild(child.get());
     }
 
-    void CGUIManager::addToManagePool(RefPtr<IControl> ui)
+    void CGUIManager::addToManagePool(RefPtr<Widget> ui)
     {
         m_managePool.push_back(ui);
     }
 
     void CGUIManager::destroy()
     {
-        IControl::destroy();
+        Widget::destroy();
 
         m_managePool.clear();
     }
@@ -177,7 +177,7 @@ namespace Lazy
 
     void CGUIManager::render(IUIRender * pDevice)
     {
-        IControl::render(pDevice);
+        Widget::render(pDevice);
     }
 
     void CGUIManager::activeEdit(CEdit * pEdit)

@@ -38,7 +38,7 @@ namespace Lazy
 
     void CImage::setImage(const tstring & image)
     {
-        IControl::setImage(image);
+        Widget::setImage(image);
 
         m_texture = TextureMgr::instance()->get(m_image);
     }

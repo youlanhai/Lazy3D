@@ -146,7 +146,7 @@ namespace Lazy
 
     void CLabel::setSize(int w, int h)
     {
-        IControl::setSize(w, h);
+        Widget::setSize(w, h);
 
         if (m_textSprite)
             m_textSprite->setMaxWidth(w);
@@ -154,7 +154,7 @@ namespace Lazy
 
     void CLabel::setColor(uint32 color)
     {
-        IControl::setColor(color);
+        Widget::setColor(color);
         if (m_textSprite)
             m_textSprite->setColor(color);
     }
@@ -162,7 +162,7 @@ namespace Lazy
     ///加载布局。
     void CLabel::loadFromStream(LZDataPtr config)
     {
-        IControl::loadFromStream(config);
+        Widget::loadFromStream(config);
 
         setAlign(config->readInt(L"textAlign"));
         enableMutiLine(config->readBool(L"mutiline"));
@@ -171,7 +171,7 @@ namespace Lazy
     ///保存布局
     void CLabel::saveToStream(LZDataPtr config)
     {
-        IControl::saveToStream(config);
+        Widget::saveToStream(config);
 
         config->writeInt(L"textAlign", m_align);
         config->writeBool(L"mutiline", m_bMutiLine);
