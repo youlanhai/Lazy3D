@@ -6,12 +6,10 @@
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="UICheckBox.h" />
     <ClInclude Include="UIConfig.h" />
-    <ClInclude Include="UIControl.h" />
     <ClInclude Include="UIDefine.h" />
     <ClInclude Include="UIEdit.h" />
     <ClInclude Include="UIEditorCtl.h" />
     <ClInclude Include="UIFactory.h" />
-    <ClInclude Include="UIForm.h" />
     <ClInclude Include="UIGuiMgr.h" />
     <ClInclude Include="UIImage.h" />
     <ClInclude Include="UILabel.h" />
@@ -19,17 +17,17 @@
     <ClInclude Include="UIRender.h" />
     <ClInclude Include="UISlidebar.h" />
     <ClInclude Include="UISprite.h" />
+    <ClInclude Include="UIWidget.h" />
+    <ClInclude Include="UIWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UICheckBox.cpp" />
-    <ClCompile Include="UIControl.cpp" />
     <ClCompile Include="UIDefine.cpp" />
     <ClCompile Include="UIEdit.cpp" />
     <ClCompile Include="UIEditorCtl.cpp" />
     <ClCompile Include="UIFactory.cpp" />
-    <ClCompile Include="UIForm.cpp" />
     <ClCompile Include="UIGuiMgr.cpp" />
     <ClCompile Include="UIImage.cpp" />
     <ClCompile Include="UILabel.cpp" />
@@ -37,5 +35,7 @@
     <ClCompile Include="UIRender.cpp" />
     <ClCompile Include="UISlidebar.cpp" />
     <ClCompile Include="UISprite.cpp" />
+    <ClCompile Include="UIWidget.cpp" />
+    <ClCompile Include="UIWindow.cpp" />
   </ItemGroup>
 </Project>

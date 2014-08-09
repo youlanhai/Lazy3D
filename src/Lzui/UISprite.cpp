@@ -1,7 +1,7 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "UISprite.h"
 
-#include "UIControl.h"
+#include "UIWidget.h"
 
 namespace Lazy
 {
@@ -64,7 +64,7 @@ namespace Lazy
     ControlSprite::~ControlSprite()
     {}
 
-    //ui�ؼ����Լ���update������render���������ﲻ�����߼���ֻ�ǵ������ꡣ
+    //ui控件有自己的update方法和render方法，这里不在做逻辑，只是调整坐标。
     void ControlSprite::update(float elapse)
     {}
 
@@ -288,7 +288,7 @@ namespace Lazy
                 it != m_sprites.end(); ++it)
         {
             const CSize & sz = (*it)->getSize();
-            (*it)->setPosition(m_size.cx, m_size.cy - sz.cy);//�׶���
+            (*it)->setPosition(m_size.cx, m_size.cy - sz.cy);//底对齐
             m_size.cx += sz.cx;
         }
     }
@@ -447,28 +447,28 @@ namespace Lazy
             line->layout();
 
             size_t textLen = line->length();
-            if (textLen == 0)//ɾ������
+            if (textLen == 0)//删除空行
             {
                 m_lineSprites.erase(m_lineSprites.begin() + i);
                 continue;
             }
 
-            if (textLen == 1)//ÿ������Ҫ��һ���ַ�
+            if (textLen == 1)//每行至少要有一个字符
             {
                 ++i;
                 continue;
             }
 
-            if(line->getSize().cx > m_maxWidth)//TODO �Ż�����ķָ��㷨
+            if(line->getSize().cx > m_maxWidth)//TODO 优化这里的分割算法
             {
                 WordSpritePtr lastSprite = line->getSprite(textLen - 1);
-                //�Ƴ�ĩβ����
+                //移除末尾文字
                 line->delWord(textLen - 1);
 
                 if (i + 1 >= m_lineSprites.size())
                     m_lineSprites.push_back(createLineSprite());
 
-                //�嵽��һ�е�����
+                //插到下一行的行首
                 m_lineSprites[i + 1]->insertWord(0, lastSprite);
 
                 continue;
@@ -476,11 +476,11 @@ namespace Lazy
             else if (line->getSize().cx < m_maxWidth)
             {
                 WordSpritePtr lastSprite = line->getSprite(textLen - 1);
-                if (lastSprite->getWord() != '\n')//ĩβ���ǻ��з���������Ҫ����һ�н�һ��
+                if (lastSprite->getWord() != '\n')//末尾不是换行符，可能需要从下一行借一个
                 {
                     TextLineSpritePtr nextLine;
 
-                    //������һ�еĽ�λ�����ܻᵼ����һ��Ϊ���У���Ҫɾ�����������Ű档
+                    //由于上一行的借位，可能会导致下一行为空行，需要删除空行重新排版。
                     while (!nextLine && i + 1 < m_lineSprites.size())
                     {
                         if (m_lineSprites[i + 1]->length() == 0)
@@ -494,7 +494,7 @@ namespace Lazy
                         }
                     }
 
-                    if (!nextLine)//û�к�������
+                    if (!nextLine)//没有后续行了
                         break;
 
                     WordSpritePtr firstSprite = nextLine->getSprite(0);

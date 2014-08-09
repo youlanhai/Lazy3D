@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "UIButton.h"
-#include "UIForm.h"
+#include "UIWindow.h"
 
 namespace Lazy
 {

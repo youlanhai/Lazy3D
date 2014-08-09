@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "UIDefine.h"
-#include "UIControl.h"
+#include "UIWidget.h"
 
 namespace Lazy
 {

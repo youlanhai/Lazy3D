@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UIControl.h"
+#include "UIWidget.h"
 
 namespace Lazy
 {
