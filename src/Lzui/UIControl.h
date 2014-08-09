@@ -8,7 +8,7 @@ namespace Lazy
         GUIMgr，管理了整个UI系统，将所有的UI关联起来，形成一颗UI树。实现了UI消息传递，
         以及统一更新和渲染。详见CGUIManager。
     */
-    class LZUI_API Widget : public IBase
+    class LZUI_API Widget
     {
     public:
         MAKE_UI_HEADER(Widget);
@@ -24,6 +24,19 @@ namespace Lazy
 
         ///绘制
         virtual void render(IUIRender * pDevice);
+
+        ///创建一个子widget
+        Widget * createWidget(const tstring & type);
+
+        ///创建一个子widget
+        template<typename T>
+        T * createWidgetT()
+        {
+            return dynamic_cast<T*>(createWidget(T::getTypeS()));
+        }
+        
+        ///销毁一个子widget
+        void deleteWidget(Widget *pWidget);
 
     public://消息处理。
 
@@ -53,11 +66,11 @@ namespace Lazy
         ///保存布局到文件
         virtual bool saveToFile(const tstring & file);
 
-        virtual void loadFromStream(LZDataPtr root);
-        virtual void saveToStream(LZDataPtr root);
+        virtual void loadFromStream(LZDataPtr config);
+        virtual void saveToStream(LZDataPtr config);
 
-        void setName(const tstring & key) { m_name = key; }
-        const tstring & getName() const { return m_name; }
+        virtual void loadProperty(LZDataPtr config);
+        virtual void saveProperty(LZDataPtr config);
 
     public: //坐标系转换
 
@@ -85,77 +98,72 @@ namespace Lazy
 
     public://属性
 
-        ///设置ID。
-        void setID(int id) { m_id = id; }
-        int  getID(void) const { return m_id; }
-
         ///获取父
         Widget* getParent(void) { return m_parent; }
 
         ///获取父
         Widget* getParent(void) const { return m_parent; }
 
-        ///设置文本
-        virtual void setText(const tstring & text) { m_text = text; }
-        virtual const tstring & getText(void) const { return m_text; }
+        void setName(const tstring & key) { m_name = key; }
+        const tstring & getName() const { return m_name; }
 
-        ///设置字体
-        virtual void setFont(const tstring & name) { m_font = name; }
-        virtual const tstring & getFont(void) const { return m_font; }
-
-        ///设置背景图像名称
-        virtual void setImage(const tstring & image) { m_image = image; }
-        virtual const tstring & getImage(void) const { return m_image; }
-
-        ///设置颜色。
-        virtual void setColor(uint32 cr) { m_color = cr; }
-        uint32 getColor(void) const { return m_color; }
-
-        uint32 getBgColor() const { return m_bgColor; }
-        void setBgColor(uint32 cr) { m_bgColor = cr; }
+        const tstring & getSkin() const { return m_skin; }
+        void setSkin(const tstring & skin);
 
         ///设置位置
         virtual void setPosition(int x, int y);
-        void setPositionX(int x);
-        void setPositionY(int y);
-        void setPositionZ(int z);
+        void setX(int x);
+        void setY(int y);
+        void setZ(int z);
 
         const CPoint & getPosition(void) const { return m_position; }
-        int getPositionX() const { return m_position.x; }
-        int getPositionY() const { return m_position.y; }
-        int getPositionZ() const { return m_zorder; }
+        int getX() const { return m_position.x; }
+        int getY() const { return m_position.y; }
+        int getZ() const { return m_zorder; }
 
         ///设置尺寸
         virtual void setSize(int w, int h);
         void setWidth(int width);
         void setHeight(int height);
 
-        const CSize & getSize(void) const { return m_size; }
-        int getWidth() const { return m_size.cx; }
-        int getHeight() const { return m_size.cy; }
+        const CPoint & getSize(void) const { return m_size; }
+        int getWidth() const { return m_size.x; }
+        int getHeight() const { return m_size.y; }
 
         //设置控件区域
         CRect getControlRect(void)  const;
         CRect getClientRect(void) const;
 
-        ///相对坐标系
-        void setRelative(bool relative);
-        bool getRelative() const { return m_bRelative; }
-
-        ///设置相对坐标。只有m_bRelative为true，此调用才有效。
-        void setRelativePos(float x, float y);
-        const Vector2 & getRelativePos() const { return m_relativePos; }
-
         ///设置对齐方式
-        void setRelativeAlign(DWORD align);
-        DWORD getRelativeAlign() const { return m_relativeAlign; }
+        void setAlign(uint32 align);
+        uint32 getAlign() const { return m_align; }
 
-        ///更新相对坐标
-        void applyRelative2Real();
-        void applyReal2Relative();
+        ///设置可见
+        virtual void setVisible(bool bShow);
+        bool getVisible(void) const { return m_visible; }
 
-        const tstring & getSkin() const { return m_skin; }
-        void setSkin(const tstring & skin);
+        ///设置是否可用
+        void setEnable(bool enable) { m_enable = enable; }
+        bool getEnable(void) const { return m_enable; }
+
+        ///设置是否可拖拽窗体
+        void setDragable(bool enable) { m_dragable = enable; }
+        bool getDragable(void) const { return m_dragable; }
+
+        ///启用/禁用处理自身消息。如果一个ui不处理自己的消息，他就相当于是个消息转发器，将消息转发到子控件
+        void setMessagable(bool enable) { m_messagable = enable; }
+        bool getMessagable(void) const { return m_messagable; }
+
+        ///点击是否可移动到上层。
+        void setTopable(bool enable) { m_topable = enable; }
+        bool getTopable(void) const { return m_topable; }
+
+        ///允许改变子控件的顺序。如果启用，点击子控件，控件的顺序会被提前。
+        void setChildOrderable(bool can) { m_childOrderable = can; }
+        bool getChildOrdeable() const { return m_childOrderable; }
+
+        void setDrawable(bool enable) { m_drawable = enable; }
+        bool getDrawable() const { return m_drawable; }
 
 #ifdef ENABLE_SCRIPT
 
@@ -173,42 +181,6 @@ namespace Lazy
 
 #endif
 
-    public://开关设置
-
-        ///设置可见
-        virtual void show(bool bShow);
-        virtual void toggle(void);
-        bool isVisible(void) const { return m_bVisible; }
-
-        ///设置是否可用
-        void enable(bool e) { m_bEnable = e; }
-        bool isEnable(void) const { return m_bEnable; }
-
-        ///设置是否可拖拽窗体
-        void enableDrag(bool e) { m_bDrag = e; }
-        bool canDrag(void) const { return m_bDrag; }
-
-        ///启用/禁用处理自身消息。如果一个ui不处理自己的消息，他就相当于是个消息转发器，将消息转发到子控件
-        void enableSelfMsg(bool e) { m_bEnableSelfMsg = e; }
-        bool isSelfMsgEnable(void) const { return m_bEnableSelfMsg; }
-
-        ///点击是否可移动到上层。
-        void enableClickTop(bool e) { m_bClickTop = e; }
-        bool canClickTop(void) const { return m_bClickTop; }
-
-        ///允许改变子控件的顺序。如果启用，点击子控件，控件的顺序会被提前。
-        void enableChangeChildOrder(bool can) { m_bChangeChildOrder = can; }
-        bool canChangeChildOrder() const { return m_bChangeChildOrder; }
-
-        void enableLimitInRect(bool enalbe) { m_bLimitInRect = enalbe; }
-        bool canLimitInRect() const { return m_bLimitInRect; }
-
-        void enableDrawSelf(bool enable) { m_bDrawSelf = enable; }
-        bool canDrawSelf() const { return m_bDrawSelf; }
-
-        void setEditable(bool enable) { m_bEditable = enable; }
-        bool getEditable() const { return m_bEditable; }
-
     public: //对子控件操作
 
         ///将本控件从父控件表中删除
@@ -216,15 +188,6 @@ namespace Lazy
 
         ///添加子控件
         virtual void addChild(Widget* pCtrl);
-
-        ///根据id查找子控件
-        virtual Widget* getChild(int id);
-
-        Widget* getChild(const tstring & name);
-
-        Widget* getChildDeep(const tstring & name);
-
-        const VisitControl & getChildren() const { return m_children; }
 
         ///删除子控件
         virtual void delChild(Widget* pCtrl);
@@ -235,25 +198,20 @@ namespace Lazy
         ///清除子控件
         void clearChildren();
 
-        ///托管池
-        void setManaged(bool managed);
-        bool getManaged() const { return m_bManaged; }
+        const WidgetChildren & getChildren() const { return m_children; }
+
+        Widget* getChild(const tstring & name);
 
         void setChildOrderDirty() { m_bOrderDirty = true; }
 
         ///根据坐标查找活动的控件。pos的参考系为当前控件。
         Widget* finChildByPos(const CPoint & pos, bool resculy = false);
 
-        //遍历children
-
-        VisitControl::iterator childBegin() { return m_children.begin(); }
-        VisitControl::iterator childEnd() { return m_children.end(); }
-        void lockChildren() { m_children.lock(); }
-        void unlockChildren() { m_children.unlock(); }
+        Widget* getSkinChild(const tstring & name);
 
     public://静态方法
 
-        static bool isVKDown(DWORD vk);
+        static bool isVKDown(uint32 vk);
         static void setFocus(Widget* focus);
         static void setSeleced(Widget* pSelected);
         static void setActived(Widget* pActived);
@@ -274,42 +232,36 @@ namespace Lazy
         /** 拖拽消息*/
         virtual void onDrag(const CPoint & delta, const CPoint & point);
 
-        virtual Widget* createEditorUI(LZDataPtr config);
+        void onAlign(const CPoint & sizeDelta);
+        virtual void onParentResize(const CPoint & newSize, const CPoint & oldSize);
+        virtual void onResize(const CPoint & newSize, const CPoint & oldSize);
 
         void clearSkin();
         void createSkin();
 
     protected:
-        int				m_id;			///< 编号。
-        tstring         m_name;         ///< 名称，跟id是相似的作用。
-        Widget*        m_parent;       ///< 父控件
-        uint32		    m_color;	    ///< 前景颜色
-        uint32          m_bgColor;      ///< 背景色
-        CPoint          m_position;     ///< 位置
-        CSize           m_size;         ///< 尺寸
-        int             m_zorder;       ///< z深度值
-        tstring         m_text;         ///<文本
-        tstring		    m_font;		    ///<字体名称
-        tstring         m_image;        ///<图片名称
+        tstring         m_name;         ///< 名称
         tstring         m_skin;
+        Widget*         m_parent;       ///< 父控件
+        CPoint          m_position;     ///< 位置
+        CPoint          m_size;         ///< 尺寸
+        int             m_zorder;       ///< z深度值
 
-        VisitControl    m_children;     ///< 子控件列表
-        VisitControl    m_skinChildren; ///< 皮肤控件
+        WidgetChildren  m_children; ///< 子定义子控件列表
+        WidgetChildren  m_skinChildren;   ///< 皮肤子控件
 
-        Vector2         m_relativePos;  ///< 相对坐标系
-        uint32          m_relativeAlign;///< 相对坐标系下的排版方式
+        uint32          m_align;///< 相对坐标系下的排版方式
 
-        bool            m_bEditable;    ///是否可用于ui编辑器。只有可编辑的控件，才可以保存到ui配置文件中。
-        bool            m_bManaged;     ///< 从配置文件中加载出来的ui，需要托管
-        bool			m_bVisible;		///< 窗体是否可见
-        bool			m_bEnable;		///< 是否可用，即可处理消息
-        bool            m_bEnableSelfMsg;   ///< 是否可以处理自己的消息。如果不能，就相当于是个消息转发器
-        bool            m_bDrag;        ///< 是否可拖拽
-        bool            m_bClickTop;    ///< 是否点击之后排到顶层
-        bool            m_bDrawSelf;    ///< 是否可绘制自己
-        bool            m_bChangeChildOrder;///< 是否可改变子控件顺序
-        bool            m_bLimitInRect;     ///< 消息是否限制在窗体区域内
-        bool            m_bRelative;    ///< 相对坐标系
+        //继承属性。会影响到子控件相应的属性。
+        bool			m_visible;		///< 窗体是否可见
+        bool			m_enable;		///< 是否可用，即可处理消息
+
+        //非继承属性。不影响子控件相应的属性。
+        bool            m_messagable;   ///< 是否可以处理自己的消息。如果不能，就相当于是个消息转发器
+        bool            m_dragable;        ///< 是否可拖拽
+        bool            m_topable;    ///< 是否点击之后排到顶层
+        bool            m_drawable;    ///< 是否可绘制自己
+        bool            m_childOrderable;///< 是否可改变子控件顺序
         bool            m_bOrderDirty;
 
     protected:
@@ -318,6 +270,6 @@ namespace Lazy
         static Widget*        m_pActived;     ///< 当前鼠标抬起后激活的控件。
     };
 
-    WidgetPtr loadUIFromFile(const tstring & layoutFile);
+    Widget* loadUIFromFile(const tstring & layoutFile);
 
 }//namespace Lazy

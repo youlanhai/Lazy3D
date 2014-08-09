@@ -98,6 +98,13 @@ namespace Lazy
         }
     }
 
+    LZDataPtr LZDataBase::newChild(const tstring & tag, const tstring & value_)
+    {
+        LZDataPtr child = newOne(tag, value_);
+        addChild(child);
+        return child;
+    }
+
     int LZDataBase::findNextChild(int index, const tstring & tag)
     {
         index += 1;

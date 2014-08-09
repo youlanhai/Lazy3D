@@ -117,6 +117,8 @@ namespace Lazy
 
         virtual LZDataPtr write(const tstring & tag, tstring value_ = _T(""));
 
+        virtual LZDataPtr newChild(const tstring & tag, const tstring & value_=_T(""));
+
         virtual const DataPool& children(void) { return m_children; }
 
         void clearChildren() { m_children.clear(); }

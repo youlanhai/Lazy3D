@@ -23,8 +23,13 @@ namespace Lazy
         virtual void render(IUIRender * pDevice) override;
         virtual void setImage(const tstring & image) override;
 
+        ///设置背景图像名称
+        virtual void setImage(const tstring & image) { m_image = image; }
+        virtual const tstring & getImage(void) const { return m_image; }
+
     protected:
-        TexturePtr m_texture;
+        TexturePtr      m_texture;
+        tstring         m_image;        ///<图片名称
     };
 
 }//namespace Lazy

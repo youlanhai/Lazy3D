@@ -15,15 +15,14 @@ namespace Lazy
 
     class Widget;
 
-    typedef RefPtr<Widget> WidgetPtr;
-
-    typedef RefPtr<class ITextSprite> TextSpritePtr;
-
     typedef Widget* (*UICreateFun)(void) ;
 
 #define MAKE_UI_HEADER(CLASS)   \
-    static Widget * createSelf(){ return new CLASS(); }   \
+    static Widget * createSelf(){ return new CLASS(); }         \
+    static const char * getTypeS() { return #CLASS; }           \
     virtual const char * getType(void) const { return #CLASS; }
+
+    typedef RefPtr<class ITextSprite> TextSpritePtr;
 
 
     class CGUIManager;
@@ -189,7 +188,7 @@ namespace Lazy
     };
 
 
-    class VisitControl : public VisitPool<Widget*>
+    class WidgetChildren : public VisitPool<Widget*>
     {
     public:
 
@@ -197,8 +196,6 @@ namespace Lazy
 
         void render(IUIRender * pDevice);
     };
-
-    typedef std::list<WidgetPtr>  ManagedControl;
 
     namespace misc
     {

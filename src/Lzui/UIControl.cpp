@@ -10,31 +10,26 @@
 namespace Lazy
 {
 
-    struct PredIfIDEqual
+    struct CompareWidgetName
     {
-        PredIfIDEqual(int id) : m_id(id) { }
-        bool operator()(Widget* pc)
-        {
-            return pc->getID() == m_id;
-        }
-    private:
-        int m_id;
-    };
+        tstring m_name;
 
-    struct PredIfID2Equal
-    {
-        PredIfID2Equal(int id) : m_id(id) { }
-        bool operator()(RefPtr<Widget> pc)
+        CompareWidgetName()
+        {}
+
+        CompareWidgetName(const tstring & name)
+            : m_name(name)
+        {}
+
+        bool operator()(const Widget * p) const
         {
-            return pc->getID() == m_id;
+            return p->getName() == m_name;
         }
-    private:
-        int m_id;
     };
 
     bool sortCompare(Widget * x, Widget * y)
     {
-        return x->getPositionZ() < y->getPositionZ();
+        return x->getZ() < y->getZ();
     }
 
     static EditorUICreateFun g_pUICreateFun = nullptr;
@@ -128,7 +123,7 @@ namespace Lazy
     /*static*/ Widget* Widget::m_pSelected = nullptr;
     /*static*/ Widget* Widget::m_pActived = nullptr;
 
-    /*static*/ bool Widget::isVKDown(DWORD vk)
+    /*static*/ bool Widget::isVKDown(uint32 vk)
     {
         return (::GetAsyncKeyState(vk) & 0x8000) != 0;
     }
@@ -163,25 +158,15 @@ namespace Lazy
 
     //////////////////////////////////////////////////////////////////////////
     Widget::Widget(void)
-        : m_id(0)
-        , m_color(0xffffffff)
-        , m_bgColor(0x7fffffff)
-        , m_bVisible(true)
-        , m_bEnable(true)
-        , m_bDrag(false)
-        , m_bEnableSelfMsg(true)
-        , m_bClickTop(false)
+        : m_visible(true)
+        , m_enable(true)
+        , m_dragable(false)
+        , m_messagable(true)
+        , m_topable(false)
         , m_parent(nullptr)
-        , m_font(getDefaultFont())
-        , m_bRelative(false)
-        , m_relativePos(0, 0)
-        , m_relativeAlign(RelativeAlign::center)
-        , m_bChangeChildOrder(true)
-        , m_bLimitInRect(false)
-        , m_bDrawSelf(true)
-        , m_name(L"noname")
-        , m_bEditable(false)
-        , m_bManaged(false)
+        , m_align(RelativeAlign::center)
+        , m_childOrderable(true)
+        , m_drawable(true)
         , m_bOrderDirty(true)
         , m_zorder(0)
     {
@@ -189,19 +174,16 @@ namespace Lazy
 
     Widget::~Widget(void)
     {
-        removeFromParent();
-
         if (this == m_pFocus) m_pFocus = nullptr;
         if (this == m_pSelected) m_pSelected = nullptr;
         if (this == m_pActived) m_pActived = nullptr;
 
-        clearChildren();
-
+        destroy();
     }
 
     bool Widget::checkCanHandelMsg()
     {
-        return m_bVisible && m_bEnable;
+        return m_visible && m_enable;
     }
 
     ///向控件发送消息。发送成功，返回true，否则false。
@@ -211,13 +193,14 @@ namespace Lazy
 
         if (sendEventToChildren(event)) return true;
 
-        if (!m_bEnableSelfMsg) return false;
+        if (!m_messagable) return false;
 
         if (event.eventType == EET_MOUSE_EVENT)
         {
             if (!isPointIn(event.mouseEvent.x, event.mouseEvent.y))
                 return false;
         }
+
         return onEvent(event);
     }
 
@@ -234,16 +217,11 @@ namespace Lazy
         {
             return false;//gui消息属于ui自己，不转发给子控件。
         }
-        else if (event.eventType == EET_MOUSE_EVENT)
-        {
-            //if (m_bLimitInRect && !isPointIn(event.mouseEvent.x, event.mouseEvent.y))
-            //    return false;
-        }
 
         bool processed = false;
-        m_children.lock();
 
-        for (VisitControl::iterator it = m_children.begin();
+        m_children.lock();
+        for (WidgetChildren::iterator it = m_children.begin();
                 it != m_children.end(); ++it)
         {
             Widget *pChild = *it;
@@ -264,6 +242,32 @@ namespace Lazy
             if (processed) break;
         }
         m_children.unlock();
+
+        if (processed)
+            return true;
+
+        m_skinChildren.lock();
+        for (WidgetChildren::iterator it = m_skinChildren.begin();
+            it != m_skinChildren.end(); ++it)
+        {
+            Widget *pChild = *it;
+
+            if (event.isMouseEvent())
+            {
+                //坐标系转换
+                SEvent subEvent = event;
+                subEvent.mouseEvent.x -= pChild->getPosition().x;
+                subEvent.mouseEvent.y -= pChild->getPosition().y;
+                processed = pChild->sendEvent(subEvent);
+            }
+            else
+            {
+                processed = pChild->sendEvent(event);
+            }
+
+            if (processed) break;
+        }
+        m_skinChildren.unlock();
 
         return processed;
     }
@@ -311,17 +315,17 @@ namespace Lazy
     }
 
 
-    void Widget::show(bool bShow)
+    void Widget::setVisible(bool visible)
     {
-        m_bVisible = bShow;
+        if (m_visible == visible)
+            return;
 
-        if (bShow) active();
-        onShow(bShow);
-    }
+        m_visible = visible;
 
-    void Widget::toggle(void)
-    {
-        show(!isVisible());
+        if (visible)
+            active();
+
+        onShow(visible);
     }
 
     void Widget::onShow(bool show)
@@ -342,7 +346,7 @@ namespace Lazy
     /** 将控件至于顶层*/
     void Widget::topmost()
     {
-        if (canClickTop() && m_parent)
+        if (getTopable() && m_parent)
         {
             m_parent->topmostChild(this);
             m_parent->topmost();
@@ -364,14 +368,64 @@ namespace Lazy
         setPosition(m_position.x + delta.x, m_position.y + delta.y);
     }
 
+    void Widget::onAlign(const CPoint & sizeDelta)
+    {
+        int x = m_position.x;
+        int y = m_position.y;
+
+        if (m_align & RelativeAlign::hcenter)
+        {
+            x += sizeDelta.x >> 1;
+        }
+        else if (m_align & RelativeAlign::right)
+        {
+            x += sizeDelta.x;
+        }
+
+        if (m_align & RelativeAlign::vcenter)
+        {
+            y += sizeDelta.y >> 1;
+        }
+        else if (m_align & RelativeAlign::bottom)
+        {
+            y += sizeDelta.y;
+        }
+
+        setPosition(x, y);
+    }
+
+    void Widget::onParentResize(const CPoint & newSize, const CPoint & oldSize)
+    {
+        onAlign(newSize - oldSize);
+    }
+
+    void Widget::onResize(const CPoint & newSize, const CPoint & oldSize)
+    {
+        onAlign(newSize - oldSize);
+
+        for (Widget * child : m_children)
+        {
+            child->onParentResize(newSize, oldSize);
+        }
+
+        for (Widget * child : m_skinChildren)
+        {
+            child->onParentResize(newSize, oldSize);
+        }
+
+#ifdef ENABLE_SCRIPT
+        m_self.call_method_quiet("onSizeChange");
+#endif
+    }
+
     CRect Widget::getControlRect(void) const
     {
-        return CRect(m_position, m_size);
+        return CRect(m_position, m_position + m_size);
     }
 
     CRect Widget::getClientRect(void) const
     {
-        return CRect(0, 0, m_size.cx, m_size.cy);
+        return CRect(0, 0, m_size.x, m_size.y);
     }
 
     //坐标系转换
@@ -441,7 +495,7 @@ namespace Lazy
     bool Widget::isPointIn(int x, int y) const
     {
         if (x < 0 || y < 0) return false;
-        if (x > m_size.cx || y > m_size.cy) return false;
+        if (x > m_size.x || y > m_size.y) return false;
 
         return true;
     }
@@ -449,8 +503,8 @@ namespace Lazy
     bool Widget::isPointInRefParent(int x, int y) const
     {
         if (x < m_position.x || y < m_position.y) return false;
-        if (x > m_position.x + m_size.cx) return false;
-        if (y > m_position.y + m_size.cy) return false;
+        if (x > m_position.x + m_size.x) return false;
+        if (y > m_position.y + m_size.y) return false;
 
         return true;
     }
@@ -458,137 +512,39 @@ namespace Lazy
     void Widget::setPosition(int x, int y)
     {
         m_position.set(x, y);
-
-        if (m_bRelative) applyReal2Relative();
     }
 
-    void Widget::setPositionX(int x)
+    void Widget::setX(int x)
     {
         setPosition(x, m_position.y);
     }
 
-    void Widget::setPositionY(int y)
+    void Widget::setY(int y)
     {
         setPosition(m_position.x, y);
     }
 
-    void Widget::setPositionZ(int z)
+    void Widget::setZ(int z)
     {
+        if (m_zorder == z) return;
+
         m_zorder = z;
         if (m_parent) m_parent->setChildOrderDirty();
     }
 
     void Widget::setWidth(int width)
     {
-        setSize(width, m_size.cy);
+        setSize(width, m_size.y);
     }
 
     void Widget::setHeight(int height)
     {
-        setSize(m_size.cx, height);
+        setSize(m_size.x, height);
     }
 
-    ///相对坐标系
-    void Widget::setRelative(bool relative)
+    void Widget::setAlign(uint32 align)
     {
-        m_bRelative = relative;
-
-        if (m_bRelative) applyRelative2Real();
-    }
-
-    ///设置相对坐标。只有m_bRelative为true，此调用才有效。
-    void Widget::setRelativePos(float x, float y)
-    {
-        m_relativePos.set(x, y);
-
-        if (m_bRelative) applyRelative2Real();
-    }
-
-    void Widget::setRelativeAlign(DWORD align)
-    {
-        m_relativeAlign = align;
-
-        if (m_bRelative) applyRelative2Real();
-    }
-
-    void Widget::applyRelative2Real()
-    {
-        if (nullptr == m_parent) return;
-
-        const CSize & size = m_parent->getSize();
-        m_position.x = LONG(size.cx * m_relativePos.x);
-        m_position.y = LONG(size.cy * m_relativePos.y);
-
-        //水平方向
-        if (m_relativeAlign & RelativeAlign::hcenter)
-        {
-            m_position.x -= m_size.cx >> 1;
-        }
-        else if (m_relativeAlign & RelativeAlign::right)
-        {
-            m_position.x -= m_size.cx;
-        }
-
-        //垂直方向
-        if (m_relativeAlign & RelativeAlign::vcenter)
-        {
-            m_position.y -= m_size.cy >> 1;
-        }
-        else if (m_relativeAlign & RelativeAlign::bottom)
-        {
-            m_position.y -= m_size.cy;
-        }
-    }
-
-    void Widget::applyReal2Relative()
-    {
-        if (nullptr == m_parent) return;
-
-        CPoint pt = m_position;
-
-        //反向矫正坐标
-
-        //水平方向
-        if (m_relativeAlign & RelativeAlign::hcenter)
-        {
-            pt.x += m_size.cx >> 1;
-        }
-        else if (m_relativeAlign & RelativeAlign::right)
-        {
-            pt.x += m_size.cx;
-        }
-
-        //垂直方向
-        if (m_relativeAlign & RelativeAlign::vcenter)
-        {
-            pt.y += m_size.cy >> 1;
-        }
-        else if (m_relativeAlign & RelativeAlign::bottom)
-        {
-            pt.y += m_size.cy;
-        }
-
-        const CSize & size = m_parent->getSize();
-
-        if (size.cx > 0)
-        {
-            m_relativePos.x = (float) pt.x / (float) size.cx;
-        }
-        else
-        {
-            m_relativePos.x = 0.0f;
-        }
-
-        if (size.cy > 0)
-        {
-            m_relativePos.y = (float) pt.y / (float) size.cy;
-        }
-        else
-        {
-            m_relativePos.y = 0.0f;
-        }
-
-
+        m_align = align;
     }
 
     void Widget::setSkin(const tstring & skin)
@@ -603,8 +559,6 @@ namespace Lazy
 
     bool Widget::loadFromFile(const tstring & file)
     {
-        setEditable(false);
-
         LZDataPtr root = openSection(file);
         if (!root || root->countChildren() == 0)
         {
@@ -618,35 +572,9 @@ namespace Lazy
 
     void Widget::loadFromStream(LZDataPtr config)
     {
-        assert(config);
-
-        m_name = config->tag();
-        setID(config->readInt(L"id"));
-        setText(config->readString(L"text"));
-        setImage(config->readString(L"image"));
-        setFont(config->readString(L"font", getDefaultFont()));
-        setColor(config->readHex(L"color", 0xffff0000));
-        setBgColor(config->readHex(L"bgcolor", 0xffffffff));
-        misc::readPosition(m_position, config, L"position");
-        misc::readSize(m_size, config, L"size");
-
-        show(config->readBool(L"visible", true));
-        enable(config->readBool(L"enable", true));
-        enableSelfMsg(config->readBool(L"enableSelfMsg", true));
-        enableDrag(config->readBool(L"enalbeDrag", false));
-        enableClickTop(config->readBool(L"clickTop", false));
-        enableChangeChildOrder(config->readBool(L"limitInRect", true));
-        enableChangeChildOrder(config->readBool(L"changeChildOrder", true));
-        enableDrawSelf(config->readBool(L"drawSelf", true));
-
-        m_bRelative = config->readBool(L"relative", false);
-        if (m_bRelative)
-        {
-            misc::readVector2(m_relativePos, config, L"relativePos");
-            setRelativeAlign(config->readInt(L"relativeAlign"));
-        }
-
         clearChildren();
+
+        loadProperty(config);
 
         //加载子控件
         LZDataPtr childrenPtr = config->read(L"children");
@@ -654,20 +582,14 @@ namespace Lazy
         {
             for (LZDataPtr childPtr : (*childrenPtr))
             {
-                int type = childPtr->readInt(L"type");
-
-                Widget* child = createEditorUI(childPtr);
+                tstring type = childPtr->readString(L"type");
+                Widget* child = createWidget(type);
                 if (!child)
                 {
-                    LOG_ERROR(L"createChildUI '%d' failed!", type);
+                    LOG_ERROR(L"createChildUI '%s' failed!", type.c_str());
                     continue;
                 }
-
                 child->loadFromStream(childPtr);
-
-                child->setName(childPtr->tag());
-                child->setEditable(true);
-                addChild(child);
             }
         }
 
@@ -676,7 +598,6 @@ namespace Lazy
         if(m_self) m_self.call_method_quiet("onLoadLayout", Lzpy::make_object(config));
 #endif
     }
-
 
     bool Widget::saveToFile(const tstring & file)
     {
@@ -698,59 +619,22 @@ namespace Lazy
 
     void Widget::saveToStream(LZDataPtr config)
     {
-        assert(config);
+        saveProperty(config);
 
-        tstring tmp;
-        charToWChar(tmp, getType());
-        config->writeString(L"type", tmp);
-
-        config->writeInt(L"id", getID());
-
-        if (!getText().empty())
-            config->writeString(L"text", getText());
-
-        if (!getImage().empty())
-            config->writeString(L"image", getImage());
-
-        if (!getFont().empty())
-            config->writeString(L"font", getFont());
-
-        config->writeHex(L"color", m_color);
-        config->writeHex(L"bgcolor", m_bgColor);
-        config->writeBool(L"visible", m_bVisible);
-        config->writeBool(L"enable", m_bEnable);
-        config->writeBool(L"enableSelfMsg", m_bEnableSelfMsg);
-        config->writeBool(L"enalbeDrag", m_bDrag);
-        config->writeBool(L"clickTop", m_bClickTop);
-        config->writeBool(L"limitInRect", m_bLimitInRect);
-        config->writeBool(L"changeChildOrder", m_bChangeChildOrder);
-        config->writeBool(L"drawSelf", m_bDrawSelf);
-
-        misc::writePosition(m_position, config, L"position");
-        misc::writeSize(m_size, config, L"size");
-
-        if (m_bRelative)
+        if (!m_children.empty())
         {
-            config->writeBool(L"relative", m_bRelative);
-            config->writeInt(L"relativeAlign", m_relativeAlign);
-            misc::writeVector2(m_relativePos, config, L"relativePos");
+            LZDataPtr childrenPtr = config->write(L"children");
+            childrenPtr->clearChildren();
+
+            //保存子控件的简略数据
+            m_children.lock();
+            for (Widget* child : m_children)
+            {
+                LZDataPtr ptr = childrenPtr->newChild(child->getName());
+                child->saveToStream(ptr);
+            }
+            m_children.unlock();
         }
-
-
-        LZDataPtr childrenPtr = config->write(L"children");
-        childrenPtr->clearChildren();
-
-        //保存子控件的简略数据
-        lockChildren();
-        for (Widget* child : m_children)
-        {
-            if (!child->getEditable()) continue;
-
-            LZDataPtr ptr = childrenPtr->newOne(child->getName(), EmptyStr);
-            childrenPtr->addChild(ptr);
-            child->saveToStream(ptr);
-        }
-        unlockChildren();
 
 #ifdef ENABLE_SCRIPT
         if (!m_script.empty()) config->writeString(L"script", m_script);
@@ -758,21 +642,67 @@ namespace Lazy
 #endif
     }
 
+
+    void Widget::loadProperty(LZDataPtr config)
+    {
+        m_name = config->tag();
+        setSkin(config->readString(L"skin"));
+
+        misc::readPosition(m_position, config, L"position");
+        misc::readPosition(m_size, config, L"size");
+
+        setVisible(config->readBool(L"visible", true));
+        setEnable(config->readBool(L"enable", true));
+        setMessagable(config->readBool(L"messagable", true));
+        setDragable(config->readBool(L"dragable", false));
+        setTopable(config->readBool(L"topable", false));
+        setChildOrderable(config->readBool(L"childOrderable", true));
+        setDrawable(config->readBool(L"drawable", true));
+    }
+
+    void Widget::saveProperty(LZDataPtr config)
+    {
+        tstring tmp;
+        charToWChar(tmp, getType());
+        config->writeString(L"type", tmp);
+
+        misc::writePosition(m_position, config, L"position");
+        misc::writePosition(m_size, config, L"size");
+
+        if (!getSkin().empty())
+            config->writeString(L"skin", getSkin());
+
+        if (!m_visible)
+            config->writeBool(L"visible", m_visible);
+
+        if (!m_enable)
+            config->writeBool(L"enable", m_enable);
+
+        if (!m_messagable)
+            config->writeBool(L"messagable", m_messagable);
+
+        if (m_dragable)
+            config->writeBool(L"dragable", m_dragable);
+
+        if (m_topable)
+            config->writeBool(L"topable", m_topable);
+
+        if (!m_childOrderable)
+            config->writeBool(L"childOrderable", m_childOrderable);
+
+        if (!m_drawable)
+            config->writeBool(L"drawable", m_drawable);
+
+    }
+
+
     void Widget::setSize(int w, int h)
     {
+        CPoint oldSize = m_size;
+
         m_size.set(w, h);
 
-        if (!m_children.empty())
-        {
-            for (Widget * child : m_children)
-            {
-                if (child->getRelative()) child->applyRelative2Real();
-            }
-        }
-
-#ifdef ENABLE_SCRIPT
-        m_self.call_method_quiet("onSizeChange");
-#endif
+        onResize(m_size, oldSize);
     }
 
 
@@ -782,48 +712,66 @@ namespace Lazy
         assert(pCtrl && "Widget::addChild");
 
         if (pCtrl->m_parent != NULL)
-            throw(std::logic_error("Widget::addChild, control has been added to a Panel list!"));
+        {
+            assert(0 && "Widget::addChild, control has been added to a Panel list!");
+            return;
+        }
 
         pCtrl->m_parent = this;
         m_children.addFront(pCtrl);
         setChildOrderDirty();
     }
 
-    Widget* Widget::getChild(int id)
-    {
-        VisitControl::iterator it = m_children.find_if(PredIfIDEqual(id));
-        if (it != m_children.end())
-        {
-            return *it;
-        }
-        return NULL;
-    }
-
     Widget* Widget::getChild(const tstring & name)
     {
-        auto fun = [name](Widget* p) { return p->getName() == name; };
-        VisitControl::iterator it = m_children.find_if(fun);
-        if (it != m_children.end()) return *it;
+        size_t pos = name.find('/');
 
-        return NULL;
+        CompareWidgetName cmp;
+        if (pos == name.npos)
+            cmp.m_name = name;
+        else
+            cmp.m_name = name.substr(0, pos);
+
+        Widget* child = nullptr;
+        WidgetChildren::iterator it = m_children.find_if(cmp);
+        if (it != m_children.end())
+            child = *it;
+
+        if (pos != name.npos && child)
+            child = child->getChild(name.substr(pos + 1));
+
+        return child;
     }
 
-    Widget* Widget::getChildDeep(const tstring & name)
+    Widget* Widget::getSkinChild(const tstring & name)
     {
         size_t pos = name.find('/');
-        if (pos == name.npos) return getChild(name);
 
-        Widget* child = getChild(name.substr(0, pos));
-        if (!child) return nullptr;
+        CompareWidgetName cmp;
+        if (pos == name.npos)
+            cmp.m_name = name;
+        else
+            cmp.m_name = name.substr(0, pos);
 
-        return child->getChildDeep(name.substr(pos + 1));
+        Widget* child = nullptr;
+        WidgetChildren::iterator it = m_skinChildren.find_if(cmp);
+        if (it != m_skinChildren.end())
+            child = *it;
+
+        if (pos != name.npos && child)
+            child = child->getChild(name.substr(pos + 1));
+
+        return child;
     }
 
     void Widget::delChild(Widget* pCtrl)
     {
         assert(pCtrl && "CPanel::delChild");
         if (pCtrl->m_parent != this)
-            throw(std::logic_error("CPanel::delChild, control is not child of this panel!"));
+        {
+            assert(0 && "CPanel::delChild, control is not child of this panel!");
+            return;
+        }
 
         pCtrl->m_parent = nullptr;
         m_children.remove(pCtrl);
@@ -833,11 +781,9 @@ namespace Lazy
     ///将子空间至于最顶层。
     void Widget::topmostChild(Widget* ctrl)
     {
-        if (!m_bChangeChildOrder) return;
+        if (!m_childOrderable) return;
 
-        assert(ctrl);
-
-        VisitControl::iterator it = m_children.find(ctrl);
+        WidgetChildren::iterator it = m_children.find(ctrl);
         if (it == m_children.end()) return;
 
         m_children.remove(ctrl);
@@ -847,41 +793,34 @@ namespace Lazy
     ///清除子控件
     void Widget::clearChildren()
     {
-        //加锁，防止子控件析构时删除自己。
-        for (VisitControl::iterator it = m_children.begin();
+        for (WidgetChildren::iterator it = m_children.begin();
                 it != m_children.end(); ++it)
         {
             (*it)->m_parent = nullptr;
-            (*it)->setManaged(false);
+            (*it)->destroy();
         }
         m_children.destroy();
     }
 
     void Widget::destroy()
     {
-        for (VisitControl::iterator it = m_children.begin();
-                it != m_children.end(); ++it)
-        {
-            (*it)->m_parent = nullptr;
-            (*it)->destroy();
-        }
-
 #ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("onDestroy");
 #endif
-
         clearChildren();
+        clearSkin();
+
         removeFromParent();
     }
 
     ///根据坐标查找控件。
     Widget* Widget::finChildByPos(const CPoint & pos, bool resculy)
     {
-        for (VisitControl::iterator it = m_children.begin();
+        for (WidgetChildren::iterator it = m_children.begin();
                 it != m_children.end();  ++it)
         {
             Widget* ptr = *it;
-            if (!ptr || !ptr->isVisible()) continue;
+            if (!ptr || !ptr->getVisible()) continue;
 
             CPoint pt = pos;
             ptr->parentToLocal(pt);
@@ -903,22 +842,6 @@ namespace Lazy
         return NULL;
     }
 
-    Widget* Widget::createEditorUI(LZDataPtr config)
-    {
-        if (g_pUICreateFun)
-        {
-            return g_pUICreateFun(this, config);
-        }
-
-        tstring type = config->readString(L"type");
-        if (type.empty()) return nullptr;
-
-        Widget *p = uiFactory()->create(wcharToChar(type));
-        if (p) setManaged(true);
-
-        return p;
-    }
-
     void Widget::update(float elapse)
     {
         if (m_bOrderDirty)
@@ -928,39 +851,84 @@ namespace Lazy
         }
 
         m_children.update(elapse);
+        m_skinChildren.update(elapse);
     }
 
     void Widget::render(IUIRender * pDevice)
     {
+        m_skinChildren.render(pDevice);
         m_children.render(pDevice);
     }
-
-    void Widget::setManaged(bool managed)
-    {
-        if (m_bManaged == managed) return;
-
-        if (managed)
-            this->addRef();
-        else
-            this->delRef();
-
-        m_bManaged = managed;
-    }
-
 
     void Widget::clearSkin()
     {
         m_skin.clear();
+
+        for (WidgetChildren::iterator it = m_skinChildren.begin();
+            it != m_skinChildren.end(); ++it)
+        {
+            (*it)->m_parent = nullptr;
+            (*it)->destroy();
+        }
+        m_skinChildren.destroy();
     }
 
     void Widget::createSkin()
     {
+        LZDataPtr root = openSection(m_skin);
+        if (!root || root->countChildren() == 0)
+        {
+            LOG_ERROR(L"Load skin file '%s' failed!", m_skin.c_str());
+            return;
+        }
 
+        LZDataPtr config = root->getChild(0);
+        loadProperty(config);
+
+        //加载子控件
+        LZDataPtr childrenPtr = config->read(L"children");
+        if (childrenPtr)
+        {
+            for (LZDataPtr childPtr : (*childrenPtr))
+            {
+                tstring type = childPtr->readString(L"type");
+                Widget* child = uiFactory()->create(wcharToChar(type));
+                if (!child)
+                {
+                    LOG_ERROR(L"createChildUI '%s' failed!", type.c_str());
+                    continue;
+                }
+                child->loadFromStream(childPtr);
+                m_skinChildren.addBack(child);
+            }
+        }
+    }
+
+    ///创建一个子widget
+    Widget * Widget::createWidget(const tstring & type)
+    {
+        Widget * pChild = uiFactory()->create(wcharToChar(type));
+        addChild(pChild);
+        return pChild;
+    }
+
+    ///销毁一个子widget
+    void Widget::deleteWidget(Widget *pWidget)
+    {
+        auto it = m_children.find(pWidget);
+        if (it == m_children.end())
+        {
+            LOG_ERROR(L"Widget '%s' is not a child of '%s'",
+                pWidget->getName().c_str(), m_name.c_str());
+            return;
+        }
+
+        delete pWidget;
     }
 
     ////////////////////////////////////////////////////////////////////
 
-    WidgetPtr loadUIFromFile(const tstring & layoutFile)
+    Widget* loadUIFromFile(const tstring & layoutFile)
     {
         if (layoutFile.empty()) return nullptr;
 
@@ -976,7 +944,7 @@ namespace Lazy
         if (type.empty())
             return nullptr;
 
-        WidgetPtr child = uiFactory()->create(wcharToChar(type));
+        Widget* child = uiFactory()->create(wcharToChar(type));
         child->loadFromStream(config);
         return child;
     }

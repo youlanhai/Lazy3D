@@ -14,8 +14,15 @@ namespace Lazy
         virtual void create(int id, const tstring & caption, int x, int y);
 
         void setAlign(int align) { m_align = align; }
-        void setText(const std::wstring & text) override;
-        void setFont(const std::wstring & font) override;
+       
+        ///设置文本
+        virtual void setText(const tstring & text) { m_text = text; }
+        virtual const tstring & getText(void) const { return m_text; }
+
+        ///设置字体
+        virtual void setFont(const tstring & name) { m_font = name; }
+        virtual const tstring & getFont(void) const { return m_font; }
+
         void setColor(uint32 color) override;
         void setSize(int w, int h) override;
 
@@ -44,6 +51,9 @@ namespace Lazy
     protected:
         void createTextSprite();
         void updateText();
+
+        tstring         m_text;         ///<文本
+        tstring         m_font;         ///<字体名称
 
         uint32	    m_align;    ///排版风格
         FontPtr     m_fontPtr;
