@@ -13,18 +13,18 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////////
-    CSlider::CSlider()
+    Slider::Slider()
         : m_pSlidebar(nullptr)
     {
-        enableDrag(true);
+        setDragable(true);
     }
 
-    bool CSlider::onEvent(const SEvent & event)
+    bool Slider::onEvent(const SEvent & event)
     {
-        return CButton::onEvent(event);
+        return Button::onEvent(event);
     }
 
-    void CSlider::onDrag(const CPoint & delta, const CPoint & point)
+    void Slider::onDrag(const CPoint & delta, const CPoint & point)
     {
         if (!m_pSlidebar) return;
 
@@ -32,34 +32,32 @@ namespace Lazy
         m_pSlidebar->slideDelta(delta[i]);
     }
 
-    void CSlider::setSize(int w, int h)
+    void Slider::setSize(int w, int h)
     {
-        CButton::setSize(w, h);
+        Button::setSize(w, h);
 
         if (m_pSlidebar) m_pSlidebar->layoutSlider();
     }
 
 
     //////////////////////////////////////////////////////////////////////////
-    CSlidebar::CSlidebar()
+    Slidebar::Slidebar()
         : m_bVertical(false)
         , m_rate(0.0f)
         , m_slideStep(0.05f)
     {
-        enableDrag(false);
-        enableLimitInRect(false);
-        setBgColor(0x7f000000);
+        setDragable(false);
 
-        setSlider(new CSlider());
+        setSlider(new Slider());
     }
 
-    void CSlidebar::setSlider(SliderPtr silider)
+    void Slidebar::setSlider(Slider * silider)
     {
         if (silider == m_slider) return;
 
         if (m_slider)
         {
-            delChild(m_slider.get());
+            delChild(m_slider);
             m_slider->m_pSlidebar = nullptr;
         }
 
@@ -68,27 +66,27 @@ namespace Lazy
         if (m_slider)
         {
             m_slider->m_pSlidebar = this;
-            addChild(silider.get());
+            addChild(silider);
         }
 
         layoutSlider();
     }
 
-    void CSlidebar::setSliderSize(int w, int h)
+    void Slidebar::setSliderSize(int w, int h)
     {
         if (m_slider)
             m_slider->setSize(w, h);
     }
 
-    CSize CSlidebar::getSliderSize() const
+    CPoint Slidebar::getSliderSize() const
     {
-        CSize size;
+        CPoint size;
         if (m_slider) size = m_slider->getSize();
 
         return size;
     }
 
-    bool CSlidebar::onEvent(const SEvent & event)
+    bool Slidebar::onEvent(const SEvent & event)
     {
         if (event.isMouseEvent() && event.mouseEvent.event == EME_MOUSE_WHEEL)
         {
@@ -96,16 +94,16 @@ namespace Lazy
             return true;
         }
 
-        return CForm::onEvent(event);
+        return Window::onEvent(event);
     }
 
-    void CSlidebar::setVertical(bool vertical)
+    void Slidebar::setVertical(bool vertical)
     {
         m_bVertical = vertical;
         layoutSlider();
     }
 
-    void CSlidebar::layoutSlider()
+    void Slidebar::layoutSlider()
     {
         if (!m_slider) return;
 
@@ -119,7 +117,7 @@ namespace Lazy
         m_slider->setPosition(pos.x, pos.y);
     }
 
-    void CSlidebar::setRate(float percent)
+    void Slidebar::setRate(float percent)
     {
         m_rate = percent;
         clamp(m_rate, 0.0f, 1.0f);
@@ -127,14 +125,14 @@ namespace Lazy
         layoutSlider();
     }
 
-    void CSlidebar::setSize(int w, int h)
+    void Slidebar::setSize(int w, int h)
     {
-        CForm::setSize(w, h);
+        Window::setSize(w, h);
         layoutSlider();
     }
 
 
-    void CSlidebar::onMouseWheel(float wheel, CPoint pt)
+    void Slidebar::onMouseWheel(float wheel, CPoint pt)
     {
         if (!m_slider) return;
 
@@ -148,12 +146,12 @@ namespace Lazy
         }
     }
 
-    int CSlidebar::getSlideDelta() const
+    int Slidebar::getSlideDelta() const
     {
         return int(m_slideStep * getSlideRange());
     }
 
-    int CSlidebar::getSlideRange() const
+    int Slidebar::getSlideRange() const
     {
         int i = m_bVertical ? 1 : 0;
         int range = m_size[i];
@@ -165,17 +163,17 @@ namespace Lazy
         return range;
     }
 
-    void CSlidebar::slideBackward(void)
+    void Slidebar::slideBackward(void)
     {
         slideDelta(-getSlideDelta());
     }
 
-    void CSlidebar::slideForward(void)
+    void Slidebar::slideForward(void)
     {
         slideDelta(getSlideDelta());
     }
 
-    void CSlidebar::slideDelta(int dt)
+    void Slidebar::slideDelta(int dt)
     {
         m_rate += float(dt) / getSlideRange();
         clamp(m_rate, 0.0f, 1.0f);
@@ -185,7 +183,7 @@ namespace Lazy
         onSlide();
     }
 
-    void CSlidebar::onSlide()
+    void Slidebar::onSlide()
     {
 #ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("onSlide", m_rate);
@@ -193,9 +191,9 @@ namespace Lazy
     }
 
 
-    void CSlidebar::loadFromStream(LZDataPtr config)
+    void Slidebar::loadFromStream(LZDataPtr config)
     {
-        CForm::loadFromStream(config);
+        Window::loadFromStream(config);
 
         setVertical(config->readBool(L"vertical", false));
         setSlideStep(config->readFloat(L"slideStep", 0.05f));
@@ -205,13 +203,13 @@ namespace Lazy
         setSliderSize(size.cx, size.cy);
     }
 
-    void CSlidebar::saveToStream(LZDataPtr config)
+    void Slidebar::saveToStream(LZDataPtr config)
     {
-        CForm::saveToStream(config);
+        Window::saveToStream(config);
 
         config->writeBool(L"vertical", m_bVertical);
         config->writeFloat(L"slideStep", m_slideStep);
-        misc::writeSize(getSliderSize(), config, L"sliderSize");
+        misc::writePosition(getSliderSize(), config, L"sliderSize");
     }
 
 }//namespace Lazy

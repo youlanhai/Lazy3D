@@ -5,15 +5,15 @@
 namespace Lazy
 {
 
-    CImage::CImage()
+    Image::Image()
     {
     }
 
-    CImage::~CImage(void)
+    Image::~Image(void)
     {
     }
 
-    void CImage::create(
+    void Image::create(
         const tstring &image,
         int x,
         int y,
@@ -25,7 +25,7 @@ namespace Lazy
         setImage(image);
     }
 
-    void CImage::render(IUIRender * pDevice)
+    void Image::render(IUIRender * pDevice)
     {
         CRect rc = getClientRect();
         localToGlobal(rc);
@@ -34,21 +34,21 @@ namespace Lazy
         Widget::render(pDevice);
     }
 
-    void CImage::setImage(const tstring & image)
+    void Image::setImage(const tstring & image)
     {
         m_image = image;
         m_texture = TextureMgr::instance()->get(m_image);
     }
 
 
-    void CImage::loadProperty(LZDataPtr root)
+    void Image::loadProperty(LZDataPtr root)
     {
         Widget::loadProperty(root);
 
         setImage(root->readString(L"image"));
     }
 
-    void CImage::saveProperty(LZDataPtr root)
+    void Image::saveProperty(LZDataPtr root)
     {
         Widget::saveProperty(root);
 

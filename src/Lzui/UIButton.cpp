@@ -10,7 +10,7 @@ namespace Lazy
     COLORREF buttonColor [] = { 0xaf808080, 0xafd0d0d0, 0xaf606060, 0xaf404040, 0xafa0a0a0 };
 
     //////////////////////////////////////////////////////////////////////////
-    CButton::CButton(void)
+    Button::Button(void)
         : m_colorFadable(true)
         , m_posMovable(true)
         , m_textSprite(new TextLineSprite())
@@ -22,20 +22,19 @@ namespace Lazy
 
         setBgColor(m_stateColor[0]);
         setBtnState(ButtonState::normal);
-        enableDrag(false);
-        enableClickTop(true);
+        setDragable(false);
+        setTopable(true);
         setSize(80, 30);
 
         m_fontPtr = getDefaultFontPtr();
-        m_textSprite->setColor(m_color);
+        m_textSprite->setColor(m_textColor);
     }
 
-    CButton::~CButton(void)
+    Button::~Button(void)
     {
     }
 
-    void CButton::create(
-        int id,
+    void Button::create(
         const tstring & caption,
         const tstring & image,
         int x,
@@ -43,14 +42,13 @@ namespace Lazy
         int w,
         int h)
     {
-        m_id = id;
         setPosition(x, y);
         setSize(w, h);
         setText(caption);
         setImage(image);
     }
 
-    void CButton::update(float fElapse)
+    void Button::update(float fElapse)
     {
         if (m_colorFadable)
         {
@@ -61,7 +59,7 @@ namespace Lazy
         m_textSprite->update(fElapse);
     }
 
-    void CButton::render(IUIRender * pDevice)
+    void Button::render(IUIRender * pDevice)
     {
         CRect rc = getClientRect();
         localToGlobal(rc);
@@ -83,13 +81,13 @@ namespace Lazy
 
     }
 
-    void CButton::renderImage(IUIRender * pDevice, CRect rc)
+    void Button::renderImage(IUIRender * pDevice, CRect rc)
     {
         TexturePtr texture = TextureMgr::instance()->get(getRealImage());
         pDevice->drawRect(rc, getBgColor(), texture);
     }
 
-    void CButton::renderText(IUIRender * pDevice, CRect rc)
+    void Button::renderText(IUIRender * pDevice, CRect rc)
     {
         if (m_text.empty() || !m_fontPtr) return;
 
@@ -97,26 +95,26 @@ namespace Lazy
 
         if (m_textAlign & RelativeAlign::hcenter)
         {
-            pt.x += (m_size.cx - m_textSprite->getSize().cx) / 2;
+            pt.x += (m_size.x - m_textSprite->getSize().cx) / 2;
         }
         else if (m_textAlign & RelativeAlign::right)
         {
-            pt.x += m_size.cx - m_textSprite->getSize().cx;
+            pt.x += m_size.x - m_textSprite->getSize().cx;
         }
 
         if (m_textAlign & RelativeAlign::vcenter)
         {
-            pt.y += (m_size.cy - m_textSprite->getSize().cy) / 2;
+            pt.y += (m_size.y - m_textSprite->getSize().cy) / 2;
         }
         else if (m_textAlign & RelativeAlign::bottom)
         {
-            pt.y += m_size.cy - m_textSprite->getSize().cy;
+            pt.y += m_size.y - m_textSprite->getSize().cy;
         }
 
         m_textSprite->render(pDevice, pt);
     }
 
-    bool CButton::onEvent(const SEvent & event)
+    bool Button::onEvent(const SEvent & event)
     {
         if (event.eventType == EET_GUI_EVENT)
         {
@@ -153,13 +151,13 @@ namespace Lazy
         return Widget::onEvent(event);
     }
 
-    void CButton::setBtnState(int state)
+    void Button::setBtnState(int state)
     {
         m_state = state;
         m_crFade.setDestColor(m_stateColor[state]);
     }
 
-    tstring CButton::getRealImage(void)
+    tstring Button::getRealImage(void)
     {
         if (m_image.find(_T("%d")) != tstring::npos)
         {
@@ -170,43 +168,41 @@ namespace Lazy
         return m_image;
     }
 
-    void CButton::setStateColor(uint32 state, uint32 cr)
+    void Button::setStateColor(uint32 state, uint32 cr)
     {
         m_stateColor[state] = cr;
     }
 
-    uint32 CButton::getStateColor(uint32 state)
+    uint32 Button::getStateColor(uint32 state)
     {
         return m_stateColor[state];
     }
 
-    void CButton::setText(const tstring & text)
+    void Button::setText(const tstring & text)
     {
         if (m_text == text) return;
 
-        Widget::setText(text);
-
+        m_text = text;
         m_textSprite->setText(m_text, m_fontPtr);
     }
 
-    void CButton::setFont(const tstring & font)
+    void Button::setFont(const tstring & font)
     {
-        Widget::setFont(font);
+        m_font = font;
         m_fontPtr = FontMgr::instance()->getFont(m_font);
-
         m_textSprite->setText(m_text, m_fontPtr);
     }
 
-    void CButton::setColor(uint32 color)
+    void Button::setBgColor(uint32 color)
     {
-        Widget::setColor(color);
+        m_bgColor = color;
         m_textSprite->setColor(color);
     }
 
     ///加载布局。
-    void CButton::loadFromStream(LZDataPtr config)
+    void Button::loadProperty(LZDataPtr config)
     {
-        Widget::loadFromStream(config);
+        Widget::loadProperty(config);
 
         setTextAlign(config->readInt(L"textAlign", RelativeAlign::center));
         setPosMovable(config->readBool(L"posMovable", m_posMovable));
@@ -214,9 +210,9 @@ namespace Lazy
     }
 
     ///保存布局
-    void CButton::saveToStream(LZDataPtr config)
+    void Button::saveProperty(LZDataPtr config)
     {
-        Widget::saveToStream(config);
+        Widget::saveProperty(config);
 
         config->writeInt(L"textAlign", m_textAlign);
         config->writeBool(L"posMovable", m_posMovable);

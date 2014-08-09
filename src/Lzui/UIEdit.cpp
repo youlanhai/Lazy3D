@@ -9,7 +9,7 @@ namespace Lazy
 {
 
 
-    CEdit::CEdit(void)
+    Edit::Edit(void)
         : m_bMutiLine(false)
         , m_cursor(0)
     {
@@ -20,19 +20,19 @@ namespace Lazy
         createTextSprite();
     }
 
-    CEdit::~CEdit(void)
+    Edit::~Edit(void)
     {
         getGUIMgr()->unactiveEdit(this);
     }
 
-    void CEdit::insertChar(wchar_t ch)
+    void Edit::insertChar(wchar_t ch)
     {
         m_text.insert(m_cursor, 1, ch);
         m_textSprite->insertWord(m_cursor, ch, m_fontPtr);
         ++m_cursor;
     }
 
-    void CEdit::delFront()
+    void Edit::delFront()
     {
         if (m_cursor != 0 && m_cursor <= m_text.size())
         {
@@ -42,7 +42,7 @@ namespace Lazy
         }
     }
 
-    void CEdit::delBack()
+    void Edit::delBack()
     {
         if (m_cursor < m_text.size())
         {
@@ -51,7 +51,7 @@ namespace Lazy
         }
     }
 
-    void CEdit::cursorGoUp()
+    void Edit::cursorGoUp()
     {
         if (!m_bMutiLine) return;
         if (!m_fontPtr) return;
@@ -60,7 +60,7 @@ namespace Lazy
         m_textSprite->getCursorPos(m_cursor, x, y);
         m_textSprite->getCursorByPos(m_cursor, x, y - m_fontPtr->getHeight());
     }
-    void CEdit::cursorGoDown()
+    void Edit::cursorGoDown()
     {
         if (!m_bMutiLine) return;
         if (!m_fontPtr) return;
@@ -69,18 +69,18 @@ namespace Lazy
         m_textSprite->getCursorPos(m_cursor, x, y);
         m_textSprite->getCursorByPos(m_cursor, x, y + m_fontPtr->getHeight());
     }
-    void CEdit::cursorGoLeft()
+    void Edit::cursorGoLeft()
     {
         if (m_cursor > 0)
             --m_cursor;
     }
-    void CEdit::cursorGoRight()
+    void Edit::cursorGoRight()
     {
         if (m_cursor < m_text.size())
             ++m_cursor;
     }
 
-    void CEdit::onSysChar(wchar_t ch)
+    void Edit::onSysChar(wchar_t ch)
     {
         //debugMessage(_T("cedit onSysChar:%d"), ch);
 
@@ -89,7 +89,7 @@ namespace Lazy
         //debugMessage(_T("cedit text: cur=%d len=%d tex='%s'"), m_cursor, m_text.size(), m_text.c_str());
     }
 
-    bool CEdit::onSysKey(bool isKeyDown, EKEY_CODE key)
+    bool Edit::onSysKey(bool isKeyDown, EKEY_CODE key)
     {
         if (!isKeyDown)
         {
@@ -143,12 +143,12 @@ namespace Lazy
         return true;
     }
 
-    void CEdit::update(float elapse)
+    void Edit::update(float elapse)
     {
         m_textSprite->update(elapse);
     }
 
-    void CEdit::render(IUIRender * pDevice)
+    void Edit::render(IUIRender * pDevice)
     {
         if (!m_fontPtr) return;
 
@@ -177,7 +177,7 @@ namespace Lazy
         }
     }
 
-    bool CEdit::onEvent(const SEvent & event)
+    bool Edit::onEvent(const SEvent & event)
     {
         if (event.eventType == EET_GUI_EVENT)
         {
@@ -210,7 +210,7 @@ namespace Lazy
         return Widget::onEvent(event);
     }
 
-    void CEdit::onFocusGet()
+    void Edit::onFocusGet()
     {
         getGUIMgr()->activeEdit(this);
 #ifdef ENABLE_SCRIPT
@@ -218,7 +218,7 @@ namespace Lazy
 #endif
     }
 
-    void CEdit::onFocusLost()
+    void Edit::onFocusLost()
     {
         getGUIMgr()->unactiveEdit(this);
 #ifdef ENABLE_SCRIPT
@@ -226,7 +226,7 @@ namespace Lazy
 #endif
     }
 
-    void CEdit::updateText()
+    void Edit::updateText()
     {
         if (!m_fontPtr)
         {
@@ -238,7 +238,7 @@ namespace Lazy
             m_textSprite->setText(m_text, m_fontPtr);
     }
 
-    void CEdit::setMutiLine(bool enable)
+    void Edit::setMutiLine(bool enable)
     {
         if (m_bMutiLine == enable) return;
 
@@ -247,20 +247,20 @@ namespace Lazy
         createTextSprite();
     }
 
-    void CEdit::createTextSprite()
+    void Edit::createTextSprite()
     {
         if (m_bMutiLine)
             m_textSprite = new TextViewSprite();
         else
             m_textSprite = new TextLineSprite();
 
-        m_textSprite->setColor(m_color);
-        m_textSprite->setMaxWidth(m_size.cx);
+        m_textSprite->setColor(m_textColor);
+        m_textSprite->setMaxWidth(m_size.x);
 
         updateText();
     }
 
-    void CEdit::setText(const tstring & text)
+    void Edit::setText(const tstring & text)
     {
         if (m_text == text) return;
 
@@ -270,7 +270,7 @@ namespace Lazy
         updateText();
     }
 
-    void CEdit::setFont(const tstring & font)
+    void Edit::setFont(const tstring & font)
     {
         if (m_font == font) return;
 
@@ -280,14 +280,14 @@ namespace Lazy
         updateText();
     }
 
-    void CEdit::setColor(uint32 color)
+    void Edit::setTextColor(uint32 color)
     {
-        Widget::setColor(color);
+        m_textColor = color;
         if (m_textSprite)
             m_textSprite->setColor(color);
     }
 
-    void CEdit::setSize(int w, int h)
+    void Edit::setSize(int w, int h)
     {
         Widget::setSize(w, h);
 
@@ -295,14 +295,14 @@ namespace Lazy
             m_textSprite->setMaxWidth(w);
     }
 
-    void CEdit::loadFromStream(LZDataPtr root)
+    void Edit::loadFromStream(LZDataPtr root)
     {
         Widget::loadFromStream(root);
 
         setMutiLine(root->readBool(L"mutiline", false));
     }
 
-    void CEdit::saveToStream(LZDataPtr root)
+    void Edit::saveToStream(LZDataPtr root)
     {
         Widget::saveToStream(root);
 

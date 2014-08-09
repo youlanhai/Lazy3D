@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
     ///ui工厂，创建ui

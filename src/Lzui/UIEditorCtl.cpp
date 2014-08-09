@@ -28,31 +28,27 @@ namespace Lazy
     }
 
 
-    CEditorCtl::CEditorCtl()
+    EditorCtl::EditorCtl()
         : m_dragType(0)
         , m_edgeSize(10)
+        , m_color(0xff777777)
+        , m_bgColor(0xff00ff00)
     {
         setSize(40, 40);
-        enableDrag(true);
-
-        m_color = 0xff777777;
-        m_bgColor = 0xff00ff00;
+        setDragable(true);
     }
 
-
-    CEditorCtl::~CEditorCtl()
+    EditorCtl::~EditorCtl()
     {
     }
 
-    void CEditorCtl::update(float fElapse)
+    void EditorCtl::update(float fElapse)
     {
 
     }
 
-    void CEditorCtl::render(IUIRender * pDevice)
+    void EditorCtl::render(IUIRender * pDevice)
     {
-        if (!m_bVisible) return;
-
         CRect rc = getClientRect();
         localToGlobal(rc);
 
@@ -62,7 +58,7 @@ namespace Lazy
         pDevice->drawRectFrame(rc, 1, m_color);
     }
 
-    bool CEditorCtl::onEvent(const SEvent & event)
+    bool EditorCtl::onEvent(const SEvent & event)
     {
         if (event.isMouseEvent() && event.mouseEvent.event == EME_LMOUSE_UP)
         {
@@ -72,7 +68,7 @@ namespace Lazy
         return Widget::onEvent(event);
     }
 
-    void CEditorCtl::onDrag(const CPoint & dp, const CPoint & pt)
+    void EditorCtl::onDrag(const CPoint & dp, const CPoint & pt)
     {
         if (m_dragType == DragType::none)
         {
@@ -90,31 +86,31 @@ namespace Lazy
         {
             if (m_dragType & DragType::left)
             {
-                int right = m_position.x + m_size.cx;
+                int right = m_position.x + m_size.x;
 
-                m_size.cx -= dp.x;
-                if (m_size.cx < 1)  m_size.cx = 1;
-                m_position.x = right - m_size.cx;
+                m_size.x -= dp.x;
+                if (m_size.x < 1)  m_size.x = 1;
+                m_position.x = right - m_size.x;
 
             }
             else if (m_dragType & DragType::right)
             {
-                m_size.cx += dp.x;
-                if (m_size.cx < 1) m_size.cx = 1;
+                m_size.x += dp.x;
+                if (m_size.x < 1) m_size.x = 1;
             }
 
             if (m_dragType & DragType::top)
             {
-                int bottom = m_position.y + m_size.cy;
+                int bottom = m_position.y + m_size.y;
 
-                m_size.cy -= dp.y;
-                if (m_size.cy < 1) m_size.cy = 1;
-                m_position.y = bottom - m_size.cy;
+                m_size.y -= dp.y;
+                if (m_size.y < 1) m_size.y = 1;
+                m_position.y = bottom - m_size.y;
             }
             else if (m_dragType & DragType::bottom)
             {
-                m_size.cy += dp.y;
-                if (m_size.cy < 1) m_size.cy = 1;
+                m_size.y += dp.y;
+                if (m_size.y < 1) m_size.y = 1;
             }
         }
     }

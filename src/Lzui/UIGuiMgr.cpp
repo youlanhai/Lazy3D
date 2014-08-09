@@ -9,16 +9,16 @@ namespace Lazy
 {
     //gui管理器
 
-    CGUIManager* g_ptrGUIMgr = NULL;
-    LZUI_API CGUIManager* getGUIMgr(void) ///获得gui管理器
+    GUIMgr* g_ptrGUIMgr = NULL;
+    LZUI_API GUIMgr* getGUIMgr(void) ///获得gui管理器
     {
         return g_ptrGUIMgr;
     }
-    /*static*/ CEdit* CGUIManager::s_pActiveEdit = NULL;
+    /*static*/ Edit* GUIMgr::s_pActiveEdit = NULL;
 
 
     //////////////////////////////////////////////////////////////////////////
-    CGUIManager::CGUIManager()
+    GUIMgr::GUIMgr()
         : m_render(nullptr)
         , m_hWnd(0)
         , m_hInstance(0)
@@ -26,12 +26,12 @@ namespace Lazy
         setName(L"guimgr");
     }
 
-    CGUIManager::CGUIManager(dx::Device * pDevice, HWND hWnd, HINSTANCE hInst)
+    GUIMgr::GUIMgr(dx::Device * pDevice, HWND hWnd, HINSTANCE hInst)
     {
         init(pDevice, hWnd, hInst);
     }
 
-    CGUIManager::~CGUIManager(void)
+    GUIMgr::~GUIMgr(void)
     {
 #ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("destroy");
@@ -43,7 +43,7 @@ namespace Lazy
         delete m_render;
     }
 
-    bool CGUIManager::init(dx::Device * pDevice, HWND hWnd, HINSTANCE hInst)
+    bool GUIMgr::init(dx::Device * pDevice, HWND hWnd, HINSTANCE hInst)
     {
         m_hWnd = hWnd;
         m_hInstance = hInst;
@@ -66,15 +66,14 @@ namespace Lazy
         setDefaultFont(L"def|17");
 
         //附加参数
-        enableClickTop(false);
-        enableChangeChildOrder(false);
-        enableSelfMsg(false);
-        enableLimitInRect(false);
+        setTopable(false);
+        setChildOrderable(false);
+        setMessagable(false);
 
         return true;
     }
 
-    bool CGUIManager::processEvent(const SEvent & sysEvent)
+    bool GUIMgr::processEvent(const SEvent & sysEvent)
     {
         SEvent event = sysEvent;
         if (event.eventType == EET_MOUSE_EVENT)
@@ -92,7 +91,7 @@ namespace Lazy
                 if (event.mouseEvent.isLeftDown())
                 {
                     //拖拽
-                    if (m_pSelected && m_pSelected->canDrag())
+                    if (m_pSelected && m_pSelected->getDragable())
                     {
                         CPoint dp = m_cursorPos - m_lastCursorPos;
                         CPoint pt = m_cursorPos;
@@ -147,7 +146,7 @@ namespace Lazy
         return sendEvent(event);
     }
 
-    void CGUIManager::render(dx::Device * pDevice)
+    void GUIMgr::render(dx::Device * pDevice)
     {
         m_render->renderBegin();
 
@@ -156,17 +155,17 @@ namespace Lazy
         m_render->renderEnd();
     }
 
-    void CGUIManager::render(IUIRender * pDevice)
+    void GUIMgr::render(IUIRender * pDevice)
     {
         Widget::render(pDevice);
     }
 
-    void CGUIManager::activeEdit(CEdit * pEdit)
+    void GUIMgr::activeEdit(Edit * pEdit)
     {
         s_pActiveEdit = pEdit;
     }
 
-    void CGUIManager::unactiveEdit(CEdit * pEdit)
+    void GUIMgr::unactiveEdit(Edit * pEdit)
     {
         if (s_pActiveEdit == pEdit)
         {

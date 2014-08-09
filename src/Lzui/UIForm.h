@@ -8,16 +8,16 @@ namespace Lazy
     /** 面板可以包含子控件，实现所有UI资源的统一管理，
     *  每一个应用程序最好只包含一个面板对象。
     */
-    class LZUI_API CForm : public Widget
+    class LZUI_API Window : public Widget
     {
     public:
-        MAKE_UI_HEADER(CForm);
+        MAKE_UI_HEADER(Window);
 
         /** 构造函数*/
-        CForm(void);
+        Window(void);
 
         /** 析构函数*/
-        ~CForm();
+        ~Window();
 
         virtual void create(const tstring & image, int x, int y);
 

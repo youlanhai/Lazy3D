@@ -31,8 +31,8 @@ namespace Lazy
     typedef RefPtr<class ITextSprite> TextSpritePtr;
 
 
-    class CGUIManager;
-    LZUI_API CGUIManager* getGUIMgr(void); ///获得gui管理器
+    class GUIMgr;
+    LZUI_API GUIMgr* getGUIMgr(void); ///获得gui管理器
 
 
     void setDefaultFont(const tstring & font);

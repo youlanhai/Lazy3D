@@ -15,13 +15,13 @@ namespace Lazy
     }
 
     ///ui编辑器用的控件
-    class CEditorCtl : public Widget
+    class EditorCtl : public Widget
     {
     public:
-        MAKE_UI_HEADER(CEditorCtl);
+        MAKE_UI_HEADER(EditorCtl);
 
-        CEditorCtl();
-        ~CEditorCtl();
+        EditorCtl();
+        ~EditorCtl();
 
         virtual void update(float fElapse) override;
         virtual void render(IUIRender * pDevice) override;
@@ -36,6 +36,9 @@ namespace Lazy
 
         int m_dragType;
         int m_edgeSize;
+
+        uint32 m_color;
+        uint32 m_bgColor;
     };
 
 }//end namespace Lazy

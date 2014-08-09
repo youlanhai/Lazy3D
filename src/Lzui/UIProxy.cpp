@@ -33,7 +33,7 @@ namespace Lazy
         m_layoutFile = layoutFile;
         m_host = loadUIFromFile(layoutFile);
 
-        return bool(m_host);
+        return m_host != nullptr;
     }
 
 }

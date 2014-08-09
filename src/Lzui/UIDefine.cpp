@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "UIDefine.h"
+#include "UIControl.h"
 
 namespace Lazy
 {
@@ -35,22 +36,24 @@ namespace Lazy
 
     //////////////////////////////////////////////////////////////////////////
 
-    void VisitControl::update(float elapse)
+    void WidgetChildren::update(float elapse)
     {
         lock();
         for (iterator it = begin(); it != end(); ++it)
         {
-            if ((*it)->isVisible()) (*it)->update(elapse);
+            if ((*it)->getVisible())
+                (*it)->update(elapse);
         }
         unlock();
     }
 
-    void VisitControl::render(IUIRender* pDevice)
+    void WidgetChildren::render(IUIRender* pDevice)
     {
         lock();
         for (reverse_iterator it = rbegin(); it != rend(); ++it)
         {
-            if ((*it)->isVisible()) (*it)->render(pDevice);
+            if ((*it)->getVisible())
+                (*it)->render(pDevice);
         }
         unlock();
     }

@@ -5,13 +5,13 @@
 namespace Lazy
 {
 
-    class LZUI_API CLabel : public Widget
+    class LZUI_API Label : public Widget
     {
     public:
-        MAKE_UI_HEADER(CLabel)
+        MAKE_UI_HEADER(Label)
 
-        CLabel(void);
-        ~CLabel(void);
+        Label(void);
+        ~Label(void);
 
         virtual void create(const tstring & text, int x, int y);
 

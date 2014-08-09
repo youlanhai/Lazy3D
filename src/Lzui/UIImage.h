@@ -6,13 +6,13 @@ namespace Lazy
 {
 
     /** 图像控件。*/
-    class LZUI_API CImage : public Widget
+    class LZUI_API Image : public Widget
     {
     public:
-        MAKE_UI_HEADER(CImage)
-        CImage(void);
+        MAKE_UI_HEADER(Image)
+        Image(void);
 
-        ~CImage(void);
+        ~Image(void);
 
         void create(
             const tstring & image,
@@ -24,9 +24,8 @@ namespace Lazy
         virtual void render(IUIRender * pDevice) override;
 
         ///设置背景图像名称
-        virtual void setImage(const tstring & image);
-        virtual const tstring & getImage(void) const { return m_image; }
-
+        void setImage(const tstring & image);
+        const tstring & getImage(void) const { return m_image; }
 
         ///加载布局。
         virtual void loadProperty(LZDataPtr config) override;

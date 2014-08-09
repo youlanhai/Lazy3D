@@ -4,7 +4,7 @@
 
 namespace Lazy
 {
-    CForm::CForm(void)
+    Window::Window(void)
         : m_clipable(false)
     {
         setDragable(true);
@@ -12,11 +12,11 @@ namespace Lazy
         setSize(200, 100);
     }
 
-    CForm::~CForm()
+    Window::~Window()
     {
     }
 
-    void CForm::create(const tstring & image, int x, int y)
+    void Window::create(const tstring & image, int x, int y)
     {
         setPosition(x, y);
         setImage(image);
@@ -24,7 +24,7 @@ namespace Lazy
         if(m_texture) ajustToImageSize();
     }
 
-    void CForm::render(IUIRender * pDevice)
+    void Window::render(IUIRender * pDevice)
     {
         CRect rect = getClientRect();
         localToGlobal(rect);
@@ -63,24 +63,24 @@ namespace Lazy
         pDevice->setClipEnalbe(oldClipEnabled);
     }
 
-    void CForm::setImage(const tstring & image)
+    void Window::setImage(const tstring & image)
     {
         m_image = image;
         m_texture = TextureMgr::instance()->get(image);
     }
 
-    const tstring & CForm::getImage() const
+    const tstring & Window::getImage() const
     {
         return m_image;
     }
 
-    void CForm::ajustToImageSize()
+    void Window::ajustToImageSize()
     {
         if (m_texture) setSize(m_texture->getWidth(), m_texture->getHeight());
         else setSize(0, 0);
     }
 
-    void CForm::loadProperty(LZDataPtr root)
+    void Window::loadProperty(LZDataPtr root)
     {
         Widget::loadProperty(root);
 
@@ -88,7 +88,7 @@ namespace Lazy
         setImage(root->readString(L"image"));
     }
 
-    void CForm::saveProperty(LZDataPtr root)
+    void Window::saveProperty(LZDataPtr root)
     {
         Widget::saveProperty(root);
 

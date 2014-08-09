@@ -4,13 +4,13 @@
 
 namespace Lazy
 {
-    class LZUI_API CCheckBox : public CButton
+    class LZUI_API CheckBox : public Button
     {
     public:
-        MAKE_UI_HEADER(CCheckBox);
+        MAKE_UI_HEADER(CheckBox);
 
-        CCheckBox(void);
-        ~CCheckBox(void);
+        CheckBox(void);
+        ~CheckBox(void);
 
         void setCheck(bool check);
         bool getCheck(void) const { return m_bCheck; }
@@ -26,7 +26,7 @@ namespace Lazy
     private:
         bool m_bCheck;
     };
-    typedef RefPtr<CCheckBox> CheckBoxPtr;
+    typedef RefPtr<CheckBox> CheckBoxPtr;
 
 }// end namespace Lazy
 

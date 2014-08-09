@@ -45,15 +45,15 @@ namespace Lazy
 #define UIREG(CLASS) registerCreateFun(#CLASS, CLASS::createSelf)
 
         UIREG(Widget);
-        UIREG(CLabel);
-        UIREG(CImage);
-        UIREG(CEdit);
-        UIREG(CForm);
-        UIREG(CButton);
-        UIREG(CCheckBox);
-        UIREG(CSlider);
-        UIREG(CSlidebar);
-        UIREG(CEditorCtl);
+        UIREG(Label);
+        UIREG(Image);
+        UIREG(Edit);
+        UIREG(Window);
+        UIREG(Button);
+        UIREG(CheckBox);
+        UIREG(Slider);
+        UIREG(Slidebar);
+        UIREG(EditorCtl);
         UIREG(UIProxy);
 
 #undef UIREG

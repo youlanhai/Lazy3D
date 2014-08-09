@@ -5,13 +5,13 @@
 namespace Lazy
 {
     /**编辑框*/
-    class CEdit : public Widget
+    class Edit : public Widget
     {
     public:
-        MAKE_UI_HEADER(CEdit)
+        MAKE_UI_HEADER(Edit)
 
-        CEdit(void);
-        virtual ~CEdit(void);
+        Edit(void);
+        virtual ~Edit(void);
 
         virtual void update(float elapse) override;
         virtual void render(IUIRender * pDevice) override;
@@ -19,10 +19,10 @@ namespace Lazy
         void setMutiLine(bool m);
         bool isMutiLine() const { return m_bMutiLine; }
 
-        virtual void setText(const tstring & text) override;
-        virtual void setFont(const tstring & name) override;
-        virtual void setColor(uint32 color) override;
-        virtual void setSize(int w, int h) override;
+        void setText(const tstring & text);
+        void setFont(const tstring & name);
+        void setTextColor(uint32 color);
+        void setSize(int w, int h);
 
         virtual void loadFromStream(LZDataPtr root);
         virtual void saveToStream(LZDataPtr root);
@@ -52,6 +52,12 @@ namespace Lazy
         void createTextSprite();
 
     protected:
+        tstring     m_text;
+        tstring     m_font;
+        uint32      m_textColor;
+        uint32      m_selectionColor;
+        uint32      m_cursorColor;
+
         FontPtr     m_fontPtr;
         TextSpritePtr   m_textSprite;
 

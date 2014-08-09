@@ -7,18 +7,18 @@ namespace Lazy
 
 #define CR_SELECT   0x7fffffff
 
-    CCheckBox::CCheckBox(void)
+    CheckBox::CheckBox(void)
         : m_bCheck(false)
     {
 
     }
 
 
-    CCheckBox::~CCheckBox()
+    CheckBox::~CheckBox()
     {
     }
 
-    void CCheckBox::setCheck(bool check)
+    void CheckBox::setCheck(bool check)
     {
         m_bCheck = check;
 
@@ -28,7 +28,7 @@ namespace Lazy
         }
     }
 
-    bool CCheckBox::onEvent(const SEvent & event)
+    bool CheckBox::onEvent(const SEvent & event)
     {
         if (event.eventType == EET_MOUSE_EVENT && event.mouseEvent.event == EME_LMOUSE_UP)
         {
@@ -39,11 +39,11 @@ namespace Lazy
 #endif
         }
 
-        return CButton::onEvent(event);
+        return Button::onEvent(event);
     }
 
 
-    void CCheckBox::setBtnState(int state)
+    void CheckBox::setBtnState(int state)
     {
         if (m_state == ButtonState::down)
         {
@@ -58,7 +58,7 @@ namespace Lazy
     }
 
 
-    void CCheckBox::renderImage(IUIRender * pDevice, CRect rc)
+    void CheckBox::renderImage(IUIRender * pDevice, CRect rc)
     {
         tstring image = getRealImage();
         if (image.empty())
@@ -71,7 +71,7 @@ namespace Lazy
                 rc2.right = rc.left + rc.width() * 2 / 3;
                 rc2.top = rc.top + rc.height() / 3;
                 rc2.bottom = rc.top + rc.height() * 2 / 3;
-                pDevice->drawRect(rc2, getColor());
+                pDevice->drawRect(rc2, 0xffffffff);
             }
         }
         else
@@ -81,7 +81,7 @@ namespace Lazy
         }
     }
 
-    void CCheckBox::renderText(IUIRender * pDevice, CRect rc)
+    void CheckBox::renderText(IUIRender * pDevice, CRect rc)
     {
         if (!m_text.empty())
         {

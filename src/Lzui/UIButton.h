@@ -6,14 +6,13 @@ namespace Lazy
 {
 
     ///按钮类
-    class LZUI_API CButton : public Widget
+    class LZUI_API Button : public Widget
     {
     public:
-        MAKE_UI_HEADER(CButton)
+        MAKE_UI_HEADER(Button)
 
-        CButton(void);
-
-        ~CButton(void);
+        Button(void);
+        ~Button(void);
 
         virtual void create(
             const tstring & caption,
@@ -49,7 +48,11 @@ namespace Lazy
         void setFont(const tstring & font);
         const tstring & getFont();
 
-        void setColor(uint32 color);
+        void setImage(const tstring & text);
+        const tstring & getImage() const { return m_image; }
+
+        void setBgColor(uint32 color);
+        uint32 getBgColor() const { return m_bgColor; }
 
         void setTextAlign(uint32 align) { m_textAlign = align; }
         uint32 getTextAlign() const { return m_textAlign; }
@@ -67,7 +70,13 @@ namespace Lazy
         virtual tstring getRealImage(void);
 
     protected:
+        uint32          m_textColor;
+        uint32          m_bgColor;
         uint32          m_textAlign;
+        tstring         m_text;
+        tstring         m_font;
+        tstring         m_image;
+
         CColorFade      m_crFade;
         bool            m_colorFadable;
         bool            m_posMovable;

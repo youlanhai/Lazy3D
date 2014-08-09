@@ -8,7 +8,7 @@
 namespace Lazy
 {
 
-    CLabel::CLabel(void)
+    Label::Label(void)
         : m_textAlign(RelativeAlign::left | RelativeAlign::top)
         , m_mutiLine(false)
         , m_lineSpace(4)
@@ -21,17 +21,17 @@ namespace Lazy
         createTextSprite();
     }
 
-    CLabel::~CLabel(void)
+    Label::~Label(void)
     {
     }
 
-    void CLabel::create(const tstring & text, int x, int y)
+    void Label::create(const tstring & text, int x, int y)
     {
         setPosition(x, y);
         setText(text);
     }
 
-    void CLabel::setMutiLine(bool enable)
+    void Label::setMutiLine(bool enable)
     {
         if (m_mutiLine == enable) return;
 
@@ -39,7 +39,7 @@ namespace Lazy
         createTextSprite();
     }
 
-    void CLabel::createTextSprite()
+    void Label::createTextSprite()
     {
         if (m_mutiLine)
             m_textSprite = new TextViewSprite();
@@ -52,14 +52,14 @@ namespace Lazy
         updateText();
     }
 
-    void CLabel::update(float elapse)
+    void Label::update(float elapse)
     {
         Widget::update(elapse);
 
         m_textSprite->update(elapse);
     }
 
-    void CLabel::render(IUIRender * pDevice)
+    void Label::render(IUIRender * pDevice)
     {
         if (m_textSprite)
         {
@@ -90,19 +90,19 @@ namespace Lazy
         Widget::render(pDevice);
     }
 
-    const CSize & CLabel::getTextSize()
+    const CSize & Label::getTextSize()
     {
         m_textSprite->layout();
         return m_textSprite->getSize();
     }
 
-    int CLabel::getTextLines()
+    int Label::getTextLines()
     {
         m_textSprite->layout();
         return m_textSprite->getTextLines();
     }
 
-    void CLabel::updateText()
+    void Label::updateText()
     {
         if (!m_fontPtr)
             return;
@@ -111,7 +111,7 @@ namespace Lazy
             m_textSprite->setText(m_text, m_fontPtr);
     }
 
-    void CLabel::setFont(const std::wstring & font)
+    void Label::setFont(const std::wstring & font)
     {
         if (m_font == font)
             return;
@@ -122,7 +122,7 @@ namespace Lazy
         updateText();
     }
 
-    void CLabel::setText(const std::wstring & text)
+    void Label::setText(const std::wstring & text)
     {
         if (m_text == text)
             return;
@@ -133,13 +133,13 @@ namespace Lazy
         updateText();
     }
 
-    void CLabel::setLineSpace(int lineSpace)
+    void Label::setLineSpace(int lineSpace)
     {
         m_lineSpace = lineSpace;
         m_textSprite->setLineSpace(lineSpace);
     }
 
-    void CLabel::setSize(int w, int h)
+    void Label::setSize(int w, int h)
     {
         Widget::setSize(w, h);
 
@@ -147,7 +147,7 @@ namespace Lazy
             m_textSprite->setMaxWidth(w);
     }
 
-    void CLabel::setTextColor(uint32 color)
+    void Label::setTextColor(uint32 color)
     {
         m_textColor = color;
 
@@ -156,7 +156,7 @@ namespace Lazy
     }
 
     ///加载布局。
-    void CLabel::loadProperty(LZDataPtr config)
+    void Label::loadProperty(LZDataPtr config)
     {
         Widget::loadProperty(config);
 
@@ -169,7 +169,7 @@ namespace Lazy
     }
 
     ///保存布局
-    void CLabel::saveProperty(LZDataPtr config)
+    void Label::saveProperty(LZDataPtr config)
     {
         Widget::saveProperty(config);
 

@@ -2,6 +2,7 @@
 
 #include "../Math/Vector.h"
 #include "../Math/Matrix.h"
+#include "UIDefine.h"
 
 namespace Lazy
 {

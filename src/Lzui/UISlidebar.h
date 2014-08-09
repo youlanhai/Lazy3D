@@ -5,17 +5,17 @@
 
 namespace Lazy
 {
-    class CSlidebar;
+    class Slidebar;
 
     //////////////////////////////////////////////////////////////////////////
     ///滑块
     //////////////////////////////////////////////////////////////////////////
-    class LZUI_API CSlider : public CButton
+    class LZUI_API Slider : public Button
     {
     public:
-        MAKE_UI_HEADER(CSlider);
+        MAKE_UI_HEADER(Slider);
 
-        CSlider();
+        Slider();
 
         virtual void setSize(int w, int h) override;
 
@@ -23,25 +23,23 @@ namespace Lazy
         virtual bool onEvent(const SEvent & event) override;
         virtual void onDrag(const CPoint & delta, const CPoint & point) override;
 
-        CSlidebar *m_pSlidebar;
+        Slidebar *m_pSlidebar;
 
-        friend class CSlidebar;
+        friend class Slidebar;
     };
-
-    typedef RefPtr<CSlider> SliderPtr;
 
     //////////////////////////////////////////////////////////////////////////
     //滚动条
     //////////////////////////////////////////////////////////////////////////
-    class LZUI_API CSlidebar : public CForm
+    class LZUI_API Slidebar : public Window
     {
     public: 
-        MAKE_UI_HEADER(CSlidebar);
+        MAKE_UI_HEADER(Slidebar);
 
-        CSlidebar();
+        Slidebar();
 
-        void setSlider(SliderPtr sil);
-        SliderPtr getSlider() const { return m_slider; }
+        void setSlider(Slider * sil);
+        Slider* getSlider() const { return m_slider; }
 
         /** 每次滑动，前进的步长*/
         void setSlideStep(float percent) { m_slideStep = percent; }
@@ -55,7 +53,7 @@ namespace Lazy
         float getRate(void) const { return m_rate; }
 
         void setSliderSize(int w, int h);
-        CSize getSliderSize() const;
+        CPoint getSliderSize() const;
 
         virtual void setSize(int w, int h) override;
 
@@ -87,7 +85,7 @@ namespace Lazy
 
         float               m_rate;
         float               m_slideStep;
-        SliderPtr           m_slider; ///<滑块
+        Slider*             m_slider; ///<滑块
         bool                m_bVertical;///<是否垂直滚动条
     };
 
