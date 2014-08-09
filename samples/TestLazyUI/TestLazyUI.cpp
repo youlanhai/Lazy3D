@@ -14,7 +14,7 @@
 
 #include "Font/Font.h"
 
-#include "LazyUI/LazyUI.h"
+#include "Lzui/Lzui.h"
 
 #define MAX_LOADSTRING 100
 
@@ -27,7 +27,7 @@
 Lazy::RefPtr<Lazy::CGUIManager>     g_guiMgr;
 Lazy::Fps           g_fps;
 
-#define USE_EDITOR 1
+#define USE_EDITOR 0
 
 const Lazy::tstring LayoutFile = L"layout/layout.lzd";
 const Lazy::tstring LayoutFile2 = L"layout/layout2.lzd";
@@ -36,29 +36,16 @@ namespace Lazy
 {
     class CTestForm;
 
-    class _EventHandler : public IEventHandler
-    {
-        CTestForm * m_pForm;
-
-    public:
-
-        _EventHandler(CTestForm * pForm);
-
-        void onButtonClick(IControl *pCtrl, bool isDown) override;
-
-    };
-
 
     class CTestForm : public CForm
     {
         CButton       *m_btnOk;
-        CScroll       *m_scroll;
+        CSlidebar     *m_scroll;
         CEdit         *m_edit;
 
     public:
         CTestForm()
         {
-            setEventHandler(new _EventHandler(this));
         }
 
         void create(int id, int x, int y)
@@ -102,18 +89,25 @@ namespace Lazy
 
             CButton *button = (CButton*)Lazy::uiFactory()->create(Lazy::uitype::Button);
             button->create(1, _T("OK"), _T(""), 0, 0, 100, 40);
-            addEditorChild(button);
+            button->setEditable(true);
+            button->setManaged(true);
+            addChild(button);
 
-            CScroll* scroll = (CScroll*)Lazy::uiFactory()->create(Lazy::uitype::Scroll);
+
+            CSlidebar* scroll = (CSlidebar*) Lazy::uiFactory()->create(Lazy::uitype::Slidebar);
             scroll->create(2, _T(""), 0, 50);
             scroll->setSize(100, 20);
-            addEditorChild(scroll);
+            scroll->setEditable(true);
+            scroll->setManaged(true);
+            addChild(scroll);
 
             CEdit *edit = (CEdit*) Lazy::uiFactory()->create(Lazy::uitype::Edit);
             edit->setID(3);
             edit->setPosition(120, 20);
             edit->setSize(100, 50);
-            addEditorChild(edit);
+            edit->setEditable(true);
+            edit->setManaged(true);
+            addChild(edit);
 
             m_name = L"MainView";
             if (!saveToFile(LayoutFile))
@@ -123,10 +117,9 @@ namespace Lazy
     #endif
 
             m_btnOk = (CButton*)getChild(1);
-            m_scroll = (CScroll*)getChild(2);
+            m_scroll = (CSlidebar*) getChild(2);
             m_edit = (CEdit*)getChild(3);
 
-            m_btnOk->setEventHandler(m_eventHandler);
             m_edit->setText(L"哈哈abc");
             m_edit->setColor(0xff00ff00);
             m_edit->setMutiLine(true);
@@ -152,17 +145,6 @@ namespace Lazy
         CLabel  m_label;
         CLabel  m_fpsLabel;
     };
-
-    _EventHandler::_EventHandler(CTestForm * pForm)
-        : m_pForm(pForm)
-    {
-
-    }
-
-    void _EventHandler::onButtonClick(IControl *pCtrl, bool isDown)
-    {
-        if(!isDown) m_pForm->toggleLabel();
-    }
 
 }
 
@@ -193,13 +175,11 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
 
 
     g_guiMgr = new Lazy::CGUIManager(Lazy::rcDevice()->getDevice(), hWnd, hInstance);
-    g_guiMgr->getUIRender()->setUIShader(L"shader/ui.fx");
-    g_guiMgr->getUIRender()->setFontShader(L"shader/font.fx");
 
     //添加一个标签
     Lazy::CLabel *pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create(Lazy::uitype::Label);
     pLabel->create(1, _T("haha你好啊ABCDEFGHIGKLMN\r\n哈哈哈\n"), 20, 100);
-    pLabel->setAlign(Lazy::AlignType::Right | Lazy::AlignType::VCenter);
+    pLabel->setAlign(Lazy::RelativeAlign::right | Lazy::RelativeAlign::vcenter);
     pLabel->enableMutiLine(true);
     pLabel->setSize(100, 40);
     pLabel->setColor(0xffff0000);
@@ -207,7 +187,7 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
 
     pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create(Lazy::uitype::Label);
     pLabel->create(1, _T("测试中文标签abcd\n哈哈哈\n"), 20, 20);
-    pLabel->setAlign(Lazy::AlignType::Center);
+    pLabel->setAlign(Lazy::RelativeAlign::center);
     pLabel->setSize(500, 40);
     pLabel->setColor(0xffff0000);
     g_guiMgr->addChildManage(pLabel);
@@ -235,7 +215,7 @@ VOID Cleanup()
     Lazy::rcDevice()->destroy();
 
     Lazy::MemoryPool::fini();
-    Lazy::MemoryChecker::deleteInstance();
+    Lazy::MemoryChecker::finiInstance();
 }
 
 

@@ -35,7 +35,7 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////////
     class LZUI_API CSlidebar : public CForm
     {
-    public:
+    public: 
         MAKE_UI_HEADER(CSlidebar, uitype::Slidebar);
 
         CSlidebar();

@@ -1,86 +1,180 @@
 #coding = utf-8
 
-MainView
+root
 {
 	type = 3
-	id = 2
-	image = gui/login.png
+	id = 1
+	image = gui/goods.bmp
 	font = def|17
 	color = ffffffff
 	bgcolor = ffffffff
 	visible = true
 	enable = true
+	enableSelfMsg = true
 	enalbeDrag = true
-	enableMsg = true
 	clickTop = true
-	position = 100 100
-	size = 300 200
 	limitInRect = true
-	handleSelfMsg = true
 	changeChildOrder = true
 	drawSelf = true
+	position = 214 88
+	size = 216 306
+	relative = true
+	relativeAlign = 18
+	relativePos = 0.503125 0.502083
 	children
 	{
-		noname
+		btn_ok
 		{
 			type = 4
-			id = 1
-			text = OK
+			id = 2
+			text = 确定
 			font = def|17
 			color = ffffffff
 			bgcolor = af808080
 			visible = true
 			enable = true
+			enableSelfMsg = true
 			enalbeDrag = false
-			enableMsg = true
 			clickTop = true
-			position = 0 0
-			size = 100 40
-			limitInRect = true
-			handleSelfMsg = true
+			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
+			position = 53 263
+			size = 100 30
 			children = ""
+			textAlign = 18
+			posMovable = true
+			colorFadable = true
 		}
-		noname
+		lbl_title
 		{
-			type = 9
-			id = 2
+			type = 5
+			id = 0
+			text = 你好哈\naaaaaaaaaa
 			font = def|17
-			color = ffffffff
-			bgcolor = 7f000000
-			visible = true
-			enable = true
-			enalbeDrag = false
-			enableMsg = true
-			clickTop = true
-			position = 0 50
-			size = 100 20
-			limitInRect = true
-			handleSelfMsg = true
-			changeChildOrder = true
-			drawSelf = true
-			children = ""
-		}
-		noname
-		{
-			type = 7
-			id = 3
-			font = def|17
-			color = ffffffff
+			color = ff00ff00
 			bgcolor = 7fffffff
 			visible = true
 			enable = true
+			enableSelfMsg = true
 			enalbeDrag = false
-			enableMsg = true
 			clickTop = true
-			position = 120 20
-			size = 100 50
-			limitInRect = true
-			handleSelfMsg = true
+			limitInRect = false
 			changeChildOrder = true
 			drawSelf = true
+			position = 15 16
+			size = 177 54
 			children = ""
+			textAlign = 17
+			mutiline = true
+		}
+		edt_msg
+		{
+			type = 7
+			id = 0
+			text = edit\nfdsf
+			font = def|30
+			color = ffffffff
+			bgcolor = ffffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 14 76
+			size = 129 71
+			children = ""
+			mutiline = true
+		}
+		ComboBox
+		{
+			type = 3
+			id = 0
+			font = def|17
+			color = ffffffff
+			bgcolor = ff7f7f7f
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = true
+			changeChildOrder = true
+			drawSelf = true
+			position = 9 167
+			size = 120 20
+			children
+			{
+				button
+				{
+					type = 4
+					id = 0
+					text = combobox
+					font = def|17
+					color = ffffffff
+					bgcolor = af808080
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = false
+					changeChildOrder = true
+					drawSelf = true
+					position = 0 0
+					size = 120 20
+					children = ""
+					textAlign = 18
+					posMovable = false
+					colorFadable = true
+				}
+				menu
+				{
+					type = 3
+					id = 0
+					font = def|17
+					color = ffffffff
+					bgcolor = ffafafaf
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = true
+					changeChildOrder = true
+					drawSelf = true
+					position = 0 20
+					size = 120 58
+					children
+					{
+						slidebar
+						{
+							type = 9
+							id = 0
+							font = def|17
+							color = ffffffff
+							bgcolor = 7f000000
+							visible = true
+							enable = true
+							enableSelfMsg = true
+							enalbeDrag = false
+							clickTop = true
+							limitInRect = false
+							changeChildOrder = true
+							drawSelf = true
+							position = 100 0
+							size = 20 58
+							children = ""
+							vertical = true
+							slideStep = 0.050000
+							sliderSize = 80 30
+						}
+					}
+				}
+			}
 		}
 	}
 }
