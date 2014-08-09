@@ -7,7 +7,6 @@ namespace Lazy
 
     CImage::CImage()
     {
-        enable(false);
     }
 
     CImage::~CImage(void)
@@ -15,17 +14,14 @@ namespace Lazy
     }
 
     void CImage::create(
-        int id,
         const tstring &image,
         int x,
         int y,
         int w,
         int h)
     {
-        m_id = id;
-        m_position.set(x, y);
-        m_size.set(w, h);
-        enable(false);
+        setPosition(x, y);
+        setSize(w, h);
         setImage(image);
     }
 
@@ -33,16 +29,33 @@ namespace Lazy
     {
         CRect rc = getClientRect();
         localToGlobal(rc);
-        pDevice->drawRect(rc, m_bgColor, m_texture);
+        pDevice->drawRect(rc, 0xffffffff, m_texture);
+
+        Widget::render(pDevice);
     }
 
     void CImage::setImage(const tstring & image)
     {
-        Widget::setImage(image);
-
+        m_image = image;
         m_texture = TextureMgr::instance()->get(m_image);
     }
 
-//////////////////////////////////////////////////////////////////////////
+
+    void CImage::loadProperty(LZDataPtr root)
+    {
+        Widget::loadProperty(root);
+
+        setImage(root->readString(L"image"));
+    }
+
+    void CImage::saveProperty(LZDataPtr root)
+    {
+        Widget::saveProperty(root);
+
+        if (!m_image.empty())
+            root->writeString(L"image", m_image);
+    }
+
+    //////////////////////////////////////////////////////////////////////////
 
 }//namespace Lazy

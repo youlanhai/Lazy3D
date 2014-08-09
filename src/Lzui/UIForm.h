@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
 
@@ -17,24 +19,26 @@ namespace Lazy
         /** 析构函数*/
         ~CForm();
 
-        virtual void create(int id, const tstring & image, int x, int y);
+        virtual void create(const tstring & image, int x, int y);
 
         virtual void render(IUIRender * pDevice) override;
 
         ///子控件超出区域部分，不会被绘制。
-        void enableClip(bool clip) { m_bClip = clip; }
-        bool canClip() const { return m_bClip; }
+        void setClipable(bool clip) { m_clipable = clip; }
+        bool getClipable() const { return m_clipable; }
 
-        virtual void setImage(const tstring & image) override;
+        void setImage(const tstring & image);
+        const tstring & getImage() const;
 
         void ajustToImageSize();
 
-        virtual void loadFromStream(LZDataPtr root) override;
-        virtual void saveToStream(LZDataPtr root) override;
+        virtual void loadProperty(LZDataPtr root) override;
+        virtual void saveProperty(LZDataPtr root) override;
 
     protected:
+        tstring         m_image;
         TexturePtr      m_texture;
-        bool            m_bClip;///<启用裁减
+        bool            m_clipable;///<启用裁减
     };
 
 }//namespace Lazy

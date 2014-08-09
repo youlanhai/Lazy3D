@@ -1,5 +1,7 @@
 #pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
     ///维持了一个外部的ui
@@ -16,11 +18,11 @@ namespace Lazy
 
         bool loadHost(const tstring & layoutFile);
 
-        WidgetPtr getHost() const { return m_host; }
+        Widget* getHost() const { return m_host; }
 
     private:
         tstring     m_layoutFile;
-        WidgetPtr  m_host;
+        Widget*  m_host;
     };
 
 }//end namespace Lazy

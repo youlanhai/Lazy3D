@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
     /**编辑框*/

@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
 
@@ -13,7 +15,6 @@ namespace Lazy
         ~CImage(void);
 
         void create(
-            int id,
             const tstring & image,
             int x,
             int y,
@@ -21,11 +22,17 @@ namespace Lazy
             int h);
 
         virtual void render(IUIRender * pDevice) override;
-        virtual void setImage(const tstring & image) override;
 
         ///设置背景图像名称
-        virtual void setImage(const tstring & image) { m_image = image; }
+        virtual void setImage(const tstring & image);
         virtual const tstring & getImage(void) const { return m_image; }
+
+
+        ///加载布局。
+        virtual void loadProperty(LZDataPtr config) override;
+
+        ///保存布局
+        virtual void saveProperty(LZDataPtr config) override;
 
     protected:
         TexturePtr      m_texture;

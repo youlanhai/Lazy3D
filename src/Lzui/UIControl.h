@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIDefine.h"
+
 namespace Lazy
 {
     /** UI控件接口

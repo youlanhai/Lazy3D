@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIDefine.h"
+
 namespace Lazy
 {
 
@@ -45,14 +47,14 @@ namespace Lazy
         ControlSprite();
         ~ControlSprite();
 
-        void setControl(WidgetPtr control) { m_control = control; }
-        WidgetPtr getControl() const { return m_control; }
+        void setControl(Widget* control) { m_control = control; }
+        Widget* getControl() const { return m_control; }
 
         virtual void update(float elapse);
         virtual void render(IUIRender * pDevice, const CPoint & world);
 
     private:
-        WidgetPtr m_control;
+        Widget* m_control;
     };
 
     //一个文字
@@ -217,7 +219,7 @@ namespace Lazy
         void addWord(wchar_t ch, FontPtr font);
         void addWord(wchar_t ch, const tstring & fontname);
         void addText(const std::wstring & str, FontPtr font);
-        void addControl(WidgetPtr control);
+        void addControl(Widget* control);
 
         void insertSprite(size_t pos, SpritePtr sprite);
 

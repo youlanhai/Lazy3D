@@ -18,7 +18,3 @@
 #ifdef ENABLE_SCRIPT
 #include "../Lzpy/Lzpy.h"
 #endif
-
-
-#include "UIDefine.h"
-#include "UIControl.h"

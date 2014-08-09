@@ -2,6 +2,12 @@
 
 #define LUI_EDITOR
 
+#include "../utility/UtilConfig.h"
+#include "../utility/SmartPtr.h"
+#include "../utility/DataSection/DataSection.h"
+#include "../utility/Tools2d.h"
+#include "../utility/VisitPool.h"
+
 #include "../Render/Config.h"
 #include "../Render/RenderDevice.h"
 #include "../Render/Texture.h"

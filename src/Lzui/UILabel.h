@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
 
@@ -11,42 +13,41 @@ namespace Lazy
         CLabel(void);
         ~CLabel(void);
 
-        virtual void create(int id, const tstring & caption, int x, int y);
+        virtual void create(const tstring & text, int x, int y);
 
-        void setAlign(int align) { m_align = align; }
-       
         ///设置文本
-        virtual void setText(const tstring & text) { m_text = text; }
+        virtual void setText(const tstring & text);
         virtual const tstring & getText(void) const { return m_text; }
 
         ///设置字体
-        virtual void setFont(const tstring & name) { m_font = name; }
+        virtual void setFont(const tstring & name);
         virtual const tstring & getFont(void) const { return m_font; }
 
-        void setColor(uint32 color) override;
-        void setSize(int w, int h) override;
+        void setTextColor(uint32 color);
+        uint32 getTextColor() const;
 
         void setLineSpace(int lineSpace);
         int getLineSpace() const { return m_lineSpace; }
 
-        void setMaxWidth(int width);
-        int getMaxWidth() const { return m_maxWidth; }
+        void setTextAlign(int align) { m_textAlign = align; }
+        uint32 getTextAlign(void) const { return m_textAlign; }
 
-        uint32 getAlign(void) const { return m_align; }
+        void setMutiLine(bool enable);
+        bool getMutiLine() const { return m_mutiLine; }
+
         const CSize & getTextSize() ;
         int getTextLines();
-
-        void enableMutiLine(bool enable);
-        bool canMutiLine() const { return m_bMutiLine; }
 
         virtual void update(float elapse);
         virtual void render(IUIRender * pDevice);
 
+        void setSize(int w, int h) override;
+
         ///加载布局。
-        virtual void loadFromStream(LZDataPtr config) override;
+        virtual void loadProperty(LZDataPtr config) override;
 
         ///保存布局
-        virtual void saveToStream(LZDataPtr config) override;
+        virtual void saveProperty(LZDataPtr config) override;
 
     protected:
         void createTextSprite();
@@ -54,15 +55,13 @@ namespace Lazy
 
         tstring         m_text;         ///<文本
         tstring         m_font;         ///<字体名称
+        uint32          m_textColor;
+        uint32	        m_textAlign;    ///排版风格
+        bool            m_mutiLine;
+        int             m_lineSpace;
 
-        uint32	    m_align;    ///排版风格
-        FontPtr     m_fontPtr;
-
-        bool        m_bMutiLine;
         TextSpritePtr   m_textSprite;
-
-        int m_lineSpace;
-        int m_maxWidth;
+        FontPtr         m_fontPtr;
     };
 
 

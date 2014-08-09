@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "../Math/Vector.h"
+#include "../Math/Matrix.h"
 
 namespace Lazy
 {
@@ -23,7 +25,7 @@ namespace Lazy
         EffectPtr   m_textureShader;
         EffectPtr   m_colorShader;
         EffectPtr   m_fontShader;
-        Matrix m_matWorldViewProj;
+        Matrix      m_matWorldViewProj;
         bool        m_bClip;
         CRect       m_rcClip;
 

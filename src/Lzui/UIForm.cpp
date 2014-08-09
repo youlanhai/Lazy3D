@@ -5,39 +5,34 @@
 namespace Lazy
 {
     CForm::CForm(void)
-        : m_bClip(false)
+        : m_clipable(false)
     {
-        enableDrag(true);
-        enableDrawSelf(true);
-        enableLimitInRect(true);
-        enableClickTop(true);
+        setDragable(true);
+        setTopable(true);
         setSize(200, 100);
-        setBgColor(0x7fffffff);
     }
 
     CForm::~CForm()
     {
     }
 
-    void CForm::create(int id, const tstring & image, int x, int y)
+    void CForm::create(const tstring & image, int x, int y)
     {
-        setID(id);
         setPosition(x, y);
         setImage(image);
 
         if(m_texture) ajustToImageSize();
     }
 
-
     void CForm::render(IUIRender * pDevice)
     {
         CRect rect = getClientRect();
         localToGlobal(rect);
 
-        if (m_bDrawSelf)
-            pDevice->drawRect(rect, getBgColor(), m_texture);
+        if (m_drawable)
+            pDevice->drawRect(rect, 0xffffffff, m_texture);
 
-        if (!m_bClip)
+        if (!m_clipable)
         {
             Widget::render(pDevice);
             return;
@@ -70,10 +65,13 @@ namespace Lazy
 
     void CForm::setImage(const tstring & image)
     {
-        Widget::setImage(image);
+        m_image = image;
         m_texture = TextureMgr::instance()->get(image);
+    }
 
-        if (m_texture) setBgColor(0xffffffff);
+    const tstring & CForm::getImage() const
+    {
+        return m_image;
     }
 
     void CForm::ajustToImageSize()
@@ -82,18 +80,23 @@ namespace Lazy
         else setSize(0, 0);
     }
 
-    void CForm::loadFromStream(LZDataPtr root)
+    void CForm::loadProperty(LZDataPtr root)
     {
-        Widget::loadFromStream(root);
+        Widget::loadProperty(root);
 
-        root->writeBool(L"clip", m_bClip);
+        setClipable(root->readBool(L"clipable", false));
+        setImage(root->readString(L"image"));
     }
 
-    void CForm::saveToStream(LZDataPtr root)
+    void CForm::saveProperty(LZDataPtr root)
     {
-        Widget::saveToStream(root);
+        Widget::saveProperty(root);
 
-        enableClip(root->readBool(L"clip", false));
+        if (m_clipable)
+            root->writeBool(L"clipable", m_clipable);
+
+        if (!m_image.empty())
+            root->writeString(L"image", m_image);
     }
 
 }//namespace Lazy

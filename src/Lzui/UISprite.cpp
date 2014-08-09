@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "UISprite.h"
 
+#include "UIControl.h"
+
 namespace Lazy
 {
 

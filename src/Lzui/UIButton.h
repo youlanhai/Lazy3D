@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "UIControl.h"
+
 namespace Lazy
 {
 
@@ -14,7 +16,6 @@ namespace Lazy
         ~CButton(void);
 
         virtual void create(
-            int id,
             const tstring & caption,
             const tstring & image,
             int x,
@@ -41,15 +42,20 @@ namespace Lazy
         void setPosMovable(bool e) { m_posMovable = e; }
         bool getPosMovable() const { return m_posMovable; }
 
-        virtual void setText(const tstring & text) override;
-        virtual void setFont(const tstring & font) override;
-        virtual void setColor(uint32 color) override;
+
+        void setText(const tstring & text);
+        const tstring & getText();
+
+        void setFont(const tstring & font);
+        const tstring & getFont();
+
+        void setColor(uint32 color);
 
         void setTextAlign(uint32 align) { m_textAlign = align; }
         uint32 getTextAlign() const { return m_textAlign; }
 
-        virtual void loadFromStream(LZDataPtr config) override;
-        virtual void saveToStream(LZDataPtr config) override;
+        virtual void loadProperty(LZDataPtr config) override;
+        virtual void saveProperty(LZDataPtr config) override;
 
     protected:
         virtual bool onEvent(const SEvent & event) override;
@@ -67,7 +73,7 @@ namespace Lazy
         bool            m_posMovable;
 
         int             m_state;
-        uint32           m_stateColor[5];
+        uint32          m_stateColor[5];
         FontPtr         m_fontPtr;
         TextSpritePtr   m_textSprite;
     };
