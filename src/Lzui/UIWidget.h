@@ -32,10 +32,7 @@ namespace Lazy
 
         ///创建一个子widget
         template<typename T>
-        T * createWidgetT()
-        {
-            return dynamic_cast<T*>(createWidget(T::getTypeS()));
-        }
+        T * createWidgetT();
         
         ///销毁一个子widget
         void deleteWidget(Widget *pWidget);
@@ -204,6 +201,9 @@ namespace Lazy
 
         Widget* getChild(const tstring & name);
 
+        template<typename T>
+        T * getChildT(const tstring & name);
+
         void setChildOrderDirty() { m_bOrderDirty = true; }
 
         ///根据坐标查找活动的控件。pos的参考系为当前控件。
@@ -273,5 +273,18 @@ namespace Lazy
     };
 
     Widget* loadUIFromFile(const tstring & layoutFile);
+
+
+    template<typename T>
+    T * Widget::createWidgetT()
+    {
+        return dynamic_cast<T*>(this->createWidget(T::getTypeS()));
+    }
+
+    template<typename T>
+    T * Widget::getChildT(const tstring & name)
+    {
+        return dynamic_cast<T*>(this->getChild(name));
+    }
 
 }//namespace Lazy

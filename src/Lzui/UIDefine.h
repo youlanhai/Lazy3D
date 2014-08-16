@@ -25,8 +25,8 @@ namespace Lazy
 
 #define MAKE_UI_HEADER(CLASS)   \
     static Widget * createSelf(){ return new CLASS(); }         \
-    static const char * getTypeS() { return #CLASS; }           \
-    virtual const char * getType(void) const { return #CLASS; }
+    static const tchar * getTypeS() { return _T(#CLASS); }           \
+    virtual const tchar * getType(void) const { return _T(#CLASS); }
 
     typedef RefPtr<class ITextSprite> TextSpritePtr;
 

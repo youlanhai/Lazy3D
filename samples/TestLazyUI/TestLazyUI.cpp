@@ -24,8 +24,8 @@
 //-----------------------------------------------------------------------------
 // Desc: 全局变量
 //-----------------------------------------------------------------------------
-Lazy::RefPtr<Lazy::CGUIManager>     g_guiMgr;
-Lazy::Fps           g_fps;
+Lazy::GUIMgr     *g_guiMgr;
+Lazy::Fps        g_fps;
 
 #define USE_EDITOR 0
 
@@ -34,40 +34,42 @@ const Lazy::tstring LayoutFile2 = L"layout/layout2.lzd";
 
 namespace Lazy
 {
-    class CTestForm;
+    class MainForm;
 
 
-    class CTestForm : public CForm
+    class MainForm : public Window
     {
-        CButton       *m_btnOk;
-        CSlidebar     *m_scroll;
-        CEdit         *m_edit;
+        Button       *m_btnOk;
+        Slidebar     *m_scroll;
+        Edit         *m_edit;
 
     public:
-        CTestForm()
+        MAKE_UI_HEADER(MainForm);
+
+        MainForm()
         {
         }
 
-        void create(int id, int x, int y)
+        void create(int x, int y)
         {
-            CForm::create(id, L"", x, y);
+            Window::create(L"", x, y);
             setSize(300, 200);
 
-            for(size_t i=0; i<100; ++i)
+            //for(size_t i=0; i<100; ++i)
             {
                 m_textVeryLong.append(L"这是中文okabcdKJKLJFDFJipjgdsgkkfj个gj发的萨芬反倒是发电量开了房uogfdg番窠倒\n臼");
             }
-            m_label.show(false);
-            m_label.setPosition(0, 0);
-            m_label.setSize(Lazy::rcDevice()->windowWidth(), Lazy::rcDevice()->windowHeight());
-            m_label.enableMutiLine(true);
-            m_label.setMaxWidth(Lazy::rcDevice()->windowWidth());
-            m_label.setColor(0xff00ff00);
-            m_label.setText(m_textVeryLong);
-            g_guiMgr->addChild(&m_label);
 
-            m_fpsLabel.setColor(0xffff0000);
-            g_guiMgr->addChild(&m_fpsLabel);
+            m_label = g_guiMgr->createWidgetT<Label>();
+            m_label->setPosition(0, 0);
+            m_label->setSize(Lazy::rcDevice()->windowWidth(), Lazy::rcDevice()->windowHeight());
+            m_label->setMutiLine(true);
+            //m_label->setMaxWidth(Lazy::rcDevice()->windowWidth());
+            m_label->setTextColor(0xff00ff00);
+            m_label->setText(m_textVeryLong);
+
+            m_fpsLabel = g_guiMgr->createWidgetT<Label>();
+            m_fpsLabel->setTextColor(0xffff0000);
 
     #if USE_EDITOR
 
@@ -85,65 +87,58 @@ namespace Lazy
     #else
 
             setImage(L"gui/login.png");
-            setBgColor(0xffffffff);
+            //setBgColor(0xffffffff);
 
-            CButton *button = (CButton*)Lazy::uiFactory()->create("CButton");
-            button->create(1, _T("OK"), _T(""), 0, 0, 100, 40);
-            button->setEditable(true);
-            button->setManaged(true);
-            addChild(button);
+            Button *button = this->createWidgetT<Button>();
+            button->setName(L"button");
+            button->create(_T("OK"), _T(""), 0, 0, 100, 40);
 
-
-            CSlidebar* scroll = (CSlidebar*) Lazy::uiFactory()->create("CSlidebar");
-            scroll->create(2, _T(""), 0, 50);
+            Slidebar* scroll = this->createWidgetT<Slidebar>();
+            scroll->setName(L"scroll");
+            scroll->create(_T(""), 0, 50);
             scroll->setSize(100, 20);
-            scroll->setEditable(true);
-            scroll->setManaged(true);
-            addChild(scroll);
+            scroll->setPosition(0, 100);
 
-            CEdit *edit = (CEdit*) Lazy::uiFactory()->create("CEdit");
-            edit->setID(3);
+            Edit *edit = this->createWidgetT<Edit>();
+            edit->setName(L"edit");
             edit->setPosition(120, 20);
             edit->setSize(100, 50);
-            edit->setEditable(true);
-            edit->setManaged(true);
-            addChild(edit);
 
-            m_name = L"MainView";
+            setName(L"MainView");
             if (!saveToFile(LayoutFile))
             {
                 LOG_ERROR(L"Save layout '%s' failed!", LayoutFile.c_str());
             }
     #endif
 
-            m_btnOk = (CButton*)getChild(1);
-            m_scroll = (CSlidebar*) getChild(2);
-            m_edit = (CEdit*)getChild(3);
+            m_btnOk = (Button*)getChild(L"button");
+            m_scroll = (Slidebar*) getChild(L"scroll");
+            m_edit = (Edit*)getChild(L"edit");
 
             m_edit->setText(L"哈哈abc");
-            m_edit->setColor(0xff00ff00);
+            m_edit->setTextColor(0xff00ff00);
             m_edit->setMutiLine(true);
         }
 
         void update(float elapse)
         {
-            CForm::update(elapse);
+            Window::update(elapse);
 
             tstring str;
             formatString(str, L"fps:%.2f", g_fps.getFps());
-            m_fpsLabel.setText(str);
+            m_fpsLabel->setText(str);
         }
 
         void toggleLabel()
         {
-            m_label.toggle();
+            m_label->setVisible(m_label->getVisible());
         }
 
     private:
 
-        tstring m_textVeryLong;
-        CLabel  m_label;
-        CLabel  m_fpsLabel;
+        tstring  m_textVeryLong;
+        Label*   m_label;
+        Label*   m_fpsLabel;
     };
 
 }
@@ -170,32 +165,13 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
     Lazy::rcDevice()->setRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(100, 100, 100));
     Lazy::rcDevice()->setRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
     Lazy::rcDevice()->setRenderState(D3DRS_ZENABLE, TRUE);
-    //Lazy::rcDevice()->setUIShader(L"shader/ui.fx");
-    //Lazy::rcDevice()->setFontShader(L"shader/font.fx");
 
-
-    g_guiMgr = new Lazy::CGUIManager(Lazy::rcDevice()->getDevice(), hWnd, hInstance);
-
-    //添加一个标签
-    Lazy::CLabel *pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create("CLabel");
-    pLabel->create(1, _T("haha你好啊ABCDEFGHIGKLMN\r\n哈哈哈\n"), 20, 100);
-    pLabel->setAlign(Lazy::RelativeAlign::right | Lazy::RelativeAlign::vcenter);
-    pLabel->enableMutiLine(true);
-    pLabel->setSize(100, 40);
-    pLabel->setColor(0xffff0000);
-    g_guiMgr->addChildManage(pLabel);
-
-    pLabel = (Lazy::CLabel*)Lazy::uiFactory()->create("CLabel");
-    pLabel->create(1, _T("测试中文标签abcd\n哈哈哈\n"), 20, 20);
-    pLabel->setAlign(Lazy::RelativeAlign::center);
-    pLabel->setSize(500, 40);
-    pLabel->setColor(0xffff0000);
-    g_guiMgr->addChildManage(pLabel);
+    g_guiMgr = new Lazy::GUIMgr(Lazy::rcDevice()->getDevice(), hWnd, hInstance);
 
     //添加测试窗体
-    Lazy::CTestForm *pForm = new Lazy::CTestForm();
-    pForm->create(2, 100, 100);
-    g_guiMgr->addChildManage(pForm);
+    Lazy::MainForm *pForm = new Lazy::MainForm();
+    pForm->create(100, 100);
+    g_guiMgr->addChild(pForm);
 
     return S_OK;
 }
@@ -207,7 +183,7 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
 //-----------------------------------------------------------------------------
 VOID Cleanup()
 {
-    g_guiMgr->destroy();
+    delete g_guiMgr;
     g_guiMgr = NULL;
 
     Lazy::clearSectionCache();

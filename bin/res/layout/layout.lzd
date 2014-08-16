@@ -2,85 +2,51 @@
 
 MainView
 {
-	type = CForm
-	id = 2
-	image = gui/login.png
-	font = def|17
-	color = ffffffff
-	bgcolor = ffffffff
-	visible = true
-	enable = true
-	enableSelfMsg = true
-	enalbeDrag = true
-	clickTop = true
-	limitInRect = true
-	changeChildOrder = true
-	drawSelf = true
-	position = 100 100
+	type = MainForm
+	position = 150 150
 	size = 300 200
+	dragable = true
+	topable = true
+	image = gui/login.png
 	children
 	{
-		noname
+		edit
 		{
-			type = CEdit
-			id = 3
-			font = def|17
-			color = ffffffff
-			bgcolor = 7fffffff
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = false
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 120 20
+			type = Edit
+			position = 130 35
 			size = 100 50
-			children = ""
 			mutiline = false
 		}
-		noname
+		scroll
 		{
-			type = CSlidebar
-			id = 2
-			font = def|17
-			color = ffffffff
-			bgcolor = 7f000000
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 0 50
+			type = Slidebar
+			position = 0 100
 			size = 100 20
-			children = ""
+			topable = true
+			children
+			{
+				
+				{
+					type = Slider
+					position = 0 -5
+					size = 80 30
+					dragable = true
+					topable = true
+					textAlign = 18
+					posMovable = true
+					colorFadable = true
+				}
+			}
 			vertical = false
 			slideStep = 0.050000
 			sliderSize = 80 30
 		}
-		noname
+		button
 		{
-			type = CButton
-			id = 1
-			text = OK
-			font = def|17
-			color = ffffffff
-			bgcolor = af808080
-			visible = true
-			enable = true
-			enableSelfMsg = true
-			enalbeDrag = false
-			clickTop = true
-			limitInRect = false
-			changeChildOrder = true
-			drawSelf = true
-			position = 0 0
+			type = Button
+			position = 10 5
 			size = 100 40
-			children = ""
+			topable = true
 			textAlign = 18
 			posMovable = true
 			colorFadable = true

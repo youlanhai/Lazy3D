@@ -662,9 +662,7 @@ namespace Lazy
 
     void Widget::saveProperty(LZDataPtr config)
     {
-        tstring tmp;
-        charToWChar(tmp, getType());
-        config->writeString(L"type", tmp);
+        config->writeString(L"type", getType());
 
         misc::writePosition(m_position, config, L"position");
         misc::writePosition(m_size, config, L"size");

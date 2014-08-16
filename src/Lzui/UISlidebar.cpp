@@ -45,6 +45,7 @@ namespace Lazy
         : m_bVertical(false)
         , m_rate(0.0f)
         , m_slideStep(0.05f)
+        , m_slider(nullptr)
     {
         setDragable(false);
 

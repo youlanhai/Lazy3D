@@ -193,6 +193,11 @@ namespace Lazy
         m_textSprite->setText(m_text, m_fontPtr);
     }
 
+    void Button::setImage(const tstring & text)
+    {
+        m_image = text;
+    }
+
     void Button::setBgColor(uint32 color)
     {
         m_bgColor = color;
