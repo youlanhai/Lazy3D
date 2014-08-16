@@ -221,24 +221,9 @@ namespace Lazy
         bool processed = false;
 
         m_children.lock();
-        for (WidgetChildren::iterator it = m_children.begin();
-                it != m_children.end(); ++it)
+        for (Widget *pChild : m_children)
         {
-            Widget *pChild = *it;
-
-            if (event.isMouseEvent())
-            {
-                //坐标系转换
-                SEvent subEvent = event;
-                subEvent.mouseEvent.x -= pChild->getPosition().x;
-                subEvent.mouseEvent.y -= pChild->getPosition().y;
-                processed = pChild->sendEvent(subEvent);
-            }
-            else
-            {
-                processed = pChild->sendEvent(event);
-            }
-
+            processed = pChild->sendEvent(event);
             if (processed) break;
         }
         m_children.unlock();
@@ -247,26 +232,13 @@ namespace Lazy
             return true;
 
         m_skinChildren.lock();
-        for (WidgetChildren::iterator it = m_skinChildren.begin();
-            it != m_skinChildren.end(); ++it)
+        m_children.lock();
+        for (Widget *pChild : m_skinChildren)
         {
-            Widget *pChild = *it;
-
-            if (event.isMouseEvent())
-            {
-                //坐标系转换
-                SEvent subEvent = event;
-                subEvent.mouseEvent.x -= pChild->getPosition().x;
-                subEvent.mouseEvent.y -= pChild->getPosition().y;
-                processed = pChild->sendEvent(subEvent);
-            }
-            else
-            {
-                processed = pChild->sendEvent(event);
-            }
-
+            processed = pChild->sendEvent(event);
             if (processed) break;
         }
+        m_children.unlock();
         m_skinChildren.unlock();
 
         return processed;
@@ -756,19 +728,20 @@ namespace Lazy
 
 
     //添加控件，获得控件
-    void Widget::addChild(Widget* pCtrl)
+    void Widget::addChild(Widget* pChild)
     {
-        assert(pCtrl && "Widget::addChild");
+        assert(pChild && "Widget::addChild");
 
-        if (pCtrl->m_parent != NULL)
+        if (pChild->m_parent != NULL)
         {
             assert(0 && "Widget::addChild, control has been added to a Panel list!");
             return;
         }
 
-        pCtrl->m_parent = this;
-        m_children.addFront(pCtrl);
+        pChild->m_parent = this;
+        m_children.addFront(pChild);
         setChildOrderDirty();
+        pChild->onParentPositionChange();
     }
 
     Widget* Widget::getChild(const tstring & name)
