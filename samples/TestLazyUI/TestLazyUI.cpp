@@ -140,7 +140,7 @@ namespace Lazy
 
         bool onButtonEvent(const SEvent & e)
         {
-            if(e.isGuiEvent() && e.guiEvent.message == GuiMsg::buttonClick)
+            if (e.isGuiEvent(GuiMsg::buttonClick))
                 this->setVisible(false);
 
             return true;

@@ -272,10 +272,34 @@ namespace Lazy
 
 
         bool isGuiEvent() const { return eventType == EET_GUI_EVENT; }
+        bool isGuiEvent(uint32 msg) const
+        {
+            return isGuiEvent() && guiEvent.message == msg;
+        }
+
         bool isMouseEvent() const { return eventType == EET_MOUSE_EVENT; }
+        bool isMouseEvent(EMOUSE_EVENT msg) const
+        {
+            return isMouseEvent() && mouseEvent.event == msg;
+        }
+
         bool isKeyEvent() const { return eventType == EET_KEY_EVENT; }
+        bool isKeyEvent(EKEY_CODE key) const
+        {
+            return isKeyEvent() && keyEvent.key == key;
+        }
+
         bool isCharEvent() const { return eventType == EET_CHAR_EVENT; }
+        bool isCharEvent(wchar_t ch) const
+        {
+            return isCharEvent() && charEvent.ch == ch;
+        }
+
         bool isSysEvent() const { return eventType == EET_SYS_EVENT; }
+        bool isSysEvent(uint32 msg) const
+        {
+            return isSysEvent() && sysEvent.message == msg;
+        }
     };
 
     class IEventReceiver
