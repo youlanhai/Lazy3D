@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../utility/Event.h"
+#include "UIDelegate.h"
 #include "UIDefine.h"
 
 namespace Lazy
@@ -56,6 +56,9 @@ namespace Lazy
 
         ///将控件至于顶层
         virtual void topmost();
+
+        ///消息委托
+        DelegateGroup delegate;
 
     public: //串行化
 

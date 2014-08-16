@@ -114,6 +114,8 @@ namespace Lazy
     #endif
 
             m_btnOk = (Button*)getChild(L"button");
+            m_btnOk->delegate.addDelegate(this, &MainForm::onButtonEvent);
+
             m_scroll = (Slidebar*) getChild(L"scroll");
             m_edit = (Edit*)getChild(L"edit");
 
@@ -134,6 +136,14 @@ namespace Lazy
         void toggleLabel()
         {
             m_label->setVisible(m_label->getVisible());
+        }
+
+        bool onButtonEvent(const SEvent & e)
+        {
+            if(e.isGuiEvent() && e.guiEvent.message == GuiMsg::buttonClick)
+                this->setVisible(false);
+
+            return true;
         }
 
     private:

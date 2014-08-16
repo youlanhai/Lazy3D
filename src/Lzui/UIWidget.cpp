@@ -279,9 +279,10 @@ namespace Lazy
             }
         }
 
+        processed |= delegate.onEvent(event);
+
 #ifdef ENABLE_SCRIPT
-        if (ScriptEvent::onEvent(m_self, event))
-            processed = true;
+        processed != ScriptEvent::onEvent(m_self, event);
 #endif
         return processed;
     }

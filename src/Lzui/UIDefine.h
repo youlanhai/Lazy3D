@@ -64,6 +64,8 @@ namespace Lazy
         const uint32 lostSelected = 13;
         const uint32 getActived = 15;
         const uint32 lostActived = 16;
+
+        const uint32 buttonClick = 20;
     }
 
     ///相对坐标系下使用的对齐方式

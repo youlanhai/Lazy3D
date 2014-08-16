@@ -140,9 +140,13 @@ namespace Lazy
             {
                 setBtnState(ButtonState::active);
 
+                SEvent evt;
+                fillGuiEvent(evt, GuiMsg::buttonClick, 0, 0);
+                delegate.onEvent(evt);
+
 #ifdef ENABLE_SCRIPT
                 m_self.call_method_quiet("onButtonClick");
-#endif
+#endif;
             }
         }
 

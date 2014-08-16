@@ -25,6 +25,7 @@
     <ClInclude Include="UICheckBox.h" />
     <ClInclude Include="UIConfig.h" />
     <ClInclude Include="UIDefine.h" />
+    <ClInclude Include="UIDelegate.h" />
     <ClInclude Include="UIEdit.h" />
     <ClInclude Include="UIEditorCtl.h" />
     <ClInclude Include="UIFactory.h" />
@@ -48,6 +49,7 @@
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UICheckBox.cpp" />
     <ClCompile Include="UIDefine.cpp" />
+    <ClCompile Include="UIDelegate.cpp" />
     <ClCompile Include="UIEdit.cpp" />
     <ClCompile Include="UIEditorCtl.cpp" />
     <ClCompile Include="UIFactory.cpp" />
