@@ -152,8 +152,7 @@ namespace Lazy
     {
         if (!m_fontPtr) return;
 
-        CRect rc = getClientRect();
-        localToGlobal(rc);
+        CRect rc = getGlobalRect();
 
 #if 1
         pDevice->drawRect(rc, 0x7f000000);

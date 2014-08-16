@@ -27,8 +27,7 @@ namespace Lazy
 
     void Image::render(IUIRender * pDevice)
     {
-        CRect rc = getClientRect();
-        localToGlobal(rc);
+        CRect rc = getGlobalRect();
         pDevice->drawRect(rc, 0xffffffff, m_texture);
 
         Widget::render(pDevice);

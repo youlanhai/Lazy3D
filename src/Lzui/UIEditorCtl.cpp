@@ -49,8 +49,7 @@ namespace Lazy
 
     void EditorCtl::render(IUIRender * pDevice)
     {
-        CRect rc = getClientRect();
-        localToGlobal(rc);
+        CRect rc = getGlobalRect();
 
         //drawRect(pDevice, rc, getBgColor());
         pDevice->drawRectFrame(rc, 1, m_bgColor);

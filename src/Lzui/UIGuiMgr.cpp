@@ -95,7 +95,6 @@ namespace Lazy
                     {
                         CPoint dp = m_cursorPos - m_lastCursorPos;
                         CPoint pt = m_cursorPos;
-                        m_pSelected->globalToLocal(pt);
 
                         SEvent dragEvent;
                         fillGuiEvent(dragEvent, GuiMsg::mouseLeftDrag, dp.toLParam(), pt.toLParam());

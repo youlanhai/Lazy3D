@@ -73,9 +73,7 @@ namespace Lazy
         if (!m_control || !m_control->getParent()) return;
 
         CPoint pt = m_position + world;
-
-        m_control->getParent()->globalToLocal(pt);
-        m_control->setPosition(pt.x, pt.y);
+        m_control->setAbsPosition(pt.x, pt.y);
     }
 
     ////////////////////////////////////////////////////////////////////

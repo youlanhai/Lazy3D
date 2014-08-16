@@ -26,8 +26,7 @@ namespace Lazy
 
     void Window::render(IUIRender * pDevice)
     {
-        CRect rect = getClientRect();
-        localToGlobal(rect);
+        CRect rect = getGlobalRect();
 
         if (m_drawable)
             pDevice->drawRect(rect, 0xffffffff, m_texture);

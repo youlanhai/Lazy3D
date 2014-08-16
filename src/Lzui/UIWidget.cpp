@@ -29,7 +29,7 @@ namespace Lazy
 
     bool sortCompare(Widget * x, Widget * y)
     {
-        return x->getZ() < y->getZ();
+        return x->getZOrder() < y->getZOrder();
     }
 
     static EditorUICreateFun g_pUICreateFun = nullptr;
@@ -420,7 +420,8 @@ namespace Lazy
 
     CRect Widget::getControlRect(void) const
     {
-        return CRect(m_position, m_position + m_size);
+        CPoint pt = getAbsPosition();
+        return CRect(pt, pt + m_size);
     }
 
     CRect Widget::getClientRect(void) const
@@ -428,103 +429,153 @@ namespace Lazy
         return CRect(0, 0, m_size.x, m_size.y);
     }
 
-    //坐标系转换
-    void Widget::localToParent(CPoint & pt) const
-    {
-        pt += m_position;
-    }
-
-    void Widget::localToParent(CRect & rc) const
-    {
-        rc.offset(m_position.x, m_position.y);
-    }
-
-    void Widget::localToGlobal(CPoint & pt) const
-    {
-        localToParent(pt);
-        if (m_parent) m_parent->localToGlobal(pt);
-    }
-
-    void Widget::localToGlobal(CRect & rc) const
-    {
-        localToParent(rc);
-        if (m_parent) m_parent->localToGlobal(rc);
-    }
-
-
-    void Widget::parentToLocal(CPoint & pt) const
-    {
-        pt -= m_position;
-    }
-
-    void Widget::parentToLocal(CRect & rc) const
-    {
-        rc.offset(-m_position.x, -m_position.y);
-    }
-
-    void Widget::globalToLocal(CPoint & pt) const
-    {
-        if (m_parent)  m_parent->globalToLocal(pt);
-
-        parentToLocal(pt);
-    }
-
-    void Widget::globalToLocal(CRect & rc) const
-    {
-        if (m_parent) m_parent->globalToLocal(rc);
-
-        parentToLocal(rc);
-    }
-
     CRect Widget::getGlobalRect() const
     {
-        CRect rc = getClientRect();
-        localToGlobal(rc);
-        return rc;
+        return CRect(m_globalPosition, m_globalPosition + m_size);
     }
 
-    void Widget::setGlobalRect(const CRect & r)
+    void Widget::setGlobalRect(const CRect & rc)
     {
-        CRect rc = r;
-        if (m_parent) m_parent->globalToLocal(rc);
-
-        setPosition(rc.left, rc.top);
-        setSize(rc.width(), rc.height());
+        m_size.set(rc.width(), rc.height());
+        m_globalPosition.set(rc.left, rc.top);
+        onPositionChange();
     }
 
     bool Widget::isPointIn(int x, int y) const
     {
-        if (x < 0 || y < 0) return false;
-        if (x > m_size.x || y > m_size.y) return false;
-
-        return true;
+        return getGlobalRect().isIn(x, y);
     }
 
-    bool Widget::isPointInRefParent(int x, int y) const
-    {
-        if (x < m_position.x || y < m_position.y) return false;
-        if (x > m_position.x + m_size.x) return false;
-        if (y > m_position.y + m_size.y) return false;
+    //global position is the world position.
+    //abs position is relative to parent.
+    //relative position is relative to parent with align.
 
-        return true;
+    CPoint Widget::abs2relativePosition(const CPoint & position) const
+    {
+        CPoint pt = position;
+        if (m_parent)
+        {
+            //offset position by align
+            if (m_align & RelativeAlign::hcenter)
+                pt.x -= (m_parent->getWidth() - m_size.x) >> 1;
+            else if (m_align & RelativeAlign::right)
+                pt.x -= (m_parent->getWidth() - m_size.x);
+
+            if (m_align & RelativeAlign::vcenter)
+                pt.y -= (m_parent->getHeight() - m_size.y) >> 1;
+            else if (m_align & RelativeAlign::bottom)
+                pt.y -= (m_parent->getHeight() - m_size.y);
+        }
+        return pt;
+    }
+
+    CPoint Widget::relative2absPosition(const CPoint & position) const
+    {
+        CPoint pt = position;
+        if (m_parent)
+        {
+            //offset position by align
+            if (m_align & RelativeAlign::hcenter)
+                pt.x += (m_parent->getWidth() - m_size.x) >> 1;
+            else if (m_align & RelativeAlign::right)
+                pt.x += (m_parent->getWidth() - m_size.x);
+
+            if (m_align & RelativeAlign::vcenter)
+                pt.y += (m_parent->getHeight() - m_size.y) >> 1;
+            else if (m_align & RelativeAlign::bottom)
+                pt.y += (m_parent->getHeight() - m_size.y);
+        }
+        return pt;
+    }
+
+    void Widget::setGlobalPosition(int x, int y)
+    {
+        CPoint pt(x, y);
+        if (pt == m_globalPosition)
+            return;
+
+        m_globalPosition = pt;
+        //convert to abs position
+        if (m_parent)
+            pt -= m_parent->getGlobalPosition();
+
+        //convert to relative postion
+        m_position = abs2relativePosition(pt);
+
+        onPositionChange();
+    }
+
+    void Widget::setAbsPosition(int x, int y)
+    {
+        CPoint pt = abs2relativePosition(CPoint(x, y));
+        if (pt == m_position)
+            return;
+
+        m_position = pt;
+        onPositionChange();
     }
 
     void Widget::setPosition(int x, int y)
     {
-        m_position.set(x, y);
+        CPoint pt(x, y);
+        if (m_position == pt)
+            return;
+
+        m_position = pt;
+
+        //convert to abs position
+        m_globalPosition = getAbsPosition();
+
+        //convert to global position
+        if(m_parent)
+            m_globalPosition += m_parent->getGlobalPosition();
+
+        onPositionChange();
     }
 
-    void Widget::setX(int x)
+    void Widget::onPositionChange()
     {
-        setPosition(x, m_position.y);
+        //position change will only effect the real position of children.
+
+        for (Widget * p : m_children)
+        {
+            p->onParentPositionChange();
+        }
+
+        for (Widget * p : m_skinChildren)
+        {
+            p->onParentPositionChange();
+        }
     }
 
-    void Widget::setY(int y)
+    void Widget::onParentPositionChange()
     {
-        setPosition(m_position.x, y);
+        //convert to abs position
+        m_globalPosition = getAbsPosition();
+
+        //convert to gloabl position
+        if (m_parent)
+            m_globalPosition += m_parent->getGlobalPosition();
+
+        onPositionChange();
     }
 
-    void Widget::setZ(int z)
+    void Widget::onSizeChange()
+    {
+        //position change will only effect the real position of children.
+
+        for (Widget * p : m_children)
+        {
+            p->onParentPositionChange();
+        }
+
+        for (Widget * p : m_skinChildren)
+        {
+            p->onParentPositionChange();
+        }
+    }
+
+    void Widget::setZOrder(int z)
     {
         if (m_zorder == z) return;
 
@@ -812,25 +863,20 @@ namespace Lazy
     }
 
     ///根据坐标查找控件。
-    Widget* Widget::finChildByPos(const CPoint & pos, bool resculy)
+    Widget* Widget::findChildByPos(const CPoint & pos, bool resculy)
     {
-        for (WidgetChildren::iterator it = m_children.begin();
-                it != m_children.end();  ++it)
+        for (Widget* ptr : m_children)
         {
-            Widget* ptr = *it;
-            if (!ptr || !ptr->getVisible()) continue;
-
-            CPoint pt = pos;
-            ptr->parentToLocal(pt);
+            if (!ptr->getVisible()) continue;
 
             //如果子控件是panel，则先进入panel
             if (resculy)
             {
-                Widget* temp = ptr->finChildByPos(pt, resculy);
+                Widget* temp = ptr->findChildByPos(pos, resculy);
                 if (temp) return temp;
             }
 
-            if (ptr->isPointIn(pt.x, pt.y))
+            if (ptr->isPointIn(pos.x, pos.y))
             {
                 return ptr;
             }

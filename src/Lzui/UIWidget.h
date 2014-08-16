@@ -1,15 +1,15 @@
 ﻿#pragma once
 
+#include "../utility/Event.h"
 #include "UIDefine.h"
 
 namespace Lazy
 {
     /** UI控件接口
-        IControl为所有控件类的基类，实现所有控件统一管理。
-        所有派生类必须实现update，render,以完成绘制和更新；
-        GUIMgr，管理了整个UI系统，将所有的UI关联起来，形成一颗UI树。实现了UI消息传递，
-        以及统一更新和渲染。详见CGUIManager。
-    */
+     *  Widget为所有控件类的基类，实现所有控件统一管理.
+     *  GUIMgr，管理了整个UI系统，将所有的UI关联起来，形成一颗UI树。实现了UI消息传递，
+     *  以及统一更新和渲染。详见GUIMgr。
+     */
     class LZUI_API Widget
     {
     public:
@@ -59,7 +59,7 @@ namespace Lazy
 
     public: //串行化
 
-        ///打开配置文件
+        ///从文件中加载布局
         virtual bool loadFromFile(const tstring & file);
 
         ///保存布局到文件
@@ -70,30 +70,6 @@ namespace Lazy
 
         virtual void loadProperty(LZDataPtr config);
         virtual void saveProperty(LZDataPtr config);
-
-    public: //坐标系转换
-
-        /** 局部坐标转换到父控件坐标系。*/
-        void localToParent(CPoint & pt) const;
-        void localToParent(CRect & rc) const;
-
-        void localToGlobal(CPoint & pt) const;
-        void localToGlobal(CRect & rc) const;
-
-        void parentToLocal(CPoint & pt) const;
-        void parentToLocal(CRect & rc) const;
-
-        void globalToLocal(CPoint & pt) const;
-        void globalToLocal(CRect & rc) const;
-
-        CRect getGlobalRect() const;
-        void setGlobalRect(const CRect & rc);
-
-        ///点是否在当前区域
-        bool isPointIn(int x, int y)  const;
-
-        ///点是否在当前区域。点为父坐标系中的点。
-        bool isPointInRefParent(int x, int y) const;
 
     public://属性
 
@@ -109,16 +85,15 @@ namespace Lazy
         const tstring & getSkin() const { return m_skin; }
         void setSkin(const tstring & skin);
 
-        ///设置位置
-        virtual void setPosition(int x, int y);
-        void setX(int x);
-        void setY(int y);
-        void setZ(int z);
+        void setGlobalPosition(int x, int y);
+        void setAbsPosition(int x, int y);
+        void setPosition(int x, int y);
+        void setZOrder(int z);
 
+        const CPoint & getGlobalPosition() const{ return m_globalPosition; }
+        CPoint getAbsPosition() const{ return abs2relativePosition(m_position); }
         const CPoint & getPosition(void) const { return m_position; }
-        int getX() const { return m_position.x; }
-        int getY() const { return m_position.y; }
-        int getZ() const { return m_zorder; }
+        int getZOrder() const { return m_zorder; }
 
         ///设置尺寸
         virtual void setSize(int w, int h);
@@ -128,6 +103,12 @@ namespace Lazy
         const CPoint & getSize(void) const { return m_size; }
         int getWidth() const { return m_size.x; }
         int getHeight() const { return m_size.y; }
+
+        CRect getGlobalRect() const;
+        void setGlobalRect(const CRect & rc);
+
+        ///点是否在当前区域
+        bool isPointIn(int x, int y)  const;
 
         //设置控件区域
         CRect getControlRect(void)  const;
@@ -207,7 +188,7 @@ namespace Lazy
         void setChildOrderDirty() { m_bOrderDirty = true; }
 
         ///根据坐标查找活动的控件。pos的参考系为当前控件。
-        Widget* finChildByPos(const CPoint & pos, bool resculy = false);
+        Widget* findChildByPos(const CPoint & pos, bool resculy = false);
 
         Widget* getSkinChild(const tstring & name);
 
@@ -238,6 +219,13 @@ namespace Lazy
         virtual void onParentResize(const CPoint & newSize, const CPoint & oldSize);
         virtual void onResize(const CPoint & newSize, const CPoint & oldSize);
 
+        CPoint abs2relativePosition(const CPoint & pt) const;
+        CPoint relative2absPosition(const CPoint & pt) const;
+
+        virtual void onPositionChange();
+        virtual void onSizeChange();
+        virtual void onParentPositionChange();
+
         void clearSkin();
         void createSkin();
 
@@ -245,6 +233,7 @@ namespace Lazy
         tstring         m_name;         ///< 名称
         tstring         m_skin;
         Widget*         m_parent;       ///< 父控件
+        CPoint          m_globalPosition;
         CPoint          m_position;     ///< 位置
         CPoint          m_size;         ///< 尺寸
         int             m_zorder;       ///< z深度值

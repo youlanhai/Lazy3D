@@ -61,8 +61,7 @@ namespace Lazy
 
     void Button::render(IUIRender * pDevice)
     {
-        CRect rc = getClientRect();
-        localToGlobal(rc);
+        CRect rc = getGlobalRect();
 
         if (m_posMovable)
         {

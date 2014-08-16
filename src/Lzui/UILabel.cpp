@@ -63,8 +63,7 @@ namespace Lazy
     {
         if (m_textSprite)
         {
-            CPoint pt;
-            localToGlobal(pt);
+            CPoint pt = getGlobalPosition();
 
             if (m_align & RelativeAlign::hcenter)
             {
