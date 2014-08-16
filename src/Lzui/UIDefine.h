@@ -39,8 +39,6 @@ namespace Lazy
     const tstring & getDefaultFont();
     FontPtr getDefaultFontPtr();
 
-    typedef Widget * (*EditorUICreateFun) (Widget * parent, LZDataPtr config);
-    void setEditorUICreateFun(EditorUICreateFun fun);
 
     /** 按钮状态*/
     namespace ButtonState

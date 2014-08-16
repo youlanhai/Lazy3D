@@ -32,11 +32,6 @@ namespace Lazy
         return x->getZOrder() < y->getZOrder();
     }
 
-    static EditorUICreateFun g_pUICreateFun = nullptr;
-    void setEditorUICreateFun(EditorUICreateFun fun)
-    {
-        g_pUICreateFun = fun;
-    }
 
 #ifdef ENABLE_SCRIPT
     class ScriptEvent
@@ -164,7 +159,7 @@ namespace Lazy
         , m_messagable(true)
         , m_topable(false)
         , m_parent(nullptr)
-        , m_align(RelativeAlign::left | RelativeAlign::top)
+        , m_align(0)
         , m_childOrderable(true)
         , m_drawable(true)
         , m_bOrderDirty(true)
@@ -673,6 +668,7 @@ namespace Lazy
         setTopable(config->readBool(L"topable", false));
         setChildOrderable(config->readBool(L"childOrderable", true));
         setDrawable(config->readBool(L"drawable", true));
+        setAlign(config->readInt(L"align", 0));
     }
 
     void Widget::saveProperty(LZDataPtr config)
@@ -706,6 +702,8 @@ namespace Lazy
         if (!m_drawable)
             config->writeBool(L"drawable", m_drawable);
 
+        if (m_align != 0)
+            config->writeInt(L"align", m_align);
     }
 
 
