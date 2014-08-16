@@ -91,7 +91,7 @@ namespace Lazy
         void setZOrder(int z);
 
         const CPoint & getGlobalPosition() const{ return m_globalPosition; }
-        CPoint getAbsPosition() const{ return abs2relativePosition(m_position); }
+        CPoint getAbsPosition() const{ return relative2absPosition(m_position); }
         const CPoint & getPosition(void) const { return m_position; }
         int getZOrder() const { return m_zorder; }
 

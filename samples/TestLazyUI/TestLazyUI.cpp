@@ -92,6 +92,8 @@ namespace Lazy
             Button *button = this->createWidgetT<Button>();
             button->setName(L"button");
             button->create(_T("OK"), _T(""), 0, 0, 100, 40);
+            button->setAlign(RelativeAlign::hcenter | RelativeAlign::bottom);
+            button->setPosition(0, -10);
 
             Slidebar* scroll = this->createWidgetT<Slidebar>();
             scroll->setName(L"scroll");

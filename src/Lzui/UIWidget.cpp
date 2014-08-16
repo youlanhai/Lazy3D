@@ -164,7 +164,7 @@ namespace Lazy
         , m_messagable(true)
         , m_topable(false)
         , m_parent(nullptr)
-        , m_align(RelativeAlign::center)
+        , m_align(RelativeAlign::left | RelativeAlign::top)
         , m_childOrderable(true)
         , m_drawable(true)
         , m_bOrderDirty(true)
@@ -462,38 +462,27 @@ namespace Lazy
 
     void Widget::setGlobalPosition(int x, int y)
     {
-        CPoint pt(x, y);
-        if (pt == m_globalPosition)
-            return;
-
-        m_globalPosition = pt;
+        m_globalPosition.set(x, y);
+        m_position = m_globalPosition;
         //convert to abs position
         if (m_parent)
-            pt -= m_parent->getGlobalPosition();
+            m_position -= m_parent->getGlobalPosition();
 
         //convert to relative postion
-        m_position = abs2relativePosition(pt);
+        m_position = abs2relativePosition(m_position);
 
         onPositionChange();
     }
 
     void Widget::setAbsPosition(int x, int y)
     {
-        CPoint pt = abs2relativePosition(CPoint(x, y));
-        if (pt == m_position)
-            return;
-
-        m_position = pt;
+        m_position = abs2relativePosition(CPoint(x, y));
         onPositionChange();
     }
 
     void Widget::setPosition(int x, int y)
     {
-        CPoint pt(x, y);
-        if (m_position == pt)
-            return;
-
-        m_position = pt;
+        m_position.set(x, y);
 
         //convert to abs position
         m_globalPosition = getAbsPosition();
@@ -568,6 +557,8 @@ namespace Lazy
     void Widget::setAlign(uint32 align)
     {
         m_align = align;
+
+        setGlobalPosition(m_globalPosition.x, m_globalPosition.y);
     }
 
     void Widget::setSkin(const tstring & skin)

@@ -193,7 +193,10 @@ namespace Lazy
         {
             if (event.mouseEvent.event == EME_LMOUSE_DOWN)
             {
-                m_textSprite->getCursorByPos(m_cursor, event.mouseEvent.x, event.mouseEvent.y);
+                CPoint pt(event.mouseEvent.x, event.mouseEvent.y);
+                pt -= getGlobalPosition();
+                //pt -= getAbsPosition();
+                m_textSprite->getCursorByPos(m_cursor, pt.x, pt.y);
             }
         }
         else if (event.eventType == EET_CHAR_EVENT)

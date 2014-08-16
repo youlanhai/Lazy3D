@@ -3,7 +3,7 @@
 MainView
 {
 	type = MainForm
-	position = 150 150
+	position = 100 100
 	size = 300 200
 	dragable = true
 	topable = true
@@ -13,7 +13,7 @@ MainView
 		edit
 		{
 			type = Edit
-			position = 130 35
+			position = 120 20
 			size = 100 50
 			mutiline = false
 		}
@@ -44,7 +44,7 @@ MainView
 		button
 		{
 			type = Button
-			position = 10 5
+			position = 0 -10
 			size = 100 40
 			topable = true
 			textAlign = 18
