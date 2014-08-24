@@ -6,13 +6,13 @@ Widget = uieditor
 	size = 1024 768
 	children
 	{
-		Window = uitree
+		Image = uitree
 		{
 			skin = layout/editor/uitree.lzd
 			position = 0 0
 			size = 300 300
 		}
-		Window = toolbox
+		Image = toolbox
 		{
 			skin = layout/editor/toolbox.lzd
 			position = 0 310
@@ -23,13 +23,15 @@ Widget = uieditor
 			skin = layout/editor/canvas.lzd
 			position = 310 100
 			size = 400 400
+			color = 0xff7f7f7f
 		}
-		Window = property
+		Image = property
 		{
 			skin = layout/editor/property.lzd
 			position = 0 0
 			size = 300 600
 			align = 4
+			color = 0xff2f2f2f
 		}
 	}
 }

@@ -27,11 +27,15 @@ namespace Lazy
         void setImage(const tstring & image);
         const tstring & getImage(void) const { return m_image; }
 
+        void setColor(uint32 color){ m_color = color; }
+        uint32 getColor() const { return m_color; }
+
         virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
         TexturePtr      m_texture;
         tstring         m_image;        ///<图片名称
+        uint32          m_color;        ///<混合颜色
     };
 
 }//namespace Lazy

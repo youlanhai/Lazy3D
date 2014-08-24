@@ -6,6 +6,7 @@ namespace Lazy
 {
 
     Image::Image()
+        : m_color(0xffffffff)
     {
     }
 
@@ -28,7 +29,7 @@ namespace Lazy
     void Image::render(IUIRender * pDevice)
     {
         CRect rc = getGlobalRect();
-        pDevice->drawRect(rc, 0xffffffff, m_texture);
+        pDevice->drawRect(rc, m_color, m_texture);
 
         Widget::render(pDevice);
     }
@@ -44,6 +45,8 @@ namespace Lazy
     {
         if (key == L"image")
             setImage(val->asString());
+        else if (key == L"color")
+            setColor(val->asHex());
         else
             return Widget::setProperty(config, key, val);
         return true;
