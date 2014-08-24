@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "UIGuiMgr.h"
 #include "UIFactory.h"
+#include "TypeParser.h"
 
 #ifdef ENABLE_SCRIPT
 #include "../PyUI/LzpyLzd.h"
@@ -572,7 +573,7 @@ namespace Lazy
 
     void Widget::setLayer(const tstring & layer)
     {
-        if (!m_layer)
+        if (m_layer)
             m_layer->delChild(this);
 
         m_layer = getGUIMgr()->getChild(layer);
@@ -596,130 +597,82 @@ namespace Lazy
 
     void Widget::loadFromStream(LZDataPtr config)
     {
+        setName(config->tag());
+
         clearChildren();
 
-        loadProperty(config);
-
-        //加载子控件
-        LZDataPtr childrenPtr = config->read(L"children");
-        if (childrenPtr)
+        for (LZDataPtr val : (*config))
         {
-            for (LZDataPtr childPtr : (*childrenPtr))
+            if (!setProperty(config, val->tag(), val))
             {
-                tstring type = childPtr->readString(L"type");
-                Widget* child = createWidget(type);
-                if (!child)
+                if (val->tag() == L"children")
                 {
-                    LOG_ERROR(L"createChildUI '%s' failed!", type.c_str());
-                    continue;
+                    for (LZDataPtr childPtr : (*val))
+                    {
+                        tstring type = childPtr->readString(L"type");
+                        Widget* child = createWidget(type);
+                        if (!child)
+                        {
+                            LOG_ERROR(L"createChildUI '%s' failed!", type.c_str());
+                            continue;
+                        }
+                        child->loadFromStream(childPtr);
+                    }
                 }
-                child->loadFromStream(childPtr);
+                else
+                {
+                    LOG_WARNING(L"Property '%s' = '%s' was not used.",
+                        val->ctag(), val->cvalue());
+                }
             }
         }
-
-#ifdef ENABLE_SCRIPT
-        setScript(config->readString(L"script"));
-        if(m_self) m_self.call_method_quiet("onLoadLayout", Lzpy::make_object(config));
-#endif
     }
 
-    bool Widget::saveToFile(const tstring & file)
+    bool Widget::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        LZDataPtr root = openSection(file, true);
-        if (!root)
+        if (key == L"type")
         {
-            LOG_ERROR(L"Open layout file '%s' failed!", file.c_str());
+            //do nothing
+        }
+        else if (key == L"skin")
+            setSkin(val->asString());
+        else if (key == L"layer")
+            setLayer(val->asString());
+        else if (key == L"position")
+        {
+            setAlign(config->readInt(L"align"));
+
+            CPoint pt = TypeParser::parsePoint(val->asString());
+            setPosition(pt.x, pt.y);
+        }
+        else if (key == L"size")
+        {
+            CPoint pt = TypeParser::parsePoint(val->asString());
+            setSize(pt.x, pt.y);
+        }
+        else if (key == L"visible")
+            setVisible(val->asBool());
+        else if (key == L"enable")
+            setEnable(val->asBool());
+        else if (key == L"messagable")
+            setMessagable(val->asBool());
+        else if (key == L"dragable")
+            setDragable(val->asBool());
+        else if (key == L"topable")
+            setTopable(val->asBool());
+        else if (key == L"childOrderable")
+            setChildOrderable(val->asBool());
+        else if (key == L"drawable")
+            setDrawable(val->asBool());
+        else if (key == L"align")
+        {
+            //do nothing
+        }
+        else
             return false;
-        }
 
-        root->clearChildren();
-
-        LZDataPtr config = root->newOne(m_name, EmptyStr);
-        root->addChild(config);
-
-        saveToStream(config);
-        return saveSection(root, file);
+        return true;
     }
-
-    void Widget::saveToStream(LZDataPtr config)
-    {
-        saveProperty(config);
-
-        if (!m_children.empty())
-        {
-            LZDataPtr childrenPtr = config->write(L"children");
-            childrenPtr->clearChildren();
-
-            //保存子控件的简略数据
-            m_children.lock();
-            for (Widget* child : m_children)
-            {
-                LZDataPtr ptr = childrenPtr->newChild(child->getName());
-                child->saveToStream(ptr);
-            }
-            m_children.unlock();
-        }
-
-#ifdef ENABLE_SCRIPT
-        if (!m_script.empty()) config->writeString(L"script", m_script);
-        if (m_self) m_self.call_method_quiet("onSaveLayout", Lzpy::make_object(config));
-#endif
-    }
-
-
-    void Widget::loadProperty(LZDataPtr config)
-    {
-        m_name = config->tag();
-        setSkin(config->readString(L"skin"));
-
-        misc::readPosition(m_position, config, L"position");
-        misc::readPosition(m_size, config, L"size");
-
-        setVisible(config->readBool(L"visible", true));
-        setEnable(config->readBool(L"enable", true));
-        setMessagable(config->readBool(L"messagable", true));
-        setDragable(config->readBool(L"dragable", false));
-        setTopable(config->readBool(L"topable", false));
-        setChildOrderable(config->readBool(L"childOrderable", true));
-        setDrawable(config->readBool(L"drawable", true));
-        setAlign(config->readInt(L"align", 0));
-    }
-
-    void Widget::saveProperty(LZDataPtr config)
-    {
-        config->writeString(L"type", getType());
-
-        misc::writePosition(m_position, config, L"position");
-        misc::writePosition(m_size, config, L"size");
-
-        if (!getSkin().empty())
-            config->writeString(L"skin", getSkin());
-
-        if (!m_visible)
-            config->writeBool(L"visible", m_visible);
-
-        if (!m_enable)
-            config->writeBool(L"enable", m_enable);
-
-        if (!m_messagable)
-            config->writeBool(L"messagable", m_messagable);
-
-        if (m_dragable)
-            config->writeBool(L"dragable", m_dragable);
-
-        if (m_topable)
-            config->writeBool(L"topable", m_topable);
-
-        if (!m_childOrderable)
-            config->writeBool(L"childOrderable", m_childOrderable);
-
-        if (!m_drawable)
-            config->writeBool(L"drawable", m_drawable);
-
-        if (m_align != 0)
-            config->writeInt(L"align", m_align);
-    }
-
 
     void Widget::setSize(int w, int h)
     {
@@ -750,6 +703,9 @@ namespace Lazy
 
     Widget* Widget::getChild(const tstring & name)
     {
+        if (name.empty())
+            return nullptr;
+
         size_t pos = name.find('/');
 
         CompareWidgetName cmp;
@@ -905,23 +861,30 @@ namespace Lazy
         }
 
         LZDataPtr config = root->getChild(0);
-        loadProperty(config);
-
-        //加载子控件
-        LZDataPtr childrenPtr = config->read(L"children");
-        if (childrenPtr)
+        for (LZDataPtr val : (*config))
         {
-            for (LZDataPtr childPtr : (*childrenPtr))
+            if (!setProperty(config, val->tag(), val))
             {
-                tstring type = childPtr->readString(L"type");
-                Widget* child = uiFactory()->create(wcharToChar(type));
-                if (!child)
+                if (val->tag() == L"children")
                 {
-                    LOG_ERROR(L"createChildUI '%s' failed!", type.c_str());
-                    continue;
+                    for (LZDataPtr childPtr : (*val))
+                    {
+                        tstring type = childPtr->readString(L"type");
+                        Widget* child = uiFactory()->create(type);
+                        if (!child)
+                        {
+                            LOG_ERROR(L"createChildUI '%s' failed!", type.c_str());
+                            continue;
+                        }
+                        child->loadFromStream(childPtr);
+                        m_skinChildren.addBack(child);
+                    }
                 }
-                child->loadFromStream(childPtr);
-                m_skinChildren.addBack(child);
+                else
+                {
+                    LOG_WARNING(L"Property '%s' = '%s' was not used.",
+                        val->tag(), val->asString().c_str());
+                }
             }
         }
     }
@@ -929,8 +892,8 @@ namespace Lazy
     ///创建一个子widget
     Widget * Widget::createWidget(const tstring & type)
     {
-        Widget * pChild = uiFactory()->create(wcharToChar(type));
-        addChild(pChild);
+        Widget * pChild = uiFactory()->create(type);
+        if(pChild) addChild(pChild);
         return pChild;
     }
 
@@ -966,8 +929,8 @@ namespace Lazy
         if (type.empty())
             return nullptr;
 
-        Widget* child = uiFactory()->create(wcharToChar(type));
-        child->loadFromStream(config);
+        Widget* child = uiFactory()->create(type);
+        if(child) child->loadFromStream(config);
         return child;
     }
 

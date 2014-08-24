@@ -13,19 +13,14 @@ namespace Lazy
     {
     }
 
-    void UIProxy::loadFromStream(LZDataPtr config)
+    bool UIProxy::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Widget::loadFromStream(config);
+        if (key == L"hostFile")
+            loadHost(val->asString());
+        else
+            return Widget::setProperty(config, key, val);
 
-        loadHost(config->readString(L"hostFile"));
-    }
-
-    void UIProxy::saveToStream(LZDataPtr config)
-    {
-        if (!m_layoutFile.empty())
-            config->writeString(L"hostFile", m_layoutFile);
-
-        saveToStream(config);
+        return true;
     }
 
     bool UIProxy::loadHost(const tstring & layoutFile)

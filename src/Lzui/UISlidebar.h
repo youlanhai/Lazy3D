@@ -68,8 +68,7 @@ namespace Lazy
 
         void layoutSlider();
 
-        virtual void loadFromStream(LZDataPtr config) override;
-        virtual void saveToStream(LZDataPtr config) override;
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
 

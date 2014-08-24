@@ -24,8 +24,7 @@ namespace Lazy
         void setTextColor(uint32 color);
         void setSize(int w, int h);
 
-        virtual void loadFromStream(LZDataPtr root);
-        virtual void saveToStream(LZDataPtr root);
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
 

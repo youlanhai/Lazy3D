@@ -57,8 +57,7 @@ namespace Lazy
         void setTextAlign(uint32 align) { m_textAlign = align; }
         uint32 getTextAlign() const { return m_textAlign; }
 
-        virtual void loadProperty(LZDataPtr config) override;
-        virtual void saveProperty(LZDataPtr config) override;
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
         virtual bool onEvent(const SEvent & event) override;

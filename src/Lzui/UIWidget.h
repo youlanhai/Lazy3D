@@ -62,17 +62,9 @@ namespace Lazy
 
     public: //串行化
 
-        ///从文件中加载布局
         virtual bool loadFromFile(const tstring & file);
-
-        ///保存布局到文件
-        virtual bool saveToFile(const tstring & file);
-
         virtual void loadFromStream(LZDataPtr config);
-        virtual void saveToStream(LZDataPtr config);
-
-        virtual void loadProperty(LZDataPtr config);
-        virtual void saveProperty(LZDataPtr config);
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val);
 
     public://属性
 

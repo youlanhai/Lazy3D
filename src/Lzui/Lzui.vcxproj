@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Lzui.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TypeParser.h" />
     <ClInclude Include="UIButton.h" />
     <ClInclude Include="UICheckBox.h" />
     <ClInclude Include="UIConfig.h" />
@@ -46,6 +47,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release_Script|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug_Script|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TypeParser.cpp" />
     <ClCompile Include="UIButton.cpp" />
     <ClCompile Include="UICheckBox.cpp" />
     <ClCompile Include="UIDefine.cpp" />

@@ -43,11 +43,7 @@ namespace Lazy
 
         void setSize(int w, int h) override;
 
-        ///加载布局。
-        virtual void loadProperty(LZDataPtr config) override;
-
-        ///保存布局
-        virtual void saveProperty(LZDataPtr config) override;
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
         void createTextSprite();

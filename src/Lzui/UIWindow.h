@@ -32,8 +32,7 @@ namespace Lazy
 
         void ajustToImageSize();
 
-        virtual void loadProperty(LZDataPtr root) override;
-        virtual void saveProperty(LZDataPtr root) override;
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
         tstring         m_image;

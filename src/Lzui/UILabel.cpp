@@ -155,40 +155,23 @@ namespace Lazy
     }
 
     ///加载布局。
-    void Label::loadProperty(LZDataPtr config)
+    bool Label::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Widget::loadProperty(config);
-
-        setTextAlign(config->readInt(L"textAlign"));
-        setMutiLine(config->readBool(L"mutiline"));
-        setFont(config->readString(L"font"));
-        setText(config->readString(L"text"));
-        setTextColor(config->readHex(L"textColor"));
-        setLineSpace(config->readInt(L"lineSpace"));
-    }
-
-    ///保存布局
-    void Label::saveProperty(LZDataPtr config)
-    {
-        Widget::saveProperty(config);
-
-        config->writeInt(L"textAlign", m_align);
-
-        if(!m_mutiLine)
-            config->writeBool(L"mutiline", m_mutiLine);
-
-        if (!m_font.empty())
-            config->writeString(L"font", m_font);
-
-        if (!m_text.empty())
-            config->writeString(L"text", m_text);
-
-        if (m_textColor != 0xffffffff)
-            config->writeHex(L"textColor", m_textColor);
-
-        if (m_lineSpace != 0)
-            config->writeInt(L"lineSpace", m_lineSpace);
-
+        if (key == L"textAlign")
+            setTextAlign(val->asInt());
+        else if (key == L"mutiline")
+            setMutiLine(val->asBool());
+        else if (key == L"font")
+            setFont(val->asString());
+        else if (key == L"text")
+            setText(val->asString());
+        else if (key == L"textColor")
+            setTextColor(val->asHex());
+        else if (key == L"lineSpace")
+            setLineSpace(val->asInt());
+        else
+            return Widget::setProperty(config, key, val);
+        return true;
     }
 
 }//namespace Lazy

@@ -40,19 +40,13 @@ namespace Lazy
     }
 
 
-    void Image::loadProperty(LZDataPtr root)
+    bool Image::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Widget::loadProperty(root);
-
-        setImage(root->readString(L"image"));
-    }
-
-    void Image::saveProperty(LZDataPtr root)
-    {
-        Widget::saveProperty(root);
-
-        if (!m_image.empty())
-            root->writeString(L"image", m_image);
+        if (key == L"image")
+            setImage(val->asString());
+        else
+            return Widget::setProperty(config, key, val);
+        return true;
     }
 
     //////////////////////////////////////////////////////////////////////////

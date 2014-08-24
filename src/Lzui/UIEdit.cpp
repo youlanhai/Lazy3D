@@ -297,18 +297,13 @@ namespace Lazy
             m_textSprite->setMaxWidth(w);
     }
 
-    void Edit::loadFromStream(LZDataPtr root)
+    bool Edit::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Widget::loadFromStream(root);
-
-        setMutiLine(root->readBool(L"mutiline", false));
-    }
-
-    void Edit::saveToStream(LZDataPtr root)
-    {
-        Widget::saveToStream(root);
-
-        root->writeBool(L"mutiline", m_bMutiLine);
+        if (key == L"mutiline")
+            setMutiLine(val->asBool());
+        else
+            return Widget::setProperty(config, key, val);
+        return true;
     }
 
 }//namespace Lazy

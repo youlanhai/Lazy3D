@@ -25,7 +25,7 @@ MainView
 			topable = true
 			children
 			{
-				
+				test
 				{
 					type = Slider
 					position = 0 -5
@@ -47,10 +47,11 @@ MainView
 			position = 0 -10
 			size = 100 40
 			topable = true
-			align = 34
+			text = OK
 			textAlign = 18
 			posMovable = true
 			colorFadable = true
+			align = 34
 		}
 	}
 }

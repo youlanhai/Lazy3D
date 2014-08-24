@@ -79,23 +79,15 @@ namespace Lazy
         else setSize(0, 0);
     }
 
-    void Window::loadProperty(LZDataPtr root)
+    bool Window::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Widget::loadProperty(root);
-
-        setClipable(root->readBool(L"clipable", false));
-        setImage(root->readString(L"image"));
-    }
-
-    void Window::saveProperty(LZDataPtr root)
-    {
-        Widget::saveProperty(root);
-
-        if (m_clipable)
-            root->writeBool(L"clipable", m_clipable);
-
-        if (!m_image.empty())
-            root->writeString(L"image", m_image);
+        if (key == L"clipable")
+            setClipable(val->asBool());
+        else if (key == L"image")
+            setImage(val->asString());
+        else
+            return Widget::setProperty(config, key, val);
+        return true;
     }
 
 }//namespace Lazy

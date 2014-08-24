@@ -27,7 +27,7 @@
 Lazy::GUIMgr     *g_guiMgr;
 Lazy::Fps        g_fps;
 
-#define USE_EDITOR 0
+#define USE_EDITOR 1
 
 const Lazy::tstring LayoutFile = L"layout/layout.lzd";
 const Lazy::tstring LayoutFile2 = L"layout/layout2.lzd";
@@ -79,10 +79,12 @@ namespace Lazy
                 return;
             }
 
+#if 0
             if (!saveToFile(LayoutFile2))
             {
                 LOG_ERROR(L"Save layout 2 failed!");
             }
+#endif
 
     #else
 

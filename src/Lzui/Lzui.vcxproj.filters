@@ -20,6 +20,7 @@
     <ClInclude Include="UIWidget.h" />
     <ClInclude Include="UIWindow.h" />
     <ClInclude Include="UIDelegate.h" />
+    <ClInclude Include="TypeParser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -39,5 +40,6 @@
     <ClCompile Include="UIWidget.cpp" />
     <ClCompile Include="UIWindow.cpp" />
     <ClCompile Include="UIDelegate.cpp" />
+    <ClCompile Include="TypeParser.cpp" />
   </ItemGroup>
 </Project>

@@ -27,11 +27,7 @@ namespace Lazy
         void setImage(const tstring & image);
         const tstring & getImage(void) const { return m_image; }
 
-        ///加载布局。
-        virtual void loadProperty(LZDataPtr config) override;
-
-        ///保存布局
-        virtual void saveProperty(LZDataPtr config) override;
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
     protected:
         TexturePtr      m_texture;

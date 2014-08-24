@@ -11,9 +11,9 @@ namespace Lazy
         UIFactoryBase();
         virtual ~UIFactoryBase();
 
-        virtual Widget* create(const std::string & type) = 0;
+        virtual Widget* create(const tstring & type) = 0;
         virtual void release(Widget* ptr) = 0;
-        virtual void registerCreateFun(const std::string & type, UICreateFun fun) = 0;
+        virtual void registerCreateFun(const tstring & type, UICreateFun fun) = 0;
     };
 
     typedef RefPtr<UIFactoryBase> UIFactoryPtr;
@@ -27,11 +27,11 @@ namespace Lazy
     public:
         NormalUIFactor();
 
-        virtual Widget* create(const std::string & type) override;
+        virtual Widget* create(const tstring & type) override;
         virtual void release(Widget* ptr);
-        virtual void registerCreateFun(const std::string & type, UICreateFun fun);
+        virtual void registerCreateFun(const tstring & type, UICreateFun fun);
 
     private:
-        std::map<std::string, UICreateFun> m_funMap;
+        std::map<tstring, UICreateFun> m_funMap;
     };
 }

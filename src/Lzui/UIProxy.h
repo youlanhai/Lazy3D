@@ -13,8 +13,7 @@ namespace Lazy
         UIProxy();
         ~UIProxy();
 
-        virtual void loadFromStream(LZDataPtr config) override;
-        virtual void saveToStream(LZDataPtr config) override;
+        virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 
         bool loadHost(const tstring & layoutFile);
 

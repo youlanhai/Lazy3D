@@ -2,6 +2,7 @@
 #include "stdafx.h"
 #include "UISlidebar.h"
 #include "UIFactory.h"
+#include "TypeParser.h"
 
 namespace Lazy
 {
@@ -192,25 +193,20 @@ namespace Lazy
     }
 
 
-    void Slidebar::loadFromStream(LZDataPtr config)
+    bool Slidebar::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Window::loadFromStream(config);
-
-        setVertical(config->readBool(L"vertical", false));
-        setSlideStep(config->readFloat(L"slideStep", 0.05f));
-
-        CSize size(20, 20);
-        misc::readSize(size, config, L"sliderSize");
-        setSliderSize(size.cx, size.cy);
-    }
-
-    void Slidebar::saveToStream(LZDataPtr config)
-    {
-        Window::saveToStream(config);
-
-        config->writeBool(L"vertical", m_bVertical);
-        config->writeFloat(L"slideStep", m_slideStep);
-        misc::writePosition(getSliderSize(), config, L"sliderSize");
+        if (key == L"vertical")
+            setVertical(val->asBool());
+        else if (key == L"slideStep")
+            setSlideStep(val->asFloat());
+        else if (key == L"sliderSize")
+        {
+            CPoint pt = TypeParser::parsePoint(val->asString());
+            setSliderSize(pt.x, pt.y);
+        }
+        else
+            return Window::setProperty(config, key, val);
+        return true;
     }
 
 }//namespace Lazy

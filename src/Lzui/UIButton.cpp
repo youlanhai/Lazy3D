@@ -208,22 +208,19 @@ namespace Lazy
     }
 
     ///加载布局。
-    void Button::loadProperty(LZDataPtr config)
+    bool Button::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        Widget::loadProperty(config);
-
-        setTextAlign(config->readInt(L"textAlign", RelativeAlign::center));
-        setPosMovable(config->readBool(L"posMovable", m_posMovable));
-        setColorFadable(config->readBool(L"colorFadable", m_colorFadable));
+        if (key == L"text")
+            setText(val->asText());
+        else if (key == L"textAlign")
+            setTextAlign(val->asInt());
+        else if (key == L"posMovable")
+            setPosMovable(val->asBool());
+        else if (key == L"colorFadable")
+            setColorFadable(val->asBool());
+        else
+            return Widget::setProperty(config, key, val);
+        return true;
     }
 
-    ///保存布局
-    void Button::saveProperty(LZDataPtr config)
-    {
-        Widget::saveProperty(config);
-
-        config->writeInt(L"textAlign", m_textAlign);
-        config->writeBool(L"posMovable", m_posMovable);
-        config->writeBool(L"colorFadable", m_colorFadable);
-    }
 }//namespace Lazy

@@ -42,7 +42,7 @@ namespace Lazy
 
     NormalUIFactor::NormalUIFactor()
     {
-#define UIREG(CLASS) registerCreateFun(#CLASS, CLASS::createSelf)
+#define UIREG(CLASS) registerCreateFun(_T(#CLASS), CLASS::createSelf)
 
         UIREG(Widget);
         UIREG(Label);
@@ -59,12 +59,12 @@ namespace Lazy
 #undef UIREG
     }
 
-    Widget * NormalUIFactor::create(const std::string & type)
+    Widget * NormalUIFactor::create(const tstring & type)
     {
-        std::map<std::string, UICreateFun>::iterator it = m_funMap.find(type);
+        std::map<tstring, UICreateFun>::iterator it = m_funMap.find(type);
         if (it == m_funMap.end())
         {
-            LOG_ERROR(L"NormalUIFactor::create - ui type '%S' doesn't found!",
+            LOG_ERROR(L"NormalUIFactor::create - ui type '%s' doesn't found!",
                 type.c_str());
             return nullptr;
         }
@@ -77,7 +77,7 @@ namespace Lazy
 
     }
 
-    void NormalUIFactor::registerCreateFun(const std::string & type, UICreateFun fun)
+    void NormalUIFactor::registerCreateFun(const tstring & type, UICreateFun fun)
     {
         m_funMap[type] = fun;
     }
