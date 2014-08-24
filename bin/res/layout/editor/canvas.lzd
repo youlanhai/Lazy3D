@@ -1,0 +1,8 @@
+#coding = utf-8
+
+Window = uitree
+{
+	position = 0 0
+	size = 200 300
+	image = gui/editor/white_64x64.png
+}

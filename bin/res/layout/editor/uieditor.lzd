@@ -1,52 +1,35 @@
 #coding = utf-8
 
-Window = MainView
+Widget = uieditor
 {
-	position = 100 100
-	size = 300 200
-	dragable = true
-	topable = true
-	image = gui/login.png
+	position = 0 0
+	size = 1024 768
 	children
 	{
-		Edit = edit
+		Window = uitree
 		{
-			position = 120 20
-			size = 100 50
-			mutiline = false
+			skin = layout/editor/uitree.lzd
+			position = 0 0
+			size = 300 300
 		}
-		Slidebar = scroll
+		Window = toolbox
 		{
-			position = 0 100
-			size = 100 20
-			topable = true
-			children
-			{
-				Slider = test
-				{
-					position = 0 -5
-					size = 80 30
-					dragable = true
-					topable = true
-					textAlign = 18
-					posMovable = true
-					colorFadable = true
-				}
-			}
-			vertical = false
-			slideStep = 0.050000
-			sliderSize = 80 30
+			skin = layout/editor/toolbox.lzd
+			position = 0 310
+			size = 300 300
 		}
-		Button = button
+		Image = canvas
 		{
-			position = 0 -10
-			size = 100 40
-			topable = true
-			text = OK
-			textAlign = 18
-			posMovable =
-			colorFadable = true
-			align = 34
+			skin = layout/editor/canvas.lzd
+			position = 310 100
+			size = 400 400
+		}
+		Window = property
+		{
+			skin = layout/editor/property.lzd
+			position = 0 0
+			size = 300 600
+			align = 4
 		}
 	}
 }

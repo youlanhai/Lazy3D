@@ -19,3 +19,15 @@
 
 
 // TODO: 在此处引用程序需要的其他头文件
+
+#include "utility/Utility.h"
+#include "Math/Math.h"
+
+#include "Render/Config.h"
+#include "Render/RenderDevice.h"
+#include "Render/Texture.h"
+#include "Render/Effect.h"
+
+#include "Font/Font.h"
+
+#include "Lzui/Lzui.h"

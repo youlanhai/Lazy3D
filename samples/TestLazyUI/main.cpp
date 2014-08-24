@@ -4,17 +4,7 @@
 #include "stdafx.h"
 #include "Resource.h"
 
-#include "utility/Utility.h"
-#include "Math/Math.h"
-
-#include "Render/Config.h"
-#include "Render/RenderDevice.h"
-#include "Render/Texture.h"
-#include "Render/Effect.h"
-
-#include "Font/Font.h"
-
-#include "Lzui/Lzui.h"
+#include "UIEditor.h"
 
 #define MAX_LOADSTRING 100
 
@@ -24,8 +14,9 @@
 //-----------------------------------------------------------------------------
 // Desc: 全局变量
 //-----------------------------------------------------------------------------
-Lazy::GUIMgr     *g_guiMgr;
-Lazy::Fps        g_fps;
+Lazy::GUIMgr*       g_guiMgr;
+Lazy::Fps           g_fps;
+Lazy::UIEditor*     g_pEditor;
 
 #define USE_EDITOR 1
 
@@ -181,6 +172,15 @@ HRESULT InitD3D( HWND hWnd, HINSTANCE hInstance )
     Lazy::rcDevice()->setRenderState(D3DRS_ZENABLE, TRUE);
 
     g_guiMgr = new Lazy::GUIMgr(Lazy::rcDevice()->getDevice(), hWnd, hInstance);
+
+    Lazy::uiFactory()->registerCreateFun(Lazy::UIEditor::getTypeS(),
+        Lazy::UIEditor::createSelf);
+
+    g_pEditor = g_guiMgr->createWidgetT<Lazy::UIEditor>();
+    if (!g_pEditor)
+        return E_FAIL;
+
+    g_pEditor->init();
 
     //添加测试窗体
     Lazy::MainForm *pForm = new Lazy::MainForm();

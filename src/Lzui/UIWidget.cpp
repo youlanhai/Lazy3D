@@ -636,7 +636,7 @@ namespace Lazy
             setLayer(val->asString());
         else if (key == L"position")
         {
-            setAlign(config->readInt(L"align"));
+            setAlign(config->readHex(L"align"));
 
             CPoint pt = TypeParser::parsePoint(val->asString());
             setPosition(pt.x, pt.y);
