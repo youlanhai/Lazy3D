@@ -197,10 +197,14 @@ namespace Lazy
     class WidgetChildren : public VisitPool<Widget*>
     {
     public:
+        WidgetChildren(Widget *pOwner);
 
         void update(float elapse);
 
         void render(IUIRender * pDevice);
+
+    private:
+        Widget *m_pOwner;
     };
 
     namespace misc

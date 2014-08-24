@@ -35,14 +35,21 @@ namespace Lazy
 
 
     //////////////////////////////////////////////////////////////////////////
+    WidgetChildren::WidgetChildren(Widget *pOwner)
+        : m_pOwner(pOwner)
+    {
+
+    }
 
     void WidgetChildren::update(float elapse)
     {
         lock();
+        Widget * p;
         for (iterator it = begin(); it != end(); ++it)
         {
-            if ((*it)->getVisible())
-                (*it)->update(elapse);
+            p = *it;
+            if (p->getVisible() && p->getParent() == m_pOwner)
+                p->update(elapse);
         }
         unlock();
     }
@@ -50,10 +57,12 @@ namespace Lazy
     void WidgetChildren::render(IUIRender* pDevice)
     {
         lock();
+        Widget * p;
         for (reverse_iterator it = rbegin(); it != rend(); ++it)
         {
-            if ((*it)->getVisible())
-                (*it)->render(pDevice);
+            p = *it;
+            if( p->getVisible() && (p->getLayer() == nullptr || p->getLayer() == m_pOwner) )
+                p->render(pDevice);
         }
         unlock();
     }

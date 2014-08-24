@@ -88,6 +88,9 @@ namespace Lazy
         const tstring & getSkin() const { return m_skin; }
         void setSkin(const tstring & skin);
 
+        Widget* getLayer() const { return m_layer; }
+        void setLayer(const tstring & layer);
+
         void setGlobalPosition(int x, int y);
         void setAbsPosition(int x, int y);
         void setPosition(int x, int y);
@@ -235,6 +238,7 @@ namespace Lazy
     protected:
         tstring         m_name;         ///< 名称
         tstring         m_skin;
+        Widget*         m_layer;
         Widget*         m_parent;       ///< 父控件
         CPoint          m_globalPosition;
         CPoint          m_position;     ///< 位置

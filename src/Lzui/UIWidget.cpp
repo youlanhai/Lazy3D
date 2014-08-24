@@ -158,12 +158,15 @@ namespace Lazy
         , m_dragable(false)
         , m_messagable(true)
         , m_topable(false)
+        , m_layer(nullptr)
         , m_parent(nullptr)
         , m_align(0)
         , m_childOrderable(true)
         , m_drawable(true)
         , m_bOrderDirty(true)
         , m_zorder(0)
+        , m_children(this)
+        , m_skinChildren(this)
     {
     }
 
@@ -567,6 +570,17 @@ namespace Lazy
         createSkin();
     }
 
+    void Widget::setLayer(const tstring & layer)
+    {
+        if (!m_layer)
+            m_layer->delChild(this);
+
+        m_layer = getGUIMgr()->getChild(layer);
+
+        if (m_layer)
+            m_layer->addChild(this);
+    }
+
     bool Widget::loadFromFile(const tstring & file)
     {
         LZDataPtr root = openSection(file);
@@ -822,6 +836,7 @@ namespace Lazy
         clearChildren();
         clearSkin();
 
+        setLayer(L"");
         removeFromParent();
     }
 
