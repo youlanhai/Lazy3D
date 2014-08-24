@@ -9,7 +9,10 @@
 #include "stdafx.h"
 #include "lzd.h"
 #include "lzdParser.h"
+
 #include "../FileTool.h"
+#include "../Log.h"
+
 #include <sstream>
 
 namespace Lazy
@@ -18,12 +21,12 @@ namespace Lazy
 //////////////////////////////////////////////////////////////////////////
     bool lzd::loadFromBuffer(const tchar* buffer, int length)
     {
-        cParser parser(new StrStream(buffer, length), this, 1);
+        LzdParser parser(new StrStream(buffer, length), this, 1);
         parser.parse();
 
         if(parser.error())
         {
-            debugMessage(_T("ERROR: parse laz file failed! eno:%d, line:%d"),
+            LOG_ERROR(_T("Parse laz file failed! eno:%d, line:%d"),
                          parser.getErrorNo(), parser.getErrorLine());
         }
 
@@ -76,7 +79,7 @@ namespace Lazy
             {
                 printTable(out, depth);
                 tstring tempStr;
-                cParser::real2transString(tempStr, ptr->value());
+                LzdParser::real2transString(tempStr, ptr->value());
                 out << ptr->tag() << _T(" = ") << tempStr << std::endl;
             }
         }
@@ -88,7 +91,7 @@ namespace Lazy
         std::string buffer;
         if(!getfs()->readString(fname, buffer)) return false;
 
-        size_t cp = cParser::parseCodingHeader(buffer.c_str(), buffer.size());
+        size_t cp = LzdParser::parseCodingHeader(buffer.c_str(), buffer.size());
 
         std::wstring fileBuffer;
         if(!charToWChar(fileBuffer, buffer, cp)) return false;

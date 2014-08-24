@@ -54,7 +54,7 @@ namespace Lazy
     }
 
     ///解析编码头
-    /*static*/ size_t cParser::parseCodingHeader(const char *buffer, size_t len)
+    /*static*/ size_t LzdParser::parseCodingHeader(const char *buffer, size_t len)
     {
         //找出第一行
         len = findCh(buffer, len, '\n');
@@ -84,7 +84,7 @@ namespace Lazy
     }
 
     ///字符转义
-    /*static*/ void cParser::real2transString(tstring & dest, const tstring & src)
+    /*static*/ void LzdParser::real2transString(tstring & dest, const tstring & src)
     {
         if (src.empty())
             return;
@@ -106,7 +106,7 @@ namespace Lazy
         }
     }
 
-    /*static*/ void cParser::trans2realString(tstring & dest, const tstring & src)
+    /*static*/ void LzdParser::trans2realString(tstring & dest, const tstring & src)
     {
         if (src.empty()) return;
         
@@ -142,7 +142,7 @@ namespace Lazy
     }
 
     ///字符转义
-    /*static*/ tchar cParser::real2transChar(tchar ch)
+    /*static*/ tchar LzdParser::real2transChar(tchar ch)
     {
         if (ch == _T('\n'))
         {
@@ -166,7 +166,7 @@ namespace Lazy
         }
     }
 
-    /*static*/ tchar cParser::trans2realChar(tchar ch)
+    /*static*/ tchar LzdParser::trans2realChar(tchar ch)
     {
         if (ch == _T('n'))
         {
@@ -192,9 +192,9 @@ namespace Lazy
 
     //////////////////////////////////////////////////////////////////////////
 
-    cParser::cParser(StrStreamPtr stream, LZDataPtr curNode, int lineNo)
+    LzdParser::LzdParser(StrStreamPtr stream, LZDataPtr curNode, int lineNo)
         : m_stream(stream)
-        , m_pCurNode(curNode)
+        , m_root(curNode)
         , m_lineNo(lineNo)
         , m_errorNo(0)
         , m_errorLine(0)
@@ -202,11 +202,11 @@ namespace Lazy
     {
     }
 
-    cParser::~cParser(void)
+    LzdParser::~LzdParser(void)
     {
     }
 
-    void cParser::parse(void)
+    void LzdParser::parse(void)
     {
         m_bEnd = false;
 
@@ -240,36 +240,25 @@ namespace Lazy
         }
     }
 
-    void cParser::onLBraket(void)
+    void LzdParser::onLBraket(void)
     {
-        LZDataPtr node;
-
         trimString(m_tempStr);
-        if (m_tempStr.empty())
+
+        if (!m_tempStr.empty())
         {
-            if (m_cacheName.empty())
-            {
-                int last = m_pCurNode->countChildren() - 1;
-                if(last >= 0) 
-                    node = m_pCurNode->getChild(last);
-                else
-                {
-                    setError(ErrorCode::InvalidLBraket, m_lineNo);
-                    return;
-                }
-            }
-            else
-            {
-                m_tempStr = m_cacheName;
-            }
+            m_lastNode = m_root->newChild(m_tempStr);
+        }
+        else if (!m_cacheName.empty())
+        {
+            m_lastNode = m_root->newChild(m_cacheName);
+        }
+        else if (!m_lastNode)
+        {
+            setError(ErrorCode::InvalidLBraket, m_lineNo);
+            return;
         }
 
-        if (!node)
-            node = new lzd(m_tempStr);
-
-        m_pCurNode->addChild(node);
-
-        cParser parser(m_stream, node, m_lineNo);
+        LzdParser parser(m_stream, m_lastNode, m_lineNo);
         parser.parse();
 
         m_lineNo = parser.getLineNo();
@@ -282,12 +271,12 @@ namespace Lazy
         m_cacheName.clear();
     }
 
-    void cParser::onRBraket(void)
+    void LzdParser::onRBraket(void)
     {
         m_bEnd = true;
     }
 
-    void cParser::onEqual(void)
+    void LzdParser::onEqual(void)
     {
         trimString(m_tempStr);
         if (m_tempStr.empty())
@@ -296,13 +285,13 @@ namespace Lazy
             return;
         }
 
-        m_pCurNode->addChild(new lzd(m_tempStr, getAStr()));
+        m_lastNode = m_root->newChild(m_tempStr, getAStr());
 
         m_tempStr.clear();
         m_cacheName.clear();
     }
 
-    void cParser::onReturn(void)
+    void LzdParser::onReturn(void)
     {
         trimString(m_tempStr);
         if (!m_tempStr.empty())
@@ -315,25 +304,25 @@ namespace Lazy
     }
 
     ///注释‘#’
-    void cParser::onComment(void)
+    void LzdParser::onComment(void)
     {
         skipToReturn();
     }
 
     ///分号
-    void cParser::onSemicolon(void)
+    void LzdParser::onSemicolon(void)
     {
         m_tempStr.clear();
         m_cacheName.clear();
     }
 
-    void cParser::onOther(tchar ch)
+    void LzdParser::onOther(tchar ch)
     {
         m_tempStr += ch;
         //testOutput(m_curVariable);
     }
 
-    void cParser::skipToEnd(void)
+    void LzdParser::skipToEnd(void)
     {
         while (!m_stream->empty())
         {
@@ -345,7 +334,7 @@ namespace Lazy
     }
 
     ///跳的回车符处
-    void cParser::skipToReturn(void)
+    void LzdParser::skipToReturn(void)
     {
         while (!m_stream->empty())
         {
@@ -358,7 +347,7 @@ namespace Lazy
 
     /** 从当前位置起，分析出一个合法的字符串（即遇到结束符[}，#，\n，；]位置 ）。
         */
-    tstring cParser::getAStr(void)
+    tstring LzdParser::getAStr(void)
     {
         tstring str;
         tchar ch;

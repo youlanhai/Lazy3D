@@ -22,22 +22,22 @@ namespace Lazy
         const int InvalidRBraket = 4;//无效的括号
     }
 
-///语法分析器。仅分析一个模块，即从当前位置起，到第一个‘}’终止
-    class cParser : public IBase
+    ///语法分析器。仅分析一个模块，即从当前位置起，到第一个‘}’终止
+    class LzdParser : public IBase
     {
     public:
         /** 构造函数。
             @param text : 待解析文本。
-            @pram curNode : 当前模块结点。
+            @pram root : 当前模块的根结点。
             */
-        cParser(StrStreamPtr stream, LZDataPtr curNode, int lineNo);
-        ~cParser(void);
+        LzdParser(StrStreamPtr stream, LZDataPtr root, int lineNo);
+        ~LzdParser(void);
 
         ///开始分析
         void parse(void);
 
         ///获得行号
-        int getLineNo(void) const { return m_lineNo;}
+        int getLineNo(void) const { return m_lineNo; }
 
         ///是否有错误
         bool error(void) const { return m_errorNo != ErrorCode::None; }
@@ -105,7 +105,8 @@ namespace Lazy
 
     private:
         StrStreamPtr    m_stream;
-        LZDataPtr       m_pCurNode;
+        LZDataPtr       m_root;
+        LZDataPtr       m_lastNode;
 
         bool            m_bEnd;
 
