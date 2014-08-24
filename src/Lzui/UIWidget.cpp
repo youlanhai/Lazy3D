@@ -597,7 +597,7 @@ namespace Lazy
 
     void Widget::loadFromStream(LZDataPtr config)
     {
-        setName(config->tag());
+        setName(config->asString());
 
         clearChildren();
 
@@ -609,7 +609,7 @@ namespace Lazy
                 {
                     for (LZDataPtr childPtr : (*val))
                     {
-                        tstring type = childPtr->readString(L"type");
+                        const tstring & type = childPtr->tag();
                         Widget* child = createWidget(type);
                         if (!child)
                         {
@@ -630,11 +630,7 @@ namespace Lazy
 
     bool Widget::setProperty(LZDataPtr config, const tstring & key, LZDataPtr val)
     {
-        if (key == L"type")
-        {
-            //do nothing
-        }
-        else if (key == L"skin")
+        if (key == L"skin")
             setSkin(val->asString());
         else if (key == L"layer")
             setLayer(val->asString());
@@ -869,7 +865,7 @@ namespace Lazy
                 {
                     for (LZDataPtr childPtr : (*val))
                     {
-                        tstring type = childPtr->readString(L"type");
+                        const tstring & type = childPtr->tag();
                         Widget* child = uiFactory()->create(type);
                         if (!child)
                         {
@@ -925,10 +921,7 @@ namespace Lazy
         }
 
         LZDataPtr config = root->getChild(0);
-        const tstring & type = config->readString(L"type");
-        if (type.empty())
-            return nullptr;
-
+        const tstring & type = config->tag();
         Widget* child = uiFactory()->create(type);
         if(child) child->loadFromStream(config);
         return child;
