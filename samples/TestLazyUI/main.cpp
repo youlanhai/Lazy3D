@@ -2,7 +2,7 @@
 //
 
 #include "stdafx.h"
-#include "TestLazyUI.h"
+#include "Resource.h"
 
 #include "utility/Utility.h"
 #include "Math/Math.h"
