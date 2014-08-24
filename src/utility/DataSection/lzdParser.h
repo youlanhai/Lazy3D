@@ -114,7 +114,7 @@ namespace Lazy
         int             m_errorLine;
 
         tstring         m_cacheName;
-        tstring         m_tempStr;
+        tstring         m_curName;
         int             m_lineNo;
     };
 

@@ -242,11 +242,11 @@ namespace Lazy
 
     void LzdParser::onLBraket(void)
     {
-        trimString(m_tempStr);
+        trimString(m_curName);
 
-        if (!m_tempStr.empty())
+        if (!m_curName.empty())
         {
-            m_lastNode = m_root->newChild(m_tempStr);
+            m_lastNode = m_root->newChild(m_curName);
         }
         else if (!m_cacheName.empty())
         {
@@ -267,7 +267,7 @@ namespace Lazy
 
         if (error()) return;
 
-        m_tempStr.clear();
+        m_curName.clear();
         m_cacheName.clear();
     }
 
@@ -278,26 +278,26 @@ namespace Lazy
 
     void LzdParser::onEqual(void)
     {
-        trimString(m_tempStr);
-        if (m_tempStr.empty())
+        trimString(m_curName);
+        if (m_curName.empty())
         {
             setError(ErrorCode::InvalidAssignment, m_lineNo);
             return;
         }
 
-        m_lastNode = m_root->newChild(m_tempStr, getAStr());
+        m_lastNode = m_root->newChild(m_curName, getAStr());
 
-        m_tempStr.clear();
+        m_curName.clear();
         m_cacheName.clear();
     }
 
     void LzdParser::onReturn(void)
     {
-        trimString(m_tempStr);
-        if (!m_tempStr.empty())
+        trimString(m_curName);
+        if (!m_curName.empty())
         {
-            m_cacheName = m_tempStr;//缓存名称
-            m_tempStr.clear();
+            m_cacheName = m_curName;//缓存名称
+            m_curName.clear();
         }
 
         ++m_lineNo;
@@ -312,13 +312,13 @@ namespace Lazy
     ///分号
     void LzdParser::onSemicolon(void)
     {
-        m_tempStr.clear();
+        m_curName.clear();
         m_cacheName.clear();
     }
 
     void LzdParser::onOther(tchar ch)
     {
-        m_tempStr += ch;
+        m_curName += ch;
         //testOutput(m_curVariable);
     }
 
