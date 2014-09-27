@@ -1,31 +1,31 @@
 #coding = utf-8
 
-Widget = uieditor
+uieditor = Widget
 {
 	position = 0 0
 	size = 1024 768
 	children
 	{
-		Image = uitree
+		uitree = Image
 		{
 			skin = layout/editor/uitree.lzd
 			position = 0 0
 			size = 300 300
 		}
-		Image = toolbox
+		toolbox = Image
 		{
 			skin = layout/editor/toolbox.lzd
 			position = 0 310
 			size = 300 300
 		}
-		Image = canvas
+		canvas = Image
 		{
 			skin = layout/editor/canvas.lzd
 			position = 310 100
 			size = 400 400
 			color = 0xff7f7f7f
 		}
-		Image = property
+		property = Image
 		{
 			skin = layout/editor/property.lzd
 			position = 0 0

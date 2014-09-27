@@ -597,7 +597,7 @@ namespace Lazy
 
     void Widget::loadFromStream(LZDataPtr config)
     {
-        setName(config->asString());
+        setName(config->tag());
 
         clearChildren();
 
@@ -609,7 +609,7 @@ namespace Lazy
                 {
                     for (LZDataPtr childPtr : (*val))
                     {
-                        const tstring & type = childPtr->tag();
+                        const tstring & type = childPtr->asString();
                         Widget* child = createWidget(type);
                         if (!child)
                         {
@@ -921,7 +921,7 @@ namespace Lazy
         }
 
         LZDataPtr config = root->getChild(0);
-        const tstring & type = config->tag();
+        const tstring & type = config->asString();
         Widget* child = uiFactory()->create(type);
         if(child) child->loadFromStream(config);
         return child;

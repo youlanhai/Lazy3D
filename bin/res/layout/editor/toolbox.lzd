@@ -1,6 +1,6 @@
 #coding = utf-8
 
-Window = uitree
+uitree = Window
 {
 	position = 0 0
 	size = 200 300

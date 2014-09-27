@@ -1,6 +1,6 @@
 #coding = utf-8
 
-Window = MainView
+MainView = Window
 {
 	position = 100 100
 	size = 300 200
@@ -9,20 +9,20 @@ Window = MainView
 	image = gui/login.png
 	children
 	{
-		Edit = edit
+		edit = Edit
 		{
 			position = 120 20
 			size = 100 50
 			mutiline = false
 		}
-		Slidebar = scroll
+		scroll = Slidebar
 		{
 			position = 0 100
 			size = 100 20
 			topable = true
 			children
 			{
-				Slider = test
+				test = Slider
 				{
 					position = 0 -5
 					size = 80 30
@@ -37,7 +37,7 @@ Window = MainView
 			slideStep = 0.050000
 			sliderSize = 80 30
 		}
-		Button = button
+		button = Button
 		{
 			position = 0 -10
 			size = 100 40
