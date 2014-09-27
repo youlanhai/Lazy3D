@@ -74,9 +74,10 @@ bool CGame::onEvent(const SEvent & event)
 
 
 CGame::CGame()
+    : m_pGuiMgr(nullptr)
+    , m_bGameStart(false)
+    , m_bUseLineMode(false)
 {
-    m_bGameStart = false;
-    m_bUseLineMode = false;
 }
 
 void CGame::clear()
@@ -86,12 +87,14 @@ void CGame::clear()
     //TerrainMap::instance()->saveMap("");
     Lazy::LoadingMgr::instance()->fini();
 
+    m_pGuiMgr->destroy();
     CApp::clear();
 
     LOG_DEBUG(_T("Clear finished."));
 }
 CGame::~CGame()
 {
+    delete m_pGuiMgr;
 }
 
 /*游戏初始化*/
@@ -106,6 +109,8 @@ bool CGame::init(void)
         LOG_DEBUG(_T("load game config failed!"));
         return false;
     }
+
+    m_pGuiMgr = new GUIMgr(m_pd3dDevice, m_hWnd, m_hInstance);
 
     g_player = new Player();
     g_player->setPhysics(new IPhysics());

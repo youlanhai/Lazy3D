@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Core/Core.h"
+#include "Lzui/Lzui.h"
 
 using namespace Lazy;
 
@@ -42,4 +43,5 @@ public:
 	RefPtr<FpsRender>	    m_pFPS;
 	RefPtr<CCube>		    m_pCube;
     bool                    m_bUseLineMode;
+    GUIMgr *                m_pGuiMgr;
 };
