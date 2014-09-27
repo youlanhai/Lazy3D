@@ -241,6 +241,11 @@ void onSizing(int w, int h)
 {
     debugMessage(_T("onSize w=%d h=%d"), w, h);
     Lazy::rcDevice()->changeSize(w, h);
+
+    if (g_guiMgr)
+        g_guiMgr->setSize(w, h);
+    if (g_pEditor)
+        g_pEditor->setSize(w, h);
 }
 
 
