@@ -106,6 +106,9 @@
     <ProjectReference Include="..\..\src\Font\Font.vcxproj">
       <Project>{d195a247-64d4-4b4d-a821-befccde9b09d}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\src\Lzui\Lzui.vcxproj">
+      <Project>{528debdd-0756-491b-a2ab-5c993b0361e4}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\Math\Math.vcxproj">
       <Project>{6e1d431e-ca1a-4bac-aaf5-2f2829806a94}</Project>
     </ProjectReference>

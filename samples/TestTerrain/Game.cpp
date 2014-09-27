@@ -136,7 +136,7 @@ bool CGame::init(void)
     m_pCamera->setDistRange(2.0f, 20.0f);
     m_pCamera->setDistance(6.0f);
 
-    m_pFPS = new cFpsRender();
+    m_pFPS = new FpsRender();
     m_pFPS->init();
 
     m_pCube = new CCube();

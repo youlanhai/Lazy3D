@@ -8,23 +8,18 @@
 namespace Lazy
 {
 
-    cFpsRender::cFpsRender()
+    FpsRender::FpsRender()
     {
-#if 0
-        m_label = new CLabel();
+        GUIMgr *p = getGUIMgr();
+        m_label = p->createWidgetT<Label>();
         m_label->setPosition(10, 10);
-
-        CGUIManager *p = getGUIMgr();
-        if(p) p->addChild(m_label.get());
-#endif
     }
 
-    cFpsRender::~cFpsRender()
+    FpsRender::~FpsRender()
     {
-        m_label = nullptr;
     }
 
-    void cFpsRender::render()
+    void FpsRender::render()
     {
         if (m_label)
         {
@@ -34,20 +29,20 @@ namespace Lazy
         }
     }
 
-    void cFpsRender::show(bool show)
+    void FpsRender::show(bool show)
     {
-        if (m_label) m_label->show(show);
+        if (m_label) m_label->setVisible(show);
     }
 
-    bool cFpsRender::visible() const
+    bool FpsRender::visible() const
     {
-        if (m_label) return m_label->isVisible();
+        if (m_label) return m_label->getVisible();
         return false;
     }
 
-    void cFpsRender::toggle()
+    void FpsRender::toggle()
     {
-        if (m_label) m_label->toggle();
+        if (m_label) m_label->setVisible(m_label->getVisible());
     }
 
 } // end namespace Lazy

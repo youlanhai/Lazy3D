@@ -54,17 +54,17 @@ namespace Lazy
             {
                 if (*it >= '0' && *it <= '9')
                 {
-                    v << 4;
+                    v <<= 4;
                     v += *it - '0';
                 }
                 else if (*it >= 'A' && *it <= 'F')
                 {
-                    v << 4;
+                    v <<= 4;
                     v += *it - 'A' + 10;
                 }
                 else if (*it >= 'a' && *it <= 'f')
                 {
-                    v << 4;
+                    v <<= 4;
                     v += *it - 'a' + 10;
                 }
                 else

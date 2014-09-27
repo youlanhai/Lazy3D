@@ -4,13 +4,13 @@
 
 namespace Lazy
 {
-    class CLabel;
+    class Label;
 
-    class LZDLL_API cFpsRender : public Fps
+    class LZDLL_API FpsRender : public Fps
     {
     public:
-        cFpsRender();
-        ~cFpsRender();
+        FpsRender();
+        ~FpsRender();
 
         void render();
 
@@ -19,7 +19,7 @@ namespace Lazy
         void toggle();
 
     private:
-        RefPtr<CLabel> m_label;
+        Label* m_label;
     };
 
 } // end namespace Lazy
