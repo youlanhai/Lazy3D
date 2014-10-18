@@ -313,62 +313,47 @@ namespace Lazy
     void IPhysics::updateHeight(float elapse)
     {
         if (!m_lockHInMap || NULL == m_pSource)
-        {
             return;
-        }
 
         TerrainMap* pMap = TerrainMap::instance();
         if (!pMap->isUserfull())
-        {
             return;
-        }
 
         Vector3 start = m_pSource->getPos();
         const FRect & rect = pMap->getRect();
 
         if (start.x < rect.left)
-        {
             start.x = rect.left;
-        }
         else if (start.x >= rect.right)
-        {
-            start.x = rect.right;
-        }
+            start.x = rect.right - 0.001f;
 
         if (start.z < rect.top)
-        {
             start.z = rect.top;
-        }
         else if (start.z > rect.bottom)
-        {
-            start.z = rect.bottom;
-        }
-
-        float mh = pMap->getHeight(start.x, start.z);
-
-        float h = mh + m_lockHeight;
+            start.z = rect.bottom - 0.001f;
 
         if (!isPlayers())
         {
-            m_pSource->m_vPos.y = h;
+            float mh = pMap->getHeight(start.x, start.z);
+            m_pSource->m_vPos.y = mh + m_lockHeight;
             return;
         }
+
+        float h1 = pMap->getHeight(start.x - 0.2f, start.z - 0.2f);
+        float h2 = pMap->getHeight(start.x - 0.2f, start.z + 0.2f);
+        float h3 = pMap->getHeight(start.x + 0.2f, start.z + 0.2f);
+        float h4 = pMap->getHeight(start.x + 0.2f, start.z - 0.2f);
+
+        float h = (h1 + h2 + h3 + h4) * 0.25f;
 
         Vector3 end = start;
 
         //贴地
         float biasHeight = elapse * JumpDownSpeed;
         if (m_collid)//如果发生过碰撞，y位置必会上移，贴地处理需要减去此值。
-        {
             biasHeight += ClimbHeight;
-        }
-        end.y -= biasHeight;
-
-        if (end.y < h)
-        {
-            end.y = h;
-        }
-
+        
+        end.y = max2( end.y - biasHeight, h);
 
         if (end.y < start.y)
         {
@@ -380,7 +365,6 @@ namespace Lazy
             if (preventCollision(cp))
             {
                 end = cp.m_start + cp.m_look * cp.m_distance;
-
                 m_isFaling = false;
             }
 
@@ -555,7 +539,7 @@ namespace Lazy
         }
         else if (m_state == PS_MOVE || m_state == PS_JUMP)
         {
-            model->playAction(L"walk1", true);
+            model->playAction(L"walk", true);
         }
 
     }

@@ -89,7 +89,7 @@ namespace Lazy
                 }
                 else
                 {
-                    float dt = (m_distMax - m_distMin) * z;
+                    float dt = (m_distMax - m_distMin) * z * 0.2f;
                     m_fDistToPlayer -= dt;
 
                     correctDist();
@@ -169,22 +169,24 @@ namespace Lazy
         else if (getCameraType() == Camera::THIRD)
         {
             //镜头距离变化缓冲模式
-            float factor = 0.8f;
-            float delta = m_realDistToPlayer - m_fDistToPlayer;
-            float decay = delta * factor * fElapse;
-            if (fabs(decay) > fabs(delta))
-            {
-                decay = delta;
-            }
+            float delta = m_fDistToPlayer - m_realDistToPlayer;
 
-            if (fabs(decay) < 0.00001f)
-            {
-                decay = 0.0f;
-            }
+            float factor = 1.0f / 0.3f; // 衰减程度/s
+            float decay = min(1.0f, factor * fElapse);
+            delta *= decay;
 
-            m_realDistToPlayer -= decay;
+            if (fabs(delta) < 0.001f)
+                m_realDistToPlayer = m_fDistToPlayer;
+            else
+                m_realDistToPlayer += delta;
 
-            m_position = vecPos - m_look * m_realDistToPlayer;
+            Vector3 dstPos = vecPos - m_look * m_realDistToPlayer;
+#if 0
+            // y方向也做平滑衰减
+            decay = min(1.0f, 10.0f * fElapse);
+            dstPos.y = m_position.y + (dstPos.y - m_position.y) * decay;
+#endif
+            m_position = dstPos;
 
             //反向射线拾取，避免有物体格挡在相机与玩家之间。
             Vector3 start = vecPos;
@@ -199,9 +201,7 @@ namespace Lazy
             if (pickRay(rc))
             {
                 distance = min(realDistance, rc.m_hitDistance);
-                end = start + dir * distance;
-                end.toD3DXVec3(m_position);
-
+                m_position = start + dir * distance;
                 m_realDistToPlayer = distance;
             }
 

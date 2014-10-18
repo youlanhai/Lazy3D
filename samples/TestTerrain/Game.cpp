@@ -114,7 +114,7 @@ bool CGame::init(void)
 
     g_player = new Player();
     g_player->setPhysics(new IPhysics());
-    g_player->setSpeed(5.0f);
+    g_player->setSpeed(8.0f);
 
     ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x", ModelType::SkinModel);
     if (model)
@@ -149,7 +149,7 @@ bool CGame::init(void)
 
     m_pSkyBox->setSource(g_player.get());
     m_pSkyBox->setSkyImage(ptrRoot->readString(L"sky"));
-    m_pSkyBox->setSkyRange(D3DXVECTOR3(-100, -100, -100), D3DXVECTOR3(100, 100, 100));
+    m_pSkyBox->setSkyRange(D3DXVECTOR3(-200, -200, -200), D3DXVECTOR3(200, 200, 200));
 
 
     Lazy::tstring mapName = ptrRoot->readString(L"map");

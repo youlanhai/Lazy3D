@@ -78,10 +78,7 @@ namespace Lazy
         /** 根据(x, z)坐标返回插值之后的y坐标。如果(x, z)超出边界，则返回m_origin.y。*/
         float getHeight(float x, float z) const;
         
-        inline float getAbsHeight(int row, int col) const
-        {
-            return m_rawdata[row * m_cols + col];
-        }
+        float getAbsHeight(int row, int col) const;
 
     private:
         tstring                 m_resource;

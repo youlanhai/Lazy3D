@@ -508,7 +508,8 @@ namespace Lazy
     ChunkPtr TerrainMap::getChunkByPos(float x, float z) const
     {
         size_t index = position2chunk(x, z);
-        assert(index < m_chunks.size() && "TerrainMap::getNode");
+        if (index < m_chunks.size())
+            return NULL;
 
         return m_chunks[index];
     }

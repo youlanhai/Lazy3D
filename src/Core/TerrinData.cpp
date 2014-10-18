@@ -103,6 +103,17 @@ namespace Lazy
         return true;
     }
 
+    float HeightMap::getAbsHeight(int row, int col) const
+    {
+        if (row >= m_rows) row = m_rows - 1;
+        else if (row < 0) row = 0;
+
+        if (col >= m_cols) col = m_cols - 1;
+        else if (col < 0) col = 0;
+
+        return m_rawdata[row * m_cols + col];
+    }
+
     float HeightMap::getHeight(float x, float z) const
     {
         x = (x - m_origin.x) / m_gridSize;
@@ -111,9 +122,6 @@ namespace Lazy
         //计算x,z坐标所在的行列值
         int col = int(x);//向下取整
         int row = int(z);
-
-        if (row < 0 || row >= m_rows || col < 0 || col >= m_cols)
-            return m_origin.y;
 
         // 获取如下图4个顶点的高度
         //
@@ -128,10 +136,13 @@ namespace Lazy
         float C = getAbsHeight(row + 1, col);
         float D = getAbsHeight(row + 1, col + 1);
 
+        float height;
+#if 1
+        height = (A + B + C + D) * 0.25f;
+#else
         float dx = x - col;
         float dz = z - row;
 
-        float height;
         if (dz < 1.0f - dx)//(x,z)点在ABC三角形上
         {
             float uy = B - A;
@@ -146,7 +157,7 @@ namespace Lazy
 
             height = D + lerp(0.0f, uy, 1.0f - dx) + lerp(0.0f, vy, 1.0f - dz);
         }
-
+#endif
         return height + m_origin.y;
     }
 

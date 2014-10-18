@@ -1,8 +1,8 @@
 
-origin = -128 0 -128
+origin = -125 0 -125
 rows = 1024
 cols = 1024
-gridSize = 0.25
+gridSize = 0.244
 
 heightScale = 0.5
 
