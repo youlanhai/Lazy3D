@@ -36,7 +36,7 @@
     <ClCompile Include="TopBoard.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Projecction.cpp" />
+    <ClCompile Include="Projection.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimModel.h" />

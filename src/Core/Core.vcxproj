@@ -94,7 +94,7 @@
     <ClCompile Include="Particle.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pick.cpp" />
-    <ClCompile Include="Projecction.cpp" />
+    <ClCompile Include="Projection.cpp" />
     <ClCompile Include="RenderRes.cpp" />
     <ClCompile Include="SceneFog.cpp" />
     <ClCompile Include="SceneNode.cpp" />
