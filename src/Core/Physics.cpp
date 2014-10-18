@@ -140,11 +140,11 @@ namespace Lazy
 
     void IPhysics::updatePlayer(float fElapse)
     {
-        if (getCamera()->getCameraType() == Camera::FREE)
+        if (getCamera()->getCameraType() == CCursorCamera::FREE)
         {
             return;
         }
-        else if (getCamera()->getCameraType() == Camera::FIRST)
+        else if (getCamera()->getCameraType() == CCursorCamera::FIRST)
         {
             m_pSource->setVisible(false);
         }
@@ -224,19 +224,19 @@ namespace Lazy
         //移动
         if(keyboard->isKeyPress('A'))
         {
-            faceToDir(-getCamera()->right());
+            faceToDir(-getCamera()->getRight());
         }
         else if(keyboard->isKeyPress('D'))
         {
-            faceToDir(getCamera()->right());
+            faceToDir(getCamera()->getRight());
         }
         else if(keyboard->isKeyPress('W'))
         {
-            faceToDir(getCamera()->look());
+            faceToDir(getCamera()->getLook());
         }
         else if(keyboard->isKeyPress('S'))
         {
-            faceToDir(-getCamera()->look());
+            faceToDir(-getCamera()->getLook());
         }
         else
         {

@@ -127,20 +127,19 @@ bool CGame::init(void)
     addUpdateRender(g_player.get());
     TerrainMap::instance()->setSource(g_player.get());
 
-    m_pCamera = new CCursorCamera(Camera::THIRD);
+    m_pCamera = new CCursorCamera(CCursorCamera::THIRD);
     m_pCamera->setSource(g_player.get());
-    m_pCamera->setSpeed(10.0f);
 
     Lazy::LZDataPtr ptrPos = ptrRoot->read(L"camera/pos");
     m_pCamera->setPosition(D3DXVECTOR3(
         ptrPos->readFloat(L"x"),
         ptrPos->readFloat(L"y"),
         ptrPos->readFloat(L"z")));
-    m_pCamera->setSpeed(ptrRoot->readFloat(L"camera/speed"));
-    m_pCamera->setNearFar(1.0f, 1000.0f);
+    m_pCamera->setSpeed(ptrRoot->readFloat(L"camera/speed", 10.0f));
     m_pCamera->setDistRange(2.0f, 20.0f);
-    m_pCamera->setDistance(6.0f);
 
+    m_projection.setPerspective(D3DX_PI / 4.0f, float(m_nWidth) / m_nHeight, 1.0f, 1000.0f);
+    
     m_pFPS = new FpsRender();
     m_pFPS->init();
 
@@ -216,15 +215,15 @@ void CGame::updateCamera(float fEla)
     //更新摄像机
     if (m_pKeyboard->isKeyUp('1'))
     {
-        m_pCamera->setCamareType(Camera::FIRST);
+        m_pCamera->setCamareType(CCursorCamera::FIRST);
     }
     else if (m_pKeyboard->isKeyUp('2'))
     {
-        m_pCamera->setCamareType(Camera::THIRD);
+        m_pCamera->setCamareType(CCursorCamera::THIRD);
     }
     else if (m_pKeyboard->isKeyUp('3'))
     {
-        m_pCamera->setCamareType(Camera::FREE);
+        m_pCamera->setCamareType(CCursorCamera::FREE);
     }
 
 }
@@ -236,7 +235,8 @@ void CGame::render()
     if (rcDevice()->beginScene())
     {
         //添加渲染代码
-        m_pCamera->render(m_pd3dDevice);
+        rcDevice()->setView(m_pCamera->getViewMatrix());
+        rcDevice()->setProj(m_projection.getProjection());
 
         {
             CLight light;

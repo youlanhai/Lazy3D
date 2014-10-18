@@ -6,159 +6,81 @@
 namespace Lazy
 {
 
-    CameraBase::CameraBase(void)
-        : m_elapse(0.0f)
-        , m_roll(0.0f)
-        , m_pitch(D3DX_PI * 0.25f)
-        , m_yaw(0.0f)
-        , m_position(0.0f, 2.0f, -2.0f)
-        , m_speed(100.0f)
-        , m_fNear(1.0f)
-        , m_fFar(1000.0f)
-    {
-        updateViewMatrixRotation();
-        setup3DCamera();
-    }
-
-    CameraBase::~CameraBase(void)
+    Projection::Projection(void)
+        : m_projection(matIdentity)
+        , m_matrixDirty(true)
+        , m_isPerspective(true)
+        , m_znear(1.0f)
+        , m_zfar(100.0f)
+        , m_fov(D3DX_PI / 4)
+        , m_aspect(1.0f)
+        , m_zoomX(640)
+        , m_zoomY(480)
     {
     }
 
-    void CameraBase::resetdir()
+    Projection::~Projection(void)
+    {}
+
+    const Matrix & Projection::getProjection() const
     {
-        m_yaw = 0.0f;
-        m_roll = 0.0f;
-        m_pitch = D3DX_PI * 0.25f;
-
-        updateViewMatrixRotation();
-    }
-
-    void CameraBase::update(float fElapse)
-    {
-        m_elapse = fElapse;
-    }
-
-    void CameraBase::render(IDirect3DDevice9 * pDevice)
-    {
-        rcDevice()->setView(m_matView);
-        rcDevice()->setProj(m_projection);
-
-        pDevice->SetTransform(D3DTS_VIEW, &m_matView);
-        pDevice->SetTransform(D3DTS_PROJECTION, &m_projection);
-    }
-
-// Rotations
-    void CameraBase::rotYaw(float amount) // rotate around y axis
-    {
-        m_yaw += amount;
-        updateViewMatrixRotation();
-    }
-
-    void CameraBase::rotPitch(float amount) // rotate around x axis
-    {
-        m_pitch += amount;
-        updateViewMatrixRotation();
-    }
-
-    void CameraBase::rotRoll(float amount) // rotate around z axis
-    {
-        m_roll += amount;
-        updateViewMatrixRotation();
-    }
-
-    void CameraBase::setPosition(const Vector3& pos)
-    {
-        m_position = pos;
-        updateViewMatrixPosition();
-    }
-
-// Move operations
-    void CameraBase::moveLook(bool positive)
-    {
-        if (positive)
+        if (m_matrixDirty)
         {
-            m_position += m_look * (m_speed * m_elapse);
+            if (m_isPerspective)
+                m_projection.makePerspective(m_fov, m_aspect, m_znear, m_zfar);
+            else
+                m_projection.makeOrtho(m_zoomX, m_zoomY, m_znear, m_zfar);
         }
-        else
-        {
-            m_position -= m_look * (m_speed * m_elapse);
-        }
-        updateViewMatrixPosition();
+        return m_projection;
     }
 
-    void CameraBase::moveRight(float positive)
+    void  Projection::setNearFar(float fNear, float fFar)
     {
-        if (positive)
-        {
-            m_position += m_right * (m_speed * m_elapse);
-        }
-        else
-        {
-            m_position -= m_right * (m_speed * m_elapse);
-        }
-        updateViewMatrixPosition();
+        m_znear = fNear;
+        m_zfar = fFar;
+        m_matrixDirty = 1;
+    }
+    
+    //设置3D摄像机	(透视投影)
+    void Projection::setPerspective(float fov, float aspect, float znear, float zfar)
+    {
+        m_isPerspective = 1;
+        setFov(fov);
+        setAspect(aspect);
+        setNearFar(znear, zfar);
     }
 
-    void CameraBase::moveUp(float positive)
+    void  Projection::setFov(float fov)
     {
-        if (positive)
-        {
-            m_position += m_right * (m_speed * m_elapse);
-        }
-        else
-        {
-            m_position -= m_right * (m_speed * m_elapse);
-        }
-        updateViewMatrixPosition();
+        m_fov = fov;
+        m_matrixDirty = 1;
     }
 
-    void CameraBase::updateViewMatrixRotation()
+    void  Projection::setAspect(float aspect)
     {
-        m_matView.makeRatateYawPitchRoll(m_yaw, m_pitch, m_roll);
-
-        m_matView.getRow(0, m_right);
-        m_matView.getRow(1, m_up);
-        m_matView.getRow(2, m_look);
-
-        m_matView.transpose();
-
-        updateViewMatrixPosition();
+        m_aspect = aspect;
+        m_matrixDirty = 1;
     }
 
-    void CameraBase::updateViewMatrixPosition()
+    //设置2D摄像机(正交投影)
+    void Projection::setOrtho(float zoomX, float zoomY, float znear, float zfar)
     {
-        m_matView._41 = - m_position.dot(m_right);
-        m_matView._42 = - m_position.dot(m_up);
-        m_matView._43 = - m_position.dot(m_look);
-        m_matView._44 = 1.0f;
+        m_isPerspective = 0;
+        setZoomX(zoomX);
+        setZoomY(zoomY);
+        setNearFar(znear, zfar);
     }
 
-
-    void CameraBase::setNearFar(float fNear, float fFar)
+    void  Projection::setZoomX(float zoom)
     {
-        if (amostZero(m_fNear - fNear) && amostZero(m_fFar - fFar)) return;
-
-        m_fNear = fNear;
-        m_fFar = fFar;
-
-        setup3DCamera();
+        m_zoomX = zoom;
+        m_matrixDirty = 1;
     }
 
-
-    void CameraBase::setup3DCamera(void)
+    void  Projection::setZoomY(float zoom)
     {
-        float aspect = float(rcDevice()->windowWidth()) / rcDevice()->windowHeight();
-
-        m_projection.makePerspective(D3DX_PI * 0.25f, aspect, m_fNear, m_fFar);
-
-    }
-
-    void CameraBase::setup2DCamera(void)
-    {
-        int width = rcDevice()->windowWidth();
-        int height = rcDevice()->windowHeight();
-
-        m_projection.makeOrtho((float)width, (float)height, m_fNear, m_fFar);
+        m_zoomY = zoom;
+        m_matrixDirty = 1;
     }
 
 } // end namespace Lazy

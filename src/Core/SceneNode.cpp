@@ -64,6 +64,19 @@ namespace Lazy
         return m_matrix;
     }
 
+    void SceneNode::genViewMatrix(Matrix & mat) const
+    {
+        mat.setRotationQuaternion(m_rotation);
+
+        Vector3 pos;
+        pos.x = -m_position.dot(mat[0]);
+        pos.y = -m_position.dot(mat[1]);
+        pos.z = -m_position.dot(mat[2]);
+
+        mat.transpose();
+        mat[3] = pos;
+    }
+
     void SceneNode::getLook(Vector3 & look) const
     {
         getMatrix().getRow(2, look);

@@ -27,10 +27,10 @@ namespace Lazy
 //////////////////////////////////////////////////////////////////////////
 
     Billboard::Billboard(void)
+        : m_pos(MathConst::vec3Zero)
     {
         m_pVertex = NULL;
         m_pTexture = NULL;
-        m_pos = D3DXVECTOR3(0, 0, 0);
         m_width = 100;
         m_height = 32;
         m_show = true;
@@ -91,12 +91,10 @@ namespace Lazy
     {
         if (m_maxShowDistance > 0)
         {
-            D3DXVECTOR3 vecDist = m_pos - getCamera()->position();
-            if (D3DXVec3Length(&vecDist) > m_maxShowDistance)
-            {
-                return true;
-            }
+            float distToCamaraSq = m_pos.distToSq(getCamera()->getPosition());
+            return distToCamaraSq > m_maxShowDistance * m_maxShowDistance;
         }
+
         return false;
     }
 
@@ -153,8 +151,7 @@ namespace Lazy
 
         Matrix mat;
 
-        D3DXVECTOR3 look = m_pos - getCamera()->position();
-        float dist = D3DXVec3Length(&look);
+        float dist = m_pos.distTo(getCamera()->getPosition());
 
         float heigth = float(getApp()->getHeight());
 
@@ -166,14 +163,12 @@ namespace Lazy
         Matrix matScale;
         matScale.makeScale(sw, sh, 1.0f);
 
-        mat.makeRatateX(getCamera()->pitch());
-        Matrix matRot;
-        matRot.makeRatateY(getCamera()->yaw());
-
         Matrix matTrans;
         matTrans.makeTranslate(m_pos);
 
-        mat = matScale * mat * matRot * matTrans;
+        Matrix matRot = getCamera()->getInvViewMatrix();
+        
+        mat = matScale * matTrans * matRot;
         pDevice->SetTransform(D3DTS_WORLD, &mat);
 
         RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);

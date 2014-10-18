@@ -145,7 +145,7 @@ namespace Lazy
     {
         if (!getCamera()) return FLOAT_MAX;
 
-        return getPosition().distTo(getCamera()->position());
+        return getPosition().distTo(getCamera()->getPosition());
     }
 
     float IEntity::distToPlayer(void) const

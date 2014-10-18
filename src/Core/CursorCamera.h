@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "camera.h"
+#include "SceneNode.h"
 
 namespace Lazy
 {
@@ -12,16 +12,23 @@ namespace Lazy
     */
 
     /** 鼠标控制摄像机。*/
-    class LZDLL_API CCursorCamera :  public Camera
+    class LZDLL_API CCursorCamera :  public SceneNode
     {
     public:
-        explicit CCursorCamera(CameraType type = THIRD);
+        enum CameraType //摄像机样式
+        {
+            FIRST = 1,	//第一人称
+            THIRD = 2,	//第三人称
+            FREE = 3,  //自由模式
+        };
 
+        explicit CCursorCamera(CameraType type = THIRD);
         ~CCursorCamera(void);
 
         virtual bool handleEvent(const SEvent & event);
 
         virtual void update(float elapse);
+        virtual void render(dx::Device *) {}
 
         /** 设置鼠标旋转速度。单位为：弧度/像素*/
         void setCurRoSpeed(float speed);
@@ -30,23 +37,48 @@ namespace Lazy
         void showCursor(bool show);
 
         virtual void drag(CPoint pt);
-
-        SceneNode* getSource(void) { return m_pSource; }
-
         bool isDraged(void) { return m_draged; }
 
+        void setSource(SceneNode *p) { m_pSource = p; }
+        SceneNode* getSource(void) { return m_pSource; }
+
         void setHeight(float h) { m_height = h; }
+        void setCamareType(CameraType cameraType);
+        CameraType getCameraType(void) { return m_cameraType; }
+
+        void setDistRange(float mind, float maxd);
+
+        Matrix getViewMatrix() const;
+        const Matrix & getInvViewMatrix() const{ return getMatrix(); }
+
+        float getSpeed() const { return m_speed; }
+        void setSpeed(float speed){ m_speed = speed; }
 
     protected:
-        bool    m_bMouseDown;
-        CPoint  m_ptDown;
-        float   m_curSpeedX;
-        float   m_curSpeedY;
-        bool    m_bCurShow;
-        bool    m_draged;
-        float   m_height;
-        float   m_realDistToPlayer;
 
+        void initCamera(CameraType type = THIRD);
+
+        /** 矫正距离玩家的距离。*/
+        void correctDist(void);
+
+    protected:
+
+        SceneNode*  m_pSource;
+        CameraType  m_cameraType;//照相机类型
+        float		m_fDistToPlayer;//照相机离玩家的距（跟随玩家移动用）
+        float       m_realDistToPlayer;
+        float       m_distMin;
+        float       m_distMax;
+        float       m_height;
+        float       m_speed;
+        float       m_lastElapse;
+
+        CPoint      m_ptDown;
+        float       m_curSpeedX;
+        float       m_curSpeedY;
+        bool        m_bMouseDown;
+        bool        m_bCurShow;
+        bool        m_draged;
     };
 
     LZDLL_API CCursorCamera* getCamera(void);

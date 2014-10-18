@@ -148,7 +148,7 @@ namespace Lazy
 
     float TerrainItem::distToCamera(void)
     {
-        return getPosition().distTo(getCamera()->position());
+        return getPosition().distTo(getCamera()->getPosition());
     }
 
     bool TerrainItem::save(LZDataPtr dataPtr) const

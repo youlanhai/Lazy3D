@@ -4,75 +4,50 @@
 
 namespace Lazy
 {
-    class CameraBase : public IBase, public IRenderObj
+    class Projection
     {
     public:
-        CameraBase(void);
-        virtual ~CameraBase(void);
+        Projection(void);
+        virtual ~Projection(void);
 
-        virtual void update(float fElapse);
-        virtual void render(IDirect3DDevice9 * pDevice);
+        const Matrix & getProjection() const;
 
-        // Rotations
-        void rotYaw(float amount); // rotate around y axis
-        void rotPitch(float amount); // rotate around x axis
-        void rotRoll(float amount); // rotate around z axis
-
-        // Move operations
-        void moveLook(bool positive);
-        void moveRight(float positive);
-        void moveUp(float positive);
-
-        void resetdir();
+        void  setNearFar(float fNear, float fFar);
+        float getNear() const{ return m_znear; }
+        float getFar() const { return m_zfar; }
 
     public:
-        const Matrix& viewMatrix() { return m_matView; }
+        //设置3D摄像机	(透视投影)
+        void setPerspective(float fov, float aspect, float znear, float zfar);
 
-        const Matrix & projMatrix() const { return m_projection; }
+        void  setFov(float fov);
+        float getFov() const { return m_fov; }
 
-        const Vector3& position() const { return m_position; }
+        void  setAspect(float aspect);
+        float getAspect() const { return m_aspect; }
 
-        void setPosition(const Vector3& pos);
+    public:
+        //设置2D摄像机(正交投影)
+        void setOrtho(float zoomX, float zoomY, float znear, float zfar);
 
-        float yaw() { return m_yaw; }
-        float pitch() { return m_pitch; }
-        float roll() { return m_roll; }
-        float speed() { return m_speed; }
-        void setSpeed(float speed) { m_speed = speed; }
+        void  setZoomX(float zoom);
+        float getZoomX() const { return m_zoomX; }
 
-        const Vector3& look() const { return m_look; }
-        const Vector3& up() const { return m_up; }
-        const Vector3& right() const { return m_right; }
-
-        void setup2DCamera(void);//设置2D摄像机(正交投影)
-
-        void setup3DCamera(void);//设置3D摄像机	(透视投影)
-
-        void setNearFar(float fNear, float fFar);
+        void  setZoomY(float zoom);
+        float getZoomY() const { return m_zoomY; }
 
     protected:
+        mutable Matrix  m_projection;
+        int             m_matrixDirty;
+        int             m_isPerspective;
+        float		    m_znear;
+        float		    m_zfar;
 
-        //计算观察矩阵
-        void updateViewMatrixRotation();
+        float           m_fov;
+        float           m_aspect;
 
-        void updateViewMatrixPosition();
-
-    protected:
-        float       m_elapse;
-        float       m_roll;
-        float       m_pitch;
-        float       m_yaw;
-        float       m_speed;
-        float		m_fNear;
-        float		m_fFar;
-
-        Vector3     m_look;
-        Vector3     m_up;
-        Vector3     m_right;
-        Vector3     m_position;
-
-        Matrix   m_matView;
-        Matrix   m_projection;
+        float           m_zoomX;
+        float           m_zoomY;
     };
 
 } // end namespace Lazy

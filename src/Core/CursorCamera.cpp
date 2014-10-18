@@ -19,10 +19,17 @@ namespace Lazy
     {
         return g_pCamera_;
     }
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
     CCursorCamera::CCursorCamera(CameraType type /*= THIRD*/)
-        : Camera(type)
+        : m_pSource(nullptr)
+        , m_cameraType(type)
+        , m_fDistToPlayer(5.0f)
+        , m_realDistToPlayer(5.0f)
+        , m_distMin(1.0f)
+        , m_distMax(12.0f)
+        , m_speed(10.0f)
+        , m_lastElapse(0.0f)
     {
         g_pCamera_ = this;
 
@@ -39,6 +46,11 @@ namespace Lazy
 
     CCursorCamera::~CCursorCamera(void)
     {
+    }
+
+    void CCursorCamera::setCamareType(CCursorCamera::CameraType cameraType)
+    {
+        m_cameraType = cameraType;
     }
 
     bool CCursorCamera::handleEvent(const SEvent & event)
@@ -78,14 +90,8 @@ namespace Lazy
 
                 if (NULL == m_pSource)
                 {
-                    if (z < 0.0f)
-                    {
-                        moveLook(false);
-                    }
-                    else if (z > 0.0f)
-                    {
-                        moveLook(true);
-                    }
+                    float dir = z < 0.0f ? 1.0f : -1.0f;
+                    moveLook(dir * m_lastElapse * m_speed);
                 }
                 else
                 {
@@ -94,7 +100,6 @@ namespace Lazy
 
                     correctDist();
                 }
-
                 return true;
             }
         }
@@ -107,8 +112,8 @@ namespace Lazy
         CPoint dp = pt - m_ptDown;
         if (abs(dp.x) < 3 && abs(dp.y) < 3)  return;
 
-        rotYaw( dp.x * m_curSpeedX );
-        rotPitch( dp.y * m_curSpeedY);
+        rotationY( dp.x * m_curSpeedX );
+        rotationRight( dp.y * m_curSpeedY);
 
 #if 1
         showCursor(false);
@@ -123,7 +128,7 @@ namespace Lazy
 
     void CCursorCamera::update(float fElapse)
     {
-        Camera::update(fElapse);
+        m_lastElapse = fElapse;
 
         if (m_realDistToPlayer > 2 * m_distMax)
         {
@@ -159,14 +164,14 @@ namespace Lazy
         //摄像机跟随
         Vector3 vecPos = m_pSource->getPosition();
         vecPos.y += m_height;
-        if (getCameraType() == Camera::FIRST)
+        if (getCameraType() == FIRST)
         {
             //m_pSource->setLook(m_look);
             //m_pSource->setUp(m_up);
             //m_pSource->setRight(m_right);
-            m_position = vecPos;
+            setPosition(vecPos);
         }
-        else if (getCameraType() == Camera::THIRD)
+        else if (getCameraType() == THIRD)
         {
             //镜头距离变化缓冲模式
             float delta = m_fDistToPlayer - m_realDistToPlayer;
@@ -180,17 +185,16 @@ namespace Lazy
             else
                 m_realDistToPlayer += delta;
 
-            Vector3 dstPos = vecPos - m_look * m_realDistToPlayer;
+            Vector3 dstPos = vecPos - getLook() * m_realDistToPlayer;
 #if 0
             // y方向也做平滑衰减
             decay = min(1.0f, 10.0f * fElapse);
             dstPos.y = m_position.y + (dstPos.y - m_position.y) * decay;
 #endif
-            m_position = dstPos;
 
             //反向射线拾取，避免有物体格挡在相机与玩家之间。
             Vector3 start = vecPos;
-            Vector3 end = m_position;
+            Vector3 end = dstPos;
             Vector3 dir = end - start;
 
             float realDistance = dir.length();
@@ -201,10 +205,11 @@ namespace Lazy
             if (pickRay(rc))
             {
                 distance = min(realDistance, rc.m_hitDistance);
-                m_position = start + dir * distance;
+                dstPos = start + dir * distance;
                 m_realDistToPlayer = distance;
             }
 
+            setPosition(dstPos);
         }
 
 
@@ -213,17 +218,16 @@ namespace Lazy
         TerrainMap* pMap = TerrainMap::instance();
         if (pMap->isUserfull())
         {
-            float h = pMap->getHeight(m_position.x, m_position.z) + HeightError;
-            if ( m_position.y < h)
+            Vector3 pos = getPosition();
+            float h = pMap->getHeight(pos.x, pos.z) + HeightError;
+            if (pos.y < h)
             {
-                m_position.y = h;
+                pos.y = h;
+                setPosition(pos);
             }
         }
 
 #endif
-
-        updateViewMatrixRotation();
-
     }
 
 
@@ -243,5 +247,34 @@ namespace Lazy
         m_bCurShow = show;
         ShowCursor(show);
     }
+
+
+    Matrix CCursorCamera::getViewMatrix() const
+    {
+        Matrix view;
+        genViewMatrix(view);
+        return view;
+    }
+
+    void CCursorCamera::setDistRange(float mind, float maxd)
+    {
+        m_distMin = mind;
+        m_distMax = maxd;
+        correctDist();
+    }
+
+    /** 矫正距离玩家的距离。*/
+    void CCursorCamera::correctDist(void)
+    {
+        if (m_fDistToPlayer < m_distMin)
+        {
+            m_fDistToPlayer = m_distMin;
+        }
+        else if (m_fDistToPlayer > m_distMax)
+        {
+            m_fDistToPlayer = m_distMax;
+        }
+    }
+
 
 } // end namespace Lazy

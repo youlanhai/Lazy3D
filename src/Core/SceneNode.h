@@ -23,6 +23,7 @@ namespace Lazy
 
         void setMatrix(const Matrix & matrix);
         const Matrix & getMatrix() const;
+        void genViewMatrix(Matrix & mat) const;
 
         void getLook(Vector3 & look) const;
         Vector3 getLook() const;

@@ -20,7 +20,7 @@ namespace Lazy
 
         void setTexture(IDirect3DTexture9* pTex) { m_pTexture = pTex; }
 
-        void setPos(D3DXVECTOR3 pos) { m_pos = pos; }
+        void setPos(const Vector3 & pos) { m_pos = pos; }
 
         virtual void update(float fElapse);
 
@@ -42,7 +42,7 @@ namespace Lazy
     protected:
         IDirect3DVertexBuffer9  *m_pVertex;
         IDirect3DTexture9       *m_pTexture;
-        D3DXVECTOR3             m_pos;
+        Vector3                 m_pos;
         float                   m_width;
         float                   m_height;
         bool                    m_show;
