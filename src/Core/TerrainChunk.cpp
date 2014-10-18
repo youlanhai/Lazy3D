@@ -97,12 +97,8 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////////
-
-    /** 线性插值*/
-    static float lerp(float a, float b, float t)
-    {
-        return a - (a * t) + (b * t);
-    }
+    ///
+    //////////////////////////////////////////////////////////////////////////
 
     template<typename T>
     static bool updateIndices(TerrainMesh * hoder, int nVertices)
@@ -360,16 +356,6 @@ namespace Lazy
     {
         if (m_isLoaded) return;
 
-        // load terrain heightmap.
-        tstring heightmap;
-        formatString(heightmap, _T("%8.8x.raw"), m_id);
-        heightmap = m_pMap->getMapName() + heightmap;
-        if (!loadHeightMap(heightmap))
-        {
-            LOG_ERROR(L"Load heightmap '%s' failed! node(%d %d)",
-                heightmap.c_str(), getRowID(), getColID());
-        }
-
         tstring chunkname;
         formatString(chunkname, _T("%8.8x.lzd"), m_id);
         chunkname = m_pMap->getMapName() + chunkname;
@@ -475,38 +461,6 @@ namespace Lazy
         }
     }
 
-    float TerrainChunk::getHeight(int r, int c) const
-    {
-        size_t index = r * MapConfig::NbChunkVertex + c;
-        if (index >= m_heightMap.size()) return 0.0f;
-
-        return m_heightMap.at(index);
-    }
-
-    bool TerrainChunk::loadHeightMap(const tstring & filename)
-    {
-        m_heightMap.resize(MapConfig::NbChunkVertexSq, 0.0f);
-
-        FILE *pFile = getfs()->openFile(filename, L"rb");
-        if (pFile)
-        {
-            fread(&m_heightMap[0], 1, m_heightMap.size(), pFile);
-            fclose(pFile);
-        }
-
-        return true;
-    }
-
-    bool TerrainChunk::saveHeightMap(const tstring & filename)
-    {
-        FILE *pFile = getfs()->openFile(filename, L"wb");
-        if (!pFile) return false;
-
-        fwrite(&m_heightMap[0], 1, m_heightMap.size(), pFile);
-        fclose(pFile);        
-        return true;
-    }
-
     void TerrainChunk::updateVertices()
     {
         if (!m_mesh.valid())
@@ -538,7 +492,7 @@ namespace Lazy
                 p = pVertex + i;
                 p->pos.x = m_rect.left + c * m_gridSize;
                 p->pos.z = m_rect.top + r * m_gridSize;
-                p->pos.y = getHeight(r, c);
+                p->pos.y = m_pMap->getHeight(p->pos.x, p->pos.z);
 
                 p->nml.x = 0.0f;
                 p->nml.y = 1.0f;
@@ -568,16 +522,6 @@ namespace Lazy
         {
             LOG_ERROR(L"The chunk(%d, %d) is loading now.", getRowID(), getColID());
             return false;
-        }
-
-        //save height map
-        tstring heightmap;
-        formatString(heightmap, _T("%8.8x.raw"), m_id);
-        heightmap = m_pMap->getMapName() + heightmap;
-        if (!saveHeightMap(heightmap))
-        {
-            LOG_ERROR(L"Failed to save heightmap '%s'", heightmap.c_str());
-            //return false;
         }
 
         //save chunkdata.
@@ -885,54 +829,6 @@ namespace Lazy
         {
             m_octree = pTree;
         }
-    }
-
-    /** 获得物理高度*/
-    float TerrainChunk::getPhysicalHeight(float x, float z) const
-    {
-        if (!m_rect.isIn(x, z)) return getHeight(0, 0);
-
-        //将地图移动到原点,方便计算
-        x = (x - m_rect.left) / m_gridSize;
-        z = (z - m_rect.top) / m_gridSize;
-
-        //计算x,z坐标所在的行列值
-        int col = int(x);//向下取整
-        int row = int(z);
-
-        // 获取如下图4个顶点的高度
-        //
-        //  A   B
-        //  *---*
-        //  | / |
-        //  *---*
-        //  C   D
-
-        float A = getHeight(row, col);
-        float B = getHeight(row, col + 1);
-        float C = getHeight(row + 1, col);
-        float D = getHeight(row + 1, col + 1);
-
-        float dx = x - col;
-        float dz = z - row;
-
-        float height;
-        if (dz < 1.0f - dx)//(x,z)点在ABC三角形上
-        {
-            float uy = B - A;
-            float vy = C - A;
-
-            height = A + lerp(0.0f, uy, dx) + lerp(0.0f, vy, dz);//线形插值得到高度
-        }
-        else//(x,z)点在BCD三角形上
-        {
-            float uy = C - D;
-            float vy = B - D;
-
-            height = D + lerp(0.0f, uy, 1.0f - dx) + lerp(0.0f, vy, 1.0f - dz);
-        }
-
-        return height;
     }
 
 } // end namespace Lazy

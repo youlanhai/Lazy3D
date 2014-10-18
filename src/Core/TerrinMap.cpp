@@ -227,11 +227,21 @@ namespace Lazy
         m_mapName = path;
         formatDirName(m_mapName);
 
+        // loa map config file
         tstring filename = m_mapName + L"map.lzd";
         LZDataPtr ptr = openSection(filename);
         if (!ptr)
         {
             LOG_ERROR(L"Load map config '%s' failed!", m_mapName.c_str());
+            return false;
+        }
+
+        // load height map
+        tstring heightmap = ptr->readString(L"heightMap");
+        m_heightmap = new HeightMap();
+        if (!m_heightmap->load(heightmap))
+        {
+            LOG_ERROR(L"Failed load map '%s', the height map load failed!", m_mapName.c_str());
             return false;
         }
 
@@ -251,6 +261,7 @@ namespace Lazy
         m_objOnGround = ptr->readBool(L"onGround", true);
         m_itemIDAllocator = ptr->readInt(L"idAllocator", 0);
 
+        // loa chunks
         initChunks();
 
         //加载路点
@@ -294,6 +305,9 @@ namespace Lazy
             LOG_ERROR(L"Load map config '%s' failed!", m_mapName.c_str());
             return false;
         }
+
+        if (m_heightmap)
+            root->writeString(L"heightMap", m_heightmap->getResource());
 
         root->writeInt(L"rows", m_chunkRows);
         root->writeInt(L"cols", m_chunkCols);
@@ -355,10 +369,7 @@ namespace Lazy
 
     float TerrainMap::getHeight(float x, float z) const
     {
-        size_t index = position2chunk(x, z);
-        if (index >= m_chunks.size()) return 0.0f;
-
-        return m_chunks[index]->getPhysicalHeight(x, z);
+        return m_heightmap ? m_heightmap->getHeight(x, z) : 0.0f;
     }
 
     void TerrainMap::loadAllChunks()

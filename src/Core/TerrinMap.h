@@ -118,6 +118,7 @@ namespace Lazy
         ChunkPool           m_visibleChunks;  ///9格
         I3DObject*          m_pSource;
         tstring             m_mapName;
+        HeightMapPtr        m_heightmap;
 
         float               m_chunkSize;     ///< 每个结点的尺寸。
         int                 m_chunkRows;        ///< 结点行数

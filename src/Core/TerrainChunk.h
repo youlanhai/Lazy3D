@@ -153,8 +153,6 @@ namespace Lazy
         float getSize() const { return m_rect.width(); }
         LPD3DXMESH getTerrainMesh() const { return m_mesh.getMesh(); }
 
-        float getPhysicalHeight(float x, float z) const;
-
     public://地图物件相关
 
         ItemIter begin() { return m_items.begin(); }
@@ -189,9 +187,6 @@ namespace Lazy
     protected:
 
         void loadItem(LZDataPtr ptr);
-        bool loadHeightMap(const tstring & filename);
-        bool saveHeightMap(const tstring & filename);
-        float getHeight(int r, int c) const;
 
         void release(void);
 
@@ -219,7 +214,6 @@ namespace Lazy
         OctreePtr       m_octree;       ///<地图物件包围盒构成的八叉树，用于快速拾取aabb
         bool            m_octreeDirty;  ///<八叉树重构标记
 
-        std::vector<float>      m_heightMap;
         ZCritical               m_itemLocker;
         ItemPool                m_items;
         ItemCatalogue           m_itemCatalogue;

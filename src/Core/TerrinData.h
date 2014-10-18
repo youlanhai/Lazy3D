@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+#include "Base.h"
+
 ///新版地形。支持多层纹理混合。
 #define USE_NEW_CHUNK_STYLE 0
 
@@ -71,6 +73,8 @@ namespace Lazy
         int rows() const { return m_rows; }
         int cols() const { return m_cols; }
 
+        const tstring & getResource() const { return m_resource; }
+
         /** 根据(x, z)坐标返回插值之后的y坐标。如果(x, z)超出边界，则返回m_origin.y。*/
         float getHeight(float x, float z) const;
         
@@ -89,5 +93,7 @@ namespace Lazy
         int                     m_rows;
         int                     m_cols;
     };
+
+    typedef RefPtr<HeightMap>   HeightMapPtr;
 
 } // end namespace Lazy
