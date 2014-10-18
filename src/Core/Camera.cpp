@@ -1,6 +1,6 @@
 ﻿
 #include "stdafx.h"
-#include "CursorCamera.h"
+#include "Camera.h"
 #include "App.h"
 #include "TerrinMap.h"
 #include "Collision.h"

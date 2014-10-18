@@ -1,7 +1,7 @@
 ﻿
 #include "stdafx.h"
 
-#include "CursorCamera.h"
+#include "Camera.h"
 #include "TerrinMap.h"
 #include "App.h"
 

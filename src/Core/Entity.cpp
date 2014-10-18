@@ -3,7 +3,7 @@
 #include "TerrinMap.h"
 #include "Pick.h"
 #include "Physics.h"
-#include "CursorCamera.h"
+#include "Camera.h"
 
 #include "Entity.h"
 #include "App.h"

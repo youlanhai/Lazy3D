@@ -9,7 +9,6 @@
 #include "CallBack.h"
 #include "Camera.h"
 #include "Cube.h"
-#include "CursorCamera.h"
 
 #include "Entity.h"
 
@@ -29,6 +28,7 @@
 #include "particle.h"
 #include "Pick.h"
 #include "Physics.h"
+#include "Projection.h"
 
 #include "RenderObj.h"
 #include "RenderTask.h"

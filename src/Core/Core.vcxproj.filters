@@ -5,11 +5,8 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Billboard.cpp" />
     <ClCompile Include="CallBack.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="CameraBase.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="cube.cpp" />
-    <ClCompile Include="CursorCamera.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="FPS.cpp" />
@@ -38,6 +35,8 @@
     <ClCompile Include="TextTexture.cpp" />
     <ClCompile Include="TopBoard.cpp" />
     <ClCompile Include="SceneNode.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Projecction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimModel.h" />
@@ -45,13 +44,10 @@
     <ClInclude Include="Base.h" />
     <ClInclude Include="Billboard.h" />
     <ClInclude Include="CallBack.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="CameraBase.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Commen.h" />
     <ClInclude Include="Core.h" />
     <ClInclude Include="Cube.h" />
-    <ClInclude Include="CursorCamera.h" />
     <ClInclude Include="dlist.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Face.h" />
@@ -84,5 +80,7 @@
     <ClInclude Include="TextTexture.h" />
     <ClInclude Include="TopBoard.h" />
     <ClInclude Include="SceneNode.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="Projection.h" />
   </ItemGroup>
 </Project>

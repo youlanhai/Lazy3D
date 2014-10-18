@@ -1,6 +1,6 @@
 ﻿
 #include "stdafx.h"
-#include "CameraBase.h"
+#include "Projection.h"
 #include "../Render/RenderDevice.h"
 
 namespace Lazy

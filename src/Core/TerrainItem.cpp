@@ -5,7 +5,7 @@
 
 #include "TerrainItem.h"
 #include "Entity.h"
-#include "CursorCamera.h"
+#include "Camera.h"
 #include "TerrinMap.h"
 #include "../Physics/Physics.h"
 #include "../Physics/LazyConllision.h"

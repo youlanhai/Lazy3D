@@ -1,7 +1,7 @@
 ﻿
 #include "stdafx.h"
-#include "CursorCamera.h"
 #include "Billboard.h"
+#include "Camera.h"
 #include "App.h"
 #include "../Render/Texture.h"
 
