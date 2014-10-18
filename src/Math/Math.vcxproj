@@ -78,6 +78,7 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Math.h" />
+    <ClInclude Include="MathTool.h" />
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="Plane.h" />
     <ClInclude Include="Polygon.h" />
@@ -91,6 +92,7 @@
   <ItemGroup>
     <ClCompile Include="AABB.cpp" />
     <ClCompile Include="Line.cpp" />
+    <ClCompile Include="MathTool.cpp" />
     <ClCompile Include="Matrix.cpp" />
     <ClCompile Include="Plane.cpp" />
     <ClCompile Include="Polygon.cpp" />

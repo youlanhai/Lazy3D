@@ -57,4 +57,28 @@ namespace Lazy
         static int SIZE;
     };
 
+    /// 高度图文件格式：灰度图，每个像素表示了一个点高度。
+    class HeightMap : public IBase
+    {
+    public:
+        HeightMap();
+
+        bool load(const tstring & filename);
+
+        size_t rows() const { return m_rows; }
+        size_t cols() const { return m_cols; }
+
+        float getHeight(float x, float z) const;
+
+    private:
+        tstring                 m_resource;
+        std::vector<float>      m_rawdata;
+
+        ///地形原点，默认从(0, 0, 0)开始，向x正轴和z负轴方向增加。
+        Vector3                 m_origin;
+        float                   m_gridSize;
+        size_t                  m_rows;
+        size_t                  m_cols;
+    };
+
 } // end namespace Lazy
