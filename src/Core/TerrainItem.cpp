@@ -16,26 +16,6 @@
 namespace Lazy
 {
 
-    void writeVector3(LZDataPtr dataPtr, const tstring & tag, const Vector3 & v)
-    {
-        tstring str;
-        formatString(str, _T("%f %f %f"), v.x, v.y, v.z);
-        dataPtr->writeString(tag, str);
-    }
-
-    void readVector3(LZDataPtr dataPtr, const tstring & tag, Vector3 & v)
-    {
-        tstring str = dataPtr->readString(tag);
-        if (str.empty())
-        {
-            v.zero();
-            return;
-        }
-
-        swscanf(str.c_str(), _T("%f %f %f"), &v.x, &v.y, &v.z);
-    }
-
-
     static AABB s_defaultAABB(Vector3(-0.5, 0.0f, 0.5f), Vector3(0.5f, 1.0f, 0.5f));
     //////////////////////////////////////////////////////////////////////////
     ///

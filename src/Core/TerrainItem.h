@@ -6,9 +6,6 @@
 
 namespace Lazy
 {
-    void writeVector3(LZDataPtr dataPtr, const tstring & tag, const Vector3 & v);
-    void readVector3(LZDataPtr dataPtr, const tstring & tag, Vector3 & v);
-
     class TerrainItem;
     class TerrainChunk;
     typedef RefPtr<TerrainItem> TerrainItemPtr;

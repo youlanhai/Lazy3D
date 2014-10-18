@@ -65,10 +65,15 @@ namespace Lazy
 
         bool load(const tstring & filename);
 
-        size_t rows() const { return m_rows; }
-        size_t cols() const { return m_cols; }
+        int rows() const { return m_rows; }
+        int cols() const { return m_cols; }
 
         float getHeight(float x, float z) const;
+        
+        inline float getAbsHeight(int row, int col) const
+        {
+            return m_rawdata[row * m_cols + col];
+        }
 
     private:
         tstring                 m_resource;
@@ -77,8 +82,8 @@ namespace Lazy
         ///地形原点，默认从(0, 0, 0)开始，向x正轴和z负轴方向增加。
         Vector3                 m_origin;
         float                   m_gridSize;
-        size_t                  m_rows;
-        size_t                  m_cols;
+        int                     m_rows;
+        int                     m_cols;
     };
 
 } // end namespace Lazy
