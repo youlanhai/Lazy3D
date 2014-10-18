@@ -239,7 +239,7 @@ namespace Lazy
         // load height map
         tstring heightmap = ptr->readString(L"heightMap");
         m_heightmap = new HeightMap();
-        if (!m_heightmap->load(heightmap))
+        if (heightmap.empty() || !m_heightmap->load(heightmap))
         {
             LOG_ERROR(L"Failed load map '%s', the height map load failed!", m_mapName.c_str());
             return false;

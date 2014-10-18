@@ -86,7 +86,8 @@ namespace Lazy
             return false;
         }
 
-        if (int(rawdata.size()) < m_rows * m_cols * depth)
+        size_t needSize = m_rows * m_cols * depth >> 3;
+        if (rawdata.size() < needSize)
         {
             LOG_ERROR(L"Invalid raw file '%s', data is too smal.", rawfile.c_str());
             return false;
