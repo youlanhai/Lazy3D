@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="AnimModel.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Billboard.cpp" />
@@ -14,7 +13,6 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="FPS.cpp" />
-    <ClCompile Include="I3DObject.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LRCLoader.cpp" />
@@ -39,9 +37,9 @@
     <ClCompile Include="TerrinMap.cpp" />
     <ClCompile Include="TextTexture.cpp" />
     <ClCompile Include="TopBoard.cpp" />
+    <ClCompile Include="SceneNode.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Transform.h" />
     <ClInclude Include="AnimModel.h" />
     <ClInclude Include="App.h" />
     <ClInclude Include="Base.h" />
@@ -58,7 +56,6 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="FPS.h" />
-    <ClInclude Include="I3DObject.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LRCLoader.h" />
@@ -86,5 +83,6 @@
     <ClInclude Include="TerrinMap.h" />
     <ClInclude Include="TextTexture.h" />
     <ClInclude Include="TopBoard.h" />
+    <ClInclude Include="SceneNode.h" />
   </ItemGroup>
 </Project>

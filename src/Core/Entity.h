@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "I3DObject.h"
+#include "SceneNode.h"
 #include "Model.h"
 #include "Pick.h"
 #include "Physics.h"
@@ -24,14 +24,15 @@ namespace Lazy
     LZDLL_API UINT convertMsg(UINT w_msg);
 
 
-    class LZDLL_API IEntity : public I3DObject
+    class LZDLL_API IEntity : public SceneNode
     {
     public:
         IEntity();
         ~IEntity();
 
-        virtual void update(float elapse);
+        virtual bool ifPlayer() const { return false; }
 
+        virtual void update(float elapse);
         virtual void render(IDirect3DDevice9* pDevice);
 
         int getID(void) const { return m_id; }
@@ -79,13 +80,15 @@ namespace Lazy
         int                 m_id;
         ModelPtr            m_model;
         PhysicsPtr          m_physics;
-        RefPtr<TopBoard>   m_topboard;
+        RefPtr<TopBoard>    m_topboard;
         float               m_showDistance;//< 最大显示距离（据离玩家）
         bool                m_bEnableSphereShow;//< 在活动时，是否显示包围球
     };
 
     typedef RefPtr<IEntity> EntityPtr;
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
+    ///
+    //////////////////////////////////////////////////////////////////////////
     class LZDLL_API EntityMgr : public IRenderObj, public IBase
     {
     public:

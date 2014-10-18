@@ -1,8 +1,10 @@
 ﻿
 #include "stdafx.h"
-#include "TerrinMap.h"
 
 #include "TopBoard.h"
+#include "SceneNode.h"
+
+#include "TerrinMap.h"
 #include "App.h"
 
 namespace Lazy
@@ -38,7 +40,7 @@ namespace Lazy
     {
         if (m_pSource)
         {
-            m_pos = m_pSource->getPos();
+            m_pos = m_pSource->getPosition();
             m_pos.y += m_biasHeight;
         }
 
@@ -48,7 +50,7 @@ namespace Lazy
         m_width = float(m_pTextTexture->getWidth());
         m_height = float(m_pTextTexture->getHeight());
 
-        __super::render(pDevice);
+        Billboard::render(pDevice);
     }
 
 } // end namespace Lazy

@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include <iostream>
-#include "i3dobject.h"
+
+#include "SceneNode.h"
 #include "Model.h"
 
 namespace Lazy
@@ -11,7 +12,7 @@ namespace Lazy
     typedef RefPtr<TerrainItem> TerrainItemPtr;
     
     /** 表示了地图上的一个物件。*/
-    class LZDLL_API TerrainItem : public I3DObject
+    class LZDLL_API TerrainItem : public SceneNode
     {
     public:
         explicit TerrainItem(uint32 id);

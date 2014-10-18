@@ -23,8 +23,7 @@ namespace Lazy
             return;
         }
 
-        AABB aabb;
-        pobj->getWorldAABB(aabb);
+        AABB aabb = pobj->getWorldBoundingBox();
         if(!aabb.intersect(ci.m_aabb)) return;
 
         Matrix world;
@@ -71,8 +70,7 @@ namespace Lazy
     {
         if(!pobj) return false;
 
-        AABB aabb;
-        pobj->getWorldAABB(aabb);
+        AABB aabb = pobj->getWorldBoundingBox();
         if(!aabb.intersectsRay(rc.m_start, rc.m_dir)) return false;
 
         ModelPtr model = pobj->getModel();

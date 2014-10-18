@@ -157,13 +157,13 @@ namespace Lazy
         }
 
         //摄像机跟随
-        D3DXVECTOR3 vecPos = m_pSource->getPos();
+        Vector3 vecPos = m_pSource->getPosition();
         vecPos.y += m_height;
         if (getCameraType() == Camera::FIRST)
         {
-            m_pSource->setLook(m_look);
-            m_pSource->setUp(m_up);
-            m_pSource->setRight(m_right);
+            //m_pSource->setLook(m_look);
+            //m_pSource->setUp(m_up);
+            //m_pSource->setRight(m_right);
             m_position = vecPos;
         }
         else if (getCameraType() == Camera::THIRD)

@@ -342,8 +342,7 @@ namespace Lazy
 
     void TerrainMap::addTerrainItem(TerrainItemPtr item)
     {
-        AABB aabb;
-        item->getWorldAABB(aabb);
+        AABB aabb = item->getWorldBoundingBox();
 
         MapRectCollider collider(false);
         collider.rect.fromAABBXZ(aabb);
@@ -482,7 +481,7 @@ namespace Lazy
     {
         if (m_pSource)
         {
-            const Vector3 & pos = m_pSource->getPos();
+            const Vector3 & pos = m_pSource->getPosition();
             if (!isInBound(pos.x, pos.z))
             {
                 return NULL;
@@ -520,7 +519,7 @@ namespace Lazy
         Vector3 pos(0, 0, 0);
         if (m_pSource)
         {
-            pos = m_pSource->getPos();
+            pos = m_pSource->getPosition();
             if (!isInBound(pos.x, pos.z))
             {
                 return;

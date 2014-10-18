@@ -1,10 +1,10 @@
 ﻿
 #include "stdafx.h"
 
+#include "Pick.h"
 #include "Entity.h"
 #include "TerrinMap.h"
 
-#include "Pick.h"
 #include "App.h"
 
 namespace Lazy
@@ -111,14 +111,11 @@ namespace Lazy
         return aabb.intersectsRay(m_pos, m_dir);
     }
 
-    bool Pick::isIntersect(I3DObject * pObj)
+    bool Pick::isIntersect(SceneNode * pObj)
     {
         if (!pObj) return false;
 
-        AABB aabb;
-        pObj->getWorldAABB(aabb);
-
-        return isIntersect(aabb);
+        return isIntersect(pObj->getWorldBoundingBox());
     }
 
     bool Pick::queryWithEntity()
@@ -137,7 +134,7 @@ namespace Lazy
 
             if (!isIntersect(ent.get())) continue;
 
-            float distSq = m_pos.distToSq(ent->m_vPos);
+            float distSq = m_pos.distToSq(ent->getPosition());
 
             if (minDistance > distSq)
             {

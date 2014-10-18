@@ -1,15 +1,16 @@
 #pragma once
 
+#include "Base.h"
 #include "RenderObj.h"
 
 namespace Lazy
 {
 
-    class Transform
+    class SceneNode : public IBase, public IRenderable
     {
     public:
-        Transform();
-        ~Transform();
+        SceneNode();
+        ~SceneNode();
 
         void setScale(const Vector3 & scale);
         const Vector3 & getScale() const{ return m_scale; }
@@ -23,14 +24,14 @@ namespace Lazy
         void setMatrix(const Matrix & matrix);
         const Matrix & getMatrix() const;
 
-        void getLook(Vector3 & look);
-        Vector3 getLook();
+        void getLook(Vector3 & look) const;
+        Vector3 getLook() const;
 
-        void getUp(Vector3 & up);
-        Vector3 getUp();
+        void getUp(Vector3 & up) const;
+        Vector3 getUp() const;
 
-        void getRight(Vector3 & right);
-        Vector3 getRight();
+        void getRight(Vector3 & right) const;
+        Vector3 getRight() const;
 
         void rotationX(float angle);
         void rotationY(float angle);
@@ -43,6 +44,14 @@ namespace Lazy
         void moveLook(float delta);
         void moveRight(float delta);
         void moveUp(float delta);
+        void move(const Vector3 & delta);
+
+        void setVisible(bool visible) { m_visible = visible ? 0 : 1; }
+        bool getVisible() const { return m_visible != 0; }
+
+        void setBoundingBox(const AABB & aabb){ m_aabb = aabb; }
+        const AABB & getBoundingBox() const { return m_aabb; }
+        AABB getWorldBoundingBox() const;
 
     private:
         Vector3                 m_position;
@@ -50,17 +59,11 @@ namespace Lazy
         Quaternion              m_rotation;
 
         mutable Matrix          m_matrix;
-        mutable bool            m_matrixDirty;
+        mutable int             m_matrixDirty;
 
-    };
-
-    class SceneNode :
-        public IBase,
-        public Transform,
-        public IRenderable
-    {
-    public:
-
+    protected:
+        int                     m_visible;
+        AABB                    m_aabb;
     };
 
 

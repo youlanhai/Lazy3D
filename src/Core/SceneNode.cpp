@@ -1,56 +1,60 @@
 #include "stdafx.h"
-#include "Transform.h"
+#include "SceneNode.h"
 
 namespace Lazy
 {
 
 
-    Transform::Transform()
+    SceneNode::SceneNode()
         : m_scale(1.0f, 1.0f, 1.0f)
-        , m_matrixDirty(false)
+        , m_rotation(0, 0, 0, 1)
+        , m_position(0, 0, 0)
+        , m_matrixDirty(0)
+        , m_matrix(matIdentity)
+        , m_visible(1)
     {
-
+        m_aabb.zero();
     }
 
-    Transform::~Transform()
+    SceneNode::~SceneNode()
     {
     }
 
-    void Transform::setScale(const Vector3 & scale)
+    void SceneNode::setScale(const Vector3 & scale)
     {
         m_scale = scale;
-        m_matrixDirty = true;
+        m_matrixDirty = 1;
     }
 
-    void Transform::setPosition(const Vector3 & position)
+    void SceneNode::setPosition(const Vector3 & position)
     {
         m_position = position;
-        m_matrixDirty = true;
+        m_matrixDirty = 1;
     }
 
-    void Transform::setRotation(const Quaternion & rotation)
+    void SceneNode::setRotation(const Quaternion & rotation)
     {
         m_rotation = rotation;
-        m_matrixDirty = true;
+        m_matrixDirty = 1;
     }
 
-    void Transform::setMatrix(const Matrix & matrix)
+    void SceneNode::setMatrix(const Matrix & matrix)
     {
         m_matrix = matrix;
         m_matrix.decompose(m_scale, m_rotation, m_position);
-        m_matrixDirty = false;
+        m_matrixDirty = 0;
     }
 
-    const Matrix & Transform::getMatrix() const
+    const Matrix & SceneNode::getMatrix() const
     {
         if (m_matrixDirty)
         {
-            m_matrixDirty = false;
-            m_matrix.makeScale(m_scale);
+            m_matrixDirty = 0;
 
-            Matrix temp;
-            temp.setRotationQuaternion(m_rotation);
-            m_matrix *= temp;
+            m_matrix.setRotationQuaternion(m_rotation);
+            m_matrix[0] *= m_scale.x;
+            m_matrix[1] *= m_scale.y;
+            m_matrix[2] *= m_scale.z;
 
             m_matrix._41 = m_position.x;
             m_matrix._42 = m_position.y;
@@ -60,97 +64,113 @@ namespace Lazy
         return m_matrix;
     }
 
-    void Transform::getLook(Vector3 & look)
+    void SceneNode::getLook(Vector3 & look) const
     {
         getMatrix().getRow(2, look);
         look.normalize();
     }
 
-    Vector3 Transform::getLook()
+    Vector3 SceneNode::getLook() const
     {
         Vector3 look;
         getLook(look);
         return look;
     }
 
-    void Transform::getUp(Vector3 & up)
+    void SceneNode::getUp(Vector3 & up) const
     {
         getMatrix().getRow(1, up);
         up.normalize();
     }
 
-    Vector3 Transform::getUp()
+    Vector3 SceneNode::getUp() const
     {
         Vector3 up;
         getUp(up);
         return up;
     }
 
-    void Transform::getRight(Vector3 & right)
+    void SceneNode::getRight(Vector3 & right) const
     {
         getMatrix().getRow(0, right);
         right.normalize();
     }
 
-    Vector3 Transform::getRight()
+    Vector3 SceneNode::getRight() const
     {
         Vector3 right;
         getUp(right);
         return right;
     }
 
-    void Transform::rotationX(float angle)
+    void SceneNode::rotationX(float angle)
     {
         rotationAxis(Vector3(1, 0, 0), angle);
     }
 
-    void Transform::rotationY(float angle)
+    void SceneNode::rotationY(float angle)
     {
         rotationAxis(Vector3(0, 1, 0), angle);
     }
 
-    void Transform::rotationZ(float angle)
+    void SceneNode::rotationZ(float angle)
     {
         rotationAxis(Vector3(0, 0, 1), angle);
     }
 
-    void Transform::rotationLook(float angle)
+    void SceneNode::rotationLook(float angle)
     {
         rotationAxis(getLook(), angle);
     }
 
-    void Transform::rotationUp(float angle)
+    void SceneNode::rotationUp(float angle)
     {
         rotationAxis(getUp(), angle);
     }
 
-    void Transform::rotationRight(float angle)
+    void SceneNode::rotationRight(float angle)
     {
         rotationAxis(getRight(), angle);
     }
 
-    void Transform::rotationAxis(const Vector3 & axis, float angle)
+    void SceneNode::rotationAxis(const Vector3 & axis, float angle)
     {
         Quaternion quat;
         quat.setRotationAxis(axis, angle);
 
         m_rotation *= quat;
+        m_matrixDirty = 1;
     }
 
-    void Transform::moveLook(float delta)
+    void SceneNode::moveLook(float delta)
     {
         m_position += getLook() * delta;
+        m_matrixDirty = 1;
     }
 
-    void Transform::moveRight(float delta)
+    void SceneNode::moveRight(float delta)
     {
         m_position += getRight() * delta;
+        m_matrixDirty = 1;
     }
 
-    void Transform::moveUp(float delta)
+    void SceneNode::moveUp(float delta)
     {
         m_position += getUp() * delta;
+        m_matrixDirty = 1;
     }
 
+    void SceneNode::move(const Vector3 & delta)
+    {
+        m_position += delta;
+        m_matrixDirty = 1;
+    }
+
+    AABB SceneNode::getWorldBoundingBox() const
+    {
+        AABB aabb;
+        m_aabb.applyMatrix(aabb, getMatrix());
+        return aabb;
+    }
 
 } // end namespace Lazy

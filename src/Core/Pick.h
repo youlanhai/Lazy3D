@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-class I3DObject;
 
 namespace Lazy
 {
+    class SceneNode;
 
     /** 鼠标拾取*/
     class LZDLL_API Pick :
@@ -30,7 +30,7 @@ namespace Lazy
         bool isIntersect(const AABB & aabb);
 
         ///与物体相交测试
-        bool isIntersect(I3DObject * pObj);
+        bool isIntersect(SceneNode * pObj);
 
         ///与地图物件相交是否启用
         bool isTerrainObjEnable(void) const { return m_terrainObjEnable; }
@@ -60,9 +60,9 @@ namespace Lazy
 
     protected:
         CPoint              m_cursor;///<鼠标坐标
-        Vector3    m_pos;///<射线原点
-        Vector3    m_dir;///<射线方向
-        Vector3    m_posOnTerrain;///<与地形交点
+        Vector3             m_pos;///<射线原点
+        Vector3             m_dir;///<射线方向
+        Vector3             m_posOnTerrain;///<与地形交点
         bool                m_intersectWithTerrain;
         bool                m_terrainObjEnable;
     };

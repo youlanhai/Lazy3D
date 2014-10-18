@@ -1,7 +1,7 @@
 ﻿//Camera.cpp
 
 #include "stdafx.h"
-#include "I3DObject.h"
+#include "SceneNode.h"
 #include "Camera.h"
 
 namespace Lazy
@@ -36,11 +36,11 @@ namespace Lazy
         {
             if (m_cameraType == FIRST )
             {
-                m_pSource->show(false);
+                //m_pSource->show(false);
             }
             else
             {
-                m_pSource->show(true);
+                //m_pSource->show(true);
             }
         }
     }

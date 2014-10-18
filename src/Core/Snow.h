@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-#include "I3DObject.h"
 #include "particle.h"
 
 namespace Lazy
 {
+    class SceneNode;
 
     /**雪花类*/
     class LZDLL_API Snow : public cParticleSystem
@@ -13,7 +13,7 @@ namespace Lazy
         /**构造函数
         * @param [in] numParticles : 粒子数量
         */
-        Snow(int maxAmount, const std::wstring & texture, I3DObject* source);
+        Snow(int maxAmount, const std::wstring & texture, SceneNode* source);
 
         ///析构函数
         ~Snow(void);
@@ -22,7 +22,7 @@ namespace Lazy
 
         virtual void update(float fElapse);
 
-        void setSource(I3DObject* source) { m_pSource = source; }
+        void setSource(SceneNode* source) { m_pSource = source; }
 
         void setRange(const Vector3 & min_, const Vector3 & max_);
 
@@ -41,9 +41,9 @@ namespace Lazy
         virtual void setRenderState(IDirect3DDevice9 *pDevice);
 
     private:
-        I3DObject*  m_pSource;
-        Vector3 m_rangeMin;
-        Vector3 m_rangeMax;
+        SceneNode*  m_pSource;
+        Vector3     m_rangeMin;
+        Vector3     m_rangeMax;
         bool        m_visible;
     };
 

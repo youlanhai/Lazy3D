@@ -2,6 +2,7 @@
 #include "stdafx.h"
 
 #include "SkyBox.h"
+#include "SceneNode.h"
 
 #include "../utility/Utility.h"
 #include "../Render/Texture.h"
@@ -130,7 +131,7 @@ namespace Lazy
         Matrix world;
         if (m_pSource)
         {
-            world.makeTranslate(m_pSource->getPos());
+            world.makeTranslate(m_pSource->getPosition());
         }
         else
         {

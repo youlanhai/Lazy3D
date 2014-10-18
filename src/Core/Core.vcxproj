@@ -86,7 +86,6 @@
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Face.cpp" />
     <ClCompile Include="FPS.cpp" />
-    <ClCompile Include="I3DObject.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LRCLoader.cpp" />
@@ -99,6 +98,7 @@
     <ClCompile Include="Pick.cpp" />
     <ClCompile Include="RenderRes.cpp" />
     <ClCompile Include="SceneFog.cpp" />
+    <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Snow.cpp" />
     <ClCompile Include="Sound.cpp" />
@@ -114,7 +114,6 @@
     <ClCompile Include="TerrinMap.cpp" />
     <ClCompile Include="TextTexture.cpp" />
     <ClCompile Include="TopBoard.cpp" />
-    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimModel.h" />
@@ -133,7 +132,6 @@
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="FPS.h" />
-    <ClInclude Include="I3DObject.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LRCLoader.h" />
@@ -149,6 +147,7 @@
     <ClInclude Include="RenderRes.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="SceneFog.h" />
+    <ClInclude Include="SceneNode.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Snow.h" />
     <ClInclude Include="Sound.h" />
@@ -161,7 +160,6 @@
     <ClInclude Include="TerrinMap.h" />
     <ClInclude Include="TextTexture.h" />
     <ClInclude Include="TopBoard.h" />
-    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

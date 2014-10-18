@@ -44,7 +44,7 @@ namespace Lazy
 
     public:
         /** 地图将以该source进行优化绘制。source往往是玩家。*/
-        void setSource(I3DObject* pSource) { m_pSource = pSource; }
+        void setSource(SceneNode* pSource) { m_pSource = pSource; }
 
         void setShowLevel(int level);
         int getShowLevel(void) { return m_showLevel; }
@@ -116,7 +116,7 @@ namespace Lazy
 
         ChunkPool           m_chunks;
         ChunkPool           m_visibleChunks;  ///9格
-        I3DObject*          m_pSource;
+        SceneNode*          m_pSource;
         tstring             m_mapName;
         HeightMapPtr        m_heightmap;
 

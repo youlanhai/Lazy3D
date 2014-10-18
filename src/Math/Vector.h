@@ -166,9 +166,9 @@ namespace Lazy
 
         void applyNormalMatrix(Vector3 & out, const Matrix & mat) const;
 
-        bool tooClose(const Vector3 & v) const
+        bool tooClose(const Vector3 & v, float error = MIN_DIST_SQ) const
         {
-            return distToSq(v) <= MIN_DIST_SQ;
+            return distToSq(v) <= error;
         }
 
         void projectTo2D(Vector2 & p) const;

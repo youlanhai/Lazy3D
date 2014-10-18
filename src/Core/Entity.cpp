@@ -51,21 +51,20 @@ namespace Lazy
         return w_msg;
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     static int  g_idAllocator = 1000;
-///生成id
+    ///生成id
     int generateID(void)
     {
         return g_idAllocator++;
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     IEntity::IEntity()
+        : m_bEnableSphereShow(true)
+        , m_showDistance(0.0f)
     {
         m_id = generateID();
-        m_showDistance = 0;
-        m_bEnableSphereShow = true;
-
     }
 
     IEntity::~IEntity()
@@ -73,7 +72,6 @@ namespace Lazy
         m_model = NULL;
         m_physics = NULL;
         m_topboard = NULL;
-
     }
 
     void IEntity::update(float elapse)
@@ -85,19 +83,18 @@ namespace Lazy
 
     void IEntity::render(IDirect3DDevice9* pDevice)
     {
-        if (!visible()) return ;
+        if (!m_visible) return ;
 
         if (m_topboard) m_topboard->render(pDevice);
 
         if (m_model)
         {
-            m_model->setWorldMatrix(getRotationMatrix());
+            m_model->setWorldMatrix(getMatrix());
             m_model->render(pDevice);
         }
 
 #ifdef _DEBUG
         if(m_physics) m_physics->render(pDevice);
-
 #endif
     }
 
@@ -147,7 +144,7 @@ namespace Lazy
     {
         if (!getCamera()) return FLOAT_MAX;
 
-        return m_vPos.distTo(getCamera()->position());
+        return getPosition().distTo(getCamera()->position());
     }
 
     float IEntity::distToPlayer(void) const
@@ -155,21 +152,23 @@ namespace Lazy
         EntityPtr player = EntityMgr::instance()->player();
         if (!player) return FLOAT_MAX;
 
-        return m_vPos.distTo(player->getPos());
+        return getPosition().distTo(player->getPosition());
     }
 
     void IEntity::lookAtPosition(const Vector3 & pos)
     {
-        m_vLook = pos -  m_vPos;
-        m_vLook.normalize();
+        Vector3 look = pos - getPosition();
+        look.y = 0.0f;
+        look.normalize();
 
-        m_vUp.set(0, 1, 0);
+        float angle = atan2f(look.z, look.x);
 
-        m_vUp.cross(m_vRight, m_vLook);
-        m_vRight.normalize();
+        Quaternion rotation;
+        rotation.setRotationAxis(MathConst::vec3y, angle);
+        setRotation(rotation);
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
 
     struct PredicateID
     {
@@ -187,8 +186,9 @@ namespace Lazy
 
     };
 
-//////////////////////////////////////////////////////////////////////////
-
+    //////////////////////////////////////////////////////////////////////////
+    ///
+    //////////////////////////////////////////////////////////////////////////
     /*static*/ EntityMgr * EntityMgr::instance()
     {
         static EntityMgr s_mgr;
@@ -306,7 +306,7 @@ namespace Lazy
     {
         m_player = p;
 
-        if (m_player && !m_player->isPlayer())
+        if (m_player && !m_player->ifPlayer())
         {
             LOG_ERROR(L"EntityMgr::setPlayer, entity is not a player!");
         }

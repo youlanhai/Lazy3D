@@ -5,7 +5,7 @@
 namespace Lazy
 {
 
-    class I3DObject;
+    class SceneNode;
 
     class LZDLL_API Camera : public CameraBase
     {
@@ -29,7 +29,7 @@ namespace Lazy
 
         void setDistRange(float mind, float maxd);
 
-        void setSource(I3DObject *p) { m_pSource = p; }
+        void setSource(SceneNode *p) { m_pSource = p; }
 
     protected:
 
@@ -41,7 +41,7 @@ namespace Lazy
     protected:
 
         CameraType  m_cameraType;			//照相机类型
-        I3DObject*  m_pSource;
+        SceneNode*  m_pSource;
         float		m_fDistToPlayer;	//照相机离玩家的距（跟随玩家移动用）
         float       m_distMin;
         float       m_distMax;

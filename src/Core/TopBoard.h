@@ -2,10 +2,10 @@
 
 #include "Billboard.h"
 #include "TextTexture.h"
-#include "I3DObject.h"
 
 namespace Lazy
 {
+    class SceneNode;
 
     class LZDLL_API TopBoard : public Billboard
     {
@@ -31,12 +31,12 @@ namespace Lazy
 
         virtual void render(IDirect3DDevice9 * pDevice);
 
-        void setSource(I3DObject *pSource) { m_pSource = pSource; }
-        I3DObject * getSource() const { return m_pSource; }
+        void setSource(SceneNode *pSource) { m_pSource = pSource; }
+        SceneNode * getSource() const { return m_pSource; }
 
     protected:
         RefPtr<TextTextureEx>    m_pTextTexture;
-        I3DObject               *m_pSource;
+        SceneNode               *m_pSource;
         float                   m_biasHeight;
     };
 

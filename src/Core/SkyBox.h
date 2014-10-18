@@ -4,11 +4,12 @@
  **********************************************************/
 #pragma once
 
+#include "Base.h"
 #include "RenderObj.h"
-#include "I3DObject.h"
 
 namespace Lazy
 {
+    class SceneNode;
 
     class LZDLL_API SkyBox : public IBase, public IRender
     {
@@ -27,9 +28,9 @@ namespace Lazy
 
         void render(IDirect3DDevice9 *pDevice);
 
-        void setSource(I3DObject* pSource) { m_pSource = pSource; }
+        void setSource(SceneNode* pSource) { m_pSource = pSource; }
 
-        I3DObject* getSource(void) { return m_pSource; }
+        SceneNode* getSource(void) { return m_pSource; }
 
         void show(bool s) { m_visible = s; }
 
@@ -45,11 +46,11 @@ namespace Lazy
         void fillVertext();
 
     private:
-        I3DObject*              m_pSource;
+        SceneNode*              m_pSource;
         std::wstring            m_texNames;
-        IDirect3DVertexBuffer9  *m_pVertexBuffer;
-        Vector3        m_min;
-        Vector3        m_max;
+        IDirect3DVertexBuffer9* m_pVertexBuffer;
+        Vector3                 m_min;
+        Vector3                 m_max;
         bool                    m_visible;
     };
 

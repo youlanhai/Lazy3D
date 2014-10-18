@@ -1,6 +1,6 @@
 ﻿
 #include "stdafx.h"
-#include "I3DObject.h"
+
 #include "CursorCamera.h"
 #include "TerrinMap.h"
 #include "App.h"
@@ -54,14 +54,8 @@ namespace Lazy
     }
 
 
-    IPhysics::IPhysics(void)
-    {
-        new(this)IPhysics(NULL);
-
-    }
-
-    IPhysics::IPhysics(I3DObject* pSource)
-        : m_pSource(pSource)
+    IPhysics::IPhysics()
+        : m_pSource(NULL)
     {
         m_enable = true;
         m_autoMove = false;
@@ -92,7 +86,7 @@ namespace Lazy
 
     void IPhysics::render(IDirect3DDevice9 * pDevice)
     {
-        if(isPlayers() && g_drawCollision)
+        if(ifPlayers() && g_drawCollision)
         {
             RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
 
@@ -108,7 +102,7 @@ namespace Lazy
             return ;
         }
 
-        if(isPlayers())
+        if(ifPlayers())
         {
             updatePlayer(fElapse);
         }
@@ -126,7 +120,7 @@ namespace Lazy
         if (m_bMoveToEntity && m_pMoveToTarget)
         {
             m_autoMove = true;
-            moveTo(m_pMoveToTarget->getPos());
+            moveTo(m_pMoveToTarget->getPosition());
         }
 
         updateAutoMove(fElapse);
@@ -139,11 +133,9 @@ namespace Lazy
         updateHeight(fElapse);
     }
 
-    bool IPhysics::isPlayers()
+    bool IPhysics::ifPlayers()
     {
-        if (m_pSource) return m_pSource->isPlayer();
-
-        return false;
+        return m_pSource ? m_pSource->ifPlayer() : false;
     }
 
     void IPhysics::updatePlayer(float fElapse)
@@ -154,7 +146,7 @@ namespace Lazy
         }
         else if (getCamera()->getCameraType() == Camera::FIRST)
         {
-            m_pSource->show(false);
+            m_pSource->setVisible(false);
         }
 
         RefPtr<CKeyboard> keyboard = getApp()->getKeyboard();
@@ -164,11 +156,11 @@ namespace Lazy
 
         if (keyboard->isKeyPress(VK_UP))
         {
-            m_pSource->m_vPos.y += JumpUpSpeed * fElapse;
+            m_pSource->moveUp( JumpUpSpeed * fElapse );
         }
         else if (keyboard->isKeyPress(VK_DOWN))
         {
-            m_pSource->m_vPos.y -= JumpUpSpeed * fElapse;
+            m_pSource->moveUp( -JumpUpSpeed * fElapse);
         }
 
         if (!m_isFaling && !m_isJumping && keyboard->isKeyDown(VK_SPACE))
@@ -197,9 +189,8 @@ namespace Lazy
             if (upTime > 0.0f)
             {
                 m_jumpingTime += upTime;
-                //m_pSource->m_vPos.y += JumpUpSpeed * upTime;
 
-                Vector3 start = m_pSource->m_vPos;
+                Vector3 start = m_pSource->getPosition();
                 start.y += ModelHeight;
                 Vector3 end = start;
                 end.y += JumpUpSpeed * upTime;
@@ -207,13 +198,12 @@ namespace Lazy
                 //降低起点，防止钻入模型。
                 start.y -= heighError;
 
+                float distance;
                 CollisionConfig config(ModelWidth, ModelWidth, 0, 0);
                 CollisionPrevent cp(start, end, true, config);
                 if (preventCollision(cp))
                 {
-                    float distance = max(0, cp.m_distance - heighError);
-
-                    m_pSource->m_vPos.y += distance;
+                    distance = max(0, cp.m_distance - heighError);
 
                     //跳跃中断
                     m_isJumping = false;
@@ -221,8 +211,12 @@ namespace Lazy
                 }
                 else
                 {
-                    m_pSource->m_vPos.y += JumpUpSpeed * upTime;
+                    distance = JumpUpSpeed * upTime;
                 }
+
+                Vector3 pos = m_pSource->getPosition();
+                pos.y += distance;
+                m_pSource->setPosition(pos);
             }
         }
 
@@ -251,9 +245,9 @@ namespace Lazy
 
         if (moved)
         {
-            Vector3 startPos = m_pSource->m_vPos;
+            Vector3 startPos = m_pSource->getPosition();
             m_pSource->moveLook(fElapse);
-            Vector3 endPos = m_pSource->m_vPos;
+            Vector3 endPos = m_pSource->getPosition();
 
             if (!startPos.tooClose(endPos))
             {
@@ -294,7 +288,7 @@ namespace Lazy
 #else
                     endPos = startPos;
 #endif
-                    m_pSource->m_vPos = endPos;
+                    m_pSource->setPosition(endPos);
                 }
             }
 
@@ -319,7 +313,7 @@ namespace Lazy
         if (!pMap->isUserfull())
             return;
 
-        Vector3 start = m_pSource->getPos();
+        Vector3 start = m_pSource->getPosition();
         const FRect & rect = pMap->getRect();
 
         if (start.x < rect.left)
@@ -332,17 +326,18 @@ namespace Lazy
         else if (start.z > rect.bottom)
             start.z = rect.bottom - 0.001f;
 
-        if (!isPlayers())
+        if (!ifPlayers())
         {
             float mh = pMap->getHeight(start.x, start.z);
-            m_pSource->m_vPos.y = mh + m_lockHeight;
+            m_pSource->move(Vector3(0, mh + m_lockHeight, 0));
             return;
         }
 
-        float h1 = pMap->getHeight(start.x - 0.2f, start.z - 0.2f);
-        float h2 = pMap->getHeight(start.x - 0.2f, start.z + 0.2f);
-        float h3 = pMap->getHeight(start.x + 0.2f, start.z + 0.2f);
-        float h4 = pMap->getHeight(start.x + 0.2f, start.z - 0.2f);
+        const float radius = 0.2f;
+        float h1 = pMap->getHeight(start.x - radius, start.z - radius);
+        float h2 = pMap->getHeight(start.x - radius, start.z + radius);
+        float h3 = pMap->getHeight(start.x + radius, start.z + radius);
+        float h4 = pMap->getHeight(start.x + radius, start.z - radius);
 
         float h = (h1 + h2 + h3 + h4) * 0.25f;
 
@@ -375,7 +370,7 @@ namespace Lazy
             m_isFaling = false;
         }
 
-        m_pSource->m_vPos = end;
+        m_pSource->setPosition(end);
     }
 
     void IPhysics::updateByPath()
@@ -399,7 +394,7 @@ namespace Lazy
         m_moveByPath = false;
         if(!m_pSource) return false;
 
-        if(!WayChunkMgr::instance()->findWay(way, m_pSource->getPos(), dest))
+        if(!WayChunkMgr::instance()->findWay(way, m_pSource->getPosition(), dest))
             return false;
 
         wayPointToPosition(m_wayPath, way);
@@ -418,30 +413,31 @@ namespace Lazy
     {
         if (!m_pSource) return;
 
-        m_pSource->m_vLook = dir;
-        m_pSource->m_vLook.y = 0.0f;
-        m_pSource->m_vLook.normalize();
+        Vector3 look = dir;
+        look.y = 0.0f;
+        look.normalize();
 
-        m_pSource->m_vUp.set(0, 1, 0);
-        m_pSource->m_vUp.cross(m_pSource->m_vRight, m_pSource->m_vLook);
-        m_pSource->m_vRight.normalize();
+        float angle = atan2f(look.z, look.x);
+
+        Quaternion rotation;
+        rotation.setRotationAxis(MathConst::vec3y, angle);
+        m_pSource->setRotation(rotation);
     }
 
-///朝向某点
     void IPhysics::faceTo(const Vector3 & dest)
     {
-        faceToDir(dest - m_pSource->getPos());
+        faceToDir(dest - m_pSource->getPosition());
     }
 
     void IPhysics::moveTo(const Vector3 & dest)
     {
-        if (m_pSource->m_vPos == dest)
+        if (m_pSource->getPosition().tooClose(dest))
         {
             m_autoMove = false;
             return;
         }
 
-        m_prevPos = m_pSource->m_vPos;
+        m_prevPos = m_pSource->getPosition();
         m_nextPos = dest;
         faceTo(dest);
 
@@ -449,8 +445,7 @@ namespace Lazy
         setState(PS_MOVE);
     }
 
-///移动到entity
-    void IPhysics::moveToEntity(I3DObject* target)
+    void IPhysics::moveToEntity(IEntity* target)
     {
         m_pMoveToTarget = target;
         m_bMoveToEntity = true;
@@ -465,9 +460,8 @@ namespace Lazy
         {
             //如果进入entity的范围，则认为就到达了
             float inRange = getMaxDistToNpc() - 1.0f;
-            float distSq = m_pSource->m_vPos.distToSq(m_pMoveToTarget->m_vPos);
-
-            if(distSq <= inRange * inRange)
+            if(m_pSource->getPosition().tooClose(
+                m_pMoveToTarget->getPosition(), inRange * inRange))
             {
                 m_bMoveToEntity = false;
                 m_pMoveToTarget = NULL;
@@ -478,7 +472,7 @@ namespace Lazy
         }
         else
         {
-            float walkDist = m_pSource->m_vPos.distToSq(m_prevPos);//已走过距离
+            float walkDist = m_pSource->getPosition().distToSq(m_prevPos);//已走过距离
             float totalDist = m_nextPos.distToSq(m_prevPos);//总距离
 
             if (walkDist >= totalDist)
@@ -525,7 +519,6 @@ namespace Lazy
         onStateChange(oldState);
     }
 
-    ///状态发生变化
     void IPhysics::onStateChange(DWORD)
     {
         if (!m_pSource) return;
@@ -544,7 +537,6 @@ namespace Lazy
 
     }
 
-///移动完毕
     void IPhysics::onMoveToFinished(bool)
     {
     }

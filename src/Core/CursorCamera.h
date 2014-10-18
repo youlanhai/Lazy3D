@@ -31,7 +31,7 @@ namespace Lazy
 
         virtual void drag(CPoint pt);
 
-        I3DObject* getSource(void) { return m_pSource; }
+        SceneNode* getSource(void) { return m_pSource; }
 
         bool isDraged(void) { return m_draged; }
 

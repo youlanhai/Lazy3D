@@ -37,7 +37,7 @@ namespace Lazy
     {
         updateRotationAxis();
 
-        if (!visible()) return;
+        if (!getVisible()) return;
 
         if (m_model) m_model->update(elapse);
     }
@@ -45,19 +45,16 @@ namespace Lazy
     void TerrainItem::render(IDirect3DDevice9* pDevice)
     {
         //绘制物体本身
-        if (visible() && m_model)
+        if (getVisible() && m_model)
         {
-            Matrix matWorld;
-            getWorldMatrix(matWorld);
-            m_model->setWorldMatrix(matWorld);
+            m_model->setWorldMatrix(getMatrix());
             m_model->render(pDevice);
         }
 
         //绘制物体AABB
         if (MapConfig::ShowAllItemAABB)
         {
-            AABB aabb;
-            getWorldAABB(aabb);
+            AABB aabb = getWorldBoundingBox();
 
             pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
             drawAABB(pDevice, aabb, 0xffffffff);
@@ -111,20 +108,14 @@ namespace Lazy
 
     void TerrainItem::updateRotationAxis(void)
     {
-        Matrix mat;
-        mat.makeRatateYawPitchRoll(m_angle.y, m_angle.x, m_angle.z);
-
-        m_vRight = mat[0];
-        m_vUp = mat[1];
-        m_vLook = mat[2];
-
-        normalizeVector();
+        Quaternion rotation;
+        rotation.setYawPitchRoll(m_angle.y, m_angle.x, m_angle.z);
+        setRotation(rotation);
     }
 
     bool TerrainItem::intersectWithCursor()
     {
-        AABB aabb;
-        getWorldAABB(aabb);
+        AABB aabb = getWorldBoundingBox();
         return Pick::instance()->isIntersect(aabb);
     }
 
@@ -157,7 +148,7 @@ namespace Lazy
 
     float TerrainItem::distToCamera(void)
     {
-        return m_vPos.distTo(getCamera()->position());
+        return getPosition().distTo(getCamera()->position());
     }
 
     bool TerrainItem::save(LZDataPtr dataPtr) const
@@ -175,8 +166,8 @@ namespace Lazy
             dataPtr->writeInt(_T("type"), type);
         }
 
-        writeVector3(dataPtr, _T("scale"), m_vScale);
-        writeVector3(dataPtr, _T("pos"), m_vPos);
+        writeVector3(dataPtr, _T("scale"), getScale());
+        writeVector3(dataPtr, _T("pos"),    getPosition());
         writeVector3(dataPtr, _T("angle"), m_angle);
         writeVector3(dataPtr, _T("aabb/min"), m_aabb.min);
         writeVector3(dataPtr, _T("aabb/max"), m_aabb.max);
@@ -194,8 +185,14 @@ namespace Lazy
     {
         m_id = dataPtr->readUint(_T("id"));
 
-        readVector3(dataPtr, _T("scale"), m_vScale);
-        readVector3(dataPtr, _T("pos"), m_vPos);
+        Vector3 tmp;
+        readVector3(dataPtr, _T("scale"), tmp);
+        setScale(tmp);
+
+        readVector3(dataPtr, _T("pos"), tmp);
+        setPosition(tmp);
+
+
         readVector3(dataPtr, _T("angle"), m_angle);
         //readVector3(dataPtr, _T("aabb/min"), m_aabb.min);
         //readVector3(dataPtr, _T("aabb/max"), m_aabb.max);
@@ -210,7 +207,9 @@ namespace Lazy
 
         if (dataPtr->readBool(L"drop", false))
         {
-            m_vPos.y = TerrainMap::instance()->getHeight(m_vPos.x, m_vPos.z);
+            Vector3 pos = getPosition();
+            pos.y = TerrainMap::instance()->getHeight(pos.x, pos.z);
+            setPosition(pos);
         }
 
         updateRotationAxis();
@@ -220,7 +219,7 @@ namespace Lazy
     //获取真实的模型矩阵
     void TerrainItem::getAbsModelMatrix(Matrix & mat) const
     {
-        getWorldMatrix(mat);
+        mat = getMatrix();
 
         if (!m_model) return;
 

@@ -50,11 +50,10 @@ namespace Lazy
                 TerrainItemPtr obj = m_pMapNode->getItemByIndex(i);
                 if (!obj) continue;
 
-                AABB aabb;
-                obj->getWorldAABB(aabb);
+                AABB aabb = obj->getWorldBoundingBox();
                 if (!aabb.intersectsRay(origin, dir)) continue;
 
-                float dist = origin.distToSq(obj->m_vPos);
+                float dist = origin.distToSq(obj->getPosition());
                 if (minDistance > dist)
                 {
                     minDistance = dist;
@@ -82,7 +81,7 @@ namespace Lazy
 
                 for (size_t i = 0; i < n; ++i)
                 {
-                    pMapNode->getItemByIndex(i)->getWorldAABB(m_aabbs[i]);
+                    m_aabbs[i] = pMapNode->getItemByIndex(i)->getWorldBoundingBox();
                 }
 
                 bool ret = doBuild();
@@ -674,7 +673,7 @@ namespace Lazy
         for (TerrainItemPtr item : m_items)
         {
             //一个item可以横跨多个chunk，只有中心坐标所在的chunk才负责渲染。
-            if (m_rect.isIn(item->getPos().x, item->getPos().z))
+            if (m_rect.isIn(item->getPosition().x, item->getPosition().z))
             {
                 item->render(pDevice);
             }

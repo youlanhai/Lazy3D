@@ -5,7 +5,7 @@
 namespace Lazy
 {
 
-    Snow::Snow(int maxAmount, const std::wstring & texture, I3DObject* source)
+    Snow::Snow(int maxAmount, const std::wstring & texture, SceneNode* source)
         : cParticleSystem(maxAmount, texture)
         , m_pSource(source)
         , m_rangeMin(-1000.0f, 100.0f, -1000.0f)
@@ -25,17 +25,15 @@ namespace Lazy
         m_rangeMax = max_;
     }
 
-///重置一个粒子的属性
     void Snow::resetParticle(Attribute *attribute)
     {
         attribute->live = true;
         attribute->age = 0.0f;
         attribute->lifeTime = 1000.0f;
-        D3DXVECTOR3 pos(0, 1000, 0);
+        Vector3 pos(0, 1000, 0);
         if (m_pSource)
-        {
-            pos = m_pSource->getPos();
-        }
+            pos = m_pSource->getPosition();
+        
         attribute->position = pos + getRandomVector(&m_rangeMin, &m_rangeMax);
 
         attribute->speed.x = getRandomFloat(-20.0f, -20.0f);
