@@ -56,8 +56,6 @@ namespace Lazy
 
     protected:
 
-        void initCamera(CameraType type = THIRD);
-
         /** 矫正距离玩家的距离。*/
         void correctDist(void);
 

@@ -112,7 +112,7 @@ namespace Lazy
     Vector3 SceneNode::getRight() const
     {
         Vector3 right;
-        getUp(right);
+        getRight(right);
         return right;
     }
 

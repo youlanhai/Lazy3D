@@ -142,21 +142,21 @@ namespace Lazy
             if(keyboard->isKeyPress('A'))
             {
                 //rotYaw(-3.14f*fElapse);
-                moveRight(false);
+                moveRight(-fElapse * m_speed);
             }
             else if(keyboard->isKeyPress('D'))
             {
                 //rotYaw(3.14f*fElapse);
-                moveRight(true);
+                moveRight(fElapse * m_speed);
             }
             //前进后退
             if(keyboard->isKeyPress('W'))
             {
-                moveLook(true);
+                moveLook(fElapse * m_speed);
             }
             else if(keyboard->isKeyPress('S'))
             {
-                moveLook(false);
+                moveLook(-fElapse * m_speed);
             }
             return ;
         }
