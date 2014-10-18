@@ -8,65 +8,23 @@ texture g_texture3;
 texture g_textureBlend;
 texture g_textureDiffuse;
 
-sampler sampler0 = sampler_state
-{
-    Texture = <g_texture0>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = WRAP;
-    AddressV  = WRAP;
-};
+#define TERRAIN_SAMPLER(NAME, TEXTURE)  \
+sampler NAME = sampler_state        \
+{                                   \
+    Texture = <TEXTURE>;            \
+    MipFilter = LINEAR;             \
+    MinFilter = LINEAR;             \
+    MagFilter = LINEAR;             \
+    AddressU  = WRAP;               \
+    AddressV  = WRAP;               \
+}
 
-sampler sampler1 = sampler_state
-{
-    Texture = <g_texture1>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = WRAP;
-    AddressV  = WRAP;
-};
-
-sampler sampler2 = sampler_state
-{
-    Texture = <g_texture2>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = WRAP;
-    AddressV  = WRAP;
-};
-
-sampler sampler3 = sampler_state
-{
-    Texture = <g_texture3>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = WRAP;
-    AddressV  = WRAP;
-};
-
-sampler samplerDiffuse = sampler_state
-{
-    Texture = <g_textureDiffuse>;
-    MipFilter = NONE;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = CLAMP;
-    AddressV  = CLAMP;
-};
-
-sampler samplerBlend = sampler_state
-{
-    Texture = <g_textureBlend>;
-    MipFilter = NONE;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = CLAMP;
-    AddressV  = CLAMP;
-};
+TERRAIN_SAMPLER(sampler0, g_texture0);
+TERRAIN_SAMPLER(sampler1, g_texture1);
+TERRAIN_SAMPLER(sampler2, g_texture2);
+TERRAIN_SAMPLER(sampler3, g_texture3);
+TERRAIN_SAMPLER(samplerDiffuse, g_textureDiffuse);
+TERRAIN_SAMPLER(samplerBlend, g_textureBlend);
 
 struct VS_INPUT
 {

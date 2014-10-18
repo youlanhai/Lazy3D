@@ -367,9 +367,9 @@ namespace Lazy
         if (root)
         {
             // load terrain basic information.
-            m_uvScale = root->readFloat(_T("uvscale"), 1.0f);
+            m_uvScale = root->readFloat(_T("uvscale"), 0.1f);
 
-            tstring tempName = root->readString(_T("shader"));
+            tstring tempName = root->readString(_T("shader"), L"shader/terrain.fx");
             m_shader = EffectMgr::instance()->get(tempName);
 
             LZDataPtr textureDatas = root->read(_T("textures"));
@@ -390,6 +390,11 @@ namespace Lazy
 
                 textureName = textureDatas->readString(_T("diffuse"));
                 m_textures[i++] = TextureMgr::instance()->get(textureName);
+            }
+            else
+            {
+                m_textures[0] = TextureMgr::instance()->get(L"map/f.jpg");
+                m_textures[MapConfig::MaxNbChunkLayer+1] = TextureMgr::instance()->get(L"map/diffuse.png");
             }
 
             // load terrain items

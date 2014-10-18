@@ -1,10 +1,10 @@
 
 origin = -128 0 -128
-rows = 256
-cols = 256
-gridSize = 1
+rows = 1024
+cols = 1024
+gridSize = 0.25
 
-heightScale = 1
+heightScale = 0.5
 
 rawFile = map/test/heightmap.raw
 rawBit = 8
