@@ -45,6 +45,7 @@ namespace Lazy
 
     }
 
+
     ///地形顶点格式
     struct TerrinVertex
     {
@@ -57,17 +58,20 @@ namespace Lazy
         static int SIZE;
     };
 
-    /// 高度图文件格式：灰度图，每个像素表示了一个点高度。
+    
+    /** 高度图文件格式：灰度图(支持8,16,32位深度)，每个像素表示了一个点高度。*/
     class HeightMap : public IBase
     {
     public:
         HeightMap();
 
+        /** 从配置文件中读取配置，并加载高度图。*/
         bool load(const tstring & filename);
 
         int rows() const { return m_rows; }
         int cols() const { return m_cols; }
 
+        /** 根据(x, z)坐标返回插值之后的y坐标。如果(x, z)超出边界，则返回m_origin.y。*/
         float getHeight(float x, float z) const;
         
         inline float getAbsHeight(int row, int col) const
@@ -79,7 +83,7 @@ namespace Lazy
         tstring                 m_resource;
         std::vector<float>      m_rawdata;
 
-        ///地形原点，默认从(0, 0, 0)开始，向x正轴和z负轴方向增加。
+        /** 地形原点，默认从(0, 0, 0)开始，向x正轴和z负轴方向增加。*/
         Vector3                 m_origin;
         float                   m_gridSize;
         int                     m_rows;
