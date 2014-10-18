@@ -246,7 +246,7 @@ namespace Lazy
         if (moved)
         {
             Vector3 startPos = m_pSource->getPosition();
-            m_pSource->moveLook(fElapse);
+            m_pSource->moveLook(fElapse * m_pSource->getSpeed().x);
             Vector3 endPos = m_pSource->getPosition();
 
             if (!startPos.tooClose(endPos))

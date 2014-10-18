@@ -35,7 +35,7 @@ public:
     {
     }
 
-    bool isPlayer() override { return true; }
+    bool ifPlayer() const override { return true; }
 };
 
 EntityPtr g_player;
@@ -114,7 +114,7 @@ bool CGame::init(void)
 
     g_player = new Player();
     g_player->setPhysics(new IPhysics());
-    g_player->setSpeed(8.0f);
+    g_player->setSpeed(Vector3(8.0f, 8.0, 8.0f));
 
     ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x", ModelType::SkinModel);
     if (model)

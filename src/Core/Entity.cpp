@@ -63,6 +63,7 @@ namespace Lazy
     IEntity::IEntity()
         : m_bEnableSphereShow(true)
         , m_showDistance(0.0f)
+        , m_speed(2, 2, 2)
     {
         m_id = generateID();
     }

@@ -76,11 +76,15 @@ namespace Lazy
         void enableSphereShow(bool s) { m_bEnableSphereShow = s; }
         bool isSphereShowEnable(void) const { return m_bEnableSphereShow; }
 
+        void setSpeed(const Vector3 & speed){ m_speed = speed; }
+        const Vector3 & getSpeed() const { return m_speed; }
+
     protected:
         int                 m_id;
         ModelPtr            m_model;
         PhysicsPtr          m_physics;
         RefPtr<TopBoard>    m_topboard;
+        Vector3             m_speed;
         float               m_showDistance;//< 最大显示距离（据离玩家）
         bool                m_bEnableSphereShow;//< 在活动时，是否显示包围球
     };
