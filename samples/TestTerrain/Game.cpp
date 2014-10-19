@@ -139,9 +139,6 @@ bool CGame::init(void)
     m_pCamera->setDistRange(2.0f, 20.0f);
 
     m_projection.setPerspective(D3DX_PI / 4.0f, float(m_nWidth) / m_nHeight, 1.0f, 1000.0f);
-    
-    m_pFPS = new FpsRender();
-    m_pFPS->init();
 
     m_pCube = new CCube();
     m_pCube->init(m_pd3dDevice, 1.0f, 1.0f, 1.0f);
@@ -175,7 +172,6 @@ bool CGame::init(void)
 void CGame::update()
 {
     CApp::update();
-    m_pFPS->update();
 
     if (!m_bGameStart)
     {
@@ -294,7 +290,6 @@ void CGame::render()
 
         m_pRenderTaskMgr->render(m_pd3dDevice);
         renderText();
-        m_pFPS->render();
         /////////////////////////
         rcDevice()->endScene();
     }

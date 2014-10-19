@@ -1,8 +1,12 @@
 ﻿//D3DApp.cpp
 
 #include "stdafx.h"
-#include "Core.h"
 #include "App.h"
+
+#include "TerrinMap.h"
+#include "Pick.h"
+#include "Sound.h"
+#include "Entity.h"
 
 #include "../Render/Texture.h"
 #include "../Font/Font.h"

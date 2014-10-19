@@ -8,7 +8,6 @@
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Face.cpp" />
-    <ClCompile Include="FPS.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="Light.cpp" />
     <ClCompile Include="LRCLoader.cpp" />
@@ -49,7 +48,6 @@
     <ClInclude Include="dlist.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Face.h" />
-    <ClInclude Include="FPS.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LRCLoader.h" />

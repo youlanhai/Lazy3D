@@ -145,42 +145,30 @@ namespace Lazy
 
     public:
         CRenderTask* getRenderTaskMgr(void) { return m_pRenderTaskMgr.get(); }
-
         CRenderTask* getUpdateTaskMgr(void) { return m_pUpdateTaskMgr.get(); }
-
-        CRenderTask* getBillboardMgr(void) { return m_pBillboardMgr.get(); }
 
         CKeyboard* getKeyboard(void) { return m_pKeyboard.get(); }
 
         RefPtr<SkyBox> getSkyBox(void) { return m_pSkyBox; }
 
         void addRender(IRenderObj* rend);
-
-        void addUpdater(IRenderObj* up);
-
-        void addUpdateRender(IRenderObj *pObj);
-
-        void addBillboard(IRenderObj* pObj);
-
         void removeRender(IRenderObj* rend);
 
+        void addUpdater(IRenderObj* up);
         void removeUpdater(IRenderObj* up);
 
+        void addUpdateRender(IRenderObj *pObj);
         void removeUpdateRender(IRenderObj* pObj);
-
-        void removeBillboard(IRenderObj* pObj);
 
         bool isMsgHooked(void) { return m_bMsgHooked; }
 
+        CRect getClientRect(void);
         void screenToClient(POINT* pt);
-
         void clientToScreen(POINT* pt);
 
         CPoint getCursorPos(void);
-
         void setCursorPos(CPoint pt);
 
-        CRect getClientRect(void);
 
     public:
 
@@ -194,29 +182,28 @@ namespace Lazy
         bool setGameLoadingStatus(bool ok) { m_isLoadingOK = ok; }
 
     protected:
-        IDirect3DDevice9    *m_pd3dDevice;      //Direct3D设备对象
+        dx::Device *        m_pd3dDevice;      //Direct3D设备对象
         HINSTANCE			m_hInstance;		//应用程序实例对象
         HWND				m_hWnd;				//窗口句柄
         int		            m_nWidth;			//窗口宽度
         int		            m_nHeight;			//窗口高度
         std::wstring        m_caption;	        //窗口标题
-        bool	            m_bFullScreen;		//是否全屏
         float               m_fElapse;
         float               m_timeScale;
 
-        bool    m_isLoading;
-        bool    m_isLoadingOK;
-        int     m_loadingType;
-        float   m_loadingElapse;
+        bool	            m_bFullScreen;		//是否全屏
+        bool                m_bMsgHooked;
 
-    protected:
+        bool                m_isLoading;
+        bool                m_isLoadingOK;
+        int                 m_loadingType;
+        float               m_loadingElapse;
+
         //公共资源
-        RenderTaskPtr           m_pRenderTaskMgr;   //< 渲染队列
-        RenderTaskPtr           m_pUpdateTaskMgr;   //< 更新队列
-        RenderTaskPtr           m_pBillboardMgr;
-        RefPtr<CKeyboard>	    m_pKeyboard;
-        bool                    m_bMsgHooked;
-        RefPtr<SkyBox>         m_pSkyBox;
+        RenderTaskPtr       m_pRenderTaskMgr;   //< 渲染队列
+        RenderTaskPtr       m_pUpdateTaskMgr;   //< 更新队列
+        RefPtr<CKeyboard>	m_pKeyboard;
+        RefPtr<SkyBox>      m_pSkyBox;
     };
 
 }// end namespace Lazy
