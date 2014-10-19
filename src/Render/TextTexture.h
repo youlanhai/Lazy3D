@@ -1,12 +1,11 @@
 ﻿#pragma once
 
-#include "Base.h"
 #include "../utility/UtilConfig.h"
 
 namespace Lazy
 {
 
-    class LZDLL_API TextTextureEx : public IBase
+    class TextTextureEx : public IBase
     {
     public:
         TextTextureEx();

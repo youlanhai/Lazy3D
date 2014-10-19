@@ -18,16 +18,12 @@
 
 #include "Material.h"
 #include "MusicPlayer.h"
-#include "Model.h"
 #include "ModelFactory.h"
 
-
-#include "particle.h"
 #include "Pick.h"
 #include "Physics.h"
 #include "Projection.h"
 
-#include "RenderInterface.h"
 #include "RenderTask.h"
 
 #include "SceneFog.h"
@@ -37,7 +33,6 @@
 #include "StaticModel.h"
 
 #include "TerrinMap.h"
-#include "TextTexture.h"
 #include "TopBoard.h"
 
 //////////////////////////////////////////////////////////////////////////

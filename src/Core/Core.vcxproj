@@ -106,7 +106,6 @@
     <ClCompile Include="TerrainItem.cpp" />
     <ClCompile Include="TerrinData.cpp" />
     <ClCompile Include="TerrinMap.cpp" />
-    <ClCompile Include="TextTexture.cpp" />
     <ClCompile Include="TopBoard.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -145,7 +144,6 @@
     <ClInclude Include="TerrainItem.h" />
     <ClInclude Include="TerrinData.h" />
     <ClInclude Include="TerrinMap.h" />
-    <ClInclude Include="TextTexture.h" />
     <ClInclude Include="TopBoard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

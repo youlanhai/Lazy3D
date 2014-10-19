@@ -1,11 +1,12 @@
 ﻿
 #include "stdafx.h"
 
-#include "../Render/Texture.h"
+#include "TextTexture.h"
+#include "Texture.h"
+#include "RenderDevice.h"
+
 #include "../Font/Font.h"
 
-#include "TextTexture.h"
-#include "../Render/RenderDevice.h"
 
 namespace Lazy
 {

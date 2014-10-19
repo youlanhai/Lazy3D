@@ -77,9 +77,6 @@
     <ClCompile Include="Sound.cpp">
       <Filter>music</Filter>
     </ClCompile>
-    <ClCompile Include="TextTexture.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
     <ClCompile Include="TopBoard.cpp">
       <Filter>misc</Filter>
     </ClCompile>
@@ -180,9 +177,6 @@
       <Filter>music</Filter>
     </ClInclude>
     <ClInclude Include="TopBoard.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="TextTexture.h">
       <Filter>misc</Filter>
     </ClInclude>
     <ClInclude Include="SkyBox.h">

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Billboard.h"
-#include "TextTexture.h"
+#include "../Render/TextTexture.h"
 
 namespace Lazy
 {
