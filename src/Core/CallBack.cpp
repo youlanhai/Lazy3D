@@ -1,89 +1,83 @@
 ﻿
 #include "stdafx.h"
 #include "CallBack.h"
+#include "../utility/Log.h"
 
 namespace Lazy
 {
 
-
-    namespace
+    class FunctionTimerDelegate : public ITimerDelegate
     {
-        struct PredDead
+    public:
+        FunctionTimerDelegate(std::function<void()> callback)
+            : m_callback(callback)
+        {}
+
+        virtual void onCall() override
         {
-            bool operator()(CallObjPtr ptr)
-            {
-                return ptr->isDead();
-            }
-        };
-    }
-
-
-    /*static*/ CallbackMgr * CallbackMgr::instance()
-    {
-        static CallbackMgr s_mgr;
-        return &s_mgr;
-    }
-
-    CallbackMgr::CallbackMgr()
-        : m_idAllocator(1)
-        , m_updating(false)
-    {
-
-    }
-
-
-
-    size_t CallbackMgr::add(CallObjPtr call)
-    {
-        assert(call && "CallbackMgr::add");
-
-        size_t id = m_idAllocator++;
-
-        call->m_id = id;
-        if (m_updating) m_cbCache.push_back(call);
-        else m_cbPool.push_back(call);
-
-        return id;
-    }
-
-    //仅标记为死亡态，并不真正删除。
-    void CallbackMgr::remove(size_t id)
-    {
-        removeCB(m_cbPool, id);
-        removeCB(m_cbCache, id);
-    }
-
-    void CallbackMgr::update(float elapse)
-    {
-        m_updating = true;
-
-        for (CallObjPtr call : m_cbPool)
-        {
-            if (call->isDead()) continue;
-
-            call->update(elapse);
-
-            if (call->isDead()) call->onDead();
+            m_callback();
         }
 
-        m_cbPool.merge(m_cbCache);
-        m_cbCache.clear();
+    protected:
+        std::function<void()> m_callback;
+    };
 
-        m_cbPool.remove_if(PredDead());
 
-        m_updating = false;
+    TimerMgr::TimerMgr()
+        : m_idAllocator(0)
+        , m_time(0)
+    {
+
     }
 
-    void CallbackMgr::removeCB(CallBackPool & pool, size_t id)
+    TimerMgr::~TimerMgr()
+    {}
+
+    TTimeHandle TimerMgr::addTimer(float time, TimerDelegatePtr delegate_)
     {
-        for (CallObjPtr call : pool)
+        TTimeHandle handle = ++m_idAllocator;
+        if (handle == 0)
         {
-            if (call->m_id == id)
+            LOG_ERROR(L"TimerMgr::addTimer - the handle is overflow!");
+            handle = ++m_idAllocator;
+        }
+
+        m_timers.push(TimerNode(m_time + time, handle, delegate_));
+        return handle;
+    }
+
+    TTimeHandle TimerMgr::addCallback(float time, const std::function<void()> & callback)
+    {
+        return addTimer(time, new FunctionTimerDelegate(callback));
+    }
+
+    void TimerMgr::remove(TTimeHandle handle)
+    {
+        m_deleted.insert(handle);
+    }
+
+    void TimerMgr::update(float elapse)
+    {
+        m_time += elapse;
+
+        while (!m_timers.empty() && m_timers.top().m_time <= m_time)
+        {
+            TimerNode node = m_timers.top();
+            m_timers.pop();
+
+            std::set<TTimeHandle>::iterator it = m_deleted.find(node.m_handle);
+            if (it != m_deleted.end())
             {
-                call->m_time = -1.0f;
-                return;
+                m_deleted.erase(it);
+                node.m_delegate->onCancel();
             }
+            else
+            {
+                node.m_delegate->onCall();
+            }
+            node.m_delegate->onExit();
         }
     }
 
-}
+} // end namespace Lazy
+

@@ -1,94 +1,73 @@
 ﻿#pragma once
 
 #include "Base.h"
-#include "RenderObj.h"
+#include "../utility/Singleton.h"
+
+#include <queue>
+#include <functional>
 
 namespace Lazy
 {
 
-    ///回调对象基类。
-    class LZDLL_API CallableNode: public IBase
+    class LZDLL_API ITimerDelegate : public IBase
     {
     public:
-        explicit CallableNode(float time)
+        virtual void onCall() = 0;
+        virtual void onCancel() {}
+        virtual void onExit() {}
+    };
+
+    typedef RefPtr<ITimerDelegate> TimerDelegatePtr;
+
+    typedef double TTimeValue;
+    typedef uint64 TTimeHandle;
+
+    class TimerNode
+    {
+    public:
+        TimerNode(TTimeValue time, TTimeHandle handle, TimerDelegatePtr delegate_)
             : m_time(time)
-            , m_id(0)
+            , m_handle(handle)
+            , m_delegate(delegate_)
         {}
 
-        void update(float elapse)
+        bool operator < (const TimerNode & node) const
         {
-            m_time -= elapse;
+            if (m_time == node.m_time)
+                return m_handle < node.m_handle;
+
+            return m_time < node.m_time;
         }
 
-        size_t id() const { return m_id; }
-        bool isDead() const { return m_time <= 0.0f; }
-
-        virtual void onDead(void) = 0;
-
     private:
-        size_t  m_id;
-        float   m_time;
+        TTimeValue          m_time;
+        TTimeHandle         m_handle;
+        TimerDelegatePtr    m_delegate;
 
-        friend class CallbackMgr;
+        friend class TimerMgr;
     };
 
-    typedef RefPtr<CallableNode> CallObjPtr;
 
-
-    ///回调管理器
-    class LZDLL_API CallbackMgr : public IBase, public IUpdate
+    /** 定时器*/
+    class LZDLL_API TimerMgr : public Singleton<TimerMgr>
     {
     public:
-        typedef std::list<CallObjPtr>   CallBackPool;
-        typedef CallBackPool::iterator  CallBackIter;
+        typedef std::priority_queue<TimerNode>   Timers;
 
-        static CallbackMgr * instance();
+        TimerMgr();
+        ~TimerMgr();
 
-        size_t add(CallObjPtr call);
+        TTimeHandle addTimer(float time, TimerDelegatePtr delegate_);
+        TTimeHandle addCallback(float time, const std::function<void()> & callback);
+        void        remove(TTimeHandle handle);
 
-        void remove(size_t id);
-
-        virtual void update(float elapse) override;
-
-    private:
-
-        CallbackMgr();
-
-        void removeCB(CallBackPool & pool, size_t id);
+        void        update(float elapse);
 
     private:
-        int             m_idAllocator;
-        bool            m_updating;
-        CallBackPool    m_cbPool;
-        CallBackPool    m_cbCache;
+        TTimeValue      m_time;
+        TTimeHandle     m_idAllocator;
+        Timers          m_timers;
+        std::set<TTimeHandle> m_deleted;
     };
 
-    //////////////////////////////////////////////////////////////////////////
-    ///默认回调函数结构
-    template<typename Type>
-    class cDefaultCall: public CallableNode
-    {
-    public:
-        cDefaultCall(float time, Type call)
-            : CallableNode(time)
-            , m_callBack(call)
-        {}
-
-        virtual void onDead()
-        {
-            m_callBack();
-        }
-
-    protected:
-        Type m_callBack;
-    };
-
-
-    template<typename Type>
-    size_t callBack(float time, Type call)
-    {
-        return CallbackMgr::instance()->add(new cDefaultCall<Type>(time, call));
-    }
-
-    //////////////////////////////////////////////////////////////////////////
 }
