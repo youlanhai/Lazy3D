@@ -16,7 +16,7 @@ namespace Lazy
     /**
     * 场景雾化类
     */
-    class LZDLL_API CSceneFog : public IBase
+    class LZDLL_API SceneFog : public IBase
     {
     public:
         ///雾化类型
@@ -30,10 +30,10 @@ namespace Lazy
         };
     public:
         ///构造函数
-        CSceneFog(void);
+        SceneFog(void);
 
         ///析构函数
-        ~CSceneFog(void);
+        ~SceneFog(void);
 
         ///初始化
         void init(IDirect3DDevice9 *pDevice);

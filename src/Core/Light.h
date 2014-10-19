@@ -8,11 +8,11 @@ Light.h（光照类）
 namespace Lazy
 {
 
-    class LZDLL_API CLight : public IBase
+    class LZDLL_API LightHelper : public IBase
     {
     public:
-        CLight(void);
-        ~CLight(void);
+        LightHelper(void);
+        ~LightHelper(void);
         void SetPointLight(			//设置点光源
             IDirect3DDevice9 *device,
             const D3DXVECTOR3 &position,	//位置

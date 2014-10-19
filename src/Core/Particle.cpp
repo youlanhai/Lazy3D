@@ -11,7 +11,7 @@ namespace Lazy
     DWORD ParticleVertex::FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE;
     DWORD ParticleVertex::SIZE = sizeof(ParticleVertex);
 
-    cParticleSystem::cParticleSystem(int maxAmount, const std::wstring & texture)
+    ParticleSystem::ParticleSystem(int maxAmount, const std::wstring & texture)
         : m_textureName(texture)
     {
         m_pVertexBuffer = NULL;	//顶点缓冲区指针
@@ -38,12 +38,12 @@ namespace Lazy
         }
     }
 
-    cParticleSystem::~cParticleSystem(void)
+    ParticleSystem::~ParticleSystem(void)
     {
         SafeRelease(m_pVertexBuffer);
     }
 
-    void cParticleSystem::setRenderState(IDirect3DDevice9 *pDevice)
+    void ParticleSystem::setRenderState(IDirect3DDevice9 *pDevice)
     {
         pDevice->SetRenderState(D3DRS_LIGHTING, FALSE);
 
@@ -61,7 +61,7 @@ namespace Lazy
     }
 
 
-    void cParticleSystem::recoverRenderState(IDirect3DDevice9 *pDevice)
+    void ParticleSystem::recoverRenderState(IDirect3DDevice9 *pDevice)
     {
         pDevice->SetTextureStageState(0, D3DTSS_ALPHAOP, D3DTOP_MODULATE);
         pDevice->SetTextureStageState(0, D3DTSS_ALPHAARG1, D3DTA_TEXTURE);
@@ -73,14 +73,14 @@ namespace Lazy
         pDevice->SetRenderState(D3DRS_LIGHTING, TRUE);
     }
 
-    void cParticleSystem::addParticle()
+    void ParticleSystem::addParticle()
     {
         Attribute attribute;
         resetParticle(&attribute);
         particles.push_front(attribute);
     }
 
-    void cParticleSystem::reset()
+    void ParticleSystem::reset()
     {
         ListNode<Attribute> * pNode = particles.begin();
         for( ; pNode != NULL; pNode = pNode->next)
@@ -89,7 +89,7 @@ namespace Lazy
         }
     }
 
-    bool cParticleSystem::isDead()
+    bool ParticleSystem::isDead()
     {
         ListNode<Attribute> *pNode = particles.begin();
         for(; pNode != NULL; pNode = pNode->next)
@@ -102,7 +102,7 @@ namespace Lazy
         return true;
     }
 
-    void cParticleSystem::removeDeadParticle()
+    void ParticleSystem::removeDeadParticle()
     {
         ListNode<Attribute> *pPrev = particles.head();
         ListNode<Attribute> *pNode = particles.begin();
@@ -122,13 +122,13 @@ namespace Lazy
         }
     }
 
-    void cParticleSystem::update(float fElapse)
+    void ParticleSystem::update(float fElapse)
     {
         updateParticles(fElapse);
         removeDeadParticle();
     }
 
-    void cParticleSystem::updateParticles(float elapse)
+    void ParticleSystem::updateParticles(float elapse)
     {
         m_amountToRender = 0;
         ParticleVertex *pVertex = NULL;
@@ -158,7 +158,7 @@ namespace Lazy
         m_pVertexBuffer->Unlock();
     }
 
-    void cParticleSystem::render(IDirect3DDevice9 *pDevice)
+    void ParticleSystem::render(IDirect3DDevice9 *pDevice)
     {
         if(m_pVertexBuffer == NULL || particles.empty())
         {
@@ -181,7 +181,7 @@ namespace Lazy
         recoverRenderState(pDevice);
     }
 
-    float cParticleSystem::getRandomFloat(float lowBound, float highBound)
+    float ParticleSystem::getRandomFloat(float lowBound, float highBound)
     {
         if( lowBound > highBound )
         {
@@ -194,19 +194,19 @@ namespace Lazy
         return (f * (highBound - lowBound)) + lowBound;
     }
 
-    D3DXVECTOR3 cParticleSystem::getRandomVector(D3DXVECTOR3* min, D3DXVECTOR3* max)
+    D3DXVECTOR3 ParticleSystem::getRandomVector(D3DXVECTOR3* min, D3DXVECTOR3* max)
     {
         return D3DXVECTOR3(getRandomFloat(min->x, max->x),
                            getRandomFloat(min->y, max->y),
                            getRandomFloat(min->z, max->z));
     }
 
-    void cParticleSystem::updateParticle(Attribute *, float)
+    void ParticleSystem::updateParticle(Attribute *, float)
     {
     }
 
 ///重置一个粒子的属性
-    void cParticleSystem::resetParticle(Attribute *)
+    void ParticleSystem::resetParticle(Attribute *)
     {
     }
 

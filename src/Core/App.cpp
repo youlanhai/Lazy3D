@@ -84,7 +84,7 @@ namespace Lazy
 
     void CApp::releaseSingleton()
     {
-        cSoundMgr::instance()->release();
+        SoundMgr::instance()->release();
         TerrainMap::finiInstance();
         Pick::finiInstance();
         TimerMgr::finiInstance();

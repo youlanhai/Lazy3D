@@ -14,11 +14,11 @@ namespace Lazy
     };
 
 //歌词加载器
-    class CLRCLoader : public IBase
+    class LRCLoader : public IBase
     {
     public:
-        CLRCLoader(void);
-        ~CLRCLoader(void);
+        LRCLoader(void);
+        ~LRCLoader(void);
         bool load(char *szFileName);
         void analysis(char *str);
         void clear(void);

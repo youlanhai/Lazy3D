@@ -227,14 +227,14 @@ void CGame::render()
     rcDevice()->applyProj();
 
     {
-        CLight light;
+        LightHelper light;
         D3DXVECTOR3 dir(-1, -1, -1);
         D3DXVec3Normalize(&dir, &dir);
         light.SetDirectionLight(m_pd3dDevice, dir, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     //设置材质
-    CMaterial::setMaterial(m_pd3dDevice, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+    Material::setMaterial(m_pd3dDevice, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
 
     //设置纹理
     m_pd3dDevice->SetTexture(0, NULL);

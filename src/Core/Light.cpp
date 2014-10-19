@@ -5,15 +5,15 @@
 namespace Lazy
 {
 
-    CLight::CLight(void)
+    LightHelper::LightHelper(void)
     {
     }
 
-    CLight::~CLight(void)
+    LightHelper::~LightHelper(void)
     {
     }
 
-    void CLight::SetPointLight(IDirect3DDevice9 *device, const D3DXVECTOR3 &position, D3DXCOLOR color)
+    void LightHelper::SetPointLight(IDirect3DDevice9 *device, const D3DXVECTOR3 &position, D3DXCOLOR color)
     {
         ZeroMemory(&d3dlight, sizeof(d3dlight));
         d3dlight.Type			= D3DLIGHT_POINT;
@@ -30,7 +30,7 @@ namespace Lazy
         device->LightEnable(0, true);
     }
 
-    void CLight::SetSpotLight(IDirect3DDevice9 *device,
+    void LightHelper::SetSpotLight(IDirect3DDevice9 *device,
                               const D3DXVECTOR3 &position,
                               const D3DXVECTOR3 &direction, D3DXCOLOR color)
     {
@@ -52,7 +52,7 @@ namespace Lazy
         device->LightEnable(0, true);
     }
 
-    void CLight::SetDirectionLight(IDirect3DDevice9 *device,
+    void LightHelper::SetDirectionLight(IDirect3DDevice9 *device,
                                    const D3DXVECTOR3 &direction, D3DXCOLOR color)
     {
         ZeroMemory(&d3dlight, sizeof(d3dlight));
@@ -63,7 +63,7 @@ namespace Lazy
         device->LightEnable(0, true);
     }
 
-    void CLight::SetDirectionLight1(IDirect3DDevice9 *device,
+    void LightHelper::SetDirectionLight1(IDirect3DDevice9 *device,
                                     const D3DXVECTOR3 &direction, D3DXCOLOR color)
     {
         ZeroMemory(&d3dlight, sizeof(d3dlight));

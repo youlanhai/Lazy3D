@@ -37,7 +37,7 @@ namespace Lazy
         }
         if (!m_pLrcLoader)
         {
-            m_pLrcLoader = new CLRCLoader();
+            m_pLrcLoader = new LRCLoader();
         }
         m_pStream = audiere::OpenSound(m_pDevice, szName, true);
         if (!(m_pStream))

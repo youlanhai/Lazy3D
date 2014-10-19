@@ -7,11 +7,11 @@ Material.h（材质类）
 namespace Lazy
 {
 
-    class LZDLL_API CMaterial : public IBase
+    class LZDLL_API Material : public IBase
     {
     public:
-        CMaterial(void);
-        ~CMaterial(void);
+        Material(void);
+        ~Material(void);
         static void setMaterial(
             IDirect3DDevice9 *device,
             D3DCOLORVALUE d,    //Diffuse，漫反射颜色

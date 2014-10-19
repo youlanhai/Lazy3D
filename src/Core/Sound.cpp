@@ -57,7 +57,7 @@ namespace Lazy
     /*是否正在播放。*/
     bool Sound::isPlaying()
     {
-        return cSoundMgr::isSoundPlaying(m_pBuffer);
+        return SoundMgr::isSoundPlaying(m_pBuffer);
     }
 
     /*设置频率。*/
@@ -80,18 +80,18 @@ namespace Lazy
 
 //////////////////////////////////////////////////////////////////////////
 
-    /*static*/ cSoundMgr* cSoundMgr::m_instance = NULL;
+    /*static*/ SoundMgr* SoundMgr::m_instance = NULL;
 
-    /*static*/ cSoundMgr* cSoundMgr::instance()
+    /*static*/ SoundMgr* SoundMgr::instance()
     {
         if (NULL == m_instance)
         {
-            m_instance = new cSoundMgr();
+            m_instance = new SoundMgr();
         }
         return m_instance;
     }
 
-    bool cSoundMgr::isSoundPlaying(LPDSBuffer buffer)
+    bool SoundMgr::isSoundPlaying(LPDSBuffer buffer)
     {
         if (NULL == buffer)
         {
@@ -109,12 +109,12 @@ namespace Lazy
         return false;
     }
 
-    void cSoundMgr::release()
+    void SoundMgr::release()
     {
         SafeDelete(m_instance);
     }
 
-    IDirectSound8* cSoundMgr::getSoundDevice(void)
+    IDirectSound8* SoundMgr::getSoundDevice(void)
     {
         if(NULL == m_dsound)
         {
@@ -132,7 +132,7 @@ namespace Lazy
         return m_dsound;
     }
 
-    SoundPtr cSoundMgr::loadSound(LPCSTR szName)
+    SoundPtr SoundMgr::loadSound(LPCSTR szName)
     {
         Sound *pSound = findUnuse(szName);
         if (pSound)
@@ -164,7 +164,7 @@ namespace Lazy
 
 
     /** 加载资源。*/
-    IDirectSoundBuffer8* cSoundMgr::loadSound_(LPCSTR szName)
+    IDirectSoundBuffer8* SoundMgr::loadSound_(LPCSTR szName)
     {
         XWRITE_LOGA("sound : try to load sound [%s] from file.", szName);
         if (NULL == getSoundDevice())
@@ -264,7 +264,7 @@ namespace Lazy
         return pBuffer8;
     }
 
-    IDirectSoundBuffer8* cSoundMgr::copySound_(IDirectSoundBuffer8* pSource)
+    IDirectSoundBuffer8* SoundMgr::copySound_(IDirectSoundBuffer8* pSource)
     {
         if (NULL == pSource || NULL == getSoundDevice())
         {
@@ -278,13 +278,13 @@ namespace Lazy
         return pBuffer8;
     }
 
-    cSoundMgr::cSoundMgr()
+    SoundMgr::SoundMgr()
     {
         m_dsound = NULL;
         m_cacheSize = 100;
     }
 
-    cSoundMgr::~cSoundMgr()
+    SoundMgr::~SoundMgr()
     {
         m_cache.clear();
         for (SoundIter it = m_sounds.begin(); it != m_sounds.end(); ++it)
@@ -299,14 +299,14 @@ namespace Lazy
         }
     }
 
-    Sound* cSoundMgr::addToCache(Sound *sound)
+    Sound* SoundMgr::addToCache(Sound *sound)
     {
         updateCache();
         m_cache.push_back(sound);
         return sound;
     }
 
-    Sound* cSoundMgr::findUnuse(std::string name)
+    Sound* SoundMgr::findUnuse(std::string name)
     {
         for (SoundPool::iterator it = m_cache.begin();
                 it != m_cache.end();
@@ -324,7 +324,7 @@ namespace Lazy
         return NULL;
     }
 
-    void cSoundMgr::updateCache()
+    void SoundMgr::updateCache()
     {
         if (m_cache.size() < (size_t)m_cacheSize)
         {
@@ -351,7 +351,7 @@ namespace Lazy
         }
     }
 
-    bool cSoundMgr::isSoundUnuse(Sound *sound)
+    bool SoundMgr::isSoundUnuse(Sound *sound)
     {
         return sound->getRef() == 1 && !sound->isPlaying();
     }

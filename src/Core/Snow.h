@@ -7,7 +7,7 @@ namespace Lazy
     class SceneNode;
 
     /**雪花类*/
-    class LZDLL_API Snow : public cParticleSystem
+    class LZDLL_API Snow : public ParticleSystem
     {
     public:
         /**构造函数

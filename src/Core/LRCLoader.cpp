@@ -5,17 +5,17 @@
 namespace Lazy
 {
 
-    CLRCLoader::CLRCLoader(void)
+    LRCLoader::LRCLoader(void)
     {
         m_nCurIndex = -1;
         m_vecLRC.reserve(100);
     }
 
-    CLRCLoader::~CLRCLoader(void)
+    LRCLoader::~LRCLoader(void)
     {
     }
 
-    bool CLRCLoader::load(char *szFileName)
+    bool LRCLoader::load(char *szFileName)
     {
         clear();
         std::ifstream fin(szFileName);
@@ -33,7 +33,7 @@ namespace Lazy
         return true;
     }
 
-    void CLRCLoader::analysis(char *str)
+    void LRCLoader::analysis(char *str)
     {
         int bracket = 0; //括号。-1左括号，0无括号，1右括号
         LRC lrc;
@@ -93,7 +93,7 @@ namespace Lazy
         }
     }
 
-    void CLRCLoader::clear(void)
+    void LRCLoader::clear(void)
     {
         m_nCurIndex = -1;
         m_vecLRC.clear();

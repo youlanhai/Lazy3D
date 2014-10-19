@@ -5,14 +5,14 @@
 namespace Lazy
 {
 
-    CMaterial::CMaterial(void)
+    Material::Material(void)
     {
     }
-    CMaterial::~CMaterial(void)
+    Material::~Material(void)
     {
     }
 
-    void CMaterial::setMaterial(
+    void Material::setMaterial(
         IDirect3DDevice9 *device,
         D3DCOLORVALUE d,
         D3DCOLORVALUE a,
@@ -30,7 +30,7 @@ namespace Lazy
         device->SetMaterial(&material);
     }
 
-    void CMaterial::setMaterial(
+    void Material::setMaterial(
         IDirect3DDevice9 *device,
         D3DCOLORVALUE d,    //Diffuse，漫反射颜色
         D3DCOLORVALUE a   //Ambient，环境光颜色
@@ -40,7 +40,7 @@ namespace Lazy
         setMaterial(device, d, a, black, black, 1.0f);
     }
 
-    void CMaterial::setMaterial(
+    void Material::setMaterial(
         IDirect3DDevice9 *device,
         D3DCOLORVALUE d    //Diffuse，漫反射颜色
     )
@@ -49,7 +49,7 @@ namespace Lazy
     }
 
     /*设置白色材质，s为衰减系数*/
-    void CMaterial::setWhiteMaterial(IDirect3DDevice9 *device, float s)
+    void Material::setWhiteMaterial(IDirect3DDevice9 *device, float s)
     {
         D3DXCOLOR d(s, s, s, 1.0f);
         setMaterial(device, d, d * 0.6f);

@@ -64,7 +64,7 @@ namespace Lazy
         void setFadeTime(float time) { m_nFadeTime = time; }
 
     private:
-        RefPtr<CLRCLoader>      m_pLrcLoader;
+        RefPtr<LRCLoader>      m_pLrcLoader;
         bool                    m_bLRCEnable;
         audiere::RefPtr<audiere::AudioDevice> m_pDevice;
         audiere::RefPtr<audiere::OutputStream> m_pStream;

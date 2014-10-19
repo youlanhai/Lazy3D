@@ -34,14 +34,14 @@ namespace Lazy
     };
 
     /**粒子系统基类*/
-    class LZDLL_API cParticleSystem : public IBase, IRenderable
+    class LZDLL_API ParticleSystem : public IBase, IRenderable
     {
     public:
         ///构造函数
-        cParticleSystem(int maxAmount, const std::wstring & texture);
+        ParticleSystem(int maxAmount, const std::wstring & texture);
 
         ///析构函数
-        ~cParticleSystem(void);
+        ~ParticleSystem(void);
 
         ///渲染定点中的粒子
         virtual void render(IDirect3DDevice9 *pDevice);
@@ -84,7 +84,7 @@ namespace Lazy
         D3DXVECTOR3 getRandomVector(D3DXVECTOR3* min, D3DXVECTOR3* max);
 
     public:
-        cMyList<Attribute> particles; //< 属性链表
+        CachedList<Attribute> particles; //< 属性链表
 
     protected:
         IDirect3DVertexBuffer9 *m_pVertexBuffer;	//顶点缓冲区指针

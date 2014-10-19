@@ -43,14 +43,14 @@ namespace Lazy
     typedef RefPtr<Sound> SoundPtr;
 
 //////////////////////////////////////////////////////////////////////////
-    class LZDLL_API cSoundMgr
+    class LZDLL_API SoundMgr
     {
     public:
         typedef std::map<std::string, LPDSBuffer> SoundMap;
         typedef SoundMap::iterator SoundIter;
         typedef std::list<RefPtr<Sound>> SoundPool;
 
-        static cSoundMgr* instance();
+        static SoundMgr* instance();
 
         void release();
 
@@ -69,9 +69,9 @@ namespace Lazy
 
         LPDSBuffer copySound_(IDirectSoundBuffer8* pSource);
 
-        cSoundMgr();
+        SoundMgr();
 
-        ~cSoundMgr();
+        ~SoundMgr();
 
         void setCacheSize(int size) { m_cacheSize = size; }
 
@@ -91,7 +91,7 @@ namespace Lazy
         SoundPool       m_cache;
         int             m_cacheSize;
 
-        static cSoundMgr *m_instance;
+        static SoundMgr *m_instance;
     };
 
 } // end namespace Lazy

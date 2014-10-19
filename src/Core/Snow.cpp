@@ -6,7 +6,7 @@ namespace Lazy
 {
 
     Snow::Snow(int maxAmount, const std::wstring & texture, SceneNode* source)
-        : cParticleSystem(maxAmount, texture)
+        : ParticleSystem(maxAmount, texture)
         , m_pSource(source)
         , m_rangeMin(-1000.0f, 100.0f, -1000.0f)
         , m_rangeMax(1000.0f, 500.0f, 1000.0f)

@@ -8,7 +8,7 @@
 namespace Lazy
 {
 
-//元素比较
+    //元素比较
     template<typename Type>
     struct ListCompare
     {
@@ -20,9 +20,7 @@ namespace Lazy
             }
         }
     };
-#endif
 
-///mlist.h
     /** 链表结点*/
     template<typename Type>
     struct ListNode
@@ -33,12 +31,11 @@ namespace Lazy
         ListNode(void): next(NULL) { }
     };
 
-///mlist.h
     /**
     * 链表类。单向链表。
     */
     template<typename Type>
-    class cMyList
+    class CachedList
     {
     public:
         typedef typename ListNode<Type> ListNode;///链表结点
@@ -46,13 +43,13 @@ namespace Lazy
     public:
 
         ///构造函数
-        cMyList()
+        CachedList()
         {
             m_nPoolSize = 0;
         }
 
         ///析构函数
-        ~cMyList() { destroy(); }
+        ~CachedList() { destroy(); }
 
         ///链表是否为空
         bool empty(void) { return (NULL == m_head.next); }
@@ -198,3 +195,5 @@ namespace Lazy
 
 
 } // end namespace Lazy
+
+#endif
