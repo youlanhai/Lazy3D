@@ -140,9 +140,6 @@ bool CGame::init(void)
 
     m_projection.setPerspective(D3DX_PI / 4.0f, float(m_nWidth) / m_nHeight, 1.0f, 1000.0f);
 
-    m_pCube = new CCube();
-    m_pCube->init(m_pd3dDevice, 1.0f, 1.0f, 1.0f);
-
     m_pSkyBox = new SkyBox();
     addDrawTask(m_pSkyBox.get());
     m_pSkyBox->setSource(m_pCamera.get());

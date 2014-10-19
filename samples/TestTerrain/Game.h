@@ -40,7 +40,6 @@ public:
 	bool		            m_bGameStart;
 	RefPtr<Camera>	        m_pCamera;
     Projection              m_projection;
-	RefPtr<CCube>		    m_pCube;
     bool                    m_bUseLineMode;
     GUIMgr *                m_pGuiMgr;
     RefPtr<SkyBox>          m_pSkyBox;

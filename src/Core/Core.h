@@ -7,7 +7,6 @@
 #include "AnimModel.h"
 
 #include "Camera.h"
-#include "Cube.h"
 
 #include "Entity.h"
 
@@ -35,7 +34,6 @@
 #include "SkyBox.h"
 #include "Snow.h"
 #include "Sound.h"
-#include "Square.h"
 #include "StaticModel.h"
 
 #include "TerrinMap.h"

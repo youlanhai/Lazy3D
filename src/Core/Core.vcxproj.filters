@@ -44,9 +44,6 @@
     <ClCompile Include="TerrinMap.cpp">
       <Filter>terrain</Filter>
     </ClCompile>
-    <ClCompile Include="cube.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>scene</Filter>
     </ClCompile>
@@ -84,9 +81,6 @@
       <Filter>misc</Filter>
     </ClCompile>
     <ClCompile Include="TopBoard.cpp">
-      <Filter>misc</Filter>
-    </ClCompile>
-    <ClCompile Include="square.cpp">
       <Filter>misc</Filter>
     </ClCompile>
     <ClCompile Include="SkyBox.cpp">
@@ -152,9 +146,6 @@
     <ClInclude Include="TerrinData.h">
       <Filter>terrain</Filter>
     </ClInclude>
-    <ClInclude Include="Cube.h">
-      <Filter>misc</Filter>
-    </ClInclude>
     <ClInclude Include="Collision.h">
       <Filter>scene</Filter>
     </ClInclude>
@@ -192,9 +183,6 @@
       <Filter>misc</Filter>
     </ClInclude>
     <ClInclude Include="TextTexture.h">
-      <Filter>misc</Filter>
-    </ClInclude>
-    <ClInclude Include="Square.h">
       <Filter>misc</Filter>
     </ClInclude>
     <ClInclude Include="SkyBox.h">
