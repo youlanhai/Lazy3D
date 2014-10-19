@@ -114,6 +114,7 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="Billboard.h" />
+    <ClInclude Include="CachedList.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Commen.h" />
@@ -124,7 +125,6 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LRCLoader.h" />
     <ClInclude Include="Material.h" />
-    <ClInclude Include="mlist.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ModelFactory.h" />
     <ClInclude Include="MusicPlayer.h" />

@@ -1,9 +1,4 @@
-﻿///mlist.h
-#pragma once
-
-
-#ifndef LISTCOMPARE
-#define LISTCOMPARE
+﻿#pragma once
 
 namespace Lazy
 {
@@ -32,8 +27,8 @@ namespace Lazy
     };
 
     /**
-    * 链表类。单向链表。
-    */
+     *  缓存结点的单向链表。
+     */
     template<typename Type>
     class CachedList
     {
@@ -45,7 +40,7 @@ namespace Lazy
         ///构造函数
         CachedList()
         {
-            m_nPoolSize = 0;
+            m_cachedSize = 0;
         }
 
         ///析构函数
@@ -99,7 +94,7 @@ namespace Lazy
             return NULL;
         }
 
-        ///清空链表。仅将结点移到内存池。
+        ///清空链表。仅将结点移到缓存。
         void clear()
         {
             ListNode *p = m_head.next;
@@ -110,11 +105,11 @@ namespace Lazy
             m_head.next = NULL;
         }
 
-        ///销毁所有资源，包括内存池
+        ///销毁所有资源，包括缓存
         void destroy()
         {
             clear();
-            ListNode *p = m_memoryPool.next;
+            ListNode *p = m_cached.next;
             ListNode *pTemp = NULL;
             while (p != NULL)
             {
@@ -127,16 +122,16 @@ namespace Lazy
         ///分配新节点
         ListNode *newNode(void)
         {
-            if(NULL == m_memoryPool.next)
+            if(NULL == m_cached.next)
             {
                 return new ListNode();
             }
             else
             {
-                ListNode *p = m_memoryPool.next;
-                m_memoryPool.next = p->next;
+                ListNode *p = m_cached.next;
+                m_cached.next = p->next;
                 p->next = NULL;
-                --m_nPoolSize;
+                --m_cachedSize;
                 return p;
             }
         }
@@ -155,9 +150,9 @@ namespace Lazy
             if (pNode != NULL)
             {
                 ListNode *p = pNode->next;
-                pNode->next = m_memoryPool.next;
-                m_memoryPool.next = pNode;
-                ++m_nPoolSize;
+                pNode->next = m_cached.next;
+                m_cached.next = pNode;
+                ++m_cachedSize;
                 return p;
             }
             else
@@ -166,17 +161,17 @@ namespace Lazy
             }
         }
 
-        ///预留空间。本质上是增加内存池容量。
+        ///预留空间。本质上是增加缓存容量。
         void reseve(int size)
         {
-            for(int i = m_nPoolSize; i < size; ++i)
+            for(int i = m_cachedSize; i < size; ++i)
             {
                 deleteNode(new ListNode());
             }
         }
 
-        ///内存池元素个数
-        int sizePool( void ) { return m_nPoolSize; }
+        ///缓存元素个数
+        int sizePool( void ) { return m_cachedSize; }
 
         ///返回链表头结点
         ListNode * head(void) { return &m_head; }
@@ -189,11 +184,9 @@ namespace Lazy
 
     private:
         ListNode	m_head;		    //头结点
-        ListNode	m_memoryPool;   //内存池
-        int         m_nPoolSize;    //内存池元素个数
+        ListNode	m_cached;       //缓存
+        int         m_cachedSize;   //缓存元素个数
     };
 
 
 } // end namespace Lazy
-
-#endif
