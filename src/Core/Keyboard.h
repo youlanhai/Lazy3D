@@ -6,11 +6,11 @@
 namespace Lazy
 {
 
-    class LZDLL_API CKeyboard : public IBase, public IRenderable
+    class LZDLL_API Keyboard : public IBase, public IRenderable
     {
     public:
-        CKeyboard(void);
-        ~CKeyboard(void);
+        Keyboard(void);
+        ~Keyboard(void);
 
         virtual void update(float fElapse);
 
@@ -24,6 +24,6 @@ namespace Lazy
         BYTE	m_oldKeyboard[256];
     };
 
-    typedef RefPtr<CKeyboard> KeyboardPtr;
+    typedef RefPtr<Keyboard> KeyboardPtr;
 
 } // end namespace Lazy

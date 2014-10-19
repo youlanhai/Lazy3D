@@ -137,7 +137,7 @@ namespace Lazy
 
         if (NULL == m_pSource || getCameraType() == FREE)
         {
-            RefPtr<CKeyboard> keyboard = getApp()->getKeyboard();
+            RefPtr<Keyboard> keyboard = getApp()->getKeyboard();
             //左右旋转
             if(keyboard->isKeyPress('A'))
             {

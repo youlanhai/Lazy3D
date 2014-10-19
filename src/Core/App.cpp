@@ -321,7 +321,7 @@ namespace Lazy
         FontMgr::instance()->init();
         FontMgr::instance()->registerFontFile(L"C:/Windows/Fonts/simhei.ttf", L"def");
 
-        m_pKeyboard = new CKeyboard();
+        m_pKeyboard = new Keyboard();
         addTickTask(m_pKeyboard.get());
 
         addDrawTickTask(TerrainMap::instance());

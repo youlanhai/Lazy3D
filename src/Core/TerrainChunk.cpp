@@ -613,7 +613,7 @@ namespace Lazy
         char buffer[64];
         for (; i < MapConfig::MaxNbChunkLayer; ++i)
         {
-            sprintf(buffer, "g_texture%d", i);
+            sprintf_s(buffer, 64, "g_texture%d", i);
             if (m_textures[i])
             {
                 m_shader->setTexture(buffer, m_textures[i]->getTexture());
@@ -637,7 +637,7 @@ namespace Lazy
 
         m_shader->setMatrix("g_worldViewProj", rcDevice()->getWorldViewProj());
 
-        sprintf(buffer, "tech_%d", maxTexIndex);
+        sprintf_s(buffer, 64, "tech_%d", maxTexIndex);
         if (!m_shader->setTechnique(buffer))
             return;
 

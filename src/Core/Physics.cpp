@@ -149,7 +149,7 @@ namespace Lazy
             m_pSource->setVisible(false);
         }
 
-        RefPtr<CKeyboard> keyboard = getApp()->getKeyboard();
+        RefPtr<Keyboard> keyboard = getApp()->getKeyboard();
 
         bool moved = true;
         m_collid = false;
