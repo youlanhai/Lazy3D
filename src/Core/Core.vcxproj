@@ -93,7 +93,6 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Pick.cpp" />
     <ClCompile Include="Projection.cpp" />
-    <ClCompile Include="RenderRes.cpp" />
     <ClCompile Include="SceneFog.cpp" />
     <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="SkyBox.cpp" />
@@ -138,7 +137,6 @@
     <ClInclude Include="Pick.h" />
     <ClInclude Include="Projection.h" />
     <ClInclude Include="RenderObj.h" />
-    <ClInclude Include="RenderRes.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="SceneFog.h" />
     <ClInclude Include="SceneNode.h" />

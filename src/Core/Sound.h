@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include "renderres.h"
 
 namespace Lazy
 {
