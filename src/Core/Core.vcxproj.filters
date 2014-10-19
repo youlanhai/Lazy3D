@@ -4,7 +4,6 @@
     <ClCompile Include="AnimModel.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Billboard.cpp" />
-    <ClCompile Include="CallBack.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="cube.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -43,7 +42,6 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="Billboard.h" />
-    <ClInclude Include="CallBack.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Commen.h" />
     <ClInclude Include="Core.h" />

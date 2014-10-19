@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "Base.h"
-#include "../utility/Singleton.h"
+#include "UtilConfig.h"
+#include "Singleton.h"
 
 #include <queue>
 #include <functional>
@@ -9,7 +9,7 @@
 namespace Lazy
 {
 
-    class LZDLL_API ITimerDelegate : public IBase
+    class ITimerDelegate : public IBase
     {
     public:
         virtual void onCall() = 0;
@@ -49,7 +49,7 @@ namespace Lazy
 
 
     /** 定时器*/
-    class LZDLL_API TimerMgr : public Singleton<TimerMgr>
+    class TimerMgr : public Singleton<TimerMgr>
     {
     public:
         typedef std::priority_queue<TimerNode>   Timers;

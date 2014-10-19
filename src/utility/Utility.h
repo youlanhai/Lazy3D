@@ -23,6 +23,7 @@
 
 #include "StringConvTool.h"
 
+#include "Timer.h"
 #include "Tools2d.h"
 
 #include "VisitPool.h"

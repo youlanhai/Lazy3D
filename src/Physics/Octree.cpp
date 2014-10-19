@@ -52,7 +52,7 @@ namespace Lazy
                 }
             }
 
-            if (bestRate >= indices.size())//出现了退化，所有aabb此边坐标都相等
+            if (bestRate >= int(indices.size()))//出现了退化，所有aabb此边坐标都相等
             {
                 //splitAABBHalf(rcFront, rcBack, splitPos, rect, splitAxis);
                 return false;
@@ -107,7 +107,7 @@ namespace Lazy
                 if (ok) break;
             }
 
-            if (minGap >= indices.size())//出现了退化，所有aabb此边坐标都相等
+            if (minGap >= int(indices.size()))//出现了退化，所有aabb此边坐标都相等
             {
                 return false;
             }

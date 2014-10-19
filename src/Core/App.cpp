@@ -75,6 +75,7 @@ namespace Lazy
         MemoryPool::init();
         TerrainMap::initInstance();
         Pick::initInstance();
+        TimerMgr::initInstance();
     }
 
     void CApp::releaseSingleton()
@@ -82,6 +83,7 @@ namespace Lazy
         cSoundMgr::instance()->release();
         TerrainMap::finiInstance();
         Pick::finiInstance();
+        TimerMgr::finiInstance();
 
         //////////////////////////////////////////////////////////////////////////
         clearSectionCache();
@@ -199,6 +201,7 @@ namespace Lazy
         if (m_fElapse < 0.00001f) return;
 
         oldUpdateTime = curTime;
+        TimerMgr::instance()->update(m_fElapse);
 
         update();//更新逻辑
         render();//渲染画面
@@ -308,9 +311,7 @@ namespace Lazy
         addUpdater(m_pKeyboard.get());
 
         addUpdateRender(TerrainMap::instance());
-
         addUpdateRender(EntityMgr::instance());
-        addUpdater(CallbackMgr::instance());
 
         m_pSkyBox = new SkyBox();
         addRender(m_pSkyBox.get());
@@ -320,7 +321,6 @@ namespace Lazy
     /**游戏更新*/
     void CApp::update(void)
     {
-
     }
 
     /**渲染*/

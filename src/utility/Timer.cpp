@@ -1,11 +1,11 @@
 ﻿
 #include "stdafx.h"
-#include "CallBack.h"
-#include "../utility/Log.h"
+#include "Timer.h"
+#include "Log.h"
 
 namespace Lazy
 {
-
+    
     class FunctionTimerDelegate : public ITimerDelegate
     {
     public:
@@ -22,7 +22,7 @@ namespace Lazy
         std::function<void()> m_callback;
     };
 
-
+    IMPLEMENT_SINGLETON(TimerMgr);
     TimerMgr::TimerMgr()
         : m_idAllocator(0)
         , m_time(0)

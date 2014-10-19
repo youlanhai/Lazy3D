@@ -236,7 +236,7 @@ namespace Lazy
 
 
         DWORD NumFaces = pMesh->GetNumFaces();
-        pMeshContainer->NumMaterials = max(1, NumMaterials);
+        pMeshContainer->NumMaterials = max<DWORD>(1, NumMaterials);
 
         pMeshContainer->pMaterials = new D3DXMATERIAL[pMeshContainer->NumMaterials];
         pMeshContainer->ppTextures = new LPDIRECT3DTEXTURE9[pMeshContainer->NumMaterials];
@@ -528,10 +528,10 @@ namespace Lazy
         if (FAILED(hr))
             return hr;
 
-        NumMaxFaceInfl = min2(NumMaxFaceInfl, 12);
+        NumMaxFaceInfl = min<DWORD>(NumMaxFaceInfl, 12);
         if (pCaps->MaxVertexBlendMatrixIndex + 1 < NumMaxFaceInfl)
         {
-            pMeshContainer->NumPaletteEntries = min2(
+            pMeshContainer->NumPaletteEntries = min<DWORD>(
                 256, 
                 pMeshContainer->pSkinInfo->GetNumBones());
 

@@ -99,6 +99,9 @@
     <ClCompile Include="SmartPtr.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileFind.h">
@@ -201,6 +204,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

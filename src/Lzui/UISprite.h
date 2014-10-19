@@ -70,7 +70,7 @@ namespace Lazy
         void setColor(uint32 color) { m_color = color; }
         uint32 getColor() const { return m_color; }
 
-        inline void update(float elapse) {}
+        inline void update(float /*elapse*/) {}
         virtual void render(IUIRender * pDevice, const CPoint & world);
 
     private:

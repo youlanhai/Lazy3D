@@ -101,6 +101,7 @@
     </ClCompile>
     <ClCompile Include="StringConvTool.cpp" />
     <ClCompile Include="TaskMgr.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Tools2d.cpp" />
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="ZLock.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="StringConvTool.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TaskMgr.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="Tools2d.h" />
     <ClInclude Include="UtilConfig.h" />
     <ClInclude Include="Utility.h" />

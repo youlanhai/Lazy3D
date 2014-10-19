@@ -203,7 +203,7 @@ namespace Lazy
                 CollisionPrevent cp(start, end, true, config);
                 if (preventCollision(cp))
                 {
-                    distance = max(0, cp.m_distance - heighError);
+                    distance = max(0.0f, cp.m_distance - heighError);
 
                     //跳跃中断
                     m_isJumping = false;

@@ -77,7 +77,6 @@
     <ClCompile Include="AnimModel.cpp" />
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Billboard.cpp" />
-    <ClCompile Include="CallBack.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="cube.cpp" />
@@ -119,7 +118,6 @@
     <ClInclude Include="App.h" />
     <ClInclude Include="Base.h" />
     <ClInclude Include="Billboard.h" />
-    <ClInclude Include="CallBack.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Commen.h" />

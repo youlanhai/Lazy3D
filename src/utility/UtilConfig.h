@@ -9,7 +9,16 @@
 #ifndef LAZY_UTILITY_CONFIG_H
 #define LAZY_UTILITY_CONFIG_H
 
+#define NOMINMAX
 #include <Windows.h>
+
+#ifdef min
+#undef min
+#endif
+
+#ifdef max
+#undef max
+#endif
 
 #include <tchar.h>
 
@@ -74,6 +83,18 @@ namespace Lazy
 
     typedef std::vector<tstring> StringPool;
     const tstring EmptyStr = _T("");
+
+    template<typename T>
+    T min(T a, T b)
+    {
+        return a < b ? a : b;
+    }
+
+    template<typename T>
+    T max(T a, T b)
+    {
+        return a > b ? a : b;
+    }
 
 }//namespace Lazy
 
