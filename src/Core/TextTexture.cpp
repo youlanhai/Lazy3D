@@ -5,7 +5,7 @@
 #include "../Font/Font.h"
 
 #include "TextTexture.h"
-#include "App.h"
+#include "../Render/RenderDevice.h"
 
 namespace Lazy
 {
@@ -53,7 +53,7 @@ namespace Lazy
         return t;
     }
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     TextTextureEx::TextTextureEx()
         : m_color(0xff000000)
         , m_pTexture(0)
@@ -78,12 +78,11 @@ namespace Lazy
         m_dirty = true;
     }
 
-    void TextTextureEx::setColor(DWORD cr)
+    void TextTextureEx::setColor(uint32 cr)
     {
         if (m_color == cr)
-        {
             return;
-        }
+
         m_color = cr;
         m_dirty = true;
     }
@@ -91,9 +90,7 @@ namespace Lazy
     void TextTextureEx::setFont(const std::wstring & font)
     {
         if (m_font == font)
-        {
             return;
-        }
 
         m_font = font;
         m_dirty = true;
@@ -103,9 +100,7 @@ namespace Lazy
     void TextTextureEx::loadTexture()
     {
         if (!m_dirty)
-        {
             return;
-        }
 
         m_dirty = false;//尽管会创建失败，但也要设置为false。
 
@@ -113,8 +108,7 @@ namespace Lazy
         if (!font)
         {
             clearTextrue(m_pTexture, 0, 0);
-
-            debugMessageA("ERROR : get font %s faild!", m_font.c_str());
+            LOG_ERROR(L"get font %s faild!", m_font.c_str());
             return;
         }
 
@@ -128,7 +122,7 @@ namespace Lazy
             {
                 clearTextrue(m_pTexture, 0, 0);
 
-                debugMessage(_T("ERROR : get texture desc faild!"));
+                LOG_ERROR(_T("get texture desc faild!"));
                 return;
             }
             if(m_width > int(desc.Width) || m_height > int(desc.Height))
@@ -148,15 +142,15 @@ namespace Lazy
             int texHeight = m_height + 10;
 #endif
 
-            LPDIRECT3DDEVICE9 pDevice = getApp()->getDevice();
+            dx::Device * pDevice = rcDevice()->getDevice();
             if(FAILED(D3DXCreateTexture( pDevice, texWidth, texHeight,
                                          1, 0, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &m_pTexture)))
             {
-                debugMessage(_T("ERROR : create texture for %s faild"), m_text.c_str());
+                LOG_ERROR(_T("create texture for %s faild"), m_text.c_str());
                 return ;
             }
 
-            debugMessage(_T("create topboard texture (w=%d, h=%d) : %s"), texWidth, texHeight, m_text.c_str());
+            LOG_ERROR(_T("topboard texture (w=%d, h=%d) : %s"), texWidth, texHeight, m_text.c_str());
         }
 
         clearTextrue(m_pTexture, 0, 0);
