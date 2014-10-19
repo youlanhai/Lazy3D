@@ -5,11 +5,11 @@
 namespace Lazy
 {
 
-    class TextTextureEx : public IBase
+    class TextTexture : public IBase
     {
     public:
-        TextTextureEx();
-        ~TextTextureEx();
+        TextTexture();
+        ~TextTexture();
 
         void setText(const std::wstring & text);
         void setColor(uint32 color);

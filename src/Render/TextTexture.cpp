@@ -55,7 +55,7 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////////
-    TextTextureEx::TextTextureEx()
+    TextTexture::TextTexture()
         : m_color(0xff000000)
         , m_pTexture(0)
         , m_dirty(true)
@@ -64,12 +64,12 @@ namespace Lazy
     {
 
     }
-    TextTextureEx::~TextTextureEx()
+    TextTexture::~TextTexture()
     {
         SafeRelease(m_pTexture);
     }
 
-    void TextTextureEx::setText(const std::wstring & text)
+    void TextTexture::setText(const std::wstring & text)
     {
         if (m_text == text)
         {
@@ -79,7 +79,7 @@ namespace Lazy
         m_dirty = true;
     }
 
-    void TextTextureEx::setColor(uint32 cr)
+    void TextTexture::setColor(uint32 cr)
     {
         if (m_color == cr)
             return;
@@ -88,7 +88,7 @@ namespace Lazy
         m_dirty = true;
     }
 
-    void TextTextureEx::setFont(const std::wstring & font)
+    void TextTexture::setFont(const std::wstring & font)
     {
         if (m_font == font)
             return;
@@ -98,7 +98,7 @@ namespace Lazy
     }
 
 
-    void TextTextureEx::loadTexture()
+    void TextTexture::loadTexture()
     {
         if (!m_dirty)
             return;

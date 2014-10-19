@@ -12,7 +12,7 @@ namespace Lazy
     TopBoard::TopBoard(void)
         : m_pSource(nullptr)
         , m_biasHeight(2.0f)
-        , m_pTextTexture(new TextTextureEx())
+        , m_pTextTexture(new TextTexture())
     {
     }
 

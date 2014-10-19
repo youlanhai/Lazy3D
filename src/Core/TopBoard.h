@@ -35,7 +35,7 @@ namespace Lazy
         SceneNode * getSource() const { return m_pSource; }
 
     protected:
-        RefPtr<TextTextureEx>    m_pTextTexture;
+        RefPtr<TextTexture>    m_pTextTexture;
         SceneNode               *m_pSource;
         float                   m_biasHeight;
     };
