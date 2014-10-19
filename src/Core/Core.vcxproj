@@ -132,7 +132,7 @@
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Pick.h" />
     <ClInclude Include="Projection.h" />
-    <ClInclude Include="RenderObj.h" />
+    <ClInclude Include="RenderInterface.h" />
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="SceneFog.h" />
     <ClInclude Include="SceneNode.h" />

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "RenderObj.h"
-#include "..\third_part\audiere\audiere.h"
+#include "RenderInterface.h"
+#include "../third_part/audiere/audiere.h"
 #include "LRCLoader.h"
 
 #ifndef RT_VOID
@@ -13,7 +13,7 @@
 namespace Lazy
 {
 
-    class LZDLL_API MusicPlayer : public IBase , public IUpdate
+    class LZDLL_API MusicPlayer : public IBase , public IRenderable
     {
     public:
         MusicPlayer(void);

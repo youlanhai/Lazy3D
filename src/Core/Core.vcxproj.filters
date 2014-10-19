@@ -197,11 +197,11 @@
     <ClInclude Include="Keyboard.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="RenderObj.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="mlist.h">
       <Filter>pariticle</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderInterface.h">
+      <Filter>app</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Base.h"
-#include "RenderObj.h"
+#include "RenderInterface.h"
 #include "mlist.h"  //自定义单向链表
 
 namespace Lazy
@@ -34,7 +34,7 @@ namespace Lazy
     };
 
     /**粒子系统基类*/
-    class LZDLL_API cParticleSystem : public IBase, IRenderObj
+    class LZDLL_API cParticleSystem : public IBase, IRenderable
     {
     public:
         ///构造函数

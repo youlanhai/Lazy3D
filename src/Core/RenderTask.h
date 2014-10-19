@@ -1,13 +1,13 @@
 ﻿#pragma once
 
-#include "RenderObj.h"
+#include "RenderInterface.h"
 
 namespace Lazy
 {
     ///安全访问数据。注意：该类不支持多线程。
-    class CRenderTask :
-        public IRenderObj,
-        public VisitPool<IRenderObj*>
+    class RenderTask :
+        public IRenderable,
+        public VisitPool<IRenderable*>
     {
     public:
 
@@ -38,7 +38,7 @@ namespace Lazy
         }
     };
 
-    typedef RefPtr<CRenderTask> RenderTaskPtr;
+    typedef RefPtr<RenderTask> RenderTaskPtr;
 
 
 } // end namespace Lazy

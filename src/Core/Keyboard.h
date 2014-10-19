@@ -1,24 +1,21 @@
 ﻿#pragma once
 
 #include "Base.h"
-#include "RenderObj.h"
+#include "RenderInterface.h"
 
 namespace Lazy
 {
 
-    class LZDLL_API CKeyboard : public IUpdate, public IBase
+    class LZDLL_API CKeyboard : public IBase, public IRenderable
     {
     public:
         CKeyboard(void);
-
         ~CKeyboard(void);
 
         virtual void update(float fElapse);
 
         bool isKeyDown(DWORD vk);
-
         bool isKeyPress(DWORD vk);
-
         bool isKeyUp(DWORD vk);
 
         BYTE* getKeyboard(void) { return m_keyboard; }

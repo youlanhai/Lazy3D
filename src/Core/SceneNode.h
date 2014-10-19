@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Base.h"
-#include "RenderObj.h"
+#include "RenderInterface.h"
 
 namespace Lazy
 {

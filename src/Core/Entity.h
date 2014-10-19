@@ -93,7 +93,7 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////////
     ///
     //////////////////////////////////////////////////////////////////////////
-    class LZDLL_API EntityMgr : public IRenderObj, public IBase
+    class LZDLL_API EntityMgr : public IRenderable, public IBase
     {
     public:
         typedef VisitPool<EntityPtr>  EntityPool;

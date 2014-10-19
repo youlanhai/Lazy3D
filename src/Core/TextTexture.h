@@ -1,8 +1,7 @@
 ﻿#pragma once
 
 #include "Base.h"
-#include "RenderObj.h"
-#include "..\utility\UtilConfig.h"
+#include "../utility/UtilConfig.h"
 
 namespace Lazy
 {

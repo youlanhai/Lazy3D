@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "RenderObj.h"
+#include "RenderInterface.h"
 
 
 namespace Lazy
@@ -9,7 +9,7 @@ namespace Lazy
     typedef RefPtr<class IModel>  ModelPtr;
 
 ///模型基类
-    class LZDLL_API IModel : public IBase, public IRenderObj
+    class LZDLL_API IModel : public IBase, public IRenderable
     {
     public:
         ///构造函数

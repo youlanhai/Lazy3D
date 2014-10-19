@@ -137,14 +137,14 @@ namespace Lazy
     public:
         KeyboardPtr getKeyboard(void) { return m_pKeyboard; }
 
-        void addDrawTask(IRenderObj* rend);
-        void delDrawTask(IRenderObj* rend);
+        void addDrawTask(IRenderable* rend);
+        void delDrawTask(IRenderable* rend);
 
-        void addTickTask(IRenderObj* up);
-        void delTickTask(IRenderObj* up);
+        void addTickTask(IRenderable* up);
+        void delTickTask(IRenderable* up);
 
-        void addDrawTickTask(IRenderObj *pObj);
-        void delDrawTickTask(IRenderObj* pObj);
+        void addDrawTickTask(IRenderable *pObj);
+        void delDrawTickTask(IRenderable* pObj);
 
         bool isMsgHooked(void) { return m_bMsgHooked; }
 

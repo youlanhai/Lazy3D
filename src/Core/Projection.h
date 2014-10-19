@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "RenderObj.h"
-
 namespace Lazy
 {
     class Projection

@@ -1,14 +1,14 @@
 ﻿#pragma once
 
 #include "base.h"
-#include "RenderObj.h"
+#include "RenderInterface.h"
 
 #include "../Render/Texture.h"
 
 namespace Lazy
 {
     /** 公告板*/
-    class LZDLL_API Billboard : public IBase, public IRenderObj
+    class LZDLL_API Billboard : public IBase, public IRenderable
     {
     public:
         Billboard(void);

@@ -5,13 +5,13 @@
 #pragma once
 
 #include "Base.h"
-#include "RenderObj.h"
+#include "RenderInterface.h"
 
 namespace Lazy
 {
     class SceneNode;
 
-    class LZDLL_API SkyBox : public IBase, public IRender
+    class LZDLL_API SkyBox : public IBase, public IRenderable
     {
     public:
         SkyBox();

@@ -315,8 +315,8 @@ namespace Lazy
     {
         srand(timeGetTime());
 
-        m_pRenderTaskMgr = new CRenderTask();
-        m_pUpdateTaskMgr = new CRenderTask();
+        m_pRenderTaskMgr = new RenderTask();
+        m_pUpdateTaskMgr = new RenderTask();
 
         FontMgr::instance()->init();
         FontMgr::instance()->registerFontFile(L"C:/Windows/Fonts/simhei.ttf", L"def");
@@ -418,34 +418,34 @@ namespace Lazy
         return rc;
     }
 
-    void CApp::addDrawTask(IRenderObj* rend)
+    void CApp::addDrawTask(IRenderable* rend)
     {
         m_pRenderTaskMgr->add(rend);
     }
-    void CApp::addTickTask(IRenderObj* up)
+    void CApp::addTickTask(IRenderable* up)
     {
         m_pUpdateTaskMgr->add(up);
     }
 
-    void CApp::addDrawTickTask(IRenderObj *pObj)
+    void CApp::addDrawTickTask(IRenderable *pObj)
     {
         addDrawTask(pObj);
         addTickTask(pObj);
     }
 
-    void CApp::delDrawTask(IRenderObj* rend)
+    void CApp::delDrawTask(IRenderable* rend)
     {
         if (m_pRenderTaskMgr)
             m_pRenderTaskMgr->remove(rend);
     }
 
-    void CApp::delTickTask(IRenderObj* up)
+    void CApp::delTickTask(IRenderable* up)
     {
         if (m_pUpdateTaskMgr)
             m_pUpdateTaskMgr->remove(up);
     }
 
-    void CApp::delDrawTickTask(IRenderObj* pObj)
+    void CApp::delDrawTickTask(IRenderable* pObj)
     {
         delDrawTask(pObj);
         delTickTask(pObj);

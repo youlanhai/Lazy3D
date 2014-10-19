@@ -27,7 +27,7 @@
 #include "Physics.h"
 #include "Projection.h"
 
-#include "RenderObj.h"
+#include "RenderInterface.h"
 #include "RenderTask.h"
 
 #include "SceneFog.h"
