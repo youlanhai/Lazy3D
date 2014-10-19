@@ -31,7 +31,6 @@ public:
     /*释放资源*/
     void clear(void);
 
-	void renderText();
 	void updateCamera(float fElapse);
 
     virtual bool onEvent(const SEvent & event) override;
@@ -44,4 +43,5 @@ public:
 	RefPtr<CCube>		    m_pCube;
     bool                    m_bUseLineMode;
     GUIMgr *                m_pGuiMgr;
+    RefPtr<SkyBox>          m_pSkyBox;
 };

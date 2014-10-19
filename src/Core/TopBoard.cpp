@@ -14,15 +14,11 @@ namespace Lazy
         , m_biasHeight(2.0f)
         , m_pTextTexture(new TextTextureEx())
     {
-
-        getApp()->addUpdateRender(this);
     }
 
     TopBoard::~TopBoard(void)
     {
         m_pTextTexture = NULL;
-
-        getApp()->removeUpdateRender(this);
     }
 
     bool TopBoard::create(const std::wstring & text,

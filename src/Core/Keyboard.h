@@ -27,4 +27,6 @@ namespace Lazy
         BYTE	m_oldKeyboard[256];
     };
 
+    typedef RefPtr<CKeyboard> KeyboardPtr;
+
 } // end namespace Lazy

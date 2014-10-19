@@ -36,12 +36,10 @@ namespace Lazy
         {
             addParticle();
         }
-        getApp()->addUpdateRender(this);
     }
 
     cParticleSystem::~cParticleSystem(void)
     {
-        getApp()->removeUpdateRender(this);
         SafeRelease(m_pVertexBuffer);
     }
 

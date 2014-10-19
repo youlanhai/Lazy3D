@@ -19,12 +19,10 @@ namespace Lazy
         m_nFadeTime = 1.0f;    //淡化时间(ms)
         m_nElapseTime = 0;  //已经淡化时间
         m_fOldVolum = 1.0f;
-        getApp()->addUpdater(this);
     }
 
     MusicPlayer::~MusicPlayer(void)
     {
-        getApp()->removeUpdater(this);
     }
 
     bool MusicPlayer::loadMusic(LPCSTR szName)

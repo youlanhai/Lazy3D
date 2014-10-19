@@ -205,10 +205,21 @@ namespace Lazy
         if (m_fElapse < 0.00001f) return;
 
         oldUpdateTime = curTime;
-        TimerMgr::instance()->update(m_fElapse);
 
         update();//更新逻辑
-        render();//渲染画面
+
+        rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 100), 1.0f, 0);
+        if (rcDevice()->beginScene())
+        {
+            render();//渲染画面
+            rcDevice()->endScene();
+        }
+        else
+        {
+            LOG_DEBUG(_T("ERROR: Render scene failed!(m_pd3dDevice->BeginScene())"));
+            Sleep(100);
+        }
+        rcDevice()->present();
 
         //Sleep(100);
     }
@@ -306,40 +317,37 @@ namespace Lazy
 
         m_pRenderTaskMgr = new CRenderTask();
         m_pUpdateTaskMgr = new CRenderTask();
-        m_pBillboardMgr = new CRenderTask();
 
         FontMgr::instance()->init();
         FontMgr::instance()->registerFontFile(L"C:/Windows/Fonts/simhei.ttf", L"def");
 
         m_pKeyboard = new CKeyboard();
-        addUpdater(m_pKeyboard.get());
+        addTickTask(m_pKeyboard.get());
 
-        addUpdateRender(TerrainMap::instance());
-        addUpdateRender(EntityMgr::instance());
+        addDrawTickTask(TerrainMap::instance());
+        addDrawTickTask(EntityMgr::instance());
 
-        m_pSkyBox = new SkyBox();
-        addRender(m_pSkyBox.get());
         return true;
     }
 
     /**游戏更新*/
     void CApp::update(void)
     {
+        TimerMgr::instance()->update(m_fElapse);
+        m_pUpdateTaskMgr->update(m_fElapse);
     }
 
     /**渲染*/
     void CApp::render(void)
     {
-
+        m_pRenderTaskMgr->render(m_pd3dDevice);
     }
 
     /**释放资源*/
     void CApp::clear(void)
     {
-        m_pSkyBox = NULL;
         m_pRenderTaskMgr = NULL;
         m_pUpdateTaskMgr = NULL;
-        m_pBillboardMgr = NULL;
         m_pKeyboard = NULL;
 
         FontMgr::instance()->fini();
@@ -373,10 +381,10 @@ namespace Lazy
     }
 
 
-    void CApp::setCaption(std::wstring const & caption)
+    void CApp::setCaption(const tstring & caption)
     {
         m_caption = caption;
-        SetWindowTextW(m_hWnd, m_caption.c_str());
+        SetWindowText(m_hWnd, m_caption.c_str());
     }
 
     void CApp::screenToClient(POINT* pt)
@@ -410,51 +418,37 @@ namespace Lazy
         return rc;
     }
 
-    void CApp::addRender(IRenderObj* rend)
+    void CApp::addDrawTask(IRenderObj* rend)
     {
         m_pRenderTaskMgr->add(rend);
     }
-    void CApp::addUpdater(IRenderObj* up)
+    void CApp::addTickTask(IRenderObj* up)
     {
         m_pUpdateTaskMgr->add(up);
     }
 
-    void CApp::addUpdateRender(IRenderObj *pObj)
+    void CApp::addDrawTickTask(IRenderObj *pObj)
     {
-        addUpdater(pObj);
-        addRender(pObj);
+        addDrawTask(pObj);
+        addTickTask(pObj);
     }
 
-    void CApp::addBillboard(IRenderObj* pObj)
+    void CApp::delDrawTask(IRenderObj* rend)
     {
-        m_pBillboardMgr->add(pObj);
+        if (m_pRenderTaskMgr)
+            m_pRenderTaskMgr->remove(rend);
     }
 
-    void CApp::removeRender(IRenderObj* rend)
+    void CApp::delTickTask(IRenderObj* up)
     {
-        if (!m_pRenderTaskMgr) return;
-
-        m_pRenderTaskMgr->remove(rend);
+        if (m_pUpdateTaskMgr)
+            m_pUpdateTaskMgr->remove(up);
     }
 
-    void CApp::removeUpdater(IRenderObj* up)
+    void CApp::delDrawTickTask(IRenderObj* pObj)
     {
-        if (!m_pUpdateTaskMgr) return;
-
-        m_pUpdateTaskMgr->remove(up);
-    }
-
-    void CApp::removeUpdateRender(IRenderObj* pObj)
-    {
-        removeUpdater(pObj);
-        removeRender(pObj);
-    }
-
-    void CApp::removeBillboard(IRenderObj* pObj)
-    {
-        if (m_pBillboardMgr) return;
-
-        m_pBillboardMgr->remove(pObj);
+        delDrawTask(pObj);
+        delTickTask(pObj);
     }
 
     void CApp::startGameLoading(int type)
@@ -464,6 +458,6 @@ namespace Lazy
         m_loadingElapse = 0.0f;
     }
 
-///////////////////class CApp end/////////////////////////
+    ///////////////////class CApp end/////////////////////////
 
 } // end namespace Lazy

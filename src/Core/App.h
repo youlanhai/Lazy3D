@@ -1,15 +1,12 @@
 ﻿//App.h
 #pragma once
 
+#include "../utility/UtilConfig.h"
+
 #include "Keyboard.h"
-
-#include "RenderObj.h"
 #include "RenderTask.h"
+
 #include "../Render/RenderDevice.h"
-
-#include "SkyBox.h"
-
-#include "TextTexture.h"
 
 namespace Lazy
 {
@@ -114,7 +111,7 @@ namespace Lazy
     public://属性
 
         ///获得绘图设备
-        IDirect3DDevice9* getDevice(void) { return m_pd3dDevice; }
+        dx::Device * getDevice(void) { return m_pd3dDevice; }
 
         ///获得窗口宽度
         int getWidth(void) const { return m_nWidth; }
@@ -122,53 +119,41 @@ namespace Lazy
         ///获得窗口高度
         int getHeight(void) const { return m_nHeight; }
 
-        ///是否是全屏
-        bool isFullScr(void) const { return m_bFullScreen; }
+        bool isFullScreen(void) const { return m_bFullScreen; }
 
-        ///获得窗口句柄
         HWND getHWnd(void) const { return m_hWnd; }
 
-        ///获得窗口实例句柄
         HINSTANCE getInstance(void) const { return m_hInstance; }
 
         float elapse() const { return m_fElapse; }
 
-
         ///设置窗口标题
-        void setCaption(std::wstring const & caption);
-        ///获得窗口标题
-        std::wstring const & getCaption(void) const { return m_caption; }
+        void setCaption(tstring const & caption);
+        const tstring & getCaption(void) const { return m_caption; }
 
-
-        float getTimeScale() const { return m_timeScale; }
-        void setTimeScale(float scale) { m_timeScale = scale; }
+        float   getTimeScale() const { return m_timeScale; }
+        void    setTimeScale(float scale) { m_timeScale = scale; }
 
     public:
-        CRenderTask* getRenderTaskMgr(void) { return m_pRenderTaskMgr.get(); }
-        CRenderTask* getUpdateTaskMgr(void) { return m_pUpdateTaskMgr.get(); }
+        KeyboardPtr getKeyboard(void) { return m_pKeyboard; }
 
-        CKeyboard* getKeyboard(void) { return m_pKeyboard.get(); }
+        void addDrawTask(IRenderObj* rend);
+        void delDrawTask(IRenderObj* rend);
 
-        RefPtr<SkyBox> getSkyBox(void) { return m_pSkyBox; }
+        void addTickTask(IRenderObj* up);
+        void delTickTask(IRenderObj* up);
 
-        void addRender(IRenderObj* rend);
-        void removeRender(IRenderObj* rend);
-
-        void addUpdater(IRenderObj* up);
-        void removeUpdater(IRenderObj* up);
-
-        void addUpdateRender(IRenderObj *pObj);
-        void removeUpdateRender(IRenderObj* pObj);
+        void addDrawTickTask(IRenderObj *pObj);
+        void delDrawTickTask(IRenderObj* pObj);
 
         bool isMsgHooked(void) { return m_bMsgHooked; }
 
-        CRect getClientRect(void);
-        void screenToClient(POINT* pt);
-        void clientToScreen(POINT* pt);
+        CRect   getClientRect(void);
+        void    screenToClient(POINT* pt);
+        void    clientToScreen(POINT* pt);
 
-        CPoint getCursorPos(void);
-        void setCursorPos(CPoint pt);
-
+        CPoint  getCursorPos(void);
+        void    setCursorPos(CPoint pt);
 
     public:
 
@@ -187,7 +172,7 @@ namespace Lazy
         HWND				m_hWnd;				//窗口句柄
         int		            m_nWidth;			//窗口宽度
         int		            m_nHeight;			//窗口高度
-        std::wstring        m_caption;	        //窗口标题
+        tstring             m_caption;	        //窗口标题
         float               m_fElapse;
         float               m_timeScale;
 
@@ -202,8 +187,7 @@ namespace Lazy
         //公共资源
         RenderTaskPtr       m_pRenderTaskMgr;   //< 渲染队列
         RenderTaskPtr       m_pUpdateTaskMgr;   //< 更新队列
-        RefPtr<CKeyboard>	m_pKeyboard;
-        RefPtr<SkyBox>      m_pSkyBox;
+        KeyboardPtr	        m_pKeyboard;
     };
 
 }// end namespace Lazy

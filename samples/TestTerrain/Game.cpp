@@ -115,6 +115,7 @@ bool CGame::init(void)
     g_player = new Player();
     g_player->setPhysics(new IPhysics());
     g_player->setSpeed(Vector3(8.0f, 8.0, 8.0f));
+    EntityMgr::instance()->add(g_player);
 
     ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x", ModelType::SkinModel);
     if (model)
@@ -124,7 +125,6 @@ bool CGame::init(void)
         g_player->setModel(model);
     }
 
-    addUpdateRender(g_player.get());
     TerrainMap::instance()->setSource(g_player.get());
 
     m_pCamera = new Camera(Camera::THIRD);
@@ -143,6 +143,8 @@ bool CGame::init(void)
     m_pCube = new CCube();
     m_pCube->init(m_pd3dDevice, 1.0f, 1.0f, 1.0f);
 
+    m_pSkyBox = new SkyBox();
+    addDrawTask(m_pSkyBox.get());
     m_pSkyBox->setSource(m_pCamera.get());
     m_pSkyBox->setSkyImage(ptrRoot->readString(L"sky"));
     m_pSkyBox->setSkyRange(Vector3(-200, -200, -200), Vector3(200, 200, 200));
@@ -173,14 +175,7 @@ void CGame::update()
 {
     CApp::update();
 
-    if (!m_bGameStart)
-    {
-        return;
-    }
-
     Lazy::LoadingMgr::instance()->dispatchFinishTask();
-
-    m_pUpdateTaskMgr->update(m_fElapse);
 
     //在此添加更新代码
     if (m_pKeyboard->isKeyUp('J'))
@@ -226,91 +221,50 @@ void CGame::updateCamera(float fEla)
 //渲染
 void CGame::render()
 {
-    rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 100), 1.0f, 0);
+    //添加渲染代码
+    rcDevice()->setView(m_pCamera->getViewMatrix());
+    rcDevice()->setProj(m_projection.getProjection());
 
-    if (rcDevice()->beginScene())
+    rcDevice()->applyWorld();
+    rcDevice()->applyView();
+    rcDevice()->applyProj();
+
     {
-        //添加渲染代码
-        rcDevice()->setView(m_pCamera->getViewMatrix());
-        rcDevice()->setProj(m_projection.getProjection());
-
-        rcDevice()->applyWorld();
-        rcDevice()->applyView();
-        rcDevice()->applyProj();
-
-        {
-            CLight light;
-            D3DXVECTOR3 dir(-1, -1, -1);
-            D3DXVec3Normalize(&dir, &dir);
-            light.SetDirectionLight(m_pd3dDevice, dir, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-        }
-
-        //设置材质
-        CMaterial::setMaterial(m_pd3dDevice, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-
-        //设置纹理
-        m_pd3dDevice->SetTexture(0, NULL);
-
-        D3DXMATRIXA16 matWord;
-        D3DXMatrixIdentity(&matWord);
-        m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWord);
-
-        if (m_bUseLineMode)
-        {
-            m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-        }
-        else
-        {
-            m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-        }
-
-        CApp::render();
-
-        m_pSkyBox->render(m_pd3dDevice);
-
-        //渲染地面
-        TerrainMap::instance()->render(m_pd3dDevice);
-
-        //if (cPick::instance()->isIntersectWithTerrain())
-        {
-            AABB aabb;
-            aabb.min = aabb.max = Pick::instance()->getPosOnTerrain();
-            float dt = 0.5f;
-            aabb.min.x -= dt;
-            aabb.min.z -= dt;
-            aabb.max.x += dt;
-            aabb.max.z += dt;
-            aabb.max.y += dt * 4;
-
-            D3DXMATRIXA16 matWord;
-            D3DXMatrixIdentity(&matWord);
-            m_pd3dDevice->SetTransform(D3DTS_WORLD, &matWord);
-            drawAABB(m_pd3dDevice, aabb, 0xffff0000);
-        }
-
-        m_pRenderTaskMgr->render(m_pd3dDevice);
-        renderText();
-        /////////////////////////
-        rcDevice()->endScene();
-    }
-    else
-    {
-        LOG_DEBUG(_T("ERROR: Render scene failed!(m_pd3dDevice->BeginScene())"));
-        Sleep(100);
+        CLight light;
+        D3DXVECTOR3 dir(-1, -1, -1);
+        D3DXVec3Normalize(&dir, &dir);
+        light.SetDirectionLight(m_pd3dDevice, dir, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
-    rcDevice()->present();
+    //设置材质
+    CMaterial::setMaterial(m_pd3dDevice, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
+
+    //设置纹理
+    m_pd3dDevice->SetTexture(0, NULL);
+    m_pd3dDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+
+    m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, 
+        m_bUseLineMode ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
+    
+    //渲染地面
+    TerrainMap::instance()->render(m_pd3dDevice);
+
+    //if (cPick::instance()->isIntersectWithTerrain())
+    {
+        AABB aabb;
+        aabb.min = aabb.max = Pick::instance()->getPosOnTerrain();
+        float dt = 0.5f;
+        aabb.min.x -= dt;
+        aabb.min.z -= dt;
+        aabb.max.x += dt;
+        aabb.max.z += dt;
+        aabb.max.y += dt * 4;
+
+        m_pd3dDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+        drawAABB(m_pd3dDevice, aabb, 0xffff0000);
+    }
+
+    CApp::render();
 }
 
-void CGame::renderText()
-{
-#if 0
-    Lazy::tstring buffer;
-    CRect rc(0, 20, 500, 40);
-    formatString(buffer, _T("show radius: %0.2f. visible chuns:%u"),
-        TerrainMap::instance()->getShowRadius(), TerrainMap::instance()->numVisibleChunk());
-    LPD3DXFONT pFont = m_pResMgr->getFontEx(L"");
-    pFont->DrawText(NULL, buffer.c_str(), -1, &rc, DT_LEFT, 0xffffffff);
-#endif
-}
 ///////////////////class CGame end/////////////////////////
