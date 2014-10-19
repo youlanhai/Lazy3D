@@ -54,8 +54,8 @@ namespace Lazy
         ///到主角的距离
         float distToPlayer(void) const;
 
-        ///朝向某点
-        void lookAtPosition(const Vector3 & pos);
+        ///朝向某方向
+        void faceToDir(const Vector3 & pos);
 
         ModelPtr getModel(void) const { return m_model; }
         void setModel(ModelPtr pModel);

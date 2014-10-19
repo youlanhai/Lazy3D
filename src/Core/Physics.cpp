@@ -411,17 +411,8 @@ namespace Lazy
 
     void IPhysics::faceToDir(const Vector3 & dir)
     {
-        if (!m_pSource) return;
-
-        Vector3 look = dir;
-        look.y = 0.0f;
-        look.normalize();
-
-        float angle = atan2f(look.z, look.x);
-
-        Quaternion rotation;
-        rotation.setRotationAxis(MathConst::vec3y, angle);
-        m_pSource->setRotation(rotation);
+        if (m_pSource)
+            m_pSource->faceToDir(dir);
     }
 
     void IPhysics::faceTo(const Vector3 & dest)

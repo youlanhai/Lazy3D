@@ -84,7 +84,7 @@ namespace Lazy
 
     void IEntity::render(IDirect3DDevice9* pDevice)
     {
-        if (!m_visible) return ;
+        if (!getVisible()) return ;
 
         if (m_topboard) m_topboard->render(pDevice);
 
@@ -156,16 +156,13 @@ namespace Lazy
         return getPosition().distTo(player->getPosition());
     }
 
-    void IEntity::lookAtPosition(const Vector3 & pos)
+    void IEntity::faceToDir(const Vector3 & dir)
     {
-        Vector3 look = pos - getPosition();
-        look.y = 0.0f;
-        look.normalize();
-
-        float angle = atan2f(look.z, look.x);
+        float angleDir = atan2f(dir.z, dir.x);
+        float angleLook = D3DX_PI * 0.5f;
 
         Quaternion rotation;
-        rotation.setRotationAxis(MathConst::vec3y, angle);
+        rotation.setRotationAxis(MathConst::vec3y, angleLook - angleDir);
         setRotation(rotation);
     }
 

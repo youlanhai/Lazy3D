@@ -135,7 +135,7 @@ bool CGame::init(void)
         ptrPos->readFloat(L"x"),
         ptrPos->readFloat(L"y"),
         ptrPos->readFloat(L"z")));
-    m_pCamera->setSpeed(ptrRoot->readFloat(L"camera/speed", 10.0f));
+    m_pCamera->setSpeed(ptrRoot->readFloat(L"camera/speed", 20.0f));
     m_pCamera->setDistRange(2.0f, 20.0f);
 
     m_projection.setPerspective(D3DX_PI / 4.0f, float(m_nWidth) / m_nHeight, 1.0f, 1000.0f);
@@ -146,9 +146,9 @@ bool CGame::init(void)
     m_pCube = new CCube();
     m_pCube->init(m_pd3dDevice, 1.0f, 1.0f, 1.0f);
 
-    m_pSkyBox->setSource(g_player.get());
+    m_pSkyBox->setSource(m_pCamera.get());
     m_pSkyBox->setSkyImage(ptrRoot->readString(L"sky"));
-    m_pSkyBox->setSkyRange(D3DXVECTOR3(-200, -200, -200), D3DXVECTOR3(200, 200, 200));
+    m_pSkyBox->setSkyRange(Vector3(-200, -200, -200), Vector3(200, 200, 200));
 
 
     Lazy::tstring mapName = ptrRoot->readString(L"map");
@@ -237,6 +237,10 @@ void CGame::render()
         //添加渲染代码
         rcDevice()->setView(m_pCamera->getViewMatrix());
         rcDevice()->setProj(m_projection.getProjection());
+
+        rcDevice()->applyWorld();
+        rcDevice()->applyView();
+        rcDevice()->applyProj();
 
         {
             CLight light;
