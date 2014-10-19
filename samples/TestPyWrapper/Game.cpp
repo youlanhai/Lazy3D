@@ -98,7 +98,7 @@ bool CGame::init(void)
     m_pGUIMgr = new CGUIManager(m_pd3dDevice, m_hWnd, m_hInstance);
     addUpdater(m_pGUIMgr.get());
 
-    m_pCamera=new CCursorCamera(m_pd3dDevice);
+    m_pCamera=new Camera(m_pd3dDevice);
     m_pCamera->setup3DCamera();
     m_pCamera->setPos(D3DXVECTOR3(0,100,-500));
     m_pCamera->setSpeed(200.0f);

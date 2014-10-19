@@ -9,12 +9,12 @@
 */
 
 /** 鼠标控制摄像机。*/
-class CCursorCamera :  public CCamera
+class Camera :  public CCamera
 {
 public:
-    CCursorCamera(HWND hWnd, LPDIRECT3DDEVICE9 pDevice, CameraType type = THIRD);
+    Camera(HWND hWnd, LPDIRECT3DDEVICE9 pDevice, CameraType type = THIRD);
 
-    ~CCursorCamera(void);
+    ~Camera(void);
 
     virtual UINT handleMessage(UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -45,4 +45,4 @@ protected:
 
 };
 
-CCursorCamera* getCamera(void);
+Camera* getCamera(void);

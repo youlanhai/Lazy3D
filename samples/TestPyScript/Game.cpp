@@ -275,7 +275,7 @@ bool CGame::init(void)
 
 #endif
 
-    m_pCamera = new CCursorCamera();
+    m_pCamera = new Camera();
     m_pCamera->setPosition(D3DXVECTOR3(0, 1.8f, -2.0f));
     m_pCamera->setSpeed(2.0f);
     m_pCamera->setDistRange(2.0f, 10.0f);

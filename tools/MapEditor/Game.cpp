@@ -90,7 +90,7 @@ bool CGame::init(void)
     addUpdater(m_pGUIMgr.get());
 #endif
 
-    m_pCamera = new CCursorCamera(m_pd3dDevice);
+    m_pCamera = new Camera(m_pd3dDevice);
     m_pCamera->setPosition(D3DXVECTOR3(0, 1.8f, -2.0f));
     m_pCamera->setSpeed(2.0f);
     m_pCamera->setDistRange(0.5f, 30.0f);

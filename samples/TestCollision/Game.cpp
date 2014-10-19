@@ -177,7 +177,7 @@ bool CGame::init(void)
     m_ui = new ui(1, m_pGUIMgr->normalPanel(), "", 0, 20, 120, 100 );
     addUpdateRender(&m_sample);
 
-    m_pCamera = new CCursorCamera(m_pd3dDevice);
+    m_pCamera = new Camera(m_pd3dDevice);
     m_pCamera->setPosition(D3DXVECTOR3(0, 100.8f, -200.0f));
     m_pCamera->setSpeed(50.0f);
     m_pCamera->setDistRange(0.5f, 30.0f);

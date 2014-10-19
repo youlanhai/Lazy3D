@@ -268,7 +268,7 @@ bool CGame::init(void)
     MapConfig::UseMultiThread = true;
 
     //创建相机
-    m_pCamera = new CCursorCamera(CCamera::THIRD);
+    m_pCamera = new Camera(CCamera::THIRD);
     m_pCamera->setSource(m_player.get());
     m_pCamera->setPosition(Math::Vector3(100, 2000.0f, -500.0f));
     m_pCamera->setSpeed(500.0f);

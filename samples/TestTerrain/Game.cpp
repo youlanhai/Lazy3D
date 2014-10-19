@@ -127,7 +127,7 @@ bool CGame::init(void)
     addUpdateRender(g_player.get());
     TerrainMap::instance()->setSource(g_player.get());
 
-    m_pCamera = new CCursorCamera(CCursorCamera::THIRD);
+    m_pCamera = new Camera(Camera::THIRD);
     m_pCamera->setSource(g_player.get());
 
     Lazy::LZDataPtr ptrPos = ptrRoot->read(L"camera/pos");
@@ -215,15 +215,15 @@ void CGame::updateCamera(float fEla)
     //更新摄像机
     if (m_pKeyboard->isKeyUp('1'))
     {
-        m_pCamera->setCamareType(CCursorCamera::FIRST);
+        m_pCamera->setCamareType(Camera::FIRST);
     }
     else if (m_pKeyboard->isKeyUp('2'))
     {
-        m_pCamera->setCamareType(CCursorCamera::THIRD);
+        m_pCamera->setCamareType(Camera::THIRD);
     }
     else if (m_pKeyboard->isKeyUp('3'))
     {
-        m_pCamera->setCamareType(CCursorCamera::FREE);
+        m_pCamera->setCamareType(Camera::FREE);
     }
 
 }

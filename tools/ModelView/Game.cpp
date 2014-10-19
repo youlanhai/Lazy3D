@@ -98,7 +98,7 @@ bool CGame::init(void)
     m_guimgr->getUIRender()->setShader(L"shader/ui.fx");
     
     //创建相机
-    m_pCamera = new CCursorCamera();
+    m_pCamera = new Camera();
     m_pCamera->setPosition(D3DXVECTOR3(0, 1.8f, -2.0f));
     m_pCamera->setSpeed(2.0f);
     m_pCamera->setDistRange(0.5f, 30.0f);

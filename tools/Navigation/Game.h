@@ -40,7 +40,7 @@ public:
 private:
 	/*注意：所有指针成员，需在构造函数中进行赋空值初始化。*/
 	bool		        m_bGameStart;
-	RefPtr<CCursorCamera>	m_pCamera;
+	RefPtr<Camera>	m_pCamera;
 	RefPtr<cFpsRender>	    m_pFPS;
 
 

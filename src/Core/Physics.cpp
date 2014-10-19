@@ -140,11 +140,11 @@ namespace Lazy
 
     void IPhysics::updatePlayer(float fElapse)
     {
-        if (getCamera()->getCameraType() == CCursorCamera::FREE)
+        if (getCamera()->getCameraType() == Camera::FREE)
         {
             return;
         }
-        else if (getCamera()->getCameraType() == CCursorCamera::FIRST)
+        else if (getCamera()->getCameraType() == Camera::FIRST)
         {
             m_pSource->setVisible(false);
         }

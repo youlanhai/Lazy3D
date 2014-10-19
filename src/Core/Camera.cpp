@@ -14,14 +14,14 @@ namespace Lazy
         const float HeightError = 0.5f; //贴地误差
     }
 
-    CCursorCamera* g_pCamera_ = NULL;
-    LZDLL_API CCursorCamera* getCamera(void)
+    Camera* g_pCamera_ = NULL;
+    LZDLL_API Camera* getCamera(void)
     {
         return g_pCamera_;
     }
     //////////////////////////////////////////////////////////////////////////
 
-    CCursorCamera::CCursorCamera(CameraType type /*= THIRD*/)
+    Camera::Camera(CameraType type /*= THIRD*/)
         : m_pSource(nullptr)
         , m_cameraType(type)
         , m_fDistToPlayer(5.0f)
@@ -44,16 +44,16 @@ namespace Lazy
     }
 
 
-    CCursorCamera::~CCursorCamera(void)
+    Camera::~Camera(void)
     {
     }
 
-    void CCursorCamera::setCamareType(CCursorCamera::CameraType cameraType)
+    void Camera::setCamareType(Camera::CameraType cameraType)
     {
         m_cameraType = cameraType;
     }
 
-    bool CCursorCamera::handleEvent(const SEvent & event)
+    bool Camera::handleEvent(const SEvent & event)
     {
         if (event.eventType == EET_MOUSE_EVENT)
         {
@@ -107,7 +107,7 @@ namespace Lazy
         return false;
     }
 
-    void CCursorCamera::drag(CPoint pt)
+    void Camera::drag(CPoint pt)
     {
         CPoint dp = pt - m_ptDown;
         if (abs(dp.x) < 3 && abs(dp.y) < 3)  return;
@@ -126,7 +126,7 @@ namespace Lazy
     }
 
 
-    void CCursorCamera::update(float fElapse)
+    void Camera::update(float fElapse)
     {
         m_lastElapse = fElapse;
 
@@ -231,14 +231,14 @@ namespace Lazy
     }
 
 
-    void CCursorCamera::setCurRoSpeed(float speed)
+    void Camera::setCurRoSpeed(float speed)
     {
         m_curSpeedX = speed;
         m_curSpeedY = speed;
 
     }
 
-    void CCursorCamera::showCursor(bool show)
+    void Camera::showCursor(bool show)
     {
         if (show == m_bCurShow)
         {
@@ -249,14 +249,14 @@ namespace Lazy
     }
 
 
-    Matrix CCursorCamera::getViewMatrix() const
+    Matrix Camera::getViewMatrix() const
     {
         Matrix view;
         genViewMatrix(view);
         return view;
     }
 
-    void CCursorCamera::setDistRange(float mind, float maxd)
+    void Camera::setDistRange(float mind, float maxd)
     {
         m_distMin = mind;
         m_distMax = maxd;
@@ -264,7 +264,7 @@ namespace Lazy
     }
 
     /** 矫正距离玩家的距离。*/
-    void CCursorCamera::correctDist(void)
+    void Camera::correctDist(void)
     {
         if (m_fDistToPlayer < m_distMin)
         {

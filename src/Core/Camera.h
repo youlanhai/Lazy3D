@@ -12,7 +12,7 @@ namespace Lazy
     */
 
     /** 鼠标控制摄像机。*/
-    class LZDLL_API CCursorCamera :  public SceneNode
+    class LZDLL_API Camera :  public SceneNode
     {
     public:
         enum CameraType //摄像机样式
@@ -22,8 +22,8 @@ namespace Lazy
             FREE = 3,  //自由模式
         };
 
-        explicit CCursorCamera(CameraType type = THIRD);
-        ~CCursorCamera(void);
+        explicit Camera(CameraType type = THIRD);
+        ~Camera(void);
 
         virtual bool handleEvent(const SEvent & event);
 
@@ -79,6 +79,6 @@ namespace Lazy
         bool        m_draged;
     };
 
-    LZDLL_API CCursorCamera* getCamera(void);
+    LZDLL_API Camera* getCamera(void);
 
 } // end namespace Lazy

@@ -1,13 +1,13 @@
 ﻿
 #include "CursorCamera.h"
 
-CCursorCamera* g_pCamera_ = NULL;
-CCursorCamera* getCamera(void)
+Camera* g_pCamera_ = NULL;
+Camera* getCamera(void)
 {
     return g_pCamera_;
 }
 //////////////////////////////////////////////////////////////////////////
-CCursorCamera::CCursorCamera(HWND hWnd, LPDIRECT3DDEVICE9 pDevice, CameraType type /*= THIRD*/)
+Camera::Camera(HWND hWnd, LPDIRECT3DDEVICE9 pDevice, CameraType type /*= THIRD*/)
     : CCamera(pDevice, type)
     , m_hWnd(hWnd)
 {
@@ -23,12 +23,12 @@ CCursorCamera::CCursorCamera(HWND hWnd, LPDIRECT3DDEVICE9 pDevice, CameraType ty
 }
 
 
-CCursorCamera::~CCursorCamera(void)
+Camera::~Camera(void)
 {
 }
 
 
-UINT CCursorCamera::handleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
+UINT Camera::handleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
 {
     if (msg==WM_LBUTTONDOWN || msg==WM_RBUTTONDOWN)
     {
@@ -79,7 +79,7 @@ UINT CCursorCamera::handleMessage(UINT msg, WPARAM wParam, LPARAM lParam)
     return 0;
 }
 
-void CCursorCamera::drag(POINT pt)
+void Camera::drag(POINT pt)
 {
     if (pt.x == m_ptDown.x && pt.y == m_ptDown.y)
     {
@@ -102,7 +102,7 @@ void CCursorCamera::drag(POINT pt)
 }
 
 
-void CCursorCamera::update(float fElapse)
+void Camera::update(float fElapse)
 {
     __super::update(fElapse);
 
@@ -134,14 +134,14 @@ void CCursorCamera::update(float fElapse)
 }
 
 
-void CCursorCamera::setCurRoSpeed(float speed)
+void Camera::setCurRoSpeed(float speed)
 {
     m_curSpeedX = speed;
     m_curSpeedY = speed;
 
 }
 
-void CCursorCamera::showCursor(bool show)
+void Camera::showCursor(bool show)
 {
     if (show == m_bCurShow)
     {

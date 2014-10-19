@@ -33,7 +33,7 @@ LPDIRECT3DDEVICE9       g_pd3dDevice     = NULL;  //Direct3D设备对象
 
 LPD3DXMESH              g_pMesh          = NULL;  //网格模型对象
 LPD3DXFONT              g_pFont          = NULL;
-Lazy::RefPtr<CCursorCamera>   g_pCamera;
+Lazy::RefPtr<Camera>   g_pCamera;
 
 float g_timeCreate = 0.0f;
 float g_timePick = 0.0f;
@@ -101,7 +101,7 @@ HRESULT InitD3D( HWND hWnd )
 
 	//设置环境光
     g_pd3dDevice->SetRenderState( D3DRS_AMBIENT, 0xffffffff );
-    g_pCamera = new CCursorCamera(g_hWnd, g_pd3dDevice);
+    g_pCamera = new Camera(g_hWnd, g_pd3dDevice);
     g_pCamera->setSpeed(1000.0f);
     g_pCamera->setPosition(Math::Vector3(0, 200, -800));
     g_pCamera->rotPitch(-D3DX_PI / 4.0f);
