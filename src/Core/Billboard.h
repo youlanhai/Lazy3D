@@ -3,6 +3,8 @@
 #include "base.h"
 #include "RenderObj.h"
 
+#include "../Render/Texture.h"
+
 namespace Lazy
 {
     /** 公告板*/
@@ -16,21 +18,18 @@ namespace Lazy
 
         void setSize(float w, float h);
 
-        void setImage(const std::wstring & texName);
-
-        void setTexture(IDirect3DTexture9* pTex) { m_pTexture = pTex; }
+        void setImage(const tstring & texName);
+        void setTexture(TexturePtr pTex) { m_pTexture = pTex; }
 
         void setPos(const Vector3 & pos) { m_pos = pos; }
 
         virtual void update(float fElapse);
-
         virtual void render(IDirect3DDevice9 * pDevice);
 
         void show(bool s) { m_show = s; }
         bool visible() { return m_show; }
 
         void setMaxShowDistance(float s) { m_maxShowDistance = s; }
-
         float getShowMaxDistance() { return m_maxShowDistance; }
 
         bool isTooFar();
@@ -40,8 +39,8 @@ namespace Lazy
         void updateVertex();
 
     protected:
-        IDirect3DVertexBuffer9  *m_pVertex;
-        IDirect3DTexture9       *m_pTexture;
+        dx::VertexBuffer *      m_pVertex;
+        TexturePtr              m_pTexture;
         Vector3                 m_pos;
         float                   m_width;
         float                   m_height;

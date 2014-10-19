@@ -200,9 +200,6 @@
     <ClInclude Include="RenderObj.h">
       <Filter>app</Filter>
     </ClInclude>
-    <ClInclude Include="dlist.h">
-      <Filter>pariticle</Filter>
-    </ClInclude>
     <ClInclude Include="mlist.h">
       <Filter>pariticle</Filter>
     </ClInclude>

@@ -42,7 +42,7 @@ namespace Lazy
 
         m_pTextTexture->loadTexture();
 
-        setTexture(m_pTextTexture->getTexture());
+        setTexture(new Texture(m_pTextTexture->getTexture()));
         m_width = float(m_pTextTexture->getWidth());
         m_height = float(m_pTextTexture->getHeight());
 

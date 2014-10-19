@@ -106,23 +106,14 @@ namespace Lazy
     void Billboard::updateVertex()
     {
         if (!m_pTexture)
-        {
             return ;
-        }
-        D3DSURFACE_DESC desc;
-        if (FAILED(m_pTexture->GetLevelDesc(0, &desc)))
-        {
-            return;
-        }
-
+        
         BillboardVertex *pVertex;
         if (FAILED(m_pVertex->Lock(0, 4 * BillboardVertex::SIZE, (void**)&pVertex, 0)))
-        {
             return ;
-        }
 
-        float u2 = float(m_width) / desc.Width;
-        float v2 = min(1.0f, m_height * 1.2f / desc.Height);
+        float u2 = float(m_width) / m_pTexture->getWidth();
+        float v2 = min(1.0f, m_height * 1.2f / m_pTexture->getHeight());
 
         float halfW = 1.0f;
         float halfH = 1.0f;
@@ -137,17 +128,10 @@ namespace Lazy
     void Billboard::render(IDirect3DDevice9 * pDevice)
     {
         if (!m_show || isTooFar())
-        {
             return;
-        }
 
-        if (NULL == m_pVertex)
-        {
-            if(!createVertex(pDevice))
-            {
-                return ;
-            }
-        }
+        if (NULL == m_pVertex && !createVertex(pDevice))
+            return ;
 
         Matrix mat;
 
@@ -174,7 +158,7 @@ namespace Lazy
         RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
 
         updateVertex();
-        pDevice->SetTexture(0, m_pTexture);
+        pDevice->SetTexture(0, m_pTexture ? m_pTexture->getTexture() : NULL);
         pDevice->SetStreamSource(0, m_pVertex, 0, BillboardVertex::SIZE);
         pDevice->SetFVF(BillboardVertex::FVF);
         pDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);

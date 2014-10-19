@@ -16,7 +16,9 @@ namespace dx
     typedef ID3DXAnimationController AnimController;
     typedef IDirect3DPixelShader9   PixelShader;
     typedef IDirect3DVertexShader9  VertexShader;
-    typedef D3DMATERIAL9        Material;
+    typedef D3DMATERIAL9            Material;
+    typedef IDirect3DVertexBuffer9  VertexBuffer;
+    typedef IDirect3DIndexBuffer9   IndexBuffer;
 
     typedef D3DRENDERSTATETYPE  RSType;
     typedef D3DPRIMITIVETYPE    PTType;

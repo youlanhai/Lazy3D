@@ -118,7 +118,6 @@
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Commen.h" />
     <ClInclude Include="Core.h" />
-    <ClInclude Include="dlist.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Face.h" />
     <ClInclude Include="Keyboard.h" />
