@@ -15,7 +15,6 @@ namespace Lazy
 
     }
 
-
     Effect::~Effect()
     {
         SAFE_DELREF_COM(m_pEffect);
@@ -24,39 +23,56 @@ namespace Lazy
 
     bool Effect::load()
     {
-        bool result = true;
-
         if (m_pEffect)
         {
-            throw(std::runtime_error("Effect::load has been loaded!"));
+            LOG_ERROR(L"Effect '%s' has been loaded!", m_source.c_str());
+            return false;
         }
 
         tstring realPath;
         if (!getfs()->getRealPath(realPath, m_source))
         {
-            LOG_ERROR(L"Can't find effect file '%s'", m_source.c_str());
+            LOG_ERROR(L"Failed to find effect file '%s'", m_source.c_str());
             return false;
         }
 
-
         LPD3DXBUFFER pError = nullptr;
         HRESULT hr = D3DXCreateEffectFromFile(rcDevice()->getDevice(),
-                                              realPath.c_str(), nullptr, nullptr, 0, nullptr, &m_pEffect, &pError);
-
-        if (FAILED(hr))
-        {
-            result = false;
-            LOG_ERROR(_T("create effect from file '%s' failed!0x%x"), realPath.c_str(), hr);
-        }
+            realPath.c_str(), nullptr, nullptr, 0, nullptr, &m_pEffect, &pError);
 
         if (pError)
         {
             std::string buffer((const char*) pError->GetBufferPointer(), pError->GetBufferSize());
-            debugMessageA("ERROR: %s", buffer.c_str());
+            debugMessageA("%s", buffer.c_str());
         }
         SAFE_DELREF_COM(pError);
 
-        return result;
+        if (FAILED(hr))
+        {
+            LOG_ERROR(_T("Failed create effect from file '%s'. code: 0x%x"), realPath.c_str(), hr);
+            return false;
+        }
+
+#if 0
+        D3DXEFFECT_DESC desc;
+        m_pEffect->GetDesc(&desc);
+        for (UINT i = 0; i < desc.Parameters; ++i)
+        {
+            D3DXPARAMETER_DESC parameter;
+            D3DXHANDLE hParameter = m_pEffect->GetParameter(NULL, i);
+            m_pEffect->GetParameterDesc(hParameter, &parameter);
+
+            if (parameter.Semantic)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+#endif
+        return true;
     }
 
     bool Effect::begin(UINT & nPass)
