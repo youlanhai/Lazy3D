@@ -3,6 +3,8 @@
 #include "Effect.h"
 #include "RenderDevice.h"
 
+#include "EffectConstant.h"
+#include "EffectConstantSetter.h"
 
 namespace Lazy
 {
@@ -17,6 +19,15 @@ namespace Lazy
 
     Effect::~Effect()
     {
+        for (ManualConstant::iterator it = m_manualConstants.begin();
+            it != m_manualConstants.end(); ++it)
+            delete it->second;
+
+        // EffectConstantSetter 是公用的，不需要在这里释放。
+        for (AutoConstants::iterator it = m_autoConstants.begin();
+            it != m_autoConstants.begin(); ++it)
+            delete it->second;
+
         SAFE_DELREF_COM(m_pEffect);
         m_pEffect = nullptr;
     }
@@ -53,7 +64,7 @@ namespace Lazy
             return false;
         }
 
-#if 0
+#if 1
         D3DXEFFECT_DESC desc;
         m_pEffect->GetDesc(&desc);
         for (UINT i = 0; i < desc.Parameters; ++i)
@@ -64,7 +75,8 @@ namespace Lazy
 
             if (parameter.Semantic)
             {
-
+                std::pair<EffectConstantSetter*, EffectConstant*> val;
+                
             }
             else
             {

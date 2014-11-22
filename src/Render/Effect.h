@@ -3,9 +3,13 @@
 #include "ResMgr.h"
 #include "Device.h"
 
+#include <vector>
 
 namespace Lazy
 {
+    class EffectConstant;
+    class EffectConstantSetter;
+
     ///封装d3d特效
     class Effect : public IResource, public IDevice
     {
@@ -42,7 +46,12 @@ namespace Lazy
         virtual int getType(void) const override { return rt::effect; };
 
     private:
-        dx::Effect *m_pEffect;
+        typedef std::vector< std::pair<EffectConstantSetter*, EffectConstant*> > AutoConstants;
+        typedef std::map<std::string, EffectConstant*> ManualConstant;
+
+        dx::Effect *        m_pEffect;
+        AutoConstants       m_autoConstants;
+        ManualConstant      m_manualConstants;
     };
 
     typedef RefPtr<Effect> EffectPtr;

@@ -79,6 +79,8 @@
     <ClInclude Include="Device.h" />
     <ClInclude Include="DXConfig.h" />
     <ClInclude Include="Effect.h" />
+    <ClInclude Include="EffectConstant.h" />
+    <ClInclude Include="EffectConstantSetter.h" />
     <ClInclude Include="RenderDevice.h" />
     <ClInclude Include="ResFactory.h" />
     <ClInclude Include="ResMgr.h" />
@@ -94,6 +96,8 @@
   <ItemGroup>
     <ClCompile Include="Device.cpp" />
     <ClCompile Include="Effect.cpp" />
+    <ClCompile Include="EffectConstant.cpp" />
+    <ClCompile Include="EffectConstantSetter.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="ResFactory.cpp" />
     <ClCompile Include="ResMgr.cpp" />

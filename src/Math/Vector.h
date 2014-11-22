@@ -286,6 +286,14 @@ namespace Lazy
         Vector4(float x, float y, float z, float w)
             : D3DXVECTOR4(x, y, z, w)
         {}
+
+        void set(float x, float y, float z, float w)
+        {
+            this->x = x;
+            this->y = y;
+            this->z = z;
+            this->w = w;
+        }
     };
 
     std::ostream & operator<<(std::ostream & out, const Vector2 & v);

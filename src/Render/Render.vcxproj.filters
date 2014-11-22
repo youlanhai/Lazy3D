@@ -66,6 +66,12 @@
     <ClInclude Include="TextTexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="EffectConstant.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectConstantSetter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,6 +108,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextTexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectConstant.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectConstantSetter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,6 +8,7 @@
 #include "Texture.h"
 #include "SkinMesh.h"
 #include "StaticMesh.h"
+#include "EffectConstantSetter.h"
 
 namespace Lazy
 {
@@ -197,6 +198,7 @@ namespace Lazy
         StaticMeshMgr::instance()->setResFacotry(factory);
         SkinMeshMgr::instance()->setResFacotry(factory);
         EffectMgr::instance()->setResFacotry(factory);
+        EffectConstantSetter::init();
 
         return true;
     }
@@ -206,6 +208,7 @@ namespace Lazy
         if (!m_device)
             return;
 
+        EffectConstantSetter::fini();
         IDevice::closeAllDevice();
 
         m_device->Release();
