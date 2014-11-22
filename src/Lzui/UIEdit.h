@@ -8,7 +8,7 @@ namespace Lazy
     class Edit : public Widget
     {
     public:
-        MAKE_UI_HEADER(Edit)
+        MAKE_UI_HEADER(Edit, Widget)
 
         Edit(void);
         virtual ~Edit(void);

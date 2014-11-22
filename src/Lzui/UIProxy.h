@@ -8,7 +8,7 @@ namespace Lazy
     class UIProxy : public Widget
     {
     public:
-        MAKE_UI_HEADER(UIProxy);
+        MAKE_UI_HEADER(UIProxy, Widget);
 
         UIProxy();
         ~UIProxy();

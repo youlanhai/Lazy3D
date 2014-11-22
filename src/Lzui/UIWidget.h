@@ -10,10 +10,10 @@ namespace Lazy
      *  GUIMgr，管理了整个UI系统，将所有的UI关联起来，形成一颗UI树。实现了UI消息传递，
      *  以及统一更新和渲染。详见GUIMgr。
      */
-    class LZUI_API Widget
+    class LZUI_API Widget : public IBase
     {
     public:
-        MAKE_UI_HEADER(Widget);
+        MAKE_UI_HEADER(Widget, IBase);
 
         Widget(void);
         virtual ~Widget(void);

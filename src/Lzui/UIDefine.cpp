@@ -44,7 +44,7 @@ namespace Lazy
     void WidgetChildren::update(float elapse)
     {
         lock();
-        Widget * p;
+        WidgetPtr p;
         for (iterator it = begin(); it != end(); ++it)
         {
             p = *it;
@@ -57,7 +57,7 @@ namespace Lazy
     void WidgetChildren::render(IUIRender* pDevice)
     {
         lock();
-        Widget * p;
+        WidgetPtr p;
         for (reverse_iterator it = rbegin(); it != rend(); ++it)
         {
             p = *it;

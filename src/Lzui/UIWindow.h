@@ -11,7 +11,7 @@ namespace Lazy
     class LZUI_API Window : public Widget
     {
     public:
-        MAKE_UI_HEADER(Window);
+        MAKE_UI_HEADER(Window, Widget);
 
         /** 构造函数*/
         Window(void);

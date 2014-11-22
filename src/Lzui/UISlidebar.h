@@ -13,7 +13,7 @@ namespace Lazy
     class LZUI_API Slider : public Button
     {
     public:
-        MAKE_UI_HEADER(Slider);
+        MAKE_UI_HEADER(Slider, Button);
 
         Slider();
 
@@ -34,7 +34,7 @@ namespace Lazy
     class LZUI_API Slidebar : public Window
     {
     public: 
-        MAKE_UI_HEADER(Slidebar);
+        MAKE_UI_HEADER(Slidebar, Window);
 
         Slidebar();
 

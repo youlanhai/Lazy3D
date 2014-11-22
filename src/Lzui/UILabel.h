@@ -8,7 +8,7 @@ namespace Lazy
     class LZUI_API Label : public Widget
     {
     public:
-        MAKE_UI_HEADER(Label)
+        MAKE_UI_HEADER(Label, Widget)
 
         Label(void);
         ~Label(void);

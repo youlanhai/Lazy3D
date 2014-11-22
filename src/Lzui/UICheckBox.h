@@ -7,7 +7,7 @@ namespace Lazy
     class LZUI_API CheckBox : public Button
     {
     public:
-        MAKE_UI_HEADER(CheckBox);
+        MAKE_UI_HEADER(CheckBox, Button);
 
         CheckBox(void);
         ~CheckBox(void);

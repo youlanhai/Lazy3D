@@ -9,7 +9,7 @@ namespace Lazy
     class LZUI_API Button : public Widget
     {
     public:
-        MAKE_UI_HEADER(Button)
+        MAKE_UI_HEADER(Button, Widget)
 
         Button(void);
         ~Button(void);

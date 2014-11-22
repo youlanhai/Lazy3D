@@ -9,7 +9,7 @@ namespace Lazy
     class LZUI_API Image : public Widget
     {
     public:
-        MAKE_UI_HEADER(Image)
+        MAKE_UI_HEADER(Image, Widget)
         Image(void);
 
         ~Image(void);

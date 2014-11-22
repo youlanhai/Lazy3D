@@ -21,11 +21,13 @@ namespace Lazy
 
     class Widget;
 
-    typedef Widget* (*UICreateFun)(void) ;
+    typedef RefPtr<Widget> WidgetPtr;
+    typedef Widget* (*UICreateFun)(void);
 
-#define MAKE_UI_HEADER(CLASS)   \
-    static Widget * createSelf(){ return new CLASS(); }         \
-    static const tchar * getTypeS() { return _T(#CLASS); }           \
+#define MAKE_UI_HEADER(CLASS, BASE)                                     \
+    typedef BASE Base;                                                  \
+    static Widget * createSelf(){ return new CLASS(); }                 \
+    static const tchar * getTypeS() { return _T(#CLASS); }              \
     virtual const tchar * getType(void) const { return _T(#CLASS); }
 
     typedef RefPtr<class ITextSprite> TextSpritePtr;
@@ -194,13 +196,12 @@ namespace Lazy
     };
 
 
-    class WidgetChildren : public VisitPool<Widget*>
+    class WidgetChildren : public VisitPool<WidgetPtr>
     {
     public:
         WidgetChildren(Widget *pOwner);
 
         void update(float elapse);
-
         void render(IUIRender * pDevice);
 
     private:

@@ -11,7 +11,7 @@ namespace Lazy
     class LZUI_API GUIMgr : public Widget
     {
     public:
-        MAKE_UI_HEADER(GUIMgr)
+        MAKE_UI_HEADER(GUIMgr, Widget)
 
 
         GUIMgr();

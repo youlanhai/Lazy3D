@@ -18,7 +18,7 @@ namespace Lazy
     class EditorCtl : public Widget
     {
     public:
-        MAKE_UI_HEADER(EditorCtl);
+        MAKE_UI_HEADER(EditorCtl, Widget);
 
         EditorCtl();
         ~EditorCtl();

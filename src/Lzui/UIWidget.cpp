@@ -22,13 +22,13 @@ namespace Lazy
             : m_name(name)
         {}
 
-        bool operator()(const Widget * p) const
+        bool operator()(const WidgetPtr & p) const
         {
             return p->getName() == m_name;
         }
     };
 
-    bool sortCompare(Widget * x, Widget * y)
+    bool sortCompare(const WidgetPtr & x, const WidgetPtr & y)
     {
         return x->getZOrder() < y->getZOrder();
     }
@@ -220,7 +220,7 @@ namespace Lazy
         bool processed = false;
 
         m_children.lock();
-        for (Widget *pChild : m_children)
+        for (WidgetPtr & pChild : m_children)
         {
             processed = pChild->sendEvent(event);
             if (processed) break;
@@ -232,7 +232,7 @@ namespace Lazy
 
         m_skinChildren.lock();
         m_children.lock();
-        for (Widget *pChild : m_skinChildren)
+        for (WidgetPtr & pChild : m_skinChildren)
         {
             processed = pChild->sendEvent(event);
             if (processed) break;
@@ -375,12 +375,12 @@ namespace Lazy
     {
         onAlign(newSize - oldSize);
 
-        for (Widget * child : m_children)
+        for (WidgetPtr & child : m_children)
         {
             child->onParentResize(newSize, oldSize);
         }
 
-        for (Widget * child : m_skinChildren)
+        for (WidgetPtr & child : m_skinChildren)
         {
             child->onParentResize(newSize, oldSize);
         }
@@ -498,12 +498,12 @@ namespace Lazy
     {
         //position change will only effect the real position of children.
 
-        for (Widget * p : m_children)
+        for (WidgetPtr & p : m_children)
         {
             p->onParentPositionChange();
         }
 
-        for (Widget * p : m_skinChildren)
+        for (WidgetPtr & p : m_skinChildren)
         {
             p->onParentPositionChange();
         }
@@ -525,12 +525,12 @@ namespace Lazy
     {
         //position change will only effect the real position of children.
 
-        for (Widget * p : m_children)
+        for (WidgetPtr & p : m_children)
         {
             p->onParentPositionChange();
         }
 
-        for (Widget * p : m_skinChildren)
+        for (WidgetPtr & p : m_skinChildren)
         {
             p->onParentPositionChange();
         }
@@ -713,7 +713,7 @@ namespace Lazy
         Widget* child = nullptr;
         WidgetChildren::iterator it = m_children.find_if(cmp);
         if (it != m_children.end())
-            child = *it;
+            child = (*it).get();
 
         if (pos != name.npos && child)
             child = child->getChild(name.substr(pos + 1));
@@ -734,7 +734,7 @@ namespace Lazy
         Widget* child = nullptr;
         WidgetChildren::iterator it = m_skinChildren.find_if(cmp);
         if (it != m_skinChildren.end())
-            child = *it;
+            child = (*it).get();
 
         if (pos != name.npos && child)
             child = child->getChild(name.substr(pos + 1));
@@ -795,7 +795,7 @@ namespace Lazy
     ///根据坐标查找控件。
     Widget* Widget::findChildByPos(const CPoint & pos, bool resculy)
     {
-        for (Widget* ptr : m_children)
+        for (WidgetPtr & ptr : m_children)
         {
             if (!ptr->getVisible()) continue;
 
@@ -808,7 +808,7 @@ namespace Lazy
 
             if (ptr->isPointIn(pos.x, pos.y))
             {
-                return ptr;
+                return ptr.get();
             }
         }
 
