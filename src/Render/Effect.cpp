@@ -64,7 +64,6 @@ namespace Lazy
             return false;
         }
 
-#if 1
         D3DXEFFECT_DESC desc;
         m_pEffect->GetDesc(&desc);
         for (UINT i = 0; i < desc.Parameters; ++i)
@@ -76,14 +75,26 @@ namespace Lazy
             if (parameter.Semantic)
             {
                 std::pair<EffectConstantSetter*, EffectConstant*> val;
-                
+                val.first = EffectConstantSetter::get(parameter.Semantic);
+                if (!val.first)
+                {
+                    LOG_ERROR(_T("Can't find Semantic '%S' for Effect %s"),
+                        parameter.Semantic, m_source.c_str());
+                }
+                else
+                {
+                    val.second = new EffectConstant(m_pEffect, hParameter);
+                    m_autoConstants.push_back(val);
+                }
             }
             else
             {
-
+                std::pair<std::string, EffectConstant*> val;
+                val.first = parameter.Name;
+                val.second = new EffectConstant(m_pEffect, hParameter);
+                m_manualConstants.insert(val);
             }
         }
-#endif
         return true;
     }
 
@@ -91,13 +102,17 @@ namespace Lazy
     {
         assert(s_pCurrentEffect == nullptr && "Effect::begin");
 
-        if (SUCCEEDED(m_pEffect->Begin(&nPass, 0)))
-        {
-            s_pCurrentEffect = this;
-            return true;
-        }
+        if (FAILED(m_pEffect->Begin(&nPass, 0)))
+            return false;
 
-        return false;
+         s_pCurrentEffect = this;
+
+        // 设置自动变量
+        for (AutoConstants::iterator it = m_autoConstants.begin();
+            it != m_autoConstants.begin(); ++it)
+            it->first->apply(it->second);
+
+        return true;
     }
 
     bool Effect::beginPass(UINT i)
@@ -148,6 +163,15 @@ namespace Lazy
         m_pEffect->SetMatrix(name, &mat);
     }
 
+    EffectConstant* Effect::getConstant(const std::string & name)
+    {
+        ManualConstant::iterator it = m_manualConstants.find(name);
+        if (it != m_manualConstants.end())
+            return it->second;
+
+        return nullptr;
+    }
+
     ///////////////////////////////////////////////////////////////////
     dx::Effect * EffectMgr::getEffect(const std::wstring & name)
     {
@@ -156,4 +180,5 @@ namespace Lazy
 
         return nullptr;
     }
+
 }//end namespace Lazy

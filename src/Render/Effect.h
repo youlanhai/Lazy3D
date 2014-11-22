@@ -34,6 +34,8 @@ namespace Lazy
         void setTexture(D3DXHANDLE name, dx::Texture *pTexture);
         void setMatrix(D3DXHANDLE name, const Matrix & mat);
 
+        EffectConstant* getConstant(const std::string & name);
+
     public://实现接口
 
         virtual void onLostDevice() override;
