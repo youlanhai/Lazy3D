@@ -299,8 +299,10 @@ namespace Lazy
         {
             //复制材质
             LPD3DXMATERIAL destMaterial = pMeshContainer->pMaterials + i;
-            destMaterial->MatD3D.Ambient = destMaterial->MatD3D.Diffuse;
-            destMaterial->MatD3D.Specular = destMaterial->MatD3D.Diffuse;
+            D3DXCOLOR diffuse = destMaterial->MatD3D.Diffuse;
+
+            destMaterial->MatD3D.Ambient = diffuse * 0.25f;
+            destMaterial->MatD3D.Specular = diffuse;
             destMaterial->MatD3D.Power = 1.0f;
 
             //提取纹理
@@ -637,9 +639,10 @@ namespace Lazy
 
     void SkinMesh::drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
     {
-        LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
         EffectPtr effect = s_noskinnedEffect;
-        
+        if (!effect)
+            return;
+
         rcDevice()->pushWorld(pFrame->CombinedTransformationMatrix);
 
         for (DWORD AttribID = 0; AttribID < pMeshContainer->NumMaterials; ++AttribID)
@@ -696,6 +699,9 @@ namespace Lazy
             return;
 
         EffectPtr effect = s_skinnedEffect;
+        if (!effect)
+            return;
+
         EffectConstant *pConst = effect->getConstant("mWorldMatrixArray");
         if (!pConst)
             return;
