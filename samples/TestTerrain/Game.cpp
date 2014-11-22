@@ -116,7 +116,7 @@ bool CGame::init(void)
     g_player->setPhysics(new IPhysics());
     g_player->setSpeed(Vector3(8.0f, 8.0, 8.0f));
     EntityMgr::instance()->add(g_player);
-
+    
     ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x", ModelType::SkinModel);
     if (model)
     {
@@ -154,7 +154,7 @@ bool CGame::init(void)
         return false;
     }
 
-#if 0
+#if 1
     if (!TerrainMap::instance()->loadMap(mapName))
     {
         LOG_ERROR(_T("load map failed!"));

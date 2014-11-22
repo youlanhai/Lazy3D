@@ -354,7 +354,6 @@ namespace Lazy
         return hr;
     }
 
-
     //////////////////////////////////////////////////////////////////////
     // SkinMesh
     //////////////////////////////////////////////////////////////////////
@@ -463,7 +462,8 @@ namespace Lazy
     /** 克隆动画控制器。*/
     dx::AnimController* SkinMesh::cloneAnimaCtrl(void)
     {
-        assert(m_pAnimController && "SkinMesh::cloneAnimaCtrl");
+        if (nullptr == m_pAnimController)
+            return nullptr;
 
         /*  克隆原始AC。克隆对象用来操作这个mesh，原始AC除了用来克隆外不做其余用途。*/
         dx::AnimController* pControl = NULL;
@@ -645,8 +645,10 @@ namespace Lazy
         for (DWORD AttribID = 0; AttribID < pMeshContainer->NumMaterials; ++AttribID)
         {
             EffectConstant *pTexture = effect->getConstant("g_texture");
-            if (pTexture)
-                pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
+            if (!pTexture || NULL == pMeshContainer->ppTextures[AttribID])
+                continue;
+
+            pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
 
             EffectConstant *pMaterialDiffuse = effect->getConstant("MaterialDiffuse");
             if (pMaterialDiffuse)
@@ -713,6 +715,10 @@ namespace Lazy
             pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
         for (DWORD iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
         {
+            DWORD AttribID = pBoneComb[iAttrib].AttribId;
+            if (!pTexture || NULL == pMeshContainer->ppTextures[AttribID])
+                continue;
+
             // first calculate all the world matrices
             for (DWORD iPaletteEntry = 0; iPaletteEntry < pMeshContainer->NumPaletteEntries; ++iPaletteEntry)
             {
@@ -727,8 +733,6 @@ namespace Lazy
 
             pConst->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries);
             
-            DWORD AttribID = pBoneComb[iAttrib].AttribId;
-
             // set material color properties 
             if (pMaterialDiffuse)
                 pMaterialDiffuse->bindValue(pMeshContainer->pMaterials[AttribID].MatD3D.Diffuse);
@@ -742,8 +746,7 @@ namespace Lazy
             }
 
             // setup the material of the mesh subset - REMEMBER to use the original pre-skinning attribute id to get the correct material id
-            if (pTexture)
-                pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
+            pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
 
             // Set CurNumBones to select the correct vertex shader for the number of bones
             if (pCurNumBones)

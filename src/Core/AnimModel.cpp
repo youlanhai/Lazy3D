@@ -109,10 +109,12 @@ namespace Lazy
     LPD3DXANIMATIONSET AnimalModel::getAnimSet(const std::wstring & name) const
     {
         LPD3DXANIMATIONSET pAnimSet = NULL;
-
-        std::string name2;
-        wcharToChar(name2, name);
-        m_pAnimControler->GetAnimationSetByName(name2.c_str(), &pAnimSet);
+        if (m_pAnimControler != NULL)
+        {
+            std::string name2;
+            wcharToChar(name2, name);
+            m_pAnimControler->GetAnimationSetByName(name2.c_str(), &pAnimSet);
+        }
         return pAnimSet;
     }
 
@@ -146,7 +148,7 @@ namespace Lazy
 
     bool AnimalModel::playAction(LPD3DXANIMATIONSET pAnimSet)
     {
-        if (NULL == pAnimSet)
+        if (NULL == pAnimSet || NULL == m_pAnimControler)
         {
             return false;
         }
@@ -170,6 +172,9 @@ namespace Lazy
     /** 获得动画个数*/
     int AnimalModel::getActionCount(void) const
     {
+        if (NULL == m_pAnimControler)
+            return 0;
+
         return m_pAnimControler->GetNumAnimationSets();
     }
 
