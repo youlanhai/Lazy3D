@@ -113,11 +113,11 @@ namespace Lazy
 #define REG_EFFECT_CONST_FACTORY(TYPE, FACTORY) \
     EffectConstantSetter::set(TYPE, new EffectConstantProxy(FACTORY))
         
-        REG_EFFECT_CONST_FACTORY("World", effectApplyWorld);
-        REG_EFFECT_CONST_FACTORY("View", effectApplyView);
-        REG_EFFECT_CONST_FACTORY("Proj", effectApplyProj);
-        REG_EFFECT_CONST_FACTORY("ViewProj", effectApplyViewProj);
-        REG_EFFECT_CONST_FACTORY("WorldViewProj", effectApplyWorldViewProj);
+        REG_EFFECT_CONST_FACTORY("WORLD", effectApplyWorld);
+        REG_EFFECT_CONST_FACTORY("VIEW", effectApplyView);
+        REG_EFFECT_CONST_FACTORY("PROJECTION", effectApplyProj);
+        REG_EFFECT_CONST_FACTORY("VIEWPROJECTION", effectApplyViewProj);
+        REG_EFFECT_CONST_FACTORY("WORLDVIEWPROJECTION", effectApplyWorldViewProj);
         REG_EFFECT_CONST_FACTORY("AmbientColor", effectApplyAmbient);
         REG_EFFECT_CONST_FACTORY("OmitLight", effectApplyOmitLight);
         REG_EFFECT_CONST_FACTORY("DirLight", effectApplyDirLight);

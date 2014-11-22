@@ -2,6 +2,7 @@
 /** 该文件为蒙皮骨骼动画核心实现*/
 
 #include "ResMgr.h"
+#include "Effect.h"
 
 namespace Lazy
 {
@@ -87,6 +88,7 @@ namespace Lazy
         int		        m_dwTrangleCnt; ///< 渲染的三角形数量
         AABB            m_aabb;         ///<aabb包围盒
         dx::AnimController* m_pAnimController;  ///< 动画控制器
+        static EffectPtr s_effect;
 
 
         void drawFrame(LPD3DXFRAME pFrame);
@@ -99,10 +101,11 @@ namespace Lazy
         HRESULT generateSkinnedMeshSoft(MeshContainer *pMeshContainer);
 
         void drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase);
-        void drawMeshContainerMeshOnly(MeshContainer *pMeshContainerBase, BoneFrame *pFrameBase);
-        void drawMeshContainerNoIndex(MeshContainer *pMeshContainerBase, BoneFrame *pFrameBase);
-        void drawMeshContainerIndex(MeshContainer *pMeshContainerBase, BoneFrame *pFrameBase);
-        void drawMeshContainerSoft(MeshContainer *pMeshContainerBase, BoneFrame *pFrameBase);
+        void drawMeshContainerMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
+        void drawMeshContainerNoIndex(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
+        void drawMeshContainerIndex(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
+        void drawMeshContainerHLSL(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
+        void drawMeshContainerSoft(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
     };
 
 

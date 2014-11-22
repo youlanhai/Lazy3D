@@ -25,7 +25,7 @@ namespace Lazy
 
         // EffectConstantSetter 是公用的，不需要在这里释放。
         for (AutoConstants::iterator it = m_autoConstants.begin();
-            it != m_autoConstants.begin(); ++it)
+            it != m_autoConstants.end(); ++it)
             delete it->second;
 
         SAFE_DELREF_COM(m_pEffect);
@@ -109,7 +109,7 @@ namespace Lazy
 
         // 设置自动变量
         for (AutoConstants::iterator it = m_autoConstants.begin();
-            it != m_autoConstants.begin(); ++it)
+            it != m_autoConstants.end(); ++it)
             it->first->apply(it->second);
 
         return true;

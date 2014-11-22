@@ -115,4 +115,9 @@ namespace Lazy
             m_pEffect->SetTexture(m_handle, texture->getTexture());
     }
 
+    void EffectConstant::bindValue(dx::Texture * texture)
+    {
+        if (texture)
+            m_pEffect->SetTexture(m_handle, texture);
+    }
 }

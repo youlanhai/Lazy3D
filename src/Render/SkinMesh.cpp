@@ -3,10 +3,12 @@
 #include "SkinMesh.h"
 #include "Texture.h"
 #include "RenderDevice.h"
-
+#include "EffectConstant.h"
 
 namespace Lazy
 {
+    static Matrix g_pBoneMatrices[256];
+
     BoneFrame::BoneFrame(const char* name)
     {
         Name = nullptr;
@@ -333,12 +335,21 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////
     // SkinMesh
     //////////////////////////////////////////////////////////////////////
+    /*static*/ EffectPtr SkinMesh::s_effect;
+
     SkinMesh::SkinMesh(const tstring & source)
         : IResource(source)
     {
         m_pAnimController = NULL;
         m_bone = NULL;
         m_skinMethod = SkinMethod::indexed;
+        
+        static bool firstTime = true;
+        if (firstTime)
+        {
+            firstTime = false;
+            s_effect = EffectMgr::instance()->get(_T("shader/skinned_mesh.fx"));
+        }
 
         m_dwTrangleCnt = 0;
 
@@ -867,21 +878,16 @@ namespace Lazy
 
         DWORD nBones = pMeshContainer->pSkinInfo->GetNumBones();
 
-        static std::vector<Matrix> s_matrixCache;
-        s_matrixCache.resize(nBones);
-
         for (DWORD i = 0; i < nBones; ++i)
         {
             D3DXMatrixMultiply(
-                &s_matrixCache[i],
+                &g_pBoneMatrices[i],
                 &pMeshContainer->pBoneOffsetMatrices[i],
                 pMeshContainer->ppBoneMatrixPtrs[i]
                 );
         }
 
-        Matrix  Identity;
-        D3DXMatrixIdentity(&Identity);
-        pDevice->SetTransform(D3DTS_WORLD, &Identity);
+        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
 
         PBYTE pbVerticesSrc;
         PBYTE pbVerticesDest;
@@ -899,7 +905,7 @@ namespace Lazy
         }
 
         pMeshContainer->pSkinInfo->UpdateSkinnedMesh(
-            &s_matrixCache[0],
+            &g_pBoneMatrices[0],
             NULL,
             pbVerticesSrc,
             pbVerticesDest);
@@ -917,6 +923,97 @@ namespace Lazy
         }
     }
 
+    void SkinMesh::drawMeshContainerHLSL(MeshContainer *pMeshContainer, BoneFrame *pFrameBase)
+    {
+        EffectConstant *pConst = s_effect->getConstant("mWorldMatrixArray");
+        if (!pConst)
+            return;
+
+        EffectConstant *pMaterialDiffuse = s_effect->getConstant("MaterialDiffuse");
+        EffectConstant *pMaterialAmbient = s_effect->getConstant("MaterialAmbient");
+        EffectConstant *pCurNumBones = s_effect->getConstant("CurNumBones");
+        EffectConstant *pTexture = s_effect->getConstant("g_texture");
+
+
+        LPDIRECT3DDEVICE9 pd3dDevice = Lazy::rcDevice()->getDevice();
+        if (pMeshContainer->UseSoftwareVP)
+        {
+            // If hw or pure hw vertex processing is forced, we can't render the
+            // mesh, so just exit out.  Typical applications should create
+            // a device with appropriate vertex processing capability for this
+            // skinning method.
+            //if (g_dwBehaviorFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
+            //    return;
+
+            pd3dDevice->SetSoftwareVertexProcessing(TRUE);
+        }
+
+        assert(pMeshContainer->NumPaletteEntries <= 32);
+
+        LPD3DXBONECOMBINATION pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(
+            pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
+        for (DWORD iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
+        {
+            // first calculate all the world matrices
+            for (DWORD iPaletteEntry = 0; iPaletteEntry < pMeshContainer->NumPaletteEntries; ++iPaletteEntry)
+            {
+                DWORD iMatrixIndex = pBoneComb[iAttrib].BoneId[iPaletteEntry];
+                if (iMatrixIndex != UINT_MAX)
+                {
+                    D3DXMatrixMultiply(&g_pBoneMatrices[iPaletteEntry],
+                        &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
+                        pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
+                }
+            }
+
+            pConst->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries, false);
+            
+            // Sum of all ambient and emissive contribution
+            D3DXCOLOR color1(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Ambient);
+            D3DXCOLOR color2(.55f, .55f, .55f, 1.0f);
+            D3DXCOLOR ambEmm;
+            D3DXColorModulate(&ambEmm, &color1, &color2);
+            ambEmm += D3DXCOLOR(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Emissive);
+
+            // set material color properties 
+            if (pMaterialDiffuse)
+                pMaterialDiffuse->bindValue((Vector4*) &(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Diffuse));
+
+            if (pMaterialAmbient)
+                pMaterialAmbient->bindValue((Vector4*) &ambEmm);
+
+            // setup the material of the mesh subset - REMEMBER to use the original pre-skinning attribute id to get the correct material id
+            if (pTexture)
+                pTexture->bindValue(pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
+
+            // Set CurNumBones to select the correct vertex shader for the number of bones
+            if (pCurNumBones)
+                pCurNumBones->bindValue(int(pMeshContainer->NumInfl) - 1);
+
+            // Start the effect now all parameters have been updated
+            UINT numPasses;
+            if (s_effect->begin(numPasses))
+            {
+                for (UINT iPass = 0; iPass < numPasses; iPass++)
+                {
+                    s_effect->beginPass(iPass);
+
+                    // draw the subset with the current world matrix palette and material state
+                    pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
+
+                    s_effect->endPass();
+                }
+                s_effect->end();
+            }
+        }
+
+        // remember to reset back to hw vertex processing if software was required
+        if (pMeshContainer->UseSoftwareVP)
+        {
+            pd3dDevice->SetSoftwareVertexProcessing(FALSE);
+        }
+    }
+
     void SkinMesh::drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase)
     {
         MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
@@ -925,6 +1022,10 @@ namespace Lazy
         if (pMeshContainer->pSkinInfo == NULL)
         {
             drawMeshContainerMeshOnly(pMeshContainer, pFrame);
+        }
+        else if (s_effect)
+        {
+            drawMeshContainerHLSL(pMeshContainer, pFrame);
         }
         else if (m_skinMethod == SkinMethod::noIndexed)
         {

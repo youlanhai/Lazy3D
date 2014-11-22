@@ -154,11 +154,13 @@ bool CGame::init(void)
         return false;
     }
 
+#if 0
     if (!TerrainMap::instance()->loadMap(mapName))
     {
         LOG_ERROR(_T("load map failed!"));
         return false;
     }
+#endif
 
     Lazy::LoadingMgr::instance()->init();
 
@@ -243,8 +245,6 @@ void CGame::render()
     m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, 
         m_bUseLineMode ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
     
-    //渲染地面
-    TerrainMap::instance()->render(m_pd3dDevice);
 
     //if (cPick::instance()->isIntersectWithTerrain())
     {

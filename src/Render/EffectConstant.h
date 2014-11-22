@@ -36,6 +36,7 @@ namespace Lazy
         void bindValue(const Vector4* values, uint32 count = 1);
 
         void bindValue(const TexturePtr texture);
+        void bindValue(dx::Texture * texture);
 
     private:
 
