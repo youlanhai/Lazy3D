@@ -11,6 +11,84 @@ namespace Lazy
     static Matrix g_pBoneMatrices[MaxNumBone];
 
     //////////////////////////////////////////////////////////////////////
+    // MeshContainer
+    //////////////////////////////////////////////////////////////////////
+
+    ///骨骼关联的mesh
+    struct MeshContainer : public D3DXMESHCONTAINER
+    {
+        MeshContainer(const char* name);
+        ~MeshContainer();
+
+        std::wstring            MeshName;
+        LPD3DXATTRIBUTERANGE	pAttributeTable;
+        LPDIRECT3DTEXTURE9 *    ppTextures;		//纹理数组
+        LPD3DXMESH				pOrigMesh;		//原始网格模型
+        DWORD					NumInfl;		//每个顶点最多受多少骨骼的影响
+        DWORD					NumAttributeGroups;		//属性组数量,即子网格的数量
+        LPD3DXBUFFER			pBoneCombinationBuf;	//骨骼组合表
+        Matrix**			    ppBoneMatrixPtrs;		//存放骨骼的组合变换矩阵
+        Matrix*				    pBoneOffsetMatrices;	//存放骨骼的初始变换矩阵
+        DWORD					NumPaletteEntries;		//骨骼数量上限
+        BOOL					UseSoftwareVP;			//是否使用软件顶点处理
+        DWORD					iAttributeSW;
+    };
+
+    MeshContainer::MeshContainer(const char * name)
+    {
+        Name = nullptr;
+        if (name)
+        {
+            Lazy::charToWChar(MeshName, name);
+
+            int n = strlen(name) + 1;
+            Name = new char[n];
+            strcpy_s(Name, n, name);
+
+            ZeroMemory(&MeshData, sizeof(MeshData));
+        }
+
+        NumMaterials = 0;
+        pMaterials = nullptr; //材质数组
+        ppTextures = nullptr; //纹理数组
+        pEffects = nullptr;
+        pAdjacency = nullptr;
+        pSkinInfo = nullptr;
+
+        pAttributeTable = nullptr;
+        pOrigMesh = nullptr;		//原始网格模型
+        NumInfl = 0;		//每个顶点最多受多少骨骼的影响
+        NumAttributeGroups = 0;		//属性组数量,即子网格的数量
+        pBoneCombinationBuf = nullptr;	//骨骼组合表
+        ppBoneMatrixPtrs = nullptr;		//存放骨骼的组合变换矩阵
+        pBoneOffsetMatrices = nullptr;	//存放骨骼的初始变换矩阵
+        NumPaletteEntries = 0;		//骨骼数量上限
+        UseSoftwareVP = TRUE;			//是否使用软件顶点处理
+        iAttributeSW = 0;
+    }
+
+    MeshContainer::~MeshContainer()
+    {
+        SafeDeleteArray(Name);
+        SafeDeleteArray(pAdjacency);
+        SafeDeleteArray(pMaterials);
+        SafeDeleteArray(pBoneOffsetMatrices);
+
+        SafeDeleteArray(ppTextures);//纹理不需要释放，有纹理管理器管理。
+        SafeDeleteArray(ppBoneMatrixPtrs);
+        SafeRelease(pBoneCombinationBuf);
+        SafeRelease(MeshData.pMesh);
+        SafeRelease(pSkinInfo);
+        SafeRelease(pOrigMesh);
+
+        if (pNextMeshContainer)
+        {
+            delete (MeshContainer*) pNextMeshContainer;
+            pNextMeshContainer = nullptr;
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////
     // BoneFrame
     //////////////////////////////////////////////////////////////////////
 
@@ -89,68 +167,6 @@ namespace Lazy
             ((BoneFrame*) pFrameFirstChild)->updateMatrix(static_cast<Matrix&>(CombinedTransformationMatrix));
         }
     }
-
-
-    //////////////////////////////////////////////////////////////////////
-    // MeshContainer
-    //////////////////////////////////////////////////////////////////////
-
-    MeshContainer::MeshContainer(const char * name)
-    {
-
-        Name = nullptr;
-        if (name)
-        {
-            Lazy::charToWChar(MeshName, name);
-
-            int n = strlen(name) + 1;
-            Name = new char[n];
-            strcpy_s(Name, n, name);
-
-            ZeroMemory(&MeshData, sizeof(MeshData));
-        }
-
-        NumMaterials = 0;
-        pMaterials = nullptr; //材质数组
-        ppTextures = nullptr; //纹理数组
-        pEffects = nullptr;
-        pAdjacency = nullptr;
-        pSkinInfo = nullptr;
-
-        pAttributeTable = nullptr;
-        pOrigMesh = nullptr;		//原始网格模型
-        NumInfl = 0;		//每个顶点最多受多少骨骼的影响
-        NumAttributeGroups = 0;		//属性组数量,即子网格的数量
-        pBoneCombinationBuf = nullptr;	//骨骼组合表
-        ppBoneMatrixPtrs = nullptr;		//存放骨骼的组合变换矩阵
-        pBoneOffsetMatrices = nullptr;	//存放骨骼的初始变换矩阵
-        NumPaletteEntries = 0;		//骨骼数量上限
-        UseSoftwareVP = true;			//是否使用软件顶点处理
-        iAttributeSW = 0;
-    }
-
-    MeshContainer::~MeshContainer()
-    {
-        SafeDeleteArray(Name);
-        SafeDeleteArray(pAdjacency);
-        SafeDeleteArray(pMaterials);
-        SafeDeleteArray(pBoneOffsetMatrices);
-
-        SafeDeleteArray(ppTextures);//纹理不需要释放，有纹理管理器管理。
-        SafeDeleteArray(ppBoneMatrixPtrs);
-        SafeRelease(pBoneCombinationBuf);
-        SafeRelease(MeshData.pMesh);
-        SafeRelease(pSkinInfo);
-        SafeRelease(pOrigMesh);
-
-        if (pNextMeshContainer)
-        {
-            delete (MeshContainer*) pNextMeshContainer;
-            pNextMeshContainer = nullptr;
-        }
-
-    }
-
 
     //////////////////////////////////////////////////////////////////////
     // CAllocateHierarchy
@@ -500,7 +516,7 @@ namespace Lazy
                 256, 
                 pMeshContainer->pSkinInfo->GetNumBones());
 
-            pMeshContainer->UseSoftwareVP = true;
+            pMeshContainer->UseSoftwareVP = TRUE;
             Flags |= D3DXMESH_SYSTEMMEM;
         }
         else
@@ -509,7 +525,7 @@ namespace Lazy
                 (pCaps->MaxVertexBlendMatrixIndex + 1) / 2,
                 pMeshContainer->pSkinInfo->GetNumBones());
 
-            pMeshContainer->UseSoftwareVP = false;
+            pMeshContainer->UseSoftwareVP = FALSE;
             Flags |= D3DXMESH_MANAGED;
         }
 

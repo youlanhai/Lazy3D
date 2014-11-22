@@ -6,6 +6,7 @@
 
 namespace Lazy
 {
+    struct MeshContainer;
 
     ///骨骼框架
     struct BoneFrame : public D3DXFRAME
@@ -18,26 +19,6 @@ namespace Lazy
 
         std::wstring    BoneName;
         Matrix      CombinedTransformationMatrix;
-    };
-
-    ///骨骼关联的mesh
-    struct MeshContainer : public D3DXMESHCONTAINER
-    {
-        MeshContainer(const char* name);
-        ~MeshContainer();
-
-        std::wstring            MeshName;
-        LPD3DXATTRIBUTERANGE	pAttributeTable;
-        LPDIRECT3DTEXTURE9		*ppTextures;		//纹理数组
-        LPD3DXMESH				pOrigMesh;		//原始网格模型
-        DWORD					NumInfl;		//每个顶点最多受多少骨骼的影响
-        DWORD					NumAttributeGroups;		//属性组数量,即子网格的数量
-        LPD3DXBUFFER			pBoneCombinationBuf;	//骨骼组合表
-        Matrix**			ppBoneMatrixPtrs;		//存放骨骼的组合变换矩阵
-        Matrix*				pBoneOffsetMatrices;	//存放骨骼的初始变换矩阵
-        DWORD					NumPaletteEntries;		//骨骼数量上限
-        bool					UseSoftwareVP;			//是否使用软件顶点处理
-        DWORD					iAttributeSW;
     };
 
     ///蒙皮骨骼动画
