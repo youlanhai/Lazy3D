@@ -28,7 +28,7 @@ protected:
     void onSize(int w, int h) override;
 
 public:
-    Lazy::RefPtr<Lazy::CGUIManager>     m_guiMgr;
-    Lazy::ControlPtr    m_fpsLabel;
+    Lazy::RefPtr<Lazy::GUIMgr>      m_guiMgr;
+    Lazy::RefPtr<Lazy::Label>       m_fpsLabel;
 
 };

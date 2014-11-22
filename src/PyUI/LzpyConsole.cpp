@@ -42,7 +42,7 @@ namespace Lzpy
         ConsolePanel *parent = dynamic_cast <ConsolePanel*>(m_parent);
         if (parent->processEditSysKey(isKeyDown, key)) return true;
 
-        return CEdit::onSysKey(isKeyDown, key);
+        return Edit::onSysKey(isKeyDown, key);
     }
 
     void ConsoleEdit::clearText()
@@ -57,21 +57,20 @@ namespace Lzpy
         : m_curCmd(0)
         , m_maxCacheSize(32)
     {
-        setBgColor(0x7f000000);
-        enableDrag(false);
+        setDragable(false);
 
         m_strResult = L"python console.";
 
         m_staticLabel.setAlign(Lazy::RelativeAlign::left);
-        m_staticLabel.enableMutiLine(true);
+        m_staticLabel.setMutiLine(true);
         addChild(&m_staticLabel);
 
-        m_markLabel.create(1, L">>>", 0, 0);
+        m_markLabel.create(L">>>", 0, 0);
         addChild(&m_markLabel);
 
         addChild(&m_cmdEdit);
 
-        show(false);
+        setVisible(false);
     }
 
     ConsolePanel::~ConsolePanel()
@@ -81,7 +80,7 @@ namespace Lzpy
 
     void ConsolePanel::setSize(int w, int h)
     {
-        CForm::setSize(w, h);
+        Window::setSize(w, h);
 
         m_staticLabel.setSize(w, h);
         m_cmdEdit.setSize(w, h);
@@ -176,7 +175,7 @@ namespace Lzpy
 
         if (cmd == L"exit")
         {
-            show(false);
+            setVisible(false);
             return;
         }
 

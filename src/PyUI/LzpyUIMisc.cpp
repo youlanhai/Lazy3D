@@ -9,7 +9,6 @@ namespace Lzpy
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(LzpyLabel);
     LZPY_GETSET(lineSpace);
-    LZPY_GETSET(maxWidth);
     LZPY_GETSET(textAlign);
     LZPY_GETSET(mutiline);
     LZPY_GET(textLines);
@@ -74,8 +73,8 @@ namespace Lzpy
 
     tuple LzpySlidebar::getSliderSize()
     {
-        CSize size = getUI()->getSliderSize();
-        return build_tuple(size.cx, size.cy);
+        CPoint size = getUI()->getSliderSize();
+        return build_tuple(size.x, size.y);
     }
 
     LZPY_IMP_METHOD_0(LzpySlidebar, slideForward)
@@ -192,7 +191,7 @@ namespace Lzpy
 
     object LzpyUIProxy::getHost()
     {
-        ControlPtr p = getUI()->getHost();
+        Widget * p = getUI()->getHost();
         if (!p || !p->getSelf()) return none_object;
 
         return object(p->getSelf());
@@ -248,7 +247,7 @@ namespace Lzpy
         DWORD vk;
         if (!PyArg_ParseTuple(arg, "k", &vk)) return NULL;
 
-        bool isDown = IControl::isVKDown(vk);
+        bool isDown = Widget::isVKDown(vk);
 
         return PyBool_FromLong(isDown);
     }
@@ -280,7 +279,7 @@ namespace Lzpy
     LZPY_MODULE_END();
 
 
-    static IControl* pyEditorUICreateFun(IControl *pParent, LZDataPtr config)
+    static Widget* pyEditorUICreateFun(Widget *pParent, LZDataPtr config)
     {
         object pyChild = createPythonUI(config);
         if (!pyChild) return nullptr;
@@ -306,7 +305,7 @@ namespace Lzpy
                 s_root->m_control = getGUIMgr();
                 s_root->m_control->setSelf(object_base(s_root));
 
-                setEditorUICreateFun(pyEditorUICreateFun);
+               // setEditorUICreateFun(pyEditorUICreateFun);
             }
 
             void fini() override

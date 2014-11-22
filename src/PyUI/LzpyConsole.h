@@ -1,14 +1,25 @@
 #pragma once
 
+#include "../Lzui/UIEdit.h"
+#include "../Lzui/UIWindow.h"
+
+#include "../utility/UtilConfig.h"
+
 #include <queue>
 
 namespace Lzpy
 {
     class PyConsoleOutput;
 
-    class ConsoleEdit : public Lazy::CEdit
+    using Lazy::Widget;
+    using Lazy::Edit;
+    using Lazy::Window;
+
+    class ConsoleEdit : public Edit
     {
     public:
+        //MAKE_UI_HEADER(ConsoleEdit, Edit)
+
         ConsoleEdit();
         ~ConsoleEdit();
 
@@ -17,9 +28,11 @@ namespace Lzpy
         void clearText();
     };
 
-    class ConsolePanel : public Lazy::CForm
+    class ConsolePanel : public Window
     {
     public :
+        //MAKE_UI_HEADER(ConsolePanel, Window)
+
         ConsolePanel();
         ~ConsolePanel();
 
@@ -36,8 +49,8 @@ namespace Lzpy
         void updateResult();
 
     private:
-        Lazy::CLabel m_staticLabel;
-        Lazy::CLabel m_markLabel;
+        Lazy::Label m_staticLabel;
+        Lazy::Label m_markLabel;
         ConsoleEdit  m_cmdEdit;
 
         std::wstring m_strResult;

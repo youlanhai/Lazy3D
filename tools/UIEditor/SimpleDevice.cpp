@@ -52,7 +52,7 @@ bool initPython()
 
     Py_SetPythonHome(&pyHome[0]);
 
-    Lzpy::registerConsoleOutput();
+    //Lzpy::registerConsoleOutput();
 
     PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
     PyImport_AppendInittab("lui", Lzpy::PyInit_lui);
@@ -179,17 +179,15 @@ bool SimpleDevice::onInit()
     Lazy::FontMgr::instance()->init();
     Lazy::FontMgr::instance()->registerFontFile(fontFile, _T("def"));
 
-    Lazy::rcDevice()->setFontShader(L"shader/font.fx");
-
     Editor::client::width = root->readInt(L"client/width", 640);
     Editor::client::height = root->readInt(L"client/height", 480);
     Editor::client::image = root->readString(L"client/image");
     Editor::client::color = root->readHex(L"client/color", 0xffffffff);
 
-    m_guiMgr = new Lazy::CGUIManager(Lazy::rcDevice()->getDevice(), m_hWnd, m_hInstance);
+    m_guiMgr = new Lazy::GUIMgr(Lazy::rcDevice()->getDevice(), m_hWnd, m_hInstance);
     m_guiMgr->setSize(Editor::client::width, Editor::client::height);
 
-    m_fpsLabel = new Lazy::CLabel();
+    m_fpsLabel = new Lazy::Label();
     m_guiMgr->addChild(m_fpsLabel.get());
     
     if (!initPython())

@@ -11,19 +11,25 @@ namespace Lzpy
     public:
         LzpyLabel();
 
-        CLabel * getUI() { return m_control.cast<CLabel>(); }
+        Label * getUI() { return m_control.cast<Label>(); }
+
+        LZPY_DEF_GET(text, getUI()->getText);
+        LZPY_DEF_SET(text, getUI()->setText, tstring);
+
+        LZPY_DEF_GET(font, getUI()->getFont);
+        LZPY_DEF_SET(font, getUI()->setFont, tstring);
+
+        LZPY_DEF_GET(color, getUI()->getTextColor);
+        LZPY_DEF_SET(color, getUI()->setTextColor, uint32);
 
         LZPY_DEF_GET(textAlign, getUI()->getAlign);
         LZPY_DEF_SET(textAlign, getUI()->setAlign, uint32);
 
-        LZPY_DEF_GET(mutiline, getUI()->canMutiLine);
-        LZPY_DEF_SET(mutiline, getUI()->enableMutiLine, bool);
+        LZPY_DEF_GET(mutiline, getUI()->getMutiLine);
+        LZPY_DEF_SET(mutiline, getUI()->setMutiLine, bool);
 
         LZPY_DEF_GET(lineSpace, getUI()->getLineSpace);
         LZPY_DEF_SET(lineSpace, getUI()->setLineSpace, int);
-
-        LZPY_DEF_GET(maxWidth, getUI()->getMaxWidth);
-        LZPY_DEF_SET(maxWidth, getUI()->setMaxWidth, int);
 
         LZPY_DEF_GET(textLines, getUI()->getTextLines);
         LZPY_DEF_GET(textSize, getTextSize);
@@ -38,10 +44,10 @@ namespace Lzpy
     public:
         LzpyForm();
 
-        CForm * getUI() { return m_control.cast<CForm>(); }
+        Window * getUI() { return m_control.cast<Window>(); }
 
-        LZPY_DEF_GET(enableClip, getUI()->canClip);
-        LZPY_DEF_SET(enableClip, getUI()->enableClip, bool);
+        LZPY_DEF_GET(enableClip, getUI()->getClipable);
+        LZPY_DEF_SET(enableClip, getUI()->setClipable, bool);
     };
 
 
@@ -51,7 +57,7 @@ namespace Lzpy
     public:
         LzpySlidebar();
 
-        CSlidebar * getUI() { return m_control.cast<CSlidebar>(); }
+        Slidebar * getUI() { return m_control.cast<Slidebar>(); }
 
         LZPY_DEF_GET(vertical, getUI()->getVertical);
         LZPY_DEF_SET(vertical, getUI()->setVertical, bool);
@@ -82,7 +88,7 @@ namespace Lzpy
     public:
         LzpyButton();
 
-        CButton * getUI() { return m_control.cast<CButton>(); }
+        Button * getUI() { return m_control.cast<Button>(); }
 
         LZPY_DEF_GET(textAlign, getUI()->getTextAlign);
         LZPY_DEF_SET(textAlign, getUI()->setTextAlign, uint32);
@@ -100,7 +106,7 @@ namespace Lzpy
     public:
         LzpySelect();
 
-        CCheckBox * getUI() { return m_control.cast<CCheckBox>(); }
+        CheckBox * getUI() { return m_control.cast<CheckBox>(); }
 
         LZPY_DEF_GET(check, getUI()->getCheck);
         LZPY_DEF_SET(check, getUI()->setCheck, bool);
@@ -113,7 +119,7 @@ namespace Lzpy
     public:
         LzpyEditorCtl();
 
-        CEditorCtl * getUI() { return m_control.cast<CEditorCtl>(); }
+        EditorCtl * getUI() { return m_control.cast<EditorCtl>(); }
 
         LZPY_DEF_GET(edgeSize, getUI()->getEdgeSize);
         LZPY_DEF_SET(edgeSize, getUI()->setEdgeSize, int);
@@ -125,6 +131,13 @@ namespace Lzpy
     public:
         LzpyImage();
 
+        Image * getUI() { return m_control.cast<Image>(); }
+
+        LZPY_DEF_GET(image, getUI()->getImage);
+        LZPY_DEF_SET(image, getUI()->setImage, tstring);
+
+        LZPY_DEF_GET(color, getUI()->getColor);
+        LZPY_DEF_SET(color, getUI()->setColor, uint32);
     };
 
     class LzpyEdit : public LzpyControl
@@ -133,7 +146,7 @@ namespace Lzpy
     public:
         LzpyEdit();
 
-        CEdit * getUI() { return m_control.cast<CEdit>(); }
+        Edit * getUI() { return m_control.cast<Edit>(); }
 
         LZPY_DEF_GET(mutiline, getUI()->isMutiLine);
         LZPY_DEF_SET(mutiline, getUI()->setMutiLine, bool);

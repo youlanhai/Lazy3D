@@ -10,7 +10,7 @@ namespace Lazy
     public:
         MAKE_UI_HEADER(Edit, Widget)
 
-        Edit(void);
+            Edit(void);
         virtual ~Edit(void);
 
         virtual void update(float elapse) override;
@@ -23,6 +23,10 @@ namespace Lazy
         void setFont(const tstring & name);
         void setTextColor(uint32 color);
         void setSize(int w, int h);
+
+        const tstring & getText() const { return m_text; }
+        const tstring & getFont() const { return m_font; }
+        uint32 getTextColor() const { return m_textColor; }
 
         virtual bool setProperty(LZDataPtr config, const tstring & key, LZDataPtr val) override;
 

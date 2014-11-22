@@ -13,28 +13,20 @@ namespace Lzpy
     LZPY_GET(parent);
     LZPY_GET(type);
     LZPY_GET(__dict__);
-    LZPY_GETSET(managed);
-    LZPY_GETSET(id);
     LZPY_GETSET(size);
     LZPY_GETSET(position);
+    LZPY_GETSET(absPosition);
+    LZPY_GETSET(globalPosition);
     LZPY_GETSET(zorder);
     LZPY_GETSET(name);
-    LZPY_GETSET(text);
-    LZPY_GETSET(font);
-    LZPY_GETSET(image);
-    LZPY_GETSET(color);
-    LZPY_GETSET(bgColor);
-    LZPY_GETSET(relative);
-    LZPY_GETSET(relativePos);
-    LZPY_GETSET(relativeAlign);
+    LZPY_GETSET(skin);
+    LZPY_GETSET(align);
     LZPY_GETSET(visible);
     LZPY_GETSET(enable);
-    LZPY_GETSET(enableDrag);
-    LZPY_GETSET(enableSelfMsg);
-    LZPY_GETSET(enableLimitInRect);
-    LZPY_GETSET(enableClickTop);
-    LZPY_GETSET(enableChangeChildOrder);
-    LZPY_GETSET(editable);
+    LZPY_GETSET(dragable);
+    LZPY_GETSET(messagable);
+    LZPY_GETSET(topable);
+    LZPY_GETSET(childOrderable);
     LZPY_GETSET(script);
 
     LZPY_GETSET(globalRect);
@@ -42,18 +34,11 @@ namespace Lzpy
     LZPY_METHOD(addChild);
     LZPY_METHOD(getChild);
     LZPY_METHOD(delChild);
-    LZPY_METHOD(getChildByName);
 
     LZPY_METHOD(clearChildren);
     LZPY_METHOD(getChildren);
     LZPY_METHOD(findChildByPos);
     LZPY_METHOD(destroy);
-
-    LZPY_METHOD(localToParent);
-    LZPY_METHOD(parentToLocal);
-
-    LZPY_METHOD(localToGlobal);
-    LZPY_METHOD(globalToLocal);
 
     LZPY_METHOD(loadFromFile);
     LZPY_METHOD(saveToFile);
@@ -142,7 +127,7 @@ namespace Lzpy
         return true;
     }
 
-    bool LzpyControl::createUI(int type, PyObject *arg)
+    bool LzpyControl::createUI(const tstring & type, PyObject *arg)
     {
         LzpyControl * parent = nullptr;
         if (!PyArg_ParseTuple(arg, "|O", &parent)) return false;
@@ -171,8 +156,7 @@ namespace Lzpy
     {
         if (m_control && m_control->getParent())
         {
-            ControlPtr parent = m_control->getParent();
-            return parent->getSelf();
+            return m_control->getParent()->getSelf();
         }
 
         return object_base();
@@ -180,8 +164,8 @@ namespace Lzpy
 
     object LzpyControl::getSize()
     {
-        const CSize & pt = m_control->getSize();
-        return build_tuple(pt.cx, pt.cy);
+        const CPoint & pt = m_control->getSize();
+        return build_tuple(pt.x, pt.y);
     }
 
     void LzpyControl::setSize(object v)
@@ -218,13 +202,13 @@ namespace Lzpy
         m_control->setPosition(pt.x, pt.y);
     }
 
-    object LzpyControl::getRelativePos()
+    object LzpyControl::getAbsPosition()
     {
-        const Vector2 & pos = m_control->getRelativePos();
+        const CPoint & pos = m_control->getAbsPosition();
         return build_tuple(pos.x, pos.y);
     }
 
-    void LzpyControl::setRelativePos(object v)
+    void LzpyControl::setAbsPosition(object v)
     {
         tuple arg(v);
         if (!arg.check() || arg.size() != 2)
@@ -233,43 +217,30 @@ namespace Lzpy
             throw(python_error("TypeError"));
         }
 
-        float x, y;
+        int x, y;
         arg.parse_tuple(&x, &y);
-        m_control->setRelativePos(x, y);
+        m_control->setAbsPosition(x, y);
     }
 
-    LZPY_IMP_METHOD(LzpyControl, localToParent)
-    {
-        CPoint pt;
-        if (!arg.parse_tuple(&pt.x, &pt.y)) return null_object;
 
-        m_control->localToParent(pt);
-        return build_tuple(pt.x, pt.y);
-    }
-    LZPY_IMP_METHOD(LzpyControl, parentToLocal)
+    object LzpyControl::getGlobalPosition()
     {
-        CPoint pt;
-        if (!arg.parse_tuple(&pt.x, &pt.y)) return null_object;
-
-        m_control->parentToLocal(pt);
-        return build_tuple(pt.x, pt.y);
+        const CPoint & pos = m_control->getGlobalPosition();
+        return build_tuple(pos.x, pos.y);
     }
 
-    LZPY_IMP_METHOD(LzpyControl, localToGlobal)
+    void LzpyControl::setGlobalPosition(object v)
     {
-        CPoint pt;
-        if (!arg.parse_tuple(&pt.x, &pt.y)) return null_object;
+        tuple arg(v);
+        if (!arg.check() || arg.size() != 2)
+        {
+            PyErr_SetString(PyExc_TypeError, "tuple(x, y) needed!");
+            throw(python_error("TypeError"));
+        }
 
-        m_control->localToGlobal(pt);
-        return build_tuple(pt.x, pt.y);
-    }
-    LZPY_IMP_METHOD(LzpyControl, globalToLocal)
-    {
-        CPoint pt;
-        if (!arg.parse_tuple(&pt.x, &pt.y)) return null_object;
-
-        m_control->globalToLocal(pt);
-        return build_tuple(pt.x, pt.y);
+        int x, y;
+        arg.parse_tuple(&x, &y);
+        m_control->setGlobalPosition(x, y);
     }
 
     tuple LzpyControl::getGlobalRect()
@@ -300,7 +271,7 @@ namespace Lzpy
         std::wstring fname;
         if (!arg.parse_tuple(&fname)) return null_object;
 
-        bool ret = m_control->saveToFile(fname);
+        bool ret = false;// m_control->saveToFile(fname);
         return build_object(ret);
     }
 
@@ -319,22 +290,10 @@ namespace Lzpy
 
     LZPY_IMP_METHOD(LzpyControl, getChild)
     {
-        int id;
-        if (!arg.parse_tuple(&id)) return null_object;
-
-        PControl child = m_control->getChild(id);
-        if (child && child->getSelf())
-            return child->getSelf();
-
-        return none_object;
-    }
-
-    LZPY_IMP_METHOD(LzpyControl, getChildByName)
-    {
         tstring name;
         if (!arg.parse_tuple(&name)) return null_object;
 
-        PControl child = m_control->getChildDeep(name);
+        Widget * child = m_control->getChild(name);
         if(child && child->getSelf())
             return child->getSelf();
 
@@ -363,13 +322,12 @@ namespace Lzpy
     {
         list lst;
 
-        for (VisitControl::iterator it = m_control->childBegin();
-                it != m_control->childEnd(); ++it)
+        const WidgetChildren & children = m_control->getChildren();
+        for (const WidgetPtr & child : children)
         {
-            IControl *pctl = *it;
-            if (pctl && pctl->getSelf())
+            if (child->getSelf())
             {
-                lst.append(pctl->getSelf());
+                lst.append(child->getSelf());
             }
         }
 
@@ -382,7 +340,7 @@ namespace Lzpy
         bool resculy;
         if (!arg.parse_tuple(&pt.x, &pt.y, &resculy)) return null_object;
 
-        PControl p = m_control->finChildByPos(pt, resculy);
+        Widget * p = m_control->findChildByPos(pt, resculy);
         if (!p || !p->getSelf()) return none_object;
 
         return object(p->getSelf());

@@ -138,7 +138,7 @@ namespace Lazy
 
         ///允许改变子控件的顺序。如果启用，点击子控件，控件的顺序会被提前。
         void setChildOrderable(bool can) { m_childOrderable = can; }
-        bool getChildOrdeable() const { return m_childOrderable; }
+        bool getChildOrderable() const { return m_childOrderable; }
 
         void setDrawable(bool enable) { m_drawable = enable; }
         bool getDrawable() const { return m_drawable; }
@@ -146,7 +146,7 @@ namespace Lazy
 #ifdef ENABLE_SCRIPT
 
         /** borrw reference */
-        Lzpy::object_base getSelf() { return m_self; }
+        Lzpy::object_base getSelf() const { return m_self; }
         void setSelf(Lzpy::object_base self) { m_self = self; }
 
         const tstring & getScript() const { return m_script; }
