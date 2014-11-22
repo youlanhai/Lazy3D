@@ -40,23 +40,11 @@ namespace Lazy
         DWORD					iAttributeSW;
     };
 
-    ///蒙皮处理方法
-    namespace SkinMethod
-    {
-        const int none = 0;
-        const int noIndexed = 1;
-        const int indexed = 2;
-        const int software = 3;
-        const int hardware = 4;
-    };
-
     ///蒙皮骨骼动画
     class SkinMesh : public IResource
     {
     public:
-
         SkinMesh(const tstring & source);
-
         virtual ~SkinMesh();
 
         /** 加载资源。*/
@@ -68,46 +56,35 @@ namespace Lazy
         /** 渲染*/
         void render();
 
-    public:
-
         int getNbDrawTrangle() const { return m_dwTrangleCnt; }
 
         const AABB & getAABB() const { return m_aabb; }
 
         /** 克隆动画控制器。*/
         dx::AnimController* cloneAnimaCtrl(void);
-
         dx::AnimController* getAnimationContrl() const { return m_pAnimController; }
+
+    private:
+        BoneFrame*      m_bone;		///< 根骨节点
+        int		        m_dwTrangleCnt; ///< 渲染的三角形数量
+        AABB            m_aabb;         ///<aabb包围盒
+        dx::AnimController* m_pAnimController;  ///< 动画控制器
+
+        static EffectPtr s_skinnedEffect;
+        static EffectPtr s_noskinnedEffect;
+
+        friend class CAllocateHierarchy;
+
 
         /** 生成蒙皮网格*/
         HRESULT generateSkinnedMesh(MeshContainer *pMeshContainer);
 
-    protected:
-        BoneFrame*      m_bone;		///< 根骨节点
-        int	            m_skinMethod;   ///< 蒙皮类型
-        int		        m_dwTrangleCnt; ///< 渲染的三角形数量
-        AABB            m_aabb;         ///<aabb包围盒
-        dx::AnimController* m_pAnimController;  ///< 动画控制器
-        static EffectPtr s_skinnedEffect;
-        static EffectPtr s_noskinnedEffect;
-
-
-
         void drawFrame(LPD3DXFRAME pFrame);
+        void drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase);
+        void drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame);
 
         HRESULT setupBoneMatrixPointers(LPD3DXFRAME pFrame);
         HRESULT setupBoneMatrixPointersOnMesh(LPD3DXMESHCONTAINER pMeshContainerBase);
-
-        HRESULT generateSkinnedMeshNoneIndex(MeshContainer *pMeshContainer);
-        HRESULT generateSkinnedMeshIndex(MeshContainer *pMeshContainer);
-        HRESULT generateSkinnedMeshSoft(MeshContainer *pMeshContainer);
-
-        void drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase);
-        void drawMeshContainerMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
-        void drawMeshContainerNoIndex(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
-        void drawMeshContainerIndex(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
-        void drawMeshContainerHLSL(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
-        void drawMeshContainerSoft(MeshContainer *pMeshContainer, BoneFrame *pFrameBase);
     };
 
 

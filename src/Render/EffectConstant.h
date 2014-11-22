@@ -5,8 +5,6 @@
 #include "texture.h"
 #include "DXConfig.h"
 
-#include "../Math/Math.h"
-
 
 namespace Lazy
 {
@@ -25,17 +23,23 @@ namespace Lazy
         void bindValue(int value);
         void bindValue(const int* values, uint32 count = 1);
 
-        void bindValue(const Matrix& value);
-        void bindValue(const Matrix* values, uint32 count, bool transposed=false);
+        void bindValue(const D3DXMATRIX & value);
+        void bindValue(const D3DXMATRIX * values, uint32 count, bool transposed = false);
 
-        void bindValue(const Vector2& value);
-        void bindValue(const Vector2* values, uint32 count = 1);
+        void bindValue(const D3DXVECTOR2 & value);
+        void bindValue(const D3DXVECTOR2 * values, uint32 count = 1);
 
-        void bindValue(const Vector3& value);
-        void bindValue(const Vector3* values, uint32 count = 1);
+        void bindValue(const D3DXVECTOR3 & value);
+        void bindValue(const D3DXVECTOR3 * values, uint32 count = 1);
 
-        void bindValue(const Vector4& value);
-        void bindValue(const Vector4* values, uint32 count = 1);
+        void bindValue(const D3DXVECTOR4 & value);
+        void bindValue(const D3DXVECTOR4 * values, uint32 count = 1);
+
+        void bindValue(const D3DCOLORVALUE & value);
+        void bindValue(const D3DCOLORVALUE * values, uint32 count = 1);
+
+        void bindValue(const D3DXCOLOR & value);
+        void bindValue(const D3DXCOLOR * values, uint32 count = 1);
 
         void bindValue(const TexturePtr texture);
         void bindValue(dx::Texture * texture);

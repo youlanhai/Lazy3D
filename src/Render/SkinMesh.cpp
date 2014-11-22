@@ -10,6 +10,10 @@ namespace Lazy
     const int MaxNumBone = 32;
     static Matrix g_pBoneMatrices[MaxNumBone];
 
+    //////////////////////////////////////////////////////////////////////
+    // BoneFrame
+    //////////////////////////////////////////////////////////////////////
+
     BoneFrame::BoneFrame(const char* name)
     {
         Name = nullptr;
@@ -87,6 +91,10 @@ namespace Lazy
     }
 
 
+    //////////////////////////////////////////////////////////////////////
+    // MeshContainer
+    //////////////////////////////////////////////////////////////////////
+
     MeshContainer::MeshContainer(const char * name)
     {
 
@@ -144,10 +152,23 @@ namespace Lazy
     }
 
 
+    //////////////////////////////////////////////////////////////////////
+    // CAllocateHierarchy
+    //////////////////////////////////////////////////////////////////////
+
     class CAllocateHierarchy : public ID3DXAllocateHierarchy
     {
     public:
-        STDMETHOD(CreateFrame)(THIS_ LPCSTR Name, LPD3DXFRAME *ppNewFrame);
+        CAllocateHierarchy(SkinMesh *pSkinMesh)
+            : m_pSkinMesh(pSkinMesh)
+        {}
+
+        STDMETHOD(CreateFrame)(THIS_ LPCSTR Name, LPD3DXFRAME *ppNewFrame)
+        {
+            *ppNewFrame = new BoneFrame(Name);
+            return S_OK;
+        }
+
         STDMETHOD(CreateMeshContainer)(
             THIS_ LPCSTR              Name,
             CONST D3DXMESHDATA*       pMeshData,
@@ -158,23 +179,21 @@ namespace Lazy
             LPD3DXSKININFO			pSkinInfo,
             LPD3DXMESHCONTAINER		*ppNewMeshContainer);
 
-        STDMETHOD(DestroyFrame)(THIS_ LPD3DXFRAME pFrameToFree);
-        STDMETHOD(DestroyMeshContainer)(THIS_ LPD3DXMESHCONTAINER pMeshContainerBase);
-        CAllocateHierarchy(SkinMesh *pSkinMesh) : m_pSkinMesh(pSkinMesh) {}
+        STDMETHOD(DestroyFrame)(THIS_ LPD3DXFRAME pFrameToFree)
+        {
+            assert(0 && "can't be called!");
+            return S_OK;
+        }
+
+        STDMETHOD(DestroyMeshContainer)(THIS_ LPD3DXMESHCONTAINER pMeshContainerBase)
+        {
+            assert(0 && "can't be called!");
+            return S_OK;
+        }
 
     public:
         SkinMesh*		m_pSkinMesh;
     };
-
-    ///////////////////////////////////////////////
-    //			CAllocateHierarchy				///
-    ///////////////////////////////////////////////
-
-    HRESULT CAllocateHierarchy::CreateFrame(LPCSTR Name, LPD3DXFRAME *ppNewFrame)
-    {
-        *ppNewFrame = new BoneFrame(Name);
-        return S_OK;
-    }
 
     LRESULT CAllocateHierarchy::CreateMeshContainer(
         THIS_ LPCSTR              Name,
@@ -319,19 +338,6 @@ namespace Lazy
         return hr;
     }
 
-    HRESULT CAllocateHierarchy::DestroyFrame(LPD3DXFRAME pFrameToFree)
-    {
-        assert(0 && "can't be called!");
-        return S_OK;
-    }
-
-    HRESULT CAllocateHierarchy::DestroyMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase)
-    {
-        assert(0 && "can't be called!");
-        return S_OK;
-    }
-
-
 
     //////////////////////////////////////////////////////////////////////
     // SkinMesh
@@ -341,11 +347,10 @@ namespace Lazy
 
     SkinMesh::SkinMesh(const tstring & source)
         : IResource(source)
+        , m_pAnimController(nullptr)
+        , m_bone(nullptr)
+        , m_dwTrangleCnt(0)
     {
-        m_pAnimController = NULL;
-        m_bone = NULL;
-        m_skinMethod = SkinMethod::indexed;
-        
         static bool firstTime = true;
         if (firstTime)
         {
@@ -354,19 +359,17 @@ namespace Lazy
             s_noskinnedEffect = EffectMgr::instance()->get(_T("shader/noskinned.fx"));
         }
 
-        m_dwTrangleCnt = 0;
-
         m_aabb.min.set(-1.0f, 0, -1.0f);
         m_aabb.max.set(1.0f, 1.0f, 1.0f);
     }
 
     SkinMesh::~SkinMesh()
     {
-        if (m_bone) delete m_bone;
+        if (m_bone)
+            delete m_bone;
 
         SAFE_RELEASE(m_pAnimController);
     }
-
 
     /** 加载资源。*/
     bool SkinMesh::load()
@@ -460,69 +463,17 @@ namespace Lazy
         return pControl;
     }
 
-    //////底层实现
 
-    HRESULT SkinMesh::generateSkinnedMeshNoneIndex(MeshContainer *pMeshContainer)
+    HRESULT SkinMesh::generateSkinnedMesh(MeshContainer *pMeshContainer)
     {
         assert(pMeshContainer);
 
-        LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
-        const D3DCAPS9 * pCaps = Lazy::rcDevice()->getCaps();
+        if (pMeshContainer->pSkinInfo == NULL) 
+            return S_OK;
 
-        HRESULT hr = pMeshContainer->pSkinInfo->ConvertToBlendedMesh(
-            pMeshContainer->pOrigMesh,
-            D3DXMESH_MANAGED | D3DXMESHOPT_VERTEXCACHE,
-            pMeshContainer->pAdjacency,
-            NULL, NULL, NULL,
-            &pMeshContainer->NumInfl,
-            &pMeshContainer->NumAttributeGroups,
-            &pMeshContainer->pBoneCombinationBuf,
-            &pMeshContainer->MeshData.pMesh);
-
-        if (FAILED(hr)) return hr;
-
-        //如果设备只支持2个顶点混和，ConverteToBlendMesh不能近似地转换所有的网格。这时需要把网格转换成两部分，
-        //只使用2个矩阵部分和其他部分。前者使用设备的顶点处理，其他部分使用软件方式处理
-        LPD3DXBONECOMBINATION rgBoneCombinations = reinterpret_cast<LPD3DXBONECOMBINATION>(
-            pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
-        for (pMeshContainer->iAttributeSW = 0;
-            pMeshContainer->iAttributeSW < pMeshContainer->NumAttributeGroups;
-            pMeshContainer->iAttributeSW++)
-        {
-            DWORD cInfl = 0;
-            for (DWORD iInfl = 0; iInfl < pMeshContainer->NumInfl; iInfl++)
-            {
-                if (rgBoneCombinations[pMeshContainer->iAttributeSW].BoneId[iInfl] != UINT_MAX)
-                {
-                    ++cInfl;
-                }
-            }
-
-            if (cInfl > pCaps->MaxVertexBlendMatrices)
-                break;
-        }
-
-        if (pMeshContainer->iAttributeSW < pMeshContainer->NumAttributeGroups)
-        {
-            LPD3DXMESH pMeshTmp;
-            hr = pMeshContainer->MeshData.pMesh->CloneMeshFVF(
-                D3DXMESH_SOFTWAREPROCESSING | pMeshContainer->MeshData.pMesh->GetOptions(),
-                pMeshContainer->MeshData.pMesh->GetFVF(),
-                pDevice, &pMeshTmp);
-
-            if (FAILED(hr))
-                return hr;
-
-            pMeshContainer->MeshData.pMesh->Release();
-            pMeshContainer->MeshData.pMesh = pMeshTmp;
-            pMeshTmp = NULL;
-        }
-
-        return S_OK;
-    }
-
-    HRESULT SkinMesh::generateSkinnedMeshIndex(MeshContainer *pMeshContainer)
-    {
+        SafeRelease(pMeshContainer->MeshData.pMesh);
+        SafeRelease(pMeshContainer->pBoneCombinationBuf);
+    
         const D3DCAPS9 * pCaps = Lazy::rcDevice()->getCaps();
 
         DWORD NumMaxFaceInfl;
@@ -579,57 +530,7 @@ namespace Lazy
         return hr;
     }
 
-    HRESULT SkinMesh::generateSkinnedMeshSoft(MeshContainer *pMeshContainer)
-    {
-        LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
 
-        HRESULT hr = pMeshContainer->pOrigMesh->CloneMeshFVF(
-            D3DXMESH_MANAGED,
-            pMeshContainer->pOrigMesh->GetFVF(),
-            pDevice,
-            &pMeshContainer->MeshData.pMesh);
-
-        if (FAILED(hr)) return hr;
-
-        hr = pMeshContainer->MeshData.pMesh->GetAttributeTable(NULL, &pMeshContainer->NumAttributeGroups);
-        if (FAILED(hr)) return hr;
-
-        pMeshContainer->pAttributeTable = new D3DXATTRIBUTERANGE[pMeshContainer->NumAttributeGroups];
-        hr = pMeshContainer->MeshData.pMesh->GetAttributeTable(pMeshContainer->pAttributeTable, NULL);
-        if (FAILED(hr)) return hr;
-
-        return S_OK;
-    }
-
-    HRESULT SkinMesh::generateSkinnedMesh(MeshContainer *pMeshContainer)
-    {
-        assert(pMeshContainer);
-
-        if (pMeshContainer->pSkinInfo == NULL) return S_OK;
-
-        SafeRelease(pMeshContainer->MeshData.pMesh);
-        SafeRelease(pMeshContainer->pBoneCombinationBuf);
-
-        if (m_skinMethod == SkinMethod::noIndexed)
-        {
-            return generateSkinnedMeshNoneIndex(pMeshContainer);
-        }
-        else if (m_skinMethod == SkinMethod::indexed)	//索引缓冲区模式的
-        {
-            return generateSkinnedMeshIndex(pMeshContainer);
-        }
-        else if (m_skinMethod == SkinMethod::software)
-        {
-            return generateSkinnedMeshSoft(pMeshContainer);
-        }
-        else
-        {
-            LOG_ERROR(L"Invalid skin method %d", m_skinMethod);
-            return E_FAIL;
-        }
-    }
-
-    //------------------------------------------------------------------
     //desc	调用SetupBoneMatrixPointersOnMesh递归为各框架安置组合变换矩阵
     HRESULT SkinMesh::setupBoneMatrixPointers(LPD3DXFRAME pFrame)
     {
@@ -718,240 +619,77 @@ namespace Lazy
         }
     }
 
-    void SkinMesh::drawMeshContainerMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
+    void SkinMesh::drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
     {
         LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
+        EffectPtr effect = s_noskinnedEffect;
         
         rcDevice()->pushWorld(pFrame->CombinedTransformationMatrix);
 
-        for (DWORD i = 0; i < pMeshContainer->NumMaterials; ++i)
+        for (DWORD AttribID = 0; AttribID < pMeshContainer->NumMaterials; ++AttribID)
         {
-            pDevice->SetMaterial(&pMeshContainer->pMaterials[i].MatD3D);
-            pDevice->SetTexture(0, pMeshContainer->ppTextures[i]);
-            pMeshContainer->MeshData.pMesh->DrawSubset(i);
+            EffectConstant *pTexture = effect->getConstant("g_texture");
+            if (pTexture)
+                pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
+
+            EffectConstant *pMaterialDiffuse = effect->getConstant("MaterialDiffuse");
+            if (pMaterialDiffuse)
+                pMaterialDiffuse->bindValue(pMeshContainer->pMaterials[AttribID].MatD3D.Diffuse);
+
+            EffectConstant *pMaterialAmbient = effect->getConstant("MaterialAmbient");
+            if (pMaterialAmbient)
+            {
+                // Sum of all ambient and emissive contribution
+                D3DXCOLOR color1(pMeshContainer->pMaterials[AttribID].MatD3D.Ambient);
+                color1 += D3DXCOLOR(pMeshContainer->pMaterials[AttribID].MatD3D.Emissive);
+
+                pMaterialAmbient->bindValue(color1);
+            }
+
+            UINT numPasses;
+            if (effect->begin(numPasses))
+            {
+                for (UINT iPass = 0; iPass < numPasses; iPass++)
+                {
+                    effect->beginPass(iPass);
+                    pMeshContainer->MeshData.pMesh->DrawSubset(AttribID);
+                    effect->endPass();
+                }
+                effect->end();
+            }
         }
 
         rcDevice()->popWorld();
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
     }
 
-    void SkinMesh::drawMeshContainerNoIndex(MeshContainer *pMeshContainer, BoneFrame *)
+    void SkinMesh::drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase)
     {
-        LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
-        const D3DCAPS9 * pCaps = Lazy::rcDevice()->getCaps();
+        MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
+        BoneFrame *pFrame = (BoneFrame*) pFrameBase;
 
-        DWORD AttribIdPrev = UNUSED32;
-        DWORD NumBlend = 0;
-        DWORD iMatrixIndex = 0;
-        Matrix matTemp;
-
-        LPD3DXBONECOMBINATION pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(
-            pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
-        for (DWORD iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
+        if (pMeshContainer->pSkinInfo == NULL)
         {
-            NumBlend = 0;
-            for (DWORD i = 0; i < pMeshContainer->NumInfl; ++i)
-            {
-                if (pBoneComb[iAttrib].BoneId[i] != UINT_MAX)
-                {
-                    NumBlend = i;
-                }
-            }
-            if (pCaps->MaxVertexBlendMatrices >= NumBlend + 1)
-            {
-                for (DWORD i = 0; i < pMeshContainer->NumInfl; ++i)
-                {
-                    iMatrixIndex = pBoneComb[iAttrib].BoneId[i];
-                    if (iMatrixIndex != UINT_MAX)
-                    {
-                        D3DXMatrixMultiply(
-                            &matTemp,
-                            &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
-                            pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
-                        pDevice->SetTransform(D3DTS_WORLDMATRIX(i), &matTemp);
-                    }
-                }
-                pDevice->SetRenderState(D3DRS_VERTEXBLEND, NumBlend);
-                if ((AttribIdPrev != pBoneComb[iAttrib].AttribId) || (AttribIdPrev == UNUSED32))
-                {
-                    pDevice->SetMaterial(&pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D);
-                    pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
-                    AttribIdPrev = pBoneComb[iAttrib].AttribId;
-                }
-                pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
-            }
-        }
-        if (pMeshContainer->iAttributeSW < pMeshContainer->NumAttributeGroups)
-        {
-            AttribIdPrev = UNUSED32;
-            pDevice->SetSoftwareVertexProcessing(true);
-            for (DWORD iAttrib = pMeshContainer->iAttributeSW;
-                iAttrib < pMeshContainer->NumAttributeGroups;
-                iAttrib++)
-            {
-                NumBlend = 0;
-                for (DWORD i = 0; i < pMeshContainer->NumInfl; ++i)
-                {
-                    if (pBoneComb[iAttrib].BoneId[i] != UINT_MAX)
-                    {
-                        NumBlend = i;
-                    }
-                }
-                if (pCaps->MaxVertexBlendMatrices < NumBlend + 1)
-                {
-                    for (DWORD i = 0; i < pMeshContainer->NumInfl; ++i)
-                    {
-                        iMatrixIndex = pBoneComb[iAttrib].BoneId[i];
-                        if (iMatrixIndex != UINT_MAX)
-                        {
-                            D3DXMatrixMultiply(
-                                &matTemp,
-                                &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
-                                pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
-                            pDevice->SetTransform(D3DTS_WORLDMATRIX(i), &matTemp);
-                        }
-                    }
-                    pDevice->SetRenderState(D3DRS_VERTEXBLEND, NumBlend);
-                    if ((AttribIdPrev != pBoneComb[iAttrib].AttribId) || (AttribIdPrev == UNUSED32))
-                    {
-                        pDevice->SetMaterial(&pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D);
-                        pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
-                        AttribIdPrev = pBoneComb[iAttrib].AttribId;
-                    }
-                    pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
-                }
-            }
-            pDevice->SetSoftwareVertexProcessing(false);
-        }
-        pDevice->SetRenderState(D3DRS_VERTEXBLEND, 0);
-    }
-
-    void SkinMesh::drawMeshContainerIndex(MeshContainer *pMeshContainer, BoneFrame *)
-    {
-        LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
-        Matrix matTemp;
-
-        if (pMeshContainer->UseSoftwareVP)
-        {
-            pDevice->SetSoftwareVertexProcessing(true);
-        }
-
-        if (pMeshContainer->NumInfl == 1)
-            pDevice->SetRenderState(D3DRS_VERTEXBLEND, D3DVBF_0WEIGHTS);
-        else
-            pDevice->SetRenderState(D3DRS_VERTEXBLEND, pMeshContainer->NumInfl - 1);
-
-        if (pMeshContainer->NumInfl)
-        {
-            pDevice->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, TRUE);
-        }
-
-        LPD3DXBONECOMBINATION pBoneComb = LPD3DXBONECOMBINATION(pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
-        for (DWORD i = 0; i < pMeshContainer->NumAttributeGroups; ++i)
-        {
-            for (DWORD iPaletteEntry = 0;
-                iPaletteEntry < pMeshContainer->NumPaletteEntries;
-                ++iPaletteEntry)
-            {
-                DWORD iMatrix = pBoneComb[i].BoneId[iPaletteEntry];
-                if (iMatrix != UINT_MAX)
-                {
-                    D3DXMatrixMultiply(&matTemp,
-                        &pMeshContainer->pBoneOffsetMatrices[iMatrix],
-                        pMeshContainer->ppBoneMatrixPtrs[iMatrix]);
-                    pDevice->SetTransform(D3DTS_WORLDMATRIX(iPaletteEntry), &matTemp);
-                }
-            }
-
-            pDevice->SetMaterial(&pMeshContainer->pMaterials[pBoneComb[i].AttribId].MatD3D);
-            pDevice->SetTexture(0, pMeshContainer->ppTextures[pBoneComb[i].AttribId]);
-            pMeshContainer->MeshData.pMesh->DrawSubset(i);
-        }
-
-        pDevice->SetRenderState(D3DRS_INDEXEDVERTEXBLENDENABLE, FALSE);
-        pDevice->SetRenderState(D3DRS_VERTEXBLEND, 0);
-
-        if (pMeshContainer->UseSoftwareVP)
-        {
-            pDevice->SetSoftwareVertexProcessing(false);
-        }
-    }
-    void SkinMesh::drawMeshContainerSoft(MeshContainer *pMeshContainer, BoneFrame *)
-    {
-        LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
-
-        DWORD nBones = pMeshContainer->pSkinInfo->GetNumBones();
-
-        for (DWORD i = 0; i < nBones; ++i)
-        {
-            D3DXMatrixMultiply(
-                &g_pBoneMatrices[i],
-                &pMeshContainer->pBoneOffsetMatrices[i],
-                pMeshContainer->ppBoneMatrixPtrs[i]
-                );
-        }
-
-        pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
-
-        PBYTE pbVerticesSrc;
-        PBYTE pbVerticesDest;
-
-        LPD3DXMESH pSrcMesh = pMeshContainer->pOrigMesh;
-        LPD3DXMESH pDstMesh = pMeshContainer->MeshData.pMesh;
-
-        if (FAILED(pSrcMesh->LockVertexBuffer(D3DLOCK_READONLY, (LPVOID*) &pbVerticesSrc)))
-            return;
-
-        if (FAILED(pDstMesh->LockVertexBuffer(0, (LPVOID*) &pbVerticesDest)))
-        {
-            pSrcMesh->UnlockVertexBuffer();
+            drawMeshOnly(pMeshContainer, pFrame);
             return;
         }
-
-        pMeshContainer->pSkinInfo->UpdateSkinnedMesh(
-            &g_pBoneMatrices[0],
-            NULL,
-            pbVerticesSrc,
-            pbVerticesDest);
-
-        pSrcMesh->UnlockVertexBuffer();
-        pDstMesh->UnlockVertexBuffer();
-
-        for (DWORD i = 0; i < pMeshContainer->NumAttributeGroups; ++i)
-        {
-            DWORD attrIdx = pMeshContainer->pAttributeTable[i].AttribId;
-
-            pDevice->SetMaterial(&pMeshContainer->pMaterials[attrIdx].MatD3D);
-            pDevice->SetTexture(0, pMeshContainer->ppTextures[attrIdx]);
-            pDstMesh->DrawSubset(attrIdx);
-        }
-    }
-
-    void SkinMesh::drawMeshContainerHLSL(MeshContainer *pMeshContainer, BoneFrame *pFrameBase)
-    {
+     
         if (pMeshContainer->NumPaletteEntries > MaxNumBone)
             return;
 
-        EffectConstant *pConst = s_skinnedEffect->getConstant("mWorldMatrixArray");
+        EffectPtr effect = s_skinnedEffect;
+        EffectConstant *pConst = effect->getConstant("mWorldMatrixArray");
         if (!pConst)
             return;
 
-        EffectConstant *pMaterialDiffuse = s_skinnedEffect->getConstant("MaterialDiffuse");
-        EffectConstant *pMaterialAmbient = s_skinnedEffect->getConstant("MaterialAmbient");
-        EffectConstant *pCurNumBones = s_skinnedEffect->getConstant("CurNumBones");
-        EffectConstant *pTexture = s_skinnedEffect->getConstant("g_texture");
-
+        EffectConstant *pMaterialDiffuse = effect->getConstant("MaterialDiffuse");
+        EffectConstant *pMaterialAmbient = effect->getConstant("MaterialAmbient");
+        EffectConstant *pCurNumBones = effect->getConstant("CurNumBones");
+        EffectConstant *pTexture = effect->getConstant("g_texture");
 
         LPDIRECT3DDEVICE9 pd3dDevice = Lazy::rcDevice()->getDevice();
         if (pMeshContainer->UseSoftwareVP)
         {
-            // If hw or pure hw vertex processing is forced, we can't render the
-            // mesh, so just exit out.  Typical applications should create
-            // a device with appropriate vertex processing capability for this
-            // skinning method.
-            //if (g_dwBehaviorFlags & D3DCREATE_HARDWARE_VERTEXPROCESSING)
-            //    return;
-
             pd3dDevice->SetSoftwareVertexProcessing(TRUE);
         }
 
@@ -973,23 +711,23 @@ namespace Lazy
 
             pConst->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries);
             
-            // Sum of all ambient and emissive contribution
-            D3DXCOLOR color1(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Ambient);
-            D3DXCOLOR color2(.25f, .25f, .25f, 1.0f);
-            D3DXCOLOR ambEmm;
-            D3DXColorModulate(&ambEmm, &color1, &color2);
-            ambEmm += D3DXCOLOR(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Emissive);
+            DWORD AttribID = pBoneComb[iAttrib].AttribId;
 
             // set material color properties 
             if (pMaterialDiffuse)
-                pMaterialDiffuse->bindValue((Vector4*) &(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Diffuse));
+                pMaterialDiffuse->bindValue(pMeshContainer->pMaterials[AttribID].MatD3D.Diffuse);
 
             if (pMaterialAmbient)
-                pMaterialAmbient->bindValue((Vector4*) &ambEmm);
+            {
+                // Sum of all ambient and emissive contribution
+                D3DXCOLOR color1(pMeshContainer->pMaterials[AttribID].MatD3D.Ambient);
+                color1 += D3DXCOLOR(pMeshContainer->pMaterials[AttribID].MatD3D.Emissive);
+                pMaterialAmbient->bindValue(color1);
+            }
 
             // setup the material of the mesh subset - REMEMBER to use the original pre-skinning attribute id to get the correct material id
             if (pTexture)
-                pTexture->bindValue(pMeshContainer->ppTextures[pBoneComb[iAttrib].AttribId]);
+                pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
 
             // Set CurNumBones to select the correct vertex shader for the number of bones
             if (pCurNumBones)
@@ -997,18 +735,18 @@ namespace Lazy
 
             // Start the effect now all parameters have been updated
             UINT numPasses;
-            if (s_skinnedEffect->begin(numPasses))
+            if (effect->begin(numPasses))
             {
                 for (UINT iPass = 0; iPass < numPasses; iPass++)
                 {
-                    s_skinnedEffect->beginPass(iPass);
+                    effect->beginPass(iPass);
 
                     // draw the subset with the current world matrix palette and material state
                     pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
 
-                    s_skinnedEffect->endPass();
+                    effect->endPass();
                 }
-                s_skinnedEffect->end();
+                effect->end();
             }
         }
 
@@ -1017,36 +755,8 @@ namespace Lazy
         {
             pd3dDevice->SetSoftwareVertexProcessing(FALSE);
         }
-    }
-
-    void SkinMesh::drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase)
-    {
-        MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
-        BoneFrame *pFrame = (BoneFrame*) pFrameBase;
-
-        if (pMeshContainer->pSkinInfo == NULL)
-        {
-            drawMeshContainerMeshOnly(pMeshContainer, pFrame);
-        }
-        else if (s_skinnedEffect)
-        {
-            drawMeshContainerHLSL(pMeshContainer, pFrame);
-        }
-        else if (m_skinMethod == SkinMethod::noIndexed)
-        {
-            drawMeshContainerNoIndex(pMeshContainer, pFrame);
-        }
-        else if (m_skinMethod == SkinMethod::indexed)
-        {
-            drawMeshContainerIndex(pMeshContainer, pFrame);
-        }
-        else if (m_skinMethod == SkinMethod::software)
-        {
-            drawMeshContainerSoft(pMeshContainer, pFrame);
-        }
 
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
     }
-
 
 }//end namespace Lazy

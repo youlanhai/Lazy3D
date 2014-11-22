@@ -39,12 +39,12 @@ namespace Lazy
         m_pEffect->SetIntArray(m_handle, values, count);
     }
 
-    void EffectConstant::bindValue(const Matrix& value)
+    void EffectConstant::bindValue(const D3DXMATRIX & value)
     {
         m_pEffect->SetMatrix(m_handle, &value);
     }
 
-    void EffectConstant::bindValue(const Matrix* values, uint32 count, bool transposed)
+    void EffectConstant::bindValue(const D3DXMATRIX * values, uint32 count, bool transposed)
     {
         if (!transposed)
             m_pEffect->SetMatrixArray(m_handle, values, count);
@@ -52,12 +52,12 @@ namespace Lazy
             m_pEffect->SetMatrixTransposeArray(m_handle, values, count);
     }
 
-    void EffectConstant::bindValue(const Vector2& value)
+    void EffectConstant::bindValue(const D3DXVECTOR2 & value)
     {
         m_pEffect->SetVector(m_handle, &Vector4(value.x, value.y, 0.f, 0.f));
     }
 
-    void EffectConstant::bindValue(const Vector2* values, uint32 count)
+    void EffectConstant::bindValue(const D3DXVECTOR2 * values, uint32 count)
     {
         assert(count > 0);
 
@@ -76,12 +76,12 @@ namespace Lazy
         _aligned_free(pVector);
     }
 
-    void EffectConstant::bindValue(const Vector3& value)
+    void EffectConstant::bindValue(const D3DXVECTOR3 & value)
     {
         m_pEffect->SetVector(m_handle, &Vector4(value, 0.f));
     }
 
-    void EffectConstant::bindValue(const Vector3* values, uint32 count)
+    void EffectConstant::bindValue(const D3DXVECTOR3 * values, uint32 count)
     {
         assert(count > 0);
 
@@ -100,14 +100,34 @@ namespace Lazy
         _aligned_free(pVector);
     }
 
-    void EffectConstant::bindValue(const Vector4& value)
+    void EffectConstant::bindValue(const D3DXVECTOR4 & value)
     {
         m_pEffect->SetVector(m_handle, &value);
     }
 
-    void EffectConstant::bindValue(const Vector4* values, uint32 count)
+    void EffectConstant::bindValue(const D3DXVECTOR4 * values, uint32 count)
     {
         m_pEffect->SetVectorArray(m_handle, values, count);
+    }
+
+    void EffectConstant::bindValue(const D3DCOLORVALUE & value)
+    {
+        m_pEffect->SetVector(m_handle, (const D3DXVECTOR4*)&value);
+    }
+
+    void EffectConstant::bindValue(const D3DCOLORVALUE * values, uint32 count)
+    {
+        m_pEffect->SetVectorArray(m_handle, (const D3DXVECTOR4*)values, count);
+    }
+
+    void EffectConstant::bindValue(const D3DXCOLOR & value)
+    {
+        m_pEffect->SetVector(m_handle, (const D3DXVECTOR4*) &value);
+    }
+
+    void EffectConstant::bindValue(const D3DXCOLOR * values, uint32 count)
+    {
+        m_pEffect->SetVectorArray(m_handle, (const D3DXVECTOR4*) values, count);
     }
 
     void EffectConstant::bindValue(TexturePtr texture)
