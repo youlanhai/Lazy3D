@@ -1,0 +1,87 @@
+#coding = utf-8
+
+mainview
+{
+	type = 1
+	id = 0
+	font = def|17
+	color = ffff0000
+	bgcolor = ffffffff
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = false
+	clickTop = false
+	limitInRect = false
+	changeChildOrder = true
+	drawSelf = true
+	position = 15 36
+	size = 165 22
+	children
+	{
+		btnShrink
+		{
+			type = 4
+			id = 0
+			text = -
+			font = def|17
+			color = ffff0000
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 0 0
+			size = 20 20
+			children = ""
+			textAlign = 18
+		}
+		btnExpand
+		{
+			type = 4
+			id = 0
+			text = +
+			font = def|17
+			color = ffff0000
+			bgcolor = ffffffff
+			visible = false
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 0 0
+			size = 20 20
+			children = ""
+			textAlign = 18
+		}
+		title
+		{
+			type = 4
+			id = 0
+			text = tree item
+			font = def|17
+			color = ffff0000
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = false
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 25 0
+			size = 100 20
+			children = ""
+			textAlign = 17
+		}
+	}
+	script = uieditor.editor.WorkTreeItem
+}

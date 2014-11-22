@@ -1,0 +1,21 @@
+#coding = utf-8
+
+mainview
+{
+	enableClip = true
+	enableDrag = false
+	size = 200 250
+	position = 0 30
+	itemClass = gui.ITreeItem
+	itemConfig = layout/predef/tree_item.lzd
+	children
+	{
+		slidebar
+		{
+			type = 9
+			vertical = true
+			position = 230 0
+			size = 20 250
+		}
+	}
+}

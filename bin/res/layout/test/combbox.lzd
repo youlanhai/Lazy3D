@@ -1,0 +1,106 @@
+#coding = utf-8
+
+noname
+{
+	type = 3
+	id = 0
+	font = def|17
+	color = ffffffff
+	bgcolor = 7f000000
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = true
+	clickTop = true
+	limitInRect = true
+	changeChildOrder = true
+	drawSelf = true
+	position = 0 0
+	size = 300 200
+	children
+	{
+		ComboBox
+		{
+			type = 3
+			id = 0
+			font = def|17
+			color = ffffffff
+			bgcolor = 7fffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = true
+			clickTop = true
+			limitInRect = true
+			changeChildOrder = true
+			drawSelf = true
+			position = 0 0
+			size = 120 30
+			children
+			{
+				menu
+				{
+					type = 3
+					id = 0
+					font = def|17
+					color = ffffffff
+					bgcolor = 7fffffff
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = true
+					changeChildOrder = true
+					drawSelf = true
+					position = 0 35
+					size = 120 20
+					children = ""
+					maxHeight = 100
+				}
+				button
+				{
+					type = 4
+					id = 0
+					font = def|17
+					color = ffffffff
+					bgcolor = af808080
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = false
+					changeChildOrder = true
+					drawSelf = true
+					position = 90 0
+					size = 30 30
+					children = ""
+					textAlign = 00000022
+				}
+				label
+				{
+					type = 5
+					id = 0
+					text = ComboBox
+					font = def|17
+					color = ffffffff
+					bgcolor = 7fffffff
+					visible = true
+					enable = false
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = false
+					limitInRect = false
+					changeChildOrder = true
+					drawSelf = true
+					position = 0 0
+					size = 100 20
+					children = ""
+					textAlign = 00000009
+					mutiline = false
+				}
+			}
+		}
+	}
+}

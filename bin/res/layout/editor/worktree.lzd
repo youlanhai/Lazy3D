@@ -1,0 +1,94 @@
+#coding = utf-8
+
+mainview
+{
+	type = 3
+	id = 1
+	font = def|17
+	color = ffffffff
+	bgcolor = af000000
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = true
+	clickTop = true
+	limitInRect = true
+	changeChildOrder = true
+	drawSelf = true
+	position = 0 41
+	size = 219 398
+	relative = true
+	relativeAlign = 17
+	relativePos = 0.000000 0.500000
+	children
+	{
+		title
+		{
+			type = 5
+			id = 0
+			text = 工作区
+			font = def|17
+			color = ff00ff00
+			bgcolor = af808080
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 55 3
+			size = 100 30
+			children = ""
+			textAlign = 17
+			mutiline = false
+		}
+		root
+		{
+			type = 3
+			id = 0
+			font = def|17
+			color = ffffffff
+			bgcolor = 7f000000
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = true
+			changeChildOrder = true
+			drawSelf = true
+			position = 2 32
+			size = 217 364
+			children
+			{
+				slidebar
+				{
+					type = 9
+					id = 0
+					font = def|17
+					color = ffff0000
+					bgcolor = ff0000ff
+					visible = false
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = false
+					changeChildOrder = true
+					drawSelf = true
+					position = 197 0
+					size = 20 364
+					children = ""
+					vertical = false
+					slideStep = 0.050000
+					sliderSize = 0 0
+				}
+			}
+			script = uieditor.editor.WorkTree
+			itemConfig = layout/editor/worktree_tree_item.lzd
+		}
+	}
+	script = uieditor.editor.WorkTreeBar
+}

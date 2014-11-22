@@ -1,0 +1,68 @@
+#coding = utf-8
+
+lst_item
+{
+	type = 1
+	id = 0
+	font = def|17
+	color = ffffffff
+	bgcolor = 7f000000
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = true
+	clickTop = true
+	limitInRect = false
+	changeChildOrder = true
+	drawSelf = true
+	position = 0 0
+	size = 193 47
+	children
+	{
+		noname
+		{
+			type = 5
+			id = 0
+			text = label
+			font = def|17
+			color = ffffffff
+			bgcolor = 7fffffff
+			visible = true
+			enable = false
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 2 11
+			size = 100 20
+			children
+			{
+				noname
+				{
+					type = 4
+					id = 0
+					text = button
+					font = def|17
+					color = ffffffff
+					bgcolor = af808080
+					visible = true
+					enable = true
+					enableSelfMsg = true
+					enalbeDrag = false
+					clickTop = true
+					limitInRect = false
+					changeChildOrder = true
+					drawSelf = true
+					position = 82 -5
+					size = 80 30
+					children = ""
+				}
+			}
+			align = 00000009
+			mutiline = false
+		}
+	}
+	script = gui.IListItem
+}

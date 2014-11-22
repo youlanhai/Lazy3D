@@ -1,0 +1,172 @@
+#coding = utf-8
+
+menu
+{
+	type = 3
+	id = 0
+	font = def|17
+	color = ffffffff
+	bgcolor = afffffff
+	visible = true
+	enable = true
+	enableSelfMsg = true
+	enalbeDrag = false
+	clickTop = true
+	limitInRect = true
+	changeChildOrder = true
+	drawSelf = true
+	position = 276 74
+	size = 300 200
+	children
+	{
+		noname
+		{
+			type = 5
+			id = 0
+			text = 菜单
+			font = def|17
+			color = ff00ff00
+			bgcolor = 7fffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 0 0
+			size = 49 24
+			children = ""
+			textAlign = 17
+			mutiline = false
+		}
+		noname
+		{
+			type = 5
+			id = 0
+			text = 文件
+			font = def|17
+			color = ffffffff
+			bgcolor = 7fffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 1 27
+			size = 59 28
+			children = ""
+			textAlign = 17
+			mutiline = false
+		}
+		edt_file
+		{
+			type = 7
+			id = 0
+			text = edit
+			font = def|17
+			color = ffffffff
+			bgcolor = 7fffffff
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 43 26
+			size = 252 30
+			children = ""
+			mutiline = false
+		}
+		btn_open
+		{
+			type = 4
+			id = 0
+			text = 打开
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 4 71
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+		btn_save
+		{
+			type = 4
+			id = 0
+			text = 保存
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 3 110
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+		btn_close
+		{
+			type = 4
+			id = 0
+			text = 关闭
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 3 148
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+		btn_scan
+		{
+			type = 4
+			id = 0
+			text = 浏览
+			font = def|17
+			color = ffffffff
+			bgcolor = af808080
+			visible = true
+			enable = true
+			enableSelfMsg = true
+			enalbeDrag = false
+			clickTop = true
+			limitInRect = false
+			changeChildOrder = true
+			drawSelf = true
+			position = 215 58
+			size = 80 30
+			children = ""
+			textAlign = 18
+		}
+	}
+}
