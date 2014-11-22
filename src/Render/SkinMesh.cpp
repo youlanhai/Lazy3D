@@ -7,7 +7,8 @@
 
 namespace Lazy
 {
-    static Matrix g_pBoneMatrices[256];
+    const int MaxNumBone = 32;
+    static Matrix g_pBoneMatrices[MaxNumBone];
 
     BoneFrame::BoneFrame(const char* name)
     {
@@ -335,7 +336,8 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////
     // SkinMesh
     //////////////////////////////////////////////////////////////////////
-    /*static*/ EffectPtr SkinMesh::s_effect;
+    /*static*/ EffectPtr SkinMesh::s_skinnedEffect;
+    /*static*/ EffectPtr SkinMesh::s_noskinnedEffect;
 
     SkinMesh::SkinMesh(const tstring & source)
         : IResource(source)
@@ -348,7 +350,8 @@ namespace Lazy
         if (firstTime)
         {
             firstTime = false;
-            s_effect = EffectMgr::instance()->get(_T("shader/skinned_mesh.fx"));
+            s_skinnedEffect = EffectMgr::instance()->get(_T("shader/skinned_mesh.fx"));
+            s_noskinnedEffect = EffectMgr::instance()->get(_T("shader/noskinned.fx"));
         }
 
         m_dwTrangleCnt = 0;
@@ -718,8 +721,8 @@ namespace Lazy
     void SkinMesh::drawMeshContainerMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
     {
         LPDIRECT3DDEVICE9 pDevice = Lazy::rcDevice()->getDevice();
-
-        pDevice->SetTransform(D3DTS_WORLD, &pFrame->CombinedTransformationMatrix);
+        
+        rcDevice()->pushWorld(pFrame->CombinedTransformationMatrix);
 
         for (DWORD i = 0; i < pMeshContainer->NumMaterials; ++i)
         {
@@ -728,6 +731,7 @@ namespace Lazy
             pMeshContainer->MeshData.pMesh->DrawSubset(i);
         }
 
+        rcDevice()->popWorld();
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
     }
 
@@ -925,14 +929,17 @@ namespace Lazy
 
     void SkinMesh::drawMeshContainerHLSL(MeshContainer *pMeshContainer, BoneFrame *pFrameBase)
     {
-        EffectConstant *pConst = s_effect->getConstant("mWorldMatrixArray");
+        if (pMeshContainer->NumPaletteEntries > MaxNumBone)
+            return;
+
+        EffectConstant *pConst = s_skinnedEffect->getConstant("mWorldMatrixArray");
         if (!pConst)
             return;
 
-        EffectConstant *pMaterialDiffuse = s_effect->getConstant("MaterialDiffuse");
-        EffectConstant *pMaterialAmbient = s_effect->getConstant("MaterialAmbient");
-        EffectConstant *pCurNumBones = s_effect->getConstant("CurNumBones");
-        EffectConstant *pTexture = s_effect->getConstant("g_texture");
+        EffectConstant *pMaterialDiffuse = s_skinnedEffect->getConstant("MaterialDiffuse");
+        EffectConstant *pMaterialAmbient = s_skinnedEffect->getConstant("MaterialAmbient");
+        EffectConstant *pCurNumBones = s_skinnedEffect->getConstant("CurNumBones");
+        EffectConstant *pTexture = s_skinnedEffect->getConstant("g_texture");
 
 
         LPDIRECT3DDEVICE9 pd3dDevice = Lazy::rcDevice()->getDevice();
@@ -947,8 +954,6 @@ namespace Lazy
 
             pd3dDevice->SetSoftwareVertexProcessing(TRUE);
         }
-
-        assert(pMeshContainer->NumPaletteEntries <= 32);
 
         LPD3DXBONECOMBINATION pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(
             pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
@@ -966,11 +971,11 @@ namespace Lazy
                 }
             }
 
-            pConst->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries, false);
+            pConst->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries);
             
             // Sum of all ambient and emissive contribution
             D3DXCOLOR color1(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Ambient);
-            D3DXCOLOR color2(.55f, .55f, .55f, 1.0f);
+            D3DXCOLOR color2(.25f, .25f, .25f, 1.0f);
             D3DXCOLOR ambEmm;
             D3DXColorModulate(&ambEmm, &color1, &color2);
             ambEmm += D3DXCOLOR(pMeshContainer->pMaterials[pBoneComb[iAttrib].AttribId].MatD3D.Emissive);
@@ -992,18 +997,18 @@ namespace Lazy
 
             // Start the effect now all parameters have been updated
             UINT numPasses;
-            if (s_effect->begin(numPasses))
+            if (s_skinnedEffect->begin(numPasses))
             {
                 for (UINT iPass = 0; iPass < numPasses; iPass++)
                 {
-                    s_effect->beginPass(iPass);
+                    s_skinnedEffect->beginPass(iPass);
 
                     // draw the subset with the current world matrix palette and material state
                     pMeshContainer->MeshData.pMesh->DrawSubset(iAttrib);
 
-                    s_effect->endPass();
+                    s_skinnedEffect->endPass();
                 }
-                s_effect->end();
+                s_skinnedEffect->end();
             }
         }
 
@@ -1023,7 +1028,7 @@ namespace Lazy
         {
             drawMeshContainerMeshOnly(pMeshContainer, pFrame);
         }
-        else if (s_effect)
+        else if (s_skinnedEffect)
         {
             drawMeshContainerHLSL(pMeshContainer, pFrame);
         }

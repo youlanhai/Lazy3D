@@ -88,7 +88,9 @@ namespace Lazy
         int		        m_dwTrangleCnt; ///< 渲染的三角形数量
         AABB            m_aabb;         ///<aabb包围盒
         dx::AnimController* m_pAnimController;  ///< 动画控制器
-        static EffectPtr s_effect;
+        static EffectPtr s_skinnedEffect;
+        static EffectPtr s_noskinnedEffect;
+
 
 
         void drawFrame(LPD3DXFRAME pFrame);

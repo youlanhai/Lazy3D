@@ -83,7 +83,7 @@ namespace Lazy
                 }
                 else
                 {
-                    val.second = new EffectConstant(m_pEffect, hParameter);
+                    val.second = new EffectConstant(m_pEffect, hParameter, parameter.Name);
                     m_autoConstants.push_back(val);
                 }
             }
@@ -91,7 +91,7 @@ namespace Lazy
             {
                 std::pair<std::string, EffectConstant*> val;
                 val.first = parameter.Name;
-                val.second = new EffectConstant(m_pEffect, hParameter);
+                val.second = new EffectConstant(m_pEffect, hParameter, parameter.Name);
                 m_manualConstants.insert(val);
             }
         }

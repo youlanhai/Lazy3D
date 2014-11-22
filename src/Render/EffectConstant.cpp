@@ -8,9 +8,10 @@
 namespace Lazy
 {
 
-    EffectConstant::EffectConstant(dx::Effect * pEffect, D3DXHANDLE handle)
+    EffectConstant::EffectConstant(dx::Effect * pEffect, D3DXHANDLE handle, LPCSTR name)
         : m_pEffect(pEffect)
         , m_handle(handle)
+        , m_name(name)
     {
     }
 
@@ -45,7 +46,7 @@ namespace Lazy
 
     void EffectConstant::bindValue(const Matrix* values, uint32 count, bool transposed)
     {
-        if (transposed)
+        if (!transposed)
             m_pEffect->SetMatrixArray(m_handle, values, count);
         else
             m_pEffect->SetMatrixTransposeArray(m_handle, values, count);
