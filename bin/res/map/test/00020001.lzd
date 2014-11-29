@@ -1,8 +1,6 @@
 #coding = utf-8
 
 savetime = [2014.7.13][20.19.27][300]
-items = ""
-
 
 items
 {
@@ -12,7 +10,7 @@ items
 		resource = model/arena/Arena.x
 		type = 1
 		scale = 0.01 0.01 0.01
-		position = 1 60 1
+		position = 1 70 1
 		rotation = 0 0 0 1
 	}
 }

@@ -338,6 +338,8 @@ namespace Lazy
         m_pMap = pMap;
         m_id = id;
         m_rect = rect;
+
+        setPosition(Vector3(m_rect.left, 0, m_rect.top));
     }
 
     bool TerrainChunk::load()
