@@ -8,7 +8,7 @@ namespace Lazy
 
     typedef RefPtr<class IModel>  ModelPtr;
 
-///模型基类
+    ///模型基类
     class LZDLL_API IModel : public IBase, public IRenderable
     {
     public:
@@ -60,7 +60,7 @@ namespace Lazy
         void setRoll(float a) { m_roll = a; }
         float getRoll(void) const { return m_roll; }
 
-//包围盒相关
+    //包围盒相关
     public:
 
         ///显示包围盒
