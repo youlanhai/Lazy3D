@@ -6,8 +6,7 @@ namespace Lazy
     namespace rt
     {
         const int texture = 1;
-        const int staticmesh = 2;
-        const int skinmesh = 3;
+        const int mesh = 3;
         const int effect = 4;
     };
 

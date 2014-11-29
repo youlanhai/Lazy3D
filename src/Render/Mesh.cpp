@@ -160,8 +160,8 @@ namespace Lazy
     class CAllocateHierarchy : public ID3DXAllocateHierarchy
     {
     public:
-        CAllocateHierarchy(Mesh *pSkinMesh)
-            : m_pSkinMesh(pSkinMesh)
+        CAllocateHierarchy(Mesh *pMesh)
+            : m_pMesh(pMesh)
         {}
 
         STDMETHOD(CreateFrame)(THIS_ LPCSTR Name, LPD3DXFRAME *ppNewFrame)
@@ -193,7 +193,7 @@ namespace Lazy
         }
 
     public:
-        Mesh*		m_pSkinMesh;
+        Mesh*		m_pMesh;
     };
 
     LRESULT CAllocateHierarchy::CreateMeshContainer(
@@ -326,7 +326,7 @@ namespace Lazy
             }
 
             //生成蒙皮网格模型
-            hr = m_pSkinMesh->generateSkinnedMesh(pMeshContainer);
+            hr = m_pMesh->generateSkinnedMesh(pMeshContainer);
 
             if (FAILED(hr))
             {

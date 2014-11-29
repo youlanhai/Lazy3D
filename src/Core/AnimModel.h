@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "Model.h"
-#include "../Render/SkinMesh.h"
+#include "../Render/Mesh.h"
 
 namespace Lazy
 {
@@ -61,7 +61,7 @@ namespace Lazy
 
     protected:
         LPD3DXANIMATIONCONTROLLER m_pAnimControler;
-        SkinMeshPtr m_pSkinMesh;
+        MeshPtr m_pMesh;
         float           m_elapse;
         float           m_elapsedTime;
         bool            m_loop;

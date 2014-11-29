@@ -6,7 +6,7 @@
 #include "ResMgr.h"
 #include "ResFactory.h"
 #include "Texture.h"
-#include "SkinMesh.h"
+#include "Mesh.h"
 #include "StaticMesh.h"
 #include "EffectConstantSetter.h"
 
@@ -196,7 +196,7 @@ namespace Lazy
         ResourceFactoryPtr factory = new ResFactory();
         TextureMgr::instance()->setResFacotry(factory);
         StaticMeshMgr::instance()->setResFacotry(factory);
-        SkinMeshMgr::instance()->setResFacotry(factory);
+        MeshMgr::instance()->setResFacotry(factory);
         EffectMgr::instance()->setResFacotry(factory);
         EffectConstantSetter::init();
 

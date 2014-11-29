@@ -21,21 +21,21 @@ namespace Lazy
     AnimalModel::~AnimalModel(void)
     {
         SafeRelease(m_pAnimControler);
-        m_pSkinMesh = NULL;
+        m_pMesh = NULL;
     }
 
     bool AnimalModel::load(const std::wstring & name)
     {
         IModel::load(name);
 
-        m_pSkinMesh = SkinMeshMgr::instance()->get(name);
-        if (!m_pSkinMesh)
+        m_pMesh = MeshMgr::instance()->get(name);
+        if (!m_pMesh)
         {
             return false;
         }
 
-        setAABB(m_pSkinMesh->getAABB());
-        m_pAnimControler = m_pSkinMesh->cloneAnimaCtrl();
+        setAABB(m_pMesh->getAABB());
+        m_pAnimControler = m_pMesh->cloneAnimaCtrl();
         return true;
     }
 
@@ -48,7 +48,7 @@ namespace Lazy
     /** 渲染*/
     void AnimalModel::render(IDirect3DDevice9* pDevice)
     {
-        if (m_pSkinMesh)
+        if (m_pMesh)
         {
             Matrix mat;
             getCombinedMatrix(mat);
@@ -56,7 +56,7 @@ namespace Lazy
             advanceAnimation();
            
             rcDevice()->pushWorld(mat);
-            m_pSkinMesh->render();
+            m_pMesh->render();
             rcDevice()->popWorld();
         }
 
