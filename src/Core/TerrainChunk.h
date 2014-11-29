@@ -136,6 +136,7 @@ namespace Lazy
         void update(float elapse);
 
         bool load();
+        void unload();
         bool save();
 
         bool ifLoaded() const { return m_isLoaded; }
@@ -167,8 +168,6 @@ namespace Lazy
 
         void renderTerrain(IDirect3DDevice9* pDevice);
         void loadItem(LZDataPtr ptr);
-
-        void release(void);
 
         void updateNormal();
         void updateVertices();

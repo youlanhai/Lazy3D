@@ -149,6 +149,7 @@ namespace Lazy
     IMPLEMENT_SINGLETON(TerrainMap);
 
     TerrainMap::TerrainMap()
+        : m_root(new SceneNode())
     {
         m_chunkSize = 0;         //< 每个格子的尺寸。
         m_chunkRows = 0;        //< 结点行数
@@ -162,8 +163,6 @@ namespace Lazy
 
         m_showRadius = 5000.0f;
         m_rect.zero();
-
-        m_root = new SceneNode();
     }
 
     TerrainMap::~TerrainMap(void)
@@ -183,6 +182,8 @@ namespace Lazy
         m_mapName.clear();
 
         m_rect.zero();
+
+        m_root->clearChildren();
     }
 
     bool TerrainMap::createMap(const tstring & nameName, int rows, int cols)
@@ -268,6 +269,8 @@ namespace Lazy
 
         m_loadingProgress = 1.0f;
         m_usefull = true;
+
+        m_root->onEnterWorld();
         return true;
     }
 
@@ -376,6 +379,7 @@ namespace Lazy
                 rc.top = r * m_chunkSize + m_rect.top;
                 rc.right = rc.left + m_chunkSize;
                 rc.bottom = rc.top + m_chunkSize;
+
                 m_chunks.push_back(new TerrainChunk(this, r << 16 | c, rc));
             }
         }
@@ -401,7 +405,8 @@ namespace Lazy
 
     void TerrainMap::render(IDirect3DDevice9* pDevice)
     {
-        if (!m_usefull || !MapConfig::ShowTerrain || !m_root) return;
+        if (!m_usefull || !MapConfig::ShowTerrain || !m_root)
+            return;
 
         m_root->render(pDevice);
 #if 0
@@ -416,14 +421,12 @@ namespace Lazy
 
     void TerrainMap::update(float elapse)
     {
-        if (!m_usefull)  return;
+        if (!m_usefull) 
+            return;
 
         genVisibleChunks();
 
-        for (ChunkPtr chunk : m_visibleChunks)
-        {
-            chunk->update(elapse);
-        }
+        m_root->update(elapse);
     }
 
     ChunkPtr TerrainMap::getFocusChunk()
@@ -476,7 +479,8 @@ namespace Lazy
         }
         m_visibleChunks.clear();
 
-        if (m_showRadius < 0) m_showRadius = 10.0f;
+        if (m_showRadius < 0)
+            m_showRadius = 10.0f;
 
         MapRectCollider collider(false);
         collider.rect.left = pos.x - m_showRadius;
@@ -486,8 +490,10 @@ namespace Lazy
         m_quadTree.queryRect(&collider);
 
         if (collider.empty()) return;
+
         for (size_t i : collider.m_chunkIds)
         {
+            m_chunks[i]->load();
             m_visibleChunks.push_back(m_chunks[i]);
         }
     }
@@ -537,6 +543,39 @@ namespace Lazy
     void TerrainMap::setShowLevel(int level)
     {
         m_showLevel = level;
+    }
+
+    void TerrainMap::onChunkLoaded(ChunkPtr chunk)
+    {
+        m_root->addChild(chunk);
+    }
+
+    void TerrainMap::onChunkUnloaded(ChunkPtr chunk)
+    {
+        m_root->delChild(chunk);
+    }
+
+    bool TerrainMap::ifChunkOutside(ChunkPtr chunk)
+    {
+        if (!m_pSource)
+            return true;
+
+        const Vector3 & center = m_pSource->getPosition();
+        FRect rc = chunk->getRect();
+
+        if (rc.isIn(center.x, center.z))
+            return false;
+
+        float VisibleDistance = m_showRadius + 10.0f;
+
+        if (abs(rc.left - center.x) < VisibleDistance ||
+            abs(rc.right - center.x) < VisibleDistance ||
+            abs(rc.top - center.y) < VisibleDistance ||
+            abs(rc.bottom - center.y) < VisibleDistance
+            )
+            return false;
+
+        return true;
     }
 
 } // end namespace Lazy

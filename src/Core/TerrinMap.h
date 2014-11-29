@@ -89,6 +89,10 @@ namespace Lazy
 
         bool intersectWithCursor();
 
+        void onChunkLoaded(ChunkPtr chunk);
+        void onChunkUnloaded(ChunkPtr chunk);
+        bool ifChunkOutside(ChunkPtr chunk);
+
     protected:
 
         /// 释放当前地图资源

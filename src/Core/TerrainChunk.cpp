@@ -330,12 +330,12 @@ namespace Lazy
 
     TerrainChunk::~TerrainChunk(void)
     {
-        release();
     }
 
     bool TerrainChunk::load()
     {
-        if (m_isLoaded || m_isLoading) return false;
+        if (m_isLoaded || m_isLoading)
+            return false;
 
         m_isLoading = true;
         if (MapConfig::UseMultiThread)
@@ -353,7 +353,8 @@ namespace Lazy
 
     void TerrainChunk::doLoading()
     {
-        if (m_isLoaded) return;
+        if (m_isLoaded)
+            return;
 
         tstring chunkname;
         formatString(chunkname, _T("%8.8x.lzd"), m_id);
@@ -431,6 +432,7 @@ namespace Lazy
 
         m_isLoaded = true;
         m_isLoading = false;
+        m_pMap->onChunkLoaded(this);
 
         LOG_DEBUG(L"Chunk(%d %d) load finish.", getRowID(), getColID());
     }
@@ -585,12 +587,12 @@ namespace Lazy
     void TerrainChunk::render(IDirect3DDevice9* pDevice)
     {
         if (!m_isLoaded)
-        {
-            load();
             return;
-        }
 
+        rcDevice()->pushWorld(matIdentity);
         renderTerrain(pDevice);
+        rcDevice()->popWorld();
+
         SceneNode::render(pDevice);
 
         //调试渲染当前场景的八叉树
@@ -658,23 +660,30 @@ namespace Lazy
         if (!m_isLoaded)
             return;
 
+        if (m_pMap->ifChunkOutside(this))
+        {
+            unload();
+            return;
+        }
+
         SceneNode::update(elapse);
 
         if (m_octreeDirty)
             buildOctree();
     }
 
-    void TerrainChunk::release(void)
+    void TerrainChunk::unload(void)
     {
-        clearChildren();
+        if (!m_isLoaded)
+            return;
 
-        if (m_isLoaded)
-        {
-            VIBCache::instance()->release(m_mesh);
-            m_isLoaded = false;
-        }
+        m_pMap->onChunkUnloaded(this);
 
+        m_isLoaded = false;
         m_isLoading = false;
+
+        VIBCache::instance()->release(m_mesh);
+        clearChildren();
     }
 
     //鼠标是否与当前地形相交。
