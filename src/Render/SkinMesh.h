@@ -6,18 +6,18 @@
 
 namespace Lazy
 {
-    struct MeshContainer;
+    class MeshContainer;
 
     ///骨骼框架
-    struct BoneFrame : public D3DXFRAME
+    class BoneFrame : public D3DXFRAME
     {
+    public:
         BoneFrame(const char *name);
         ~BoneFrame();
 
-        BoneFrame* find(const std::wstring & name);
-        void updateMatrix(const Matrix & matParent);
+        BoneFrame*  find(const char * name);
+        void        updateMatrix(const Matrix & matParent);
 
-        std::wstring    BoneName;
         Matrix      CombinedTransformationMatrix;
     };
 

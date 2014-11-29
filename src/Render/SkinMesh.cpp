@@ -15,14 +15,14 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////
 
     ///骨骼关联的mesh
-    struct MeshContainer : public D3DXMESHCONTAINER
+    class MeshContainer : public D3DXMESHCONTAINER
     {
+    public:
         MeshContainer(const char* name);
         ~MeshContainer();
 
-        std::wstring            MeshName;
         LPD3DXATTRIBUTERANGE	pAttributeTable;
-        LPDIRECT3DTEXTURE9 *    ppTextures;		//纹理数组
+        TexturePtr *            ppTextures;		//纹理数组
         LPD3DXMESH				pOrigMesh;		//原始网格模型
         DWORD					NumInfl;		//每个顶点最多受多少骨骼的影响
         DWORD					NumAttributeGroups;		//属性组数量,即子网格的数量
@@ -36,17 +36,9 @@ namespace Lazy
 
     MeshContainer::MeshContainer(const char * name)
     {
-        Name = nullptr;
-        if (name)
-        {
-            Lazy::charToWChar(MeshName, name);
+        Name = _strdup(name ? name : "NUL");
 
-            int n = strlen(name) + 1;
-            Name = new char[n];
-            strcpy_s(Name, n, name);
-
-            ZeroMemory(&MeshData, sizeof(MeshData));
-        }
+        ZeroMemory(&MeshData, sizeof(MeshData));
 
         NumMaterials = 0;
         pMaterials = nullptr; //材质数组
@@ -69,13 +61,15 @@ namespace Lazy
 
     MeshContainer::~MeshContainer()
     {
-        SafeDeleteArray(Name);
+        free(Name);
+
         SafeDeleteArray(pAdjacency);
         SafeDeleteArray(pMaterials);
         SafeDeleteArray(pBoneOffsetMatrices);
 
         SafeDeleteArray(ppTextures);//纹理不需要释放，有纹理管理器管理。
         SafeDeleteArray(ppBoneMatrixPtrs);
+
         SafeRelease(pBoneCombinationBuf);
         SafeRelease(MeshData.pMesh);
         SafeRelease(pSkinInfo);
@@ -94,20 +88,11 @@ namespace Lazy
 
     BoneFrame::BoneFrame(const char* name)
     {
-        Name = nullptr;
-        if (name)
-        {
-            Lazy::charToWChar(BoneName, name);
-
-            int n = strlen(name) + 1;
-            Name = new char[n];
-            strcpy_s(Name, n, name);
-        }
+        Name = _strdup(name ? name : "NUL");
 
         pMeshContainer = nullptr;
         pFrameSibling = nullptr;
         pFrameFirstChild = nullptr;
-
 
         D3DXMatrixIdentity(&TransformationMatrix);
         D3DXMatrixIdentity(&CombinedTransformationMatrix);
@@ -115,7 +100,7 @@ namespace Lazy
 
     BoneFrame::~BoneFrame()
     {
-        SafeDeleteArray(Name);
+        free(Name);
 
         if (pMeshContainer)
         {
@@ -137,9 +122,9 @@ namespace Lazy
 
     }
 
-    BoneFrame* BoneFrame::find(const std::wstring & name)
+    BoneFrame* BoneFrame::find(const char * name)
     {
-        if (name == BoneName) return this;
+        if (strcmp(name, Name) == 0 ) return this;
 
         BoneFrame * pNode = nullptr;
         if (pFrameSibling)
@@ -277,7 +262,7 @@ namespace Lazy
         pMeshContainer->NumMaterials = max<DWORD>(1, NumMaterials);
 
         pMeshContainer->pMaterials = new D3DXMATERIAL[pMeshContainer->NumMaterials];
-        pMeshContainer->ppTextures = new LPDIRECT3DTEXTURE9[pMeshContainer->NumMaterials];
+        pMeshContainer->ppTextures = new TexturePtr[pMeshContainer->NumMaterials];
         pMeshContainer->pAdjacency = new DWORD[NumFaces * 3];
 
         //复制邻接信息
@@ -306,7 +291,6 @@ namespace Lazy
             destMaterial->MatD3D.Power = 1.0f;
 
             //提取纹理
-            pMeshContainer->ppTextures[i] = NULL;
             if (destMaterial->pTextureFilename != NULL)
             {
                 std::wstring name;
@@ -314,8 +298,7 @@ namespace Lazy
                 Lazy::removeFilePath(name);
                 if (Lazy::getfs()->searchFile(name, name, L""))
                 {
-                    TexturePtr ptr = TextureMgr::instance()->get(name);
-                    if (ptr) pMeshContainer->ppTextures[i] = ptr->getTexture();
+                    pMeshContainer->ppTextures[i] = TextureMgr::instance()->get(name);
                 }
                 else
                 {
@@ -452,7 +435,6 @@ namespace Lazy
 
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
-        pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
         m_bone->updateMatrix(rcDevice()->getWorld());
         drawFrame(m_bone);
@@ -593,12 +575,9 @@ namespace Lazy
         DWORD nBones = pSkinInfo->GetNumBones();
         pMeshContainer->ppBoneMatrixPtrs = new Matrix*[nBones];
 
-        std::wstring tempName;
         for (DWORD i = 0; i < nBones; ++i)
         {
-            Lazy::charToWChar(tempName, pSkinInfo->GetBoneName(i));
-
-            BoneFrame *pFrame = m_bone->find(tempName);
+            BoneFrame *pFrame = m_bone->find(pSkinInfo->GetBoneName(i));
             if (pFrame != NULL)
             {
                 pMeshContainer->ppBoneMatrixPtrs[i] = &pFrame->CombinedTransformationMatrix;
