@@ -420,9 +420,6 @@ namespace Lazy
         }
 
         updateVertices();
-
-        LOG_DEBUG(_T("Finish load node(%d %d) path='%s'"),
-            getRowID(), getColID(), chunkname.c_str());
     }
 
     ///场景加载完毕
@@ -434,7 +431,7 @@ namespace Lazy
         m_isLoading = false;
         m_pMap->onChunkLoaded(this);
 
-        LOG_DEBUG(L"Chunk(%d %d) load finish.", getRowID(), getColID());
+        LOG_DEBUG(L"Chunk(%d %d) loaded.", getRowID(), getColID());
     }
 
     void TerrainChunk::loadItem(LZDataPtr ptr)
@@ -684,6 +681,8 @@ namespace Lazy
 
         VIBCache::instance()->release(m_mesh);
         clearChildren();
+
+        LOG_DEBUG(L"Chunk(%d %d) unloaded.", getRowID(), getColID());
     }
 
     //鼠标是否与当前地形相交。

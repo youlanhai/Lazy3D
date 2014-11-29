@@ -155,13 +155,12 @@ namespace Lazy
         m_chunkRows = 0;        //< 结点行数
         m_chunkCols = 0;        //< 结点列数
 
-        m_showLevel = 1;
         m_usefull = false;
 
         m_pSource = NULL;
         m_loadingProgress = 0.0f;
 
-        m_showRadius = 5000.0f;
+        m_showRadius = 10.0f;
         m_rect.zero();
     }
 
@@ -387,7 +386,7 @@ namespace Lazy
         //构造四叉树
         LOG_INFO(L"Build quad tree.");
 
-        qtree::Config = { 14, 1, 1000.0f, true };
+        qtree::Config = { 14, 1, m_chunkSize, true };
         RectArray rects;
         for (auto it = m_chunks.begin(); it != m_chunks.end(); ++it)
         {
@@ -538,11 +537,6 @@ namespace Lazy
     bool TerrainMap::isInBound(float x, float z)
     {
         return m_rect.isIn(x, z);
-    }
-
-    void TerrainMap::setShowLevel(int level)
-    {
-        m_showLevel = level;
     }
 
     void TerrainMap::onChunkLoaded(ChunkPtr chunk)

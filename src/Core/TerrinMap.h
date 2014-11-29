@@ -41,9 +41,6 @@ namespace Lazy
         /** 地图将以该source进行优化绘制。source往往是玩家。*/
         void setSource(SceneNode* pSource) { m_pSource = pSource; }
 
-        void setShowLevel(int level);
-        int getShowLevel(void) { return m_showLevel; }
-
         ///获取和设置显示范围
         float getShowRadius() const { return m_showRadius; }
         void setShowRadius(float r) { m_showRadius = r;  }
@@ -118,7 +115,6 @@ namespace Lazy
         int                 m_chunkRows;        ///< 结点行数
         int                 m_chunkCols;        ///< 结点列数
         float               m_showRadius;   ///<以玩家为中心的，显示范围半径
-        int                 m_showLevel;    ///< 显示级别
         bool                m_usefull;      ///< 是否可使用
         FRect               m_rect;
 
