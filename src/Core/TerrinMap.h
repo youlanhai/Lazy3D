@@ -35,7 +35,7 @@ namespace Lazy
         const tstring & getMapName() const { return m_mapName; }
 
         ///地图是否可用
-        bool isUserfull() const { return m_usefull; }
+        BOOL isUserfull() const { return m_usefull; }
 
     public:
         /** 地图将以该source进行优化绘制。source往往是玩家。*/
@@ -72,7 +72,7 @@ namespace Lazy
         ChunkPtr getChunkByPos(float x, float z) const;
 
         ///加载所有的chunk。如果MapConfig::UseMultiThread为true，此函数会立即返回。
-        void loadAllChunks();
+        void loadAllChunks(bool load);
 
         ///是否所有的chunk都已经加载
         bool isAllChunkLoaded();
@@ -115,10 +115,11 @@ namespace Lazy
         int                 m_chunkRows;        ///< 结点行数
         int                 m_chunkCols;        ///< 结点列数
         float               m_showRadius;   ///<以玩家为中心的，显示范围半径
-        bool                m_usefull;      ///< 是否可使用
+        BOOL                m_usefull;      ///< 是否可使用
         FRect               m_rect;
 
-        bool                m_objOnGround;  ///< 物体是否贴地
+        BOOL                m_objOnGround;  ///< 物体是否贴地
+        BOOL                m_loadAll;
 
         float               m_loadingProgress;
         QuadTree            m_quadTree;     ///<四叉树

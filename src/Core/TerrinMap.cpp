@@ -150,12 +150,13 @@ namespace Lazy
 
     TerrainMap::TerrainMap()
         : m_root(new SceneNode())
+        , m_loadAll(FALSE)
     {
         m_chunkSize = 0;         //< 每个格子的尺寸。
         m_chunkRows = 0;        //< 结点行数
         m_chunkCols = 0;        //< 结点列数
 
-        m_usefull = false;
+        m_usefull = FALSE;
 
         m_pSource = NULL;
         m_loadingProgress = 0.0f;
@@ -335,11 +336,16 @@ namespace Lazy
         return m_heightmap ? m_heightmap->getHeight(x, z) : 0.0f;
     }
 
-    void TerrainMap::loadAllChunks()
+    void TerrainMap::loadAllChunks(bool load)
     {
-        for (ChunkPtr chunk : m_chunks)
+        m_loadAll = load;
+
+        if (m_loadAll)
         {
-            chunk->load();
+            for (ChunkPtr chunk : m_chunks)
+            {
+                chunk->load();
+            }
         }
     }
 
@@ -553,6 +559,9 @@ namespace Lazy
 
     bool TerrainMap::ifChunkOutside(ChunkPtr chunk)
     {
+        if (m_loadAll)
+            return false;
+
         if (!m_pSource)
             return true;
 

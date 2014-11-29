@@ -187,7 +187,9 @@ void CGame::update()
     }
     else if (m_pKeyboard->isKeyPress(VK_CONTROL) && m_pKeyboard->isKeyUp('S'))
     {
+        TerrainMap::instance()->loadAllChunks(true);
         TerrainMap::instance()->saveMap();
+        TerrainMap::instance()->loadAllChunks(false);
     }
     else if (m_pKeyboard->isKeyUp('L'))
     {
