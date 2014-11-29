@@ -1,7 +1,7 @@
 ﻿#pragma once
 
 #include "RenderInterface.h"
-#include "../third_part/audiere/audiere.h"
+#include <audiere/audiere.h>
 #include "LRCLoader.h"
 
 #ifndef RT_VOID

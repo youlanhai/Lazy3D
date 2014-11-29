@@ -58,6 +58,7 @@
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>../../third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Lib />
   </ItemDefinitionGroup>
@@ -71,6 +72,7 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <PrecompiledHeader>Use</PrecompiledHeader>
+      <AdditionalIncludeDirectories>../../third_party;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -97,7 +99,6 @@
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Snow.cpp" />
     <ClCompile Include="Sound.cpp" />
-    <ClCompile Include="StaticModel.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -138,7 +139,6 @@
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Snow.h" />
     <ClInclude Include="Sound.h" />
-    <ClInclude Include="StaticModel.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TerrainChunk.h" />
     <ClInclude Include="TerrainItem.h" />

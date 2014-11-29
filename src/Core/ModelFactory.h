@@ -7,7 +7,6 @@ namespace Lazy
 
     namespace ModelType
     {
-        const int StaticModel = 0;
         const int SkinModel = 1;
     };
 

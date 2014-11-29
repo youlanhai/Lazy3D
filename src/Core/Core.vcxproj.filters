@@ -5,9 +5,6 @@
     <ClCompile Include="AnimModel.cpp">
       <Filter>model</Filter>
     </ClCompile>
-    <ClCompile Include="StaticModel.cpp">
-      <Filter>model</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>model</Filter>
     </ClCompile>
@@ -93,9 +90,6 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="AnimModel.h">
-      <Filter>model</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticModel.h">
       <Filter>model</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">

@@ -160,10 +160,6 @@ namespace Lazy
         if (m_model)
         {
             dataPtr->writeString(_T("path"), m_model->source());
-
-            int type = ModelType::StaticModel;
-            if (m_model->isSkeleton()) type = ModelType::SkinModel;
-            dataPtr->writeInt(_T("type"), type);
         }
 
         writeVector3(dataPtr, _T("scale"), getScale());

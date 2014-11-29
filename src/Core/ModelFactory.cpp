@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "ModelFactory.h"
 
-#include "StaticModel.h"
 #include "AnimModel.h"
 
 namespace Lazy
@@ -23,11 +22,7 @@ namespace Lazy
 
         ModelPtr pModel;
 
-        if (typeId == ModelType::StaticModel)
-        {
-            pModel = new StaticModel();
-        }
-        else if (typeId == ModelType::SkinModel)
+        if (typeId == ModelType::SkinModel)
         {
             pModel = new AnimalModel();
         }

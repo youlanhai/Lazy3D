@@ -30,7 +30,6 @@
 #include "SkyBox.h"
 #include "Snow.h"
 #include "Sound.h"
-#include "StaticModel.h"
 
 #include "TerrinMap.h"
 #include "TopBoard.h"

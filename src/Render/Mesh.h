@@ -32,7 +32,7 @@ namespace Lazy
         virtual bool load()  override;
 
         /** 获得资源类型*/
-        virtual int getType(void) const override { return rt::skinmesh; }
+        virtual int getType(void) const override { return rt::mesh; }
 
         /** 渲染*/
         void render();
@@ -74,6 +74,6 @@ namespace Lazy
     class MeshMgr : public ResMgr<MeshMgr, MeshPtr>
     {
     public:
-        virtual int getType() { return rt::skinmesh; }
+        virtual int getType() { return rt::mesh; }
     };
 }
