@@ -29,11 +29,6 @@ namespace Lazy
         /** create a new map*/
         bool createMap(const tstring & nameName, int rows, int cols);
 
-        uint32 allocateTerrainItemID();
-        TerrainItemPtr createTerrainItem();
-        void addTerrainItem(TerrainItemPtr item);
-        void delTerrainItem(TerrainItemPtr item);
-
         /** 获得物理高度*/
         float getHeight(float x, float z) const;
 
@@ -94,11 +89,6 @@ namespace Lazy
 
         bool intersectWithCursor();
 
-        TerrainItemPtr getActiveObj() { return m_pActiveObj; }
-        void setActiveObj(TerrainItemPtr pObj);
-
-        TerrainItemPtr getSelectObj() { return m_pSelectObj; }
-
     protected:
 
         /// 释放当前地图资源
@@ -111,8 +101,8 @@ namespace Lazy
         void genVisibleChunks(void);
 
     protected:
-        uint32              m_itemIDAllocator;
-        ZCritical           m_itemIDLocker;
+
+        SceneNodePtr        m_root;
 
         ChunkPool           m_chunks;
         ChunkPool           m_visibleChunks;  ///9格
@@ -128,8 +118,6 @@ namespace Lazy
         bool                m_usefull;      ///< 是否可使用
         FRect               m_rect;
 
-        TerrainItemPtr      m_pActiveObj;   ///<活动的OBJ，即拥有鼠标焦点
-        TerrainItemPtr      m_pSelectObj;   ///<被选择的Obj
         bool                m_objOnGround;  ///< 物体是否贴地
 
         float               m_loadingProgress;

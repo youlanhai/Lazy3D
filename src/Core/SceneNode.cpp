@@ -328,4 +328,14 @@ namespace Lazy
         m_children.unlock();
     }
 
+    bool SceneNode::saveToStream(LZDataPtr dataPtr)
+    {
+        return false;
+    }
+
+    bool SceneNode::loadFromStream(LZDataPtr dataPtr)
+    {
+        return false;
+    }
+
 } // end namespace Lazy

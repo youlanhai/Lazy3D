@@ -180,6 +180,8 @@ namespace Lazy
 
         inline bool empty() const { return m_pool.empty(); }
 
+        inline size_t size() const { return m_pool.size(); }
+
     private:
         Container   m_pool;
         CacheList   m_cache;

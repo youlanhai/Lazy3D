@@ -79,7 +79,7 @@ namespace Lazy
     ///射线拾取场景物件
     class MapRayAndObjCollider : public RayCollider
     {
-        TerrainItemPtr m_obj;
+        SceneNodePtr m_obj;
         Vector3 v3Origin;
         Vector3 v3Dir;
     public:
@@ -97,7 +97,7 @@ namespace Lazy
 
         }
 
-        TerrainItemPtr getObj() const
+        SceneNodePtr getObj() const
         {
             return m_obj;
         }
@@ -158,14 +158,12 @@ namespace Lazy
         m_usefull = false;
 
         m_pSource = NULL;
-        m_pActiveObj = NULL;
-        m_pSelectObj = NULL;
         m_loadingProgress = 0.0f;
 
         m_showRadius = 5000.0f;
         m_rect.zero();
 
-        m_itemIDAllocator = 0;
+        m_root = new SceneNode();
     }
 
     TerrainMap::~TerrainMap(void)
@@ -184,11 +182,7 @@ namespace Lazy
 
         m_mapName.clear();
 
-        m_pActiveObj = NULL;
-        m_pSelectObj = NULL;
-
         m_rect.zero();
-        m_itemIDAllocator = 0;
     }
 
     bool TerrainMap::createMap(const tstring & nameName, int rows, int cols)
@@ -259,7 +253,6 @@ namespace Lazy
         m_rect.set(-w * 0.5f, -h * 0.5f, w * 0.5f, h * 0.5f);
 
         m_objOnGround = ptr->readBool(L"onGround", true);
-        m_itemIDAllocator = ptr->readInt(L"idAllocator", 0);
 
         // loa chunks
         initChunks();
@@ -311,7 +304,6 @@ namespace Lazy
 
         root->writeInt(L"rows", m_chunkRows);
         root->writeInt(L"cols", m_chunkCols);
-        root->writeUint(L"idAllocator", m_itemIDAllocator);
         root->writeBool(L"onGround", m_objOnGround);
 
         if (!saveSection(root, filename))
@@ -327,36 +319,6 @@ namespace Lazy
         }
 
         return true;
-    }
-
-    uint32 TerrainMap::allocateTerrainItemID()
-    {
-        ZLockHolder holder(&m_itemIDLocker);
-        return ++m_itemIDAllocator;
-    }
-
-    TerrainItemPtr TerrainMap::createTerrainItem()
-    {
-        return new TerrainItem(allocateTerrainItemID());
-    }
-
-    void TerrainMap::addTerrainItem(TerrainItemPtr item)
-    {
-        AABB aabb = item->getWorldBoundingBox();
-
-        MapRectCollider collider(false);
-        collider.rect.fromAABBXZ(aabb);
-        m_quadTree.queryRect(&collider);
-
-        for (size_t i : collider.m_chunkIds)
-        {
-            m_chunks[i]->addItem(item);
-        }
-    }
-
-    void TerrainMap::delTerrainItem(TerrainItemPtr item)
-    {
-        item->removeFromChunks();
     }
 
     int TerrainMap::position2chunk(float x, float z) const
@@ -439,22 +401,9 @@ namespace Lazy
 
     void TerrainMap::render(IDirect3DDevice9* pDevice)
     {
-        if (!m_usefull || !MapConfig::ShowTerrain) return;
+        if (!m_usefull || !MapConfig::ShowTerrain || !m_root) return;
 
-        rcDevice()->pushWorld(matIdentity);
-
-        for (size_t i = 0; i < m_visibleChunks.size(); ++i)
-        {
-            m_visibleChunks[i]->renderTerrain(pDevice);
-        }
-
-        //绘制地图物体
-        for (size_t i = 0; i < m_visibleChunks.size(); ++i)
-        {
-            m_visibleChunks[i]->renderItems(pDevice);
-        }
-
-        rcDevice()->popWorld();
+        m_root->render(pDevice);
 #if 0
 
         Matrix matWorld;
@@ -562,46 +511,14 @@ namespace Lazy
         return false;
     }
 
-    bool TerrainMap::handeEvent(const SEvent & event)
+    bool TerrainMap::handeEvent(const SEvent & /*event*/)
     {
-        if (!m_usefull) return false;
-
-        if (!Pick::instance()->isTerrainObjEnable())
-        {
-            return false;
-        }
-
-        if (getActiveObj())
-        {
-            switch (event.mouseEvent.event)
-            {
-            case EME_LMOUSE_DOWN:
-                getActiveObj()->focusCursor(CM_LDOWN);
-                break;
-
-            case EME_LMOUSE_UP:
-                getActiveObj()->focusCursor(CM_LUP);
-                break;
-
-            case EME_RMOUSE_DOWN:
-                getActiveObj()->focusCursor(CM_RDOWN);
-                break;
-
-            case EME_RMOUSE_UP:
-                getActiveObj()->focusCursor(CM_RUP);
-                m_pSelectObj = getActiveObj();
-                break;
-
-            default:
-                return false;
-            };
-        }
         return false;
     }
 
     bool TerrainMap::intersectWithCursor()
     {
-        TerrainItemPtr pActiveObj = NULL;
+        SceneNodePtr pActiveObj;
 
         //八叉树拾取
         MapRayAndObjCollider collider(Pick::instance()->rayPos(), Pick::instance()->rayDir());
@@ -609,23 +526,8 @@ namespace Lazy
 
         pActiveObj = collider.getObj();
 
-        setActiveObj(pActiveObj);
         return pActiveObj != NULL;
     }
-
-    void TerrainMap::setActiveObj(TerrainItemPtr pObj)
-    {
-        if (m_pActiveObj)
-        {
-            m_pActiveObj->focusCursor(CM_LEAVE);
-        }
-        m_pActiveObj = pObj;
-        if (m_pActiveObj)
-        {
-            m_pActiveObj->focusCursor(CM_ENTER);
-        }
-    }
-
 
     bool TerrainMap::isInBound(float x, float z)
     {

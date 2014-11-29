@@ -41,14 +41,14 @@ namespace Lazy
         ///是否与八叉树叶结点碰撞。
         bool ObjCollider::query(OctreeBase *, const IndicesArray & indices)
         {
-            //size_t numObj = m_pMapNode->getNumObj();
-
             float minDistance = MAX_FLOAT;
 
             for (size_t i : indices)
             {
-                TerrainItemPtr obj = m_pMapNode->getItemByIndex(i);
-                if (!obj) continue;
+                //TODO 完善碰撞
+                SceneNodePtr obj /*= m_pMapNode->getItemByIndex(i)*/;
+                if (!obj)
+                    continue;
 
                 AABB aabb = obj->getWorldBoundingBox();
                 if (!aabb.intersectsRay(origin, dir)) continue;
@@ -76,12 +76,12 @@ namespace Lazy
 
             bool build(TerrainChunk* pMapNode)
             {
-                size_t n = pMapNode->getNbItems();
-                m_aabbs.resize(n);
+                //TODO 完善碰撞
+                m_aabbs.clear();
 
-                for (size_t i = 0; i < n; ++i)
+                for (SceneNodePtr child : (*pMapNode))
                 {
-                    m_aabbs[i] = pMapNode->getItemByIndex(i)->getWorldBoundingBox();
+                    m_aabbs.push_back(child->getWorldBoundingBox());
                 }
 
                 bool ret = doBuild();
@@ -437,32 +437,16 @@ namespace Lazy
 
     void TerrainChunk::loadItem(LZDataPtr ptr)
     {
-        uint32 itemID = ptr->readUint(L"id");
-        if (findItem(itemID))
+        uint32 type = ptr->readUint(L"type");
+        
+        SceneNodePtr item /* = SceneNodeFactory::create(type); */;
+        if (!item)
             return;
 
-        TerrainItemPtr item = new TerrainItem(itemID);
-        item->load(ptr);
-        
-        bool isAdded = false;
-        tstring chunkIDs = ptr->readString(L"chunks");
-        std::wistringstream ss(chunkIDs);
-        while (ss.good())
-        {
-            uint32 id = 0xffffffff;
-            ss >> id;
-            if (id == 0xffffffff)
-                break;
+        if (!item->loadFromStream(ptr))
+            return;
 
-            isAdded = true;
-            ChunkPtr chunk = m_pMap->getChunkByID(id);
-            chunk->addItem(item);
-        }
-
-        if (!isAdded)
-        {
-            m_pMap->addTerrainItem(item);
-        }
+        addChild(item);
     }
 
     void TerrainChunk::updateVertices()
@@ -579,10 +563,10 @@ namespace Lazy
             LZDataPtr items = root->write(_T("items"));
             items->clearChildren();
 
-            for (TerrainItemPtr item : m_items)
+            for (SceneNodePtr child : m_children)
             {
                 LZDataPtr itemData = items->newOne(L"item", L"");
-                if (item->save(itemData))
+                if (child->saveToStream(itemData))
                 {
                     items->addChild(itemData);
                 }
@@ -598,7 +582,7 @@ namespace Lazy
         return true;
     }
 
-    void TerrainChunk::renderTerrain(IDirect3DDevice9* pDevice)
+    void TerrainChunk::render(IDirect3DDevice9* pDevice)
     {
         if (!m_isLoaded)
         {
@@ -606,6 +590,21 @@ namespace Lazy
             return;
         }
 
+        renderTerrain(pDevice);
+        SceneNode::render(pDevice);
+
+        //调试渲染当前场景的八叉树
+        if (MapConfig::ShowChunkOctree && TerrainMap::instance()->getFocusChunk() == this)
+        {
+            RSHolder rsHolder1(pDevice, D3DRS_LIGHTING, FALSE);
+
+            pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
+            if (m_octree) m_octree->render(pDevice);
+        }
+    }
+
+    void TerrainChunk::renderTerrain(IDirect3DDevice9* pDevice)
+    {
         if (!m_mesh.valid() || !m_shader) return;
 
         int maxTexIndex = -1;
@@ -656,42 +655,18 @@ namespace Lazy
 
     void TerrainChunk::update(float elapse)
     {
-        if (!m_isLoaded) return;
+        if (!m_isLoaded)
+            return;
 
-        if (m_octreeDirty) buildOctree();
+        SceneNode::update(elapse);
 
-        for (TerrainItemPtr item : m_items)
-        {
-            item->update(elapse);
-        }
-    }
-
-    void TerrainChunk::renderItems(IDirect3DDevice9* pDevice)
-    {
-        if (!m_isLoaded) return;
-
-        for (TerrainItemPtr item : m_items)
-        {
-            //一个item可以横跨多个chunk，只有中心坐标所在的chunk才负责渲染。
-            if (m_rect.isIn(item->getPosition().x, item->getPosition().z))
-            {
-                item->render(pDevice);
-            }
-        }
-
-        //调试渲染当前场景的八叉树
-        if (MapConfig::ShowChunkOctree && TerrainMap::instance()->getFocusChunk() == this)
-        {
-            RSHolder rsHolder1(pDevice, D3DRS_LIGHTING, FALSE);
-
-            pDevice->SetTransform(D3DTS_WORLD, &matIdentity);
-            if (m_octree) m_octree->render(pDevice);
-        }
+        if (m_octreeDirty)
+            buildOctree();
     }
 
     void TerrainChunk::release(void)
     {
-        clearItems();
+        clearChildren();
 
         if (m_isLoaded)
         {
@@ -743,7 +718,7 @@ namespace Lazy
     }
 
     ///射线拾取
-    TerrainItemPtr TerrainChunk::pickItem(const Vector3 & origin, const Vector3 & dir)
+    SceneNodePtr TerrainChunk::pickItem(const Vector3 & origin, const Vector3 & dir)
     {
         if (!m_octree) return nullptr;
 
@@ -758,53 +733,6 @@ namespace Lazy
     void TerrainChunk::updateNormal(void)
     {
         m_mesh.optimize();
-    }
-
-    TerrainItemPtr TerrainChunk::findItem(uint32 id)
-    {
-        ZLockHolder hodler(&m_itemLocker);
-
-        ItemCatalogue::iterator it = m_itemCatalogue.find(id);
-        if (it == m_itemCatalogue.end())
-            return nullptr;
-        return it->second;
-    }
-
-    void TerrainChunk::delItem(TerrainItemPtr item)
-    {
-        ZLockHolder hodler(&m_itemLocker);
-
-        ItemCatalogue::iterator it = m_itemCatalogue.find(item->getID());
-        if (it == m_itemCatalogue.end())
-            return; //doesn't found.
-
-        m_itemCatalogue.erase(item->getID());
-        m_items.erase(std::find(m_items.begin(), m_items.end(), item));
-        m_octreeDirty = true;
-    }
-
-    void TerrainChunk::addItem(TerrainItemPtr item)
-    {
-        ZLockHolder hodler(&m_itemLocker);
-
-        auto it = m_itemCatalogue.insert(std::make_pair(item->getID(), item));
-        if (!it.second) //has been added.
-            return;
-
-        m_items.push_back(item);
-        item->addChunk(this);
-        m_octreeDirty = true;
-    }
-
-    void TerrainChunk::clearItems()
-    {
-        ZLockHolder hodler(&m_itemLocker);
-
-        m_items.clear();
-        m_itemCatalogue.clear();
-
-        m_octree = nullptr;
-        m_octreeDirty = true;
     }
 
     void TerrainChunk::buildOctree()

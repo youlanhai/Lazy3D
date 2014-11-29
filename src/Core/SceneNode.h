@@ -86,6 +86,15 @@ namespace Lazy
         void clearChildren();
         void removeFromParent();
 
+        TChildren &                 getChildren() { return m_children; }
+        const TChildren &           getChildren() const { return m_children; }
+        size_t                      getNbChildren() const { return m_children.size(); }
+
+        TChildren::iterator         begin() { return m_children.begin(); }
+        TChildren::const_iterator   begin() const { return m_children.begin(); }
+        TChildren::iterator         end() { return m_children.end(); }
+        TChildren::const_iterator   end() const { return m_children.end(); }
+
         /** 当结点加入场景树后，会被调用。*/
         virtual void onEnterWorld();
         /** 当结点从场景树移除之前，会被调用。*/
@@ -96,6 +105,9 @@ namespace Lazy
 
         ///逻辑更新
         virtual void update(float elapse);
+
+        virtual bool saveToStream(LZDataPtr dataPtr);
+        virtual bool loadFromStream(LZDataPtr dataPtr);
 
     protected:
         void setParent(SceneNode * parent);

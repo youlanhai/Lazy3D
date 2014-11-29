@@ -13,8 +13,10 @@ namespace Lazy
 
     //////////////////////////////////////////////////////////////////////////
 
-    void check2WithObj( CollisionPrevent & ci, TerrainItemPtr pobj)
+    void check2WithObj( CollisionPrevent & ci, SceneNodePtr pobj)
     {
+        //TODO 碰撞检测
+#if 0
         if(!pobj) return;
 
         ModelPtr model = pobj->getModel();
@@ -43,7 +45,7 @@ namespace Lazy
         ci.preventCollision(model->getMesh(), world);
 
 #endif
-
+#endif
     }
 
 
@@ -52,10 +54,9 @@ namespace Lazy
         ChunkPtr node = TerrainMap::instance()->getFocusChunk();
         if(!node) return;
 
-        TerrainChunk::ItemConstIter it;
-        FOR_EACH((*node), it)
+        for (SceneNodePtr it : (*node))
         {
-            check2WithObj(ci, *it);
+            check2WithObj(ci, it);
         }
     }
 
@@ -66,8 +67,10 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////////
-    bool _pickRay(RayCollision & rc, TerrainItemPtr pobj)
+    bool _pickRay(RayCollision & rc, SceneNodePtr pobj)
     {
+        //TODO 碰撞检测
+#if 0
         if(!pobj) return false;
 
         AABB aabb = pobj->getWorldBoundingBox();
@@ -82,6 +85,9 @@ namespace Lazy
         Matrix world;
         pobj->getAbsModelMatrix(world);
         return rc.pick(model->getMesh(), world);
+#else
+        return false;
+#endif
     }
 
     bool pickRay(RayCollision & rc)
@@ -96,7 +102,7 @@ namespace Lazy
             _pickRay(rc, *it);
         }
 #else
-        TerrainItemPtr obj = node->pickItem(rc.m_start, rc.m_dir);
+        SceneNodePtr obj = node->pickItem(rc.m_start, rc.m_dir);
         _pickRay(rc, obj);
 #endif
 

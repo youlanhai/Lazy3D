@@ -32,9 +32,6 @@
     <ClCompile Include="TerrainChunk.cpp">
       <Filter>terrain</Filter>
     </ClCompile>
-    <ClCompile Include="TerrainItem.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
     <ClCompile Include="TerrinData.cpp">
       <Filter>terrain</Filter>
     </ClCompile>
@@ -129,9 +126,6 @@
       <Filter>terrain</Filter>
     </ClInclude>
     <ClInclude Include="TerrainChunk.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainItem.h">
       <Filter>terrain</Filter>
     </ClInclude>
     <ClInclude Include="TerrinData.h">

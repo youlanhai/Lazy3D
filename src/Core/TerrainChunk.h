@@ -6,7 +6,8 @@
 */
 
 #include "TerrinData.h"
-#include "TerrainItem.h"
+#include "SceneNode.h"
+
 #include "../Physics/Octree.h"
 
 #include "../Render/Effect.h"
@@ -42,13 +43,13 @@ namespace Lazy
         ///用于射线拾取地形obj
         class ObjCollider : public oc::RayCollider
         {
-            TerrainItemPtr m_obj;
-            TerrainChunk* m_pMapNode;
+            SceneNodePtr    m_obj;
+            TerrainChunk*   m_pMapNode;
 
         public:
             ObjCollider(TerrainChunk* pMapNode);
 
-            TerrainItemPtr getObj() const { return m_obj; }
+            SceneNodePtr getObj() const { return m_obj; }
 
             ///是否与八叉树叶结点碰撞。
             virtual bool query(OctreeBase* pTree, const IndicesArray & indices) override;
@@ -124,19 +125,14 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////////
     ///地图子块
     //////////////////////////////////////////////////////////////////////////
-    class TerrainChunk : public IBase
+    class TerrainChunk : public SceneNode
     {
     public:
-        typedef std::vector<TerrainItemPtr>     ItemPool;
-        typedef ItemPool::iterator              ItemIter;
-        typedef ItemPool::const_iterator        ItemConstIter;
-        typedef std::hash_map<uint32, TerrainItemPtr>   ItemCatalogue;
 
         TerrainChunk(TerrainMap *pMap, uint32 id, const FRect & rect);
         ~TerrainChunk(void);
 
-        void renderTerrain(IDirect3DDevice9* pDevice);
-        void renderItems(IDirect3DDevice9* pDevice);
+        void render(IDirect3DDevice9* pDevice);
         void update(float elapse);
 
         bool load();
@@ -153,23 +149,6 @@ namespace Lazy
         float getSize() const { return m_rect.width(); }
         LPD3DXMESH getTerrainMesh() const { return m_mesh.getMesh(); }
 
-    public://地图物件相关
-
-        ItemIter begin() { return m_items.begin(); }
-        ItemIter end() { return m_items.end(); }
-        ItemConstIter begin() const { return m_items.begin(); }
-        ItemConstIter end() const { return m_items.end(); }
-
-        TerrainItemPtr getItemByIndex(size_t i) const { return m_items[i]; }
-        size_t getNbItems() const { return m_items.size(); }
-
-        TerrainItemPtr findItem(uint32 id);
-        void clearItems();
-        //{ don't call the following method, unless you know what you did.
-        void addItem(TerrainItemPtr item);
-        void delItem(TerrainItemPtr item);
-        //}
-
     public://拾取与碰撞检测
 
         ///鼠标射线是否与当前地表相交。
@@ -182,10 +161,11 @@ namespace Lazy
         bool intersect(const AABB & aabb) const;
 
         ///射线拾取
-        TerrainItemPtr pickItem(const Vector3 & origin, const Vector3 & dir);
+        SceneNodePtr pickItem(const Vector3 & origin, const Vector3 & dir);
 
     protected:
 
+        void renderTerrain(IDirect3DDevice9* pDevice);
         void loadItem(LZDataPtr ptr);
 
         void release(void);
@@ -215,8 +195,6 @@ namespace Lazy
         bool            m_octreeDirty;  ///<八叉树重构标记
 
         ZCritical               m_itemLocker;
-        ItemPool                m_items;
-        ItemCatalogue           m_itemCatalogue;
 
         float                   m_uvScale;
         TexturePtr              m_textures[MapConfig::MaxNbChunkTexture];
