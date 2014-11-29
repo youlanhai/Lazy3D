@@ -178,4 +178,20 @@ namespace Lazy
         return pAnimSet->GetName();
     }
 
+    void AnimalModel::saveToStream(LZDataPtr data)
+    {
+        Base::saveToStream(data);
+
+        if (!m_source.empty())
+            data->writeString(L"resource", m_source);
+    }
+
+    bool AnimalModel::loadFromStream(LZDataPtr data)
+    {
+        if (!Base::loadFromStream(data)) return false;
+
+        m_source = data->readString(L"resource");
+        return load(m_source);
+    }
+
 } // end namespace Lazy

@@ -7,6 +7,7 @@
 #include "Pick.h"
 #include "Sound.h"
 #include "Entity.h"
+#include "SceneNodeFactory.h"
 
 #include "../Render/Texture.h"
 #include "../Font/Font.h"
@@ -80,6 +81,7 @@ namespace Lazy
         TerrainMap::initInstance();
         Pick::initInstance();
         TimerMgr::initInstance();
+        SceneNodeFactory::init();
     }
 
     void CApp::releaseSingleton()

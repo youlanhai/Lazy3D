@@ -11,6 +11,8 @@ namespace Lazy
     class LZDLL_API IModel : public SceneNode
     {
     public:
+        SCENE_NODE_HEADER(IModel);
+        
         ///构造函数
         IModel(void);
 

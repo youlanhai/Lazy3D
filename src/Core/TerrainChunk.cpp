@@ -5,6 +5,7 @@
 #include "TerrainChunk.h"
 #include "App.h"
 #include "TerrinMap.h"
+#include "SceneNodeFactory.h"
 
 #include "../Physics/Physics.h"
 
@@ -316,20 +317,27 @@ namespace Lazy
     //////////////////////////////////////////////////////////////////////////
     /// TerrainChunk
     //////////////////////////////////////////////////////////////////////////
-    TerrainChunk::TerrainChunk(TerrainMap *pMap, uint32 id, const FRect & rect)
-        : m_id(id)
-        , m_pMap(pMap)
+    TerrainChunk::TerrainChunk()
+        : m_id(0)
+        , m_pMap(0)
         , m_isLoaded(false)
         , m_isLoading(false)
         , m_octreeDirty(true)
-        , m_rect(rect)
         , m_uvScale(1.0f)
+        , m_gridSize(MapConfig::ChunkGridSize)
     {
-        m_gridSize = MapConfig::ChunkGridSize;
+        m_rect.zero();
     }
 
     TerrainChunk::~TerrainChunk(void)
     {
+    }
+
+    void TerrainChunk::init(TerrainMap *pMap, uint32 id, const FRect & rect)
+    {
+        m_pMap = pMap;
+        m_id = id;
+        m_rect = rect;
     }
 
     bool TerrainChunk::load()
@@ -436,14 +444,19 @@ namespace Lazy
 
     void TerrainChunk::loadItem(LZDataPtr ptr)
     {
-        uint32 type = ptr->readUint(L"type");
+        int type = ptr->readInt(L"type");
         
-        SceneNodePtr item /* = SceneNodeFactory::create(type); */;
+        SceneNodePtr item = SceneNodeFactory::create(type);;
         if (!item)
+        {
             return;
+        }
 
         if (!item->loadFromStream(ptr))
+        {
+            LOG_ERROR(L"Failed load Chunk Item. type %d", type);
             return;
+        }
 
         addChild(item);
     }
@@ -565,10 +578,8 @@ namespace Lazy
             for (SceneNodePtr child : m_children)
             {
                 LZDataPtr itemData = items->newOne(L"item", L"");
-                if (child->saveToStream(itemData))
-                {
-                    items->addChild(itemData);
-                }
+                child->saveToStream(itemData);
+                items->addChild(itemData);
             }
         }
 

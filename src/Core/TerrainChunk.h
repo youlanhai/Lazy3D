@@ -128,9 +128,12 @@ namespace Lazy
     class TerrainChunk : public SceneNode
     {
     public:
+        SCENE_NODE_HEADER(TerrainChunk);
 
-        TerrainChunk(TerrainMap *pMap, uint32 id, const FRect & rect);
+        TerrainChunk(void);
         ~TerrainChunk(void);
+
+        void init(TerrainMap *pMap, uint32 id, const FRect & rect);
 
         void render(IDirect3DDevice9* pDevice);
         void update(float elapse);

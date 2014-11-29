@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "SceneNode.h"
+#include "../Math/MathTool.h"
 
 namespace Lazy
 {
@@ -328,14 +329,30 @@ namespace Lazy
         m_children.unlock();
     }
 
-    bool SceneNode::saveToStream(LZDataPtr dataPtr)
+    void SceneNode::saveToStream(LZDataPtr data)
     {
-        return false;
+        data->writeInt(L"type", getType());
+        if (!m_name.empty())
+            data->writeString(L"name", charToWChar(m_name));
+
+        writeQuaternion(data, L"rotation", m_rotation);
+        writeVector3(data, L"scale", m_scale);
+        writeVector3(data, L"position", m_position);
+        writeAABB(data, L"bb", m_aabb);
     }
 
-    bool SceneNode::loadFromStream(LZDataPtr dataPtr)
+    bool SceneNode::loadFromStream(LZDataPtr data)
     {
-        return false;
+        setDirtyFlag(DirtyAll);
+
+        m_name = wcharToChar( data->readString(L"name") );
+
+        readQuaternion(data, L"rotation", m_rotation);
+        readVector3(data, L"scale", m_scale);
+        readVector3(data, L"position", m_position);
+        readAABB(data, L"bb", m_aabb);
+
+        return true;
     }
 
 } // end namespace Lazy

@@ -9,6 +9,8 @@ namespace Lazy
     class LZDLL_API AnimalModel : public IModel
     {
     public:
+        SCENE_NODE_HEADER(AnimalModel);
+
         /** 构造函数。*/
         AnimalModel(void);
 
@@ -22,6 +24,9 @@ namespace Lazy
 
         /** 渲染*/
         virtual void render(IDirect3DDevice9* pDevice);
+
+        virtual void saveToStream(LZDataPtr data);
+        virtual bool loadFromStream(LZDataPtr data);
 
     public:
 

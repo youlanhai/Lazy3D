@@ -160,7 +160,7 @@ namespace Lazy
         m_pSource = NULL;
         m_loadingProgress = 0.0f;
 
-        m_showRadius = 10.0f;
+        m_showRadius = 50.0f;
         m_rect.zero();
     }
 
@@ -379,7 +379,9 @@ namespace Lazy
                 rc.right = rc.left + m_chunkSize;
                 rc.bottom = rc.top + m_chunkSize;
 
-                m_chunks.push_back(new TerrainChunk(this, r << 16 | c, rc));
+                TerrainChunk *p = new TerrainChunk();
+                p->init(this, r << 16 | c, rc);
+                m_chunks.push_back(p);
             }
         }
 

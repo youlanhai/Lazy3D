@@ -4,6 +4,11 @@
 #include "RenderInterface.h"
 #include "../utility/VisitPool.h"
 
+#define SCENE_NODE_HEADER(CLASS)        \
+    typedef This    Base;               \
+    typedef CLASS   This;               \
+    static CLASS * createInstance(){ return new CLASS(); } \
+
 namespace Lazy
 {
     class SceneNode;
@@ -16,6 +21,9 @@ namespace Lazy
     class SceneNode : public IBase, public IRenderable
     {
     public:
+        typedef SceneNode This;
+        static SceneNode * createInstance(){ return new SceneNode(); }
+
         typedef VisitPool<SceneNodePtr> TChildren;
         enum DirtyFlag
         {
@@ -27,6 +35,8 @@ namespace Lazy
 
         SceneNode();
         ~SceneNode();
+
+        virtual int getType() const { return 0; }
 
         void    setScale(const Vector3 & scale);
         const Vector3 & getScale() const{ return m_scale; }
@@ -106,8 +116,8 @@ namespace Lazy
         ///Âß¼­¸üÐÂ
         virtual void update(float elapse);
 
-        virtual bool saveToStream(LZDataPtr dataPtr);
-        virtual bool loadFromStream(LZDataPtr dataPtr);
+        virtual void saveToStream(LZDataPtr data);
+        virtual bool loadFromStream(LZDataPtr data);
 
     protected:
         void setParent(SceneNode * parent);

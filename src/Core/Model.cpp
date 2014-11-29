@@ -32,6 +32,8 @@ namespace Lazy
 
     void IModel::render(IDirect3DDevice9 * pDevice)
     {
+        Base::render(pDevice);
+
         if (m_bbVisible)
         {
             renderBoundingBox(pDevice);

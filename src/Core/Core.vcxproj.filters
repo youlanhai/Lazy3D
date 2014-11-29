@@ -83,6 +83,7 @@
     <ClCompile Include="Keyboard.cpp">
       <Filter>app</Filter>
     </ClCompile>
+    <ClCompile Include="SceneNodeFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -185,6 +186,7 @@
     <ClInclude Include="CachedList.h">
       <Filter>pariticle</Filter>
     </ClInclude>
+    <ClInclude Include="SceneNodeFactory.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pariticle">

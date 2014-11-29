@@ -4,6 +4,8 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+#include "AABB.h"
+
 #include <sstream>
 
 namespace Lazy
@@ -60,6 +62,16 @@ namespace Lazy
         ptr->writeString(tag, ss.str());
     }
 
+    bool readQuaternion(LZDataPtr ptr, const tstring & tag, Quaternion & vec)
+    {
+        return readVector4(ptr, tag, *((Vector4*) &vec));
+    }
+
+    void writeQuaternion(LZDataPtr ptr, const tstring & tag, const Quaternion & vec)
+    {
+        writeVector4(ptr, tag, *((const Vector4*) &vec));
+    }
+
     bool readMatrix(LZDataPtr ptr, const tstring & tag, Matrix & mat)
     {
         const tstring & val = ptr->readString(tag);
@@ -82,4 +94,30 @@ namespace Lazy
         ptr->writeString(tag, ss.str());
     }
 
+
+    bool readAABB(LZDataPtr ptr, const tstring & tag, AABB & ab)
+    {
+        const tstring & val = ptr->readString(tag);
+        if (val.empty()) return false;
+
+        std::wistringstream ss(val);
+        ss >> ab.min.x >> ab.min.y >> ab.min.z
+            >> ab.max.x >> ab.max.y >> ab.max.z;
+
+        return true;
+    }
+
+    void writeAABB(LZDataPtr ptr, const tstring & tag, const AABB & ab)
+    {
+        std::wostringstream ss;
+
+        ss << ab.min.x << ' '
+            << ab.min.y << ' '
+            << ab.min.z << ' '
+            << ab.max.x << ' '
+            << ab.max.y << ' '
+            << ab.max.z;
+
+        ptr->writeString(tag, ss.str());
+    }
 }

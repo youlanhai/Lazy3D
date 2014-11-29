@@ -96,6 +96,7 @@
     <ClCompile Include="Projection.cpp" />
     <ClCompile Include="SceneFog.cpp" />
     <ClCompile Include="SceneNode.cpp" />
+    <ClCompile Include="SceneNodeFactory.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Snow.cpp" />
     <ClCompile Include="Sound.cpp" />
@@ -135,6 +136,7 @@
     <ClInclude Include="RenderTask.h" />
     <ClInclude Include="SceneFog.h" />
     <ClInclude Include="SceneNode.h" />
+    <ClInclude Include="SceneNodeFactory.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Snow.h" />
     <ClInclude Include="Sound.h" />

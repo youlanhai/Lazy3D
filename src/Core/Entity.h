@@ -27,6 +27,8 @@ namespace Lazy
     class LZDLL_API IEntity : public SceneNode
     {
     public:
+        SCENE_NODE_HEADER(IEntity);
+
         IEntity();
         ~IEntity();
 
