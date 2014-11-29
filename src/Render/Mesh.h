@@ -22,11 +22,11 @@ namespace Lazy
     };
 
     ///蒙皮骨骼动画
-    class SkinMesh : public IResource
+    class Mesh : public IResource
     {
     public:
-        SkinMesh(const tstring & source);
-        virtual ~SkinMesh();
+        Mesh(const tstring & source);
+        virtual ~Mesh();
 
         /** 加载资源。*/
         virtual bool load()  override;
@@ -69,9 +69,9 @@ namespace Lazy
     };
 
 
-    typedef RefPtr<SkinMesh> SkinMeshPtr;
+    typedef RefPtr<Mesh> MeshPtr;
 
-    class SkinMeshMgr : public ResMgr<SkinMeshMgr, SkinMeshPtr>
+    class MeshMgr : public ResMgr<MeshMgr, MeshPtr>
     {
     public:
         virtual int getType() { return rt::skinmesh; }

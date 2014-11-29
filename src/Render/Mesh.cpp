@@ -1,6 +1,6 @@
-﻿//SkinMesh.cpp
+﻿//Mesh.cpp
 #include "stdafx.h"
-#include "SkinMesh.h"
+#include "Mesh.h"
 #include "Texture.h"
 #include "RenderDevice.h"
 #include "EffectConstant.h"
@@ -160,7 +160,7 @@ namespace Lazy
     class CAllocateHierarchy : public ID3DXAllocateHierarchy
     {
     public:
-        CAllocateHierarchy(SkinMesh *pSkinMesh)
+        CAllocateHierarchy(Mesh *pSkinMesh)
             : m_pSkinMesh(pSkinMesh)
         {}
 
@@ -193,7 +193,7 @@ namespace Lazy
         }
 
     public:
-        SkinMesh*		m_pSkinMesh;
+        Mesh*		m_pSkinMesh;
     };
 
     LRESULT CAllocateHierarchy::CreateMeshContainer(
@@ -340,12 +340,12 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////
-    // SkinMesh
+    // Mesh
     //////////////////////////////////////////////////////////////////////
-    /*static*/ EffectPtr SkinMesh::s_skinnedEffect;
-    /*static*/ EffectPtr SkinMesh::s_noskinnedEffect;
+    /*static*/ EffectPtr Mesh::s_skinnedEffect;
+    /*static*/ EffectPtr Mesh::s_noskinnedEffect;
 
-    SkinMesh::SkinMesh(const tstring & source)
+    Mesh::Mesh(const tstring & source)
         : IResource(source)
         , m_pAnimController(nullptr)
         , m_bone(nullptr)
@@ -363,7 +363,7 @@ namespace Lazy
         m_aabb.max.set(1.0f, 1.0f, 1.0f);
     }
 
-    SkinMesh::~SkinMesh()
+    Mesh::~Mesh()
     {
         if (m_bone)
             delete m_bone;
@@ -372,14 +372,14 @@ namespace Lazy
     }
 
     /** 加载资源。*/
-    bool SkinMesh::load()
+    bool Mesh::load()
     {
         assert(m_bone == nullptr && "Loaded more than once!");
 
         tstring realPath;
         if (!getfs()->getRealPath(realPath, m_source))
         {
-            LOG_ERROR(L"SkinMesh '%s' was not found!", m_source.c_str());
+            LOG_ERROR(L"Mesh '%s' was not found!", m_source.c_str());
             return false;
         }
 
@@ -395,14 +395,14 @@ namespace Lazy
 
         if (FAILED(hr))
         {
-            LOG_ERROR(L"Load SkinMesh '%s' failed! hr=0x%x, code=0x%x",
+            LOG_ERROR(L"Load Mesh '%s' failed! hr=0x%x, code=0x%x",
                 realPath.c_str(), hr, GetLastError());
             return false;
         }
 
         if (FAILED(setupBoneMatrixPointers(m_bone)))
         {
-            LOG_ERROR(L"Load SkinMesh '%s' failed! hr=0x%x, code=0x%x",
+            LOG_ERROR(L"Load Mesh '%s' failed! hr=0x%x, code=0x%x",
                 realPath.c_str(), hr, GetLastError());
             return false;
         }
@@ -425,7 +425,7 @@ namespace Lazy
         return true;
     }
 
-    void SkinMesh::render()
+    void Mesh::render()
     {
         if (!m_bone) return;
 
@@ -444,7 +444,7 @@ namespace Lazy
     }
 
     /** 克隆动画控制器。*/
-    dx::AnimController* SkinMesh::cloneAnimaCtrl(void)
+    dx::AnimController* Mesh::cloneAnimaCtrl(void)
     {
         if (nullptr == m_pAnimController)
             return nullptr;
@@ -464,7 +464,7 @@ namespace Lazy
     }
 
 
-    HRESULT SkinMesh::generateSkinnedMesh(MeshContainer *pMeshContainer)
+    HRESULT Mesh::generateSkinnedMesh(MeshContainer *pMeshContainer)
     {
         assert(pMeshContainer);
 
@@ -532,7 +532,7 @@ namespace Lazy
 
 
     //desc	调用SetupBoneMatrixPointersOnMesh递归为各框架安置组合变换矩阵
-    HRESULT SkinMesh::setupBoneMatrixPointers(LPD3DXFRAME pFrame)
+    HRESULT Mesh::setupBoneMatrixPointers(LPD3DXFRAME pFrame)
     {
         assert(pFrame);
 
@@ -562,7 +562,7 @@ namespace Lazy
 
     //-----------------------------------------------------------
     //desc: 设置每个骨骼的组合变换矩阵
-    HRESULT SkinMesh::setupBoneMatrixPointersOnMesh(LPD3DXMESHCONTAINER pMeshContainerBase)
+    HRESULT Mesh::setupBoneMatrixPointersOnMesh(LPD3DXMESHCONTAINER pMeshContainerBase)
     {
         //先转换成新的类
         MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
@@ -594,7 +594,7 @@ namespace Lazy
 
     //-----------------------------------------------------
     // desc: 绘制框架: 还是和安置矩阵一样递归渲染各框架
-    void SkinMesh::drawFrame(LPD3DXFRAME pFrame)
+    void Mesh::drawFrame(LPD3DXFRAME pFrame)
     {
         LPD3DXMESHCONTAINER pMeshContainer;
 
@@ -616,7 +616,7 @@ namespace Lazy
         }
     }
 
-    void SkinMesh::drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
+    void Mesh::drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
     {
         EffectPtr effect = s_noskinnedEffect;
         if (!effect)
@@ -663,7 +663,7 @@ namespace Lazy
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
     }
 
-    void SkinMesh::drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase)
+    void Mesh::drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase)
     {
         MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
         BoneFrame *pFrame = (BoneFrame*) pFrameBase;
