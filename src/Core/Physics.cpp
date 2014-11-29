@@ -519,11 +519,11 @@ namespace Lazy
 
         if (m_state == PS_FREE)
         {
-            model->playAction(L"stand", true);
+            model->playAction("stand", true);
         }
         else if (m_state == PS_MOVE || m_state == PS_JUMP)
         {
-            model->playAction(L"walk", true);
+            model->playAction("walk", true);
         }
 
     }

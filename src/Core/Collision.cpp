@@ -18,7 +18,7 @@ namespace Lazy
         if(!pobj) return;
 
         ModelPtr model = pobj->getModel();
-        if(!model || !model->isMesh())
+        if(!model || !model->getMesh())
         {
             return;
         }
@@ -74,7 +74,7 @@ namespace Lazy
         if(!aabb.intersectsRay(rc.m_start, rc.m_dir)) return false;
 
         ModelPtr model = pobj->getModel();
-        if(!model || !model->isMesh())
+        if(!model || !model->getMesh())
         {
             return true; //如果没有模型，则只与aabb碰撞检测
         }

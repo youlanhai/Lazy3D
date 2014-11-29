@@ -77,25 +77,22 @@ namespace Lazy
 
     void IEntity::update(float elapse)
     {
-        if (m_physics) m_physics->update(elapse);
+        SceneNode::update(elapse);
 
-        if (m_model)  m_model->update(elapse);
+        if (m_physics)
+            m_physics->update(elapse);
     }
 
     void IEntity::render(IDirect3DDevice9* pDevice)
     {
-        if (!getVisible()) return ;
+        SceneNode::render(pDevice);
 
-        if (m_topboard) m_topboard->render(pDevice);
-
-        if (m_model)
-        {
-            m_model->setWorldMatrix(getMatrix());
-            m_model->render(pDevice);
-        }
+        if (m_topboard)
+            m_topboard->render(pDevice);
 
 #ifdef _DEBUG
-        if(m_physics) m_physics->render(pDevice);
+        if(m_physics)
+            m_physics->render(pDevice);
 #endif
     }
 
@@ -110,8 +107,15 @@ namespace Lazy
 
     void IEntity::setModel(ModelPtr pModel)
     {
+        if (m_model)
+            this->delChild(m_model);
+
         m_model = pModel;
-        if (m_model) m_model->getTransformdAABB(m_aabb);
+        if (m_model)
+        {
+            m_aabb = m_model->getWorldBoundingBox();
+            this->addChild(m_model);
+        }
     }
 
     bool IEntity::isActive(void) const
@@ -125,11 +129,11 @@ namespace Lazy
         {
             if (msg == CM_ENTER || msg == CM_LUP || msg == CM_RUP)
             {
-                m_model->showBound(true);
+                m_model->setBBVisible(true);
             }
             else if (msg == CM_LEAVE || msg == CM_LDOWN || msg == CM_RDOWN)
             {
-                m_model->showBound(false);
+                m_model->setBBVisible(false);
             }
         }
         onFocusCursor(msg);

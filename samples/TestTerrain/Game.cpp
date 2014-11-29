@@ -117,11 +117,11 @@ bool CGame::init(void)
     g_player->setSpeed(Vector3(8.0f, 8.0, 8.0f));
     EntityMgr::instance()->add(g_player);
     
-    ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x", ModelType::SkinModel);
+    ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x");
     if (model)
     {
-        model->setScale(0.025f);
-        model->setYaw(3.14159f);
+        model->setScale(Vector3(0.025f, 0.025f, 0.025f));
+        model->rotationY(D3DX_PI);
         g_player->setModel(model);
     }
 

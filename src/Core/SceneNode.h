@@ -2,36 +2,54 @@
 
 #include "Base.h"
 #include "RenderInterface.h"
+#include "../utility/VisitPool.h"
 
 namespace Lazy
 {
+    class SceneNode;
+    typedef RefPtr<SceneNode> SceneNodePtr;
 
+    /** 场景结点。
+     *  一个结点可以拥有若干子结点，从而构成一个场景树。
+     *  挂在场景树上的结点，每帧都可以被更新（update）和渲染（render）。
+     */
     class SceneNode : public IBase, public IRenderable
     {
     public:
+        typedef VisitPool<SceneNodePtr> TChildren;
+        enum DirtyFlag
+        {
+            DirtyLocal = 1 << 0,
+            DirtyWorld = 1 << 1,
+
+            DirtyAll = DirtyLocal | DirtyWorld,
+        };
+
         SceneNode();
         ~SceneNode();
 
-        void setScale(const Vector3 & scale);
+        void    setScale(const Vector3 & scale);
         const Vector3 & getScale() const{ return m_scale; }
 
-        void setPosition(const Vector3 & position);
+        void    setPosition(const Vector3 & position);
         const Vector3 & getPosition() const{ return m_position; }
 
-        void setRotation(const Quaternion & rotation);
+        void    setRotation(const Quaternion & rotation);
         const Quaternion & getRotation() const { return m_rotation; }
 
-        void setMatrix(const Matrix & matrix);
+        void    setMatrix(const Matrix & matrix);
         const Matrix & getMatrix() const;
-        void genViewMatrix(Matrix & mat) const;
+        void    genViewMatrix(Matrix & mat) const;
 
-        void getLook(Vector3 & look) const;
+        const Matrix & getWorldMatrix(void) const;
+
+        void    getLook(Vector3 & look) const;
         Vector3 getLook() const;
 
-        void getUp(Vector3 & up) const;
+        void    getUp(Vector3 & up) const;
         Vector3 getUp() const;
 
-        void getRight(Vector3 & right) const;
+        void    getRight(Vector3 & right) const;
         Vector3 getRight() const;
 
         void rotationX(float angle);
@@ -54,6 +72,43 @@ namespace Lazy
         const AABB & getBoundingBox() const { return m_aabb; }
         AABB getWorldBoundingBox() const;
 
+        SceneNode * getParent() { return m_parent; }
+        const SceneNode * getParent() const { return m_parent; }
+        const std::string & getName() const { return m_name; }
+        BOOL inWorld() const { return m_inWorld; }
+
+        /** 根据名称查找子结点。name可以为路径形式，如 "parent/child1" */
+        SceneNodePtr findChild(const std::string & name);
+
+        void addChild(SceneNodePtr child);
+        void delChild(SceneNodePtr child);
+        void delChildByName(const std::string & name);
+        void clearChildren();
+        void removeFromParent();
+
+        /** 当结点加入场景树后，会被调用。*/
+        virtual void onEnterWorld();
+        /** 当结点从场景树移除之前，会被调用。*/
+        virtual void onLeaveWorld();
+
+        ///画面渲染
+        virtual void render(IDirect3DDevice9 * pDevice);
+
+        ///逻辑更新
+        virtual void update(float elapse);
+
+    protected:
+        void setParent(SceneNode * parent);
+        void setDirtyFlag(int flag);
+
+
+        std::string             m_name;
+        TChildren               m_children;
+        SceneNode *             m_parent;
+        BOOL                    m_inWorld;
+        BOOL                    m_visible;
+        AABB                    m_aabb;
+
     private:
         Vector3                 m_position;
         Vector3                 m_scale;
@@ -61,10 +116,7 @@ namespace Lazy
 
         mutable Matrix          m_matrix;
         mutable int             m_matrixDirty;
-
-    protected:
-        int                     m_visible;
-        AABB                    m_aabb;
+        mutable Matrix          m_matWorld;
     };
 
 

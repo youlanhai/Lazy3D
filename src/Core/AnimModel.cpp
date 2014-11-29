@@ -8,7 +8,7 @@
 namespace Lazy
 {
 
-//////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////
     AnimalModel::AnimalModel()
         : m_pAnimControler(NULL)
         , m_elapsedTime(0)
@@ -34,7 +34,7 @@ namespace Lazy
             return false;
         }
 
-        setAABB(m_pMesh->getAABB());
+        setBoundingBox(m_pMesh->getAABB());
         m_pAnimControler = m_pMesh->cloneAnimaCtrl();
         return true;
     }
@@ -50,12 +50,9 @@ namespace Lazy
     {
         if (m_pMesh)
         {
-            Matrix mat;
-            getCombinedMatrix(mat);
-
             advanceAnimation();
            
-            rcDevice()->pushWorld(mat);
+            rcDevice()->pushWorld(getWorldMatrix());
             m_pMesh->render();
             rcDevice()->popWorld();
         }
@@ -106,32 +103,28 @@ namespace Lazy
         return NULL;
     }
 
-    LPD3DXANIMATIONSET AnimalModel::getAnimSet(const std::wstring & name) const
+    LPD3DXANIMATIONSET AnimalModel::getAnimSet(const std::string & name) const
     {
         LPD3DXANIMATIONSET pAnimSet = NULL;
         if (m_pAnimControler != NULL)
         {
-            std::string name2;
-            wcharToChar(name2, name);
-            m_pAnimControler->GetAnimationSetByName(name2.c_str(), &pAnimSet);
+            m_pAnimControler->GetAnimationSetByName(name.c_str(), &pAnimSet);
         }
         return pAnimSet;
     }
 
-    LPD3DXANIMATIONSET AnimalModel::findAnimSet(const std::wstring & name) const
+    LPD3DXANIMATIONSET AnimalModel::findAnimSet(const std::string & name) const
     {
         int n = getActionCount();
 
-        std::wstring animName;
         LPD3DXANIMATIONSET pAnimSet = NULL;
         for(int i = 0; i < n; ++i)
         {
             pAnimSet = getAnimSet(i);
             if (pAnimSet)
             {
-                charToWChar(animName, pAnimSet->GetName());
-
-                if (animName.find(name) != name.npos) return pAnimSet;
+                if (name == pAnimSet->GetName())
+                    return pAnimSet;
             }
         }
 
@@ -139,7 +132,7 @@ namespace Lazy
     }
 
     /** 播放动画*/
-    bool AnimalModel::playAction(const std::wstring & name, bool loop)
+    bool AnimalModel::playAction(const std::string & name, bool loop)
     {
         //DebugMsg("playAction name=%s, loop=%d", name.c_str(), loop);
         m_loop = loop;
@@ -163,7 +156,7 @@ namespace Lazy
     /** 停止动画*/
     void AnimalModel::stopAction(void)
     {
-        if(!playAction(findAnimSet(L"idle")))
+        if(!playAction( findAnimSet("idle") ))
         {
             playAction(getAnimSet(0));
         }
@@ -179,11 +172,10 @@ namespace Lazy
     }
 
     /** 获得动画名称*/
-    void AnimalModel::getActionName(std::wstring & name, int index) const
+    std::string AnimalModel::getActionName(int index) const
     {
         LPD3DXANIMATIONSET pAnimSet = getAnimSet(index);
-
-        charToWChar(name, pAnimSet->GetName());
+        return pAnimSet->GetName();
     }
 
 } // end namespace Lazy

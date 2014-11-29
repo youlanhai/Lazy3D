@@ -282,4 +282,22 @@ namespace Lazy
         D3DXMatrixDecompose(&scale, &rotation, &position, this);
     }
 
+    /** this = left * right */
+    void Matrix::multiply(const Matrix & left, const Matrix & right)
+    {
+        D3DXMatrixMultiply(this, &left, &right);
+    }
+
+    /** this = left * this */
+    void Matrix::preMultiply(const Matrix & left)
+    {
+        D3DXMatrixMultiply(this, &left, this);
+    }
+
+    /** this = this * right */
+    void Matrix::postMultiply(const Matrix & right)
+    {
+        D3DXMatrixMultiply(this, this, &right);
+    }
+
 }//end namespace Lazy

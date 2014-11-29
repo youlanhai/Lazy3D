@@ -10,27 +10,14 @@ namespace Lazy
     {
     }
 
-
     ModelFactory::~ModelFactory()
     {
     }
 
-
-
-    /*static*/ ModelPtr ModelFactory::loadModel(const std::wstring & filename, int typeId)
+    /*static*/ ModelPtr ModelFactory::loadModel(const std::wstring & filename)
     {
-
-        ModelPtr pModel;
-
-        if (typeId == ModelType::SkinModel)
-        {
-            pModel = new AnimalModel();
-        }
-        else
-        {
-            return nullptr;
-        }
-
+        ModelPtr pModel = new AnimalModel();
+        
         if (!pModel->load(filename))
         {
             return nullptr;

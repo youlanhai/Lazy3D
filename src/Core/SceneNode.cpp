@@ -4,52 +4,56 @@
 namespace Lazy
 {
 
-
     SceneNode::SceneNode()
         : m_scale(1.0f, 1.0f, 1.0f)
         , m_rotation(0, 0, 0, 1)
         , m_position(0, 0, 0)
         , m_matrixDirty(0)
         , m_matrix(matIdentity)
-        , m_visible(1)
+        , m_matWorld(matIdentity)
+        , m_visible(TRUE)
+        , m_inWorld(FALSE)
+        , m_parent(nullptr)
     {
         m_aabb.zero();
     }
 
     SceneNode::~SceneNode()
     {
+        removeFromParent();
+        clearChildren();
     }
 
     void SceneNode::setScale(const Vector3 & scale)
     {
         m_scale = scale;
-        m_matrixDirty = 1;
+        setDirtyFlag(DirtyAll);
     }
 
     void SceneNode::setPosition(const Vector3 & position)
     {
         m_position = position;
-        m_matrixDirty = 1;
+        setDirtyFlag(DirtyAll);
     }
 
     void SceneNode::setRotation(const Quaternion & rotation)
     {
         m_rotation = rotation;
-        m_matrixDirty = 1;
+        setDirtyFlag(DirtyAll);
     }
 
     void SceneNode::setMatrix(const Matrix & matrix)
     {
         m_matrix = matrix;
         m_matrix.decompose(m_scale, m_rotation, m_position);
-        m_matrixDirty = 0;
+        setDirtyFlag(DirtyWorld);
     }
 
     const Matrix & SceneNode::getMatrix() const
     {
-        if (m_matrixDirty)
+        if (m_matrixDirty & DirtyLocal)
         {
-            m_matrixDirty = 0;
+            m_matrixDirty &= ~DirtyLocal;
 
             m_matrix.setRotationQuaternion(m_rotation);
             m_matrix[0] *= m_scale.x;
@@ -75,6 +79,19 @@ namespace Lazy
 
         mat.transpose();
         mat[3] = pos;
+    }
+
+    const Matrix & SceneNode::getWorldMatrix(void) const
+    {
+        if (m_matrixDirty & DirtyWorld)
+        {
+            m_matWorld = getMatrix();
+            if (m_parent)
+                m_matWorld.postMultiply(m_parent->getWorldMatrix());
+
+            m_matrixDirty &= ~DirtyWorld;
+        }
+        return m_matWorld;
     }
 
     void SceneNode::getLook(Vector3 & look) const
@@ -151,39 +168,164 @@ namespace Lazy
         Quaternion quat;
         quat.setRotationAxis(axis, angle);
 
-        m_rotation *= quat;
-        m_matrixDirty = 1;
+        setRotation( m_rotation * quat );
     }
 
     void SceneNode::moveLook(float delta)
     {
-        m_position += getLook() * delta;
-        m_matrixDirty = 1;
+        setPosition(m_position + getLook() * delta);
     }
 
     void SceneNode::moveRight(float delta)
     {
-        m_position += getRight() * delta;
-        m_matrixDirty = 1;
+        setPosition(m_position + getRight() * delta);
     }
 
     void SceneNode::moveUp(float delta)
     {
-        m_position += getUp() * delta;
-        m_matrixDirty = 1;
+        setPosition(m_position + getUp() * delta);
     }
 
     void SceneNode::move(const Vector3 & delta)
     {
-        m_position += delta;
-        m_matrixDirty = 1;
+        setPosition(m_position + delta);
     }
 
     AABB SceneNode::getWorldBoundingBox() const
     {
         AABB aabb;
-        m_aabb.applyMatrix(aabb, getMatrix());
+        m_aabb.applyMatrix(aabb, getWorldMatrix());
         return aabb;
+    }
+
+    SceneNodePtr SceneNode::findChild(const std::string & name)
+    {
+        SceneNodePtr child;
+        size_t pos = name.find("/");
+        size_t len = (pos != name.npos ? pos : name.size());
+        const char * str = name.c_str();
+
+        for (SceneNodePtr it : m_children)
+        {
+            const std::string & dst = it->m_name;
+            if (dst.size() == len && strncmp(dst.c_str(), str, len))
+            {
+                child = it;
+                break;
+            }
+        }
+
+        if (pos != name.npos)
+            child = findChild(name.substr(pos + 1));
+        return child;
+    }
+
+    void SceneNode::addChild(SceneNodePtr child)
+    {
+        assert(!child->inWorld() && "SceneNode::addChild - the child has been in world.");
+        m_children.add(child);
+        child->setParent(this);
+
+        if (m_inWorld)
+            child->onEnterWorld();
+    }
+
+    void SceneNode::delChild(SceneNodePtr child)
+    {
+        assert(child->m_parent == this && "SceneNode::delChild - the child doens't owned by this node.");
+
+        if (child->inWorld())
+            child->onLeaveWorld();
+
+        m_children.remove(child);
+        child->setParent(nullptr);
+    }
+
+    void SceneNode::delChildByName(const std::string & name)
+    {
+        SceneNodePtr child = findChild(name);
+        if (child)
+            delChild(child);
+    }
+
+    void SceneNode::clearChildren()
+    {
+        if (this->inWorld())
+            this->onLeaveWorld();
+
+        for (SceneNodePtr child : m_children)
+            child->setParent(nullptr);
+        m_children.clear();
+    }
+
+    void SceneNode::removeFromParent()
+    {
+        if (m_parent)
+            m_parent->delChild(this);
+    }
+
+    /** 当结点加入场景树后，会被调用。*/
+    void SceneNode::onEnterWorld()
+    {
+        assert(!m_inWorld && "SceneNode::onEnterWorld - this node has been in world.");
+        m_inWorld = true;
+
+        m_children.lock();
+        for (SceneNodePtr child : m_children)
+            child->onEnterWorld();
+        m_children.unlock();
+    }
+
+    /** 当结点从场景树移除之前，会被调用。*/
+    void SceneNode::onLeaveWorld()
+    {
+        assert(m_inWorld && "SceneNode::onLeaveWorld - this node has been leave world.");
+        m_inWorld = false;
+
+        m_children.lock();
+        for (SceneNodePtr child : m_children)
+            child->onLeaveWorld();
+        m_children.unlock();
+    }
+
+    void SceneNode::setParent(SceneNode * parent)
+    {
+        m_parent = parent;
+        setDirtyFlag(DirtyWorld);
+    }
+
+    void SceneNode::setDirtyFlag(int flag)
+    {
+        int oldFlag = m_matrixDirty;
+        m_matrixDirty |= flag;
+
+        if (oldFlag == 0 && m_matrixDirty != 0)
+        {
+            for (SceneNodePtr child : m_children)
+                child->setDirtyFlag(DirtyWorld);
+        }
+    }
+
+    ///画面渲染
+    void SceneNode::render(IDirect3DDevice9 * pDevice)
+    {
+        m_children.lock();
+        for (SceneNodePtr child : m_children)
+        {
+            if(child->getVisible()) child->render(pDevice);
+        }
+        m_children.unlock();
+    }
+
+    ///逻辑更新
+    void SceneNode::update(float elapse)
+    {
+        m_children.lock();
+        for (SceneNodePtr child : m_children)
+        {
+            if (child->getVisible()) child->update(elapse);
+        }
+        m_children.unlock();
     }
 
 } // end namespace Lazy

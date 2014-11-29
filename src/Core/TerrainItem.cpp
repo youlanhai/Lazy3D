@@ -35,21 +35,16 @@ namespace Lazy
 
     void TerrainItem::update(float elapse)
     {
+        SceneNode::update(elapse);
+
         updateRotationAxis();
 
         if (!getVisible()) return;
-
-        if (m_model) m_model->update(elapse);
     }
 
     void TerrainItem::render(IDirect3DDevice9* pDevice)
     {
-        //绘制物体本身
-        if (getVisible() && m_model)
-        {
-            m_model->setWorldMatrix(getMatrix());
-            m_model->render(pDevice);
-        }
+        SceneNode::render(pDevice);
 
         //绘制物体AABB
         if (MapConfig::ShowAllItemAABB)
@@ -63,13 +58,12 @@ namespace Lazy
         //绘制物体八叉树
         if (MapConfig::ShowItemOctree && TerrainMap::instance()->getSelectObj() == this)
         {
-            if (m_model && m_model->isMesh())
+            if (m_model && m_model->getMesh())
             {
                 OCTreePtr tree = findOCTree(m_model->getMesh());
                 if (tree)
                 {
-                    Matrix matWorld;
-                    m_model->getCombinedMatrix(matWorld);
+                    const Matrix & matWorld = m_model->getWorldMatrix();
                     pDevice->SetTransform(D3DTS_WORLD, &matWorld);
                     tree->render(pDevice);
                 }
@@ -79,11 +73,15 @@ namespace Lazy
 
     void TerrainItem::setModel(ModelPtr model)
     {
+        if (m_model)
+            this->delChild(m_model);
+
         m_model = model;
 
         if (m_model)
         {
-            m_model->getTransformdAABB(m_aabb);
+            m_aabb = m_model->getWorldBoundingBox();
+            this->addChild(m_model);
         }
         else
         {
@@ -130,11 +128,11 @@ namespace Lazy
         {
             if (msg == CM_ENTER || msg == CM_LUP || msg == CM_RUP)
             {
-                m_model->showBound(true);
+                m_model->setBBVisible(true);
             }
             else if (msg == CM_LEAVE || msg == CM_LDOWN || msg == CM_RDOWN)
             {
-                m_model->showBound(false);
+                m_model->setBBVisible(false);
             }
         }
 
@@ -195,11 +193,7 @@ namespace Lazy
 
         tstring temp;
         temp = dataPtr->readString(_T("path"));
-        if (!temp.empty())
-        {
-            int type = dataPtr->readInt(_T("type"));
-            setModel(ModelFactory::loadModel(temp, type));
-        }
+        setModel(ModelFactory::loadModel(temp));
 
         if (dataPtr->readBool(L"drop", false))
         {
@@ -216,11 +210,6 @@ namespace Lazy
     void TerrainItem::getAbsModelMatrix(Matrix & mat) const
     {
         mat = getMatrix();
-
-        if (!m_model) return;
-
-        m_model->setWorldMatrix(mat);
-        m_model->getCombinedMatrix(mat);
     }
 
     /** 从chunk中删除自己。*/

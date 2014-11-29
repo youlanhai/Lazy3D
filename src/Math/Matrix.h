@@ -56,6 +56,13 @@ namespace Lazy
         float pitch() const;
         float roll() const;
 
+        /** this = left * right */
+        void multiply(const Matrix & left, const Matrix & right);
+        /** this = left * this */
+        void preMultiply(const Matrix & left);
+        /** this = this * right */
+        void postMultiply(const Matrix & right);
+
     public://运算符重载
 
         Vector3 & operator [](int i);

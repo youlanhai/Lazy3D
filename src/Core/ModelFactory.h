@@ -4,14 +4,7 @@
 
 namespace Lazy
 {
-
-    namespace ModelType
-    {
-        const int SkinModel = 1;
-    };
-
-
-///加载模型
+    ///加载模型
     class ModelFactory
     {
     public:
@@ -19,34 +12,32 @@ namespace Lazy
         ~ModelFactory();
 
         ///使用主线程加载模型
-        static ModelPtr loadModel(std::wstring const & filename, int type);
+        static ModelPtr loadModel(std::wstring const & filename);
 
         ///使用后台线程加载模型
         template<typename F>
-        static void loadModelBg(std::wstring const & filename, int type, F callback);
+        static void loadModelBg(std::wstring const & filename, F callback);
     };
 
 
-///模型加载任务
+    ///模型加载任务
     template<typename F>
     class ModelLoadTask : public TaskInterface
     {
         std::wstring    m_file;
-        int             m_type;
         F               m_callback;
         ModelPtr        m_model;
 
     public:
 
-        ModelLoadTask(const std::wstring & filename, int type, F callback)
+        ModelLoadTask(const std::wstring & filename, F callback)
             : m_file(filename)
-            , m_type(type)
             , m_callback(callback)
         { }
 
         virtual void doTask(void) override
         {
-            m_model = ModelFactory::loadModel(m_file, m_type);
+            m_model = ModelFactory::loadModel(m_file);
         }
 
         virtual void onTaskFinish(void) override
@@ -57,9 +48,9 @@ namespace Lazy
 
 
     template<typename F>
-    /*static*/ void ModelFactory::loadModelBg(std::wstring const & filename, int type, F callback)
+    /*static*/ void ModelFactory::loadModelBg(std::wstring const & filename, F callback)
     {
-        TaskPtr task = new ModelLoadTask<F>(filename, type, callback);
+        TaskPtr task = new ModelLoadTask<F>(filename, callback);
 
 #ifdef USE_MULTI_THREAD
         LoadingMgr::instance()->addTask(task);

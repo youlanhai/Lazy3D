@@ -8,16 +8,10 @@ namespace Lazy
 
     ///构造函数
     IModel::IModel(void)
-        : m_yaw(0.0f)
-        , m_pitch(0.0f)
-        , m_roll(0.0f)
-        , m_scale(1.0f, 1.0f, 1.0f)
-        , m_bShowBound(false)
-        , m_matWorld(matIdentity)
+        : m_bbVisible(FALSE)
     {
         m_aabb.min.set(-10, -10, -10);
         m_aabb.max.set(10, 10, 10);
-
     }
 
     ///析构函数
@@ -26,12 +20,9 @@ namespace Lazy
     }
 
 
-
     void IModel::renderBoundingBox(IDirect3DDevice9 * pDevice)
     {
-        Matrix mat;
-        getCombinedMatrix(mat);
-        pDevice->SetTransform(D3DTS_WORLD, &mat);
+        pDevice->SetTransform(D3DTS_WORLD, &getWorldMatrix());
         pDevice->SetTexture(0, NULL);
 
         RSHolder rsHolder(pDevice, D3DRS_LIGHTING, FALSE);
@@ -41,35 +32,14 @@ namespace Lazy
 
     void IModel::render(IDirect3DDevice9 * pDevice)
     {
-        if (m_bShowBound)
+        if (m_bbVisible)
         {
             renderBoundingBox(pDevice);
         }
     }
 
-    void IModel::getCombinedMatrix(Matrix & mat) const
-    {
-        Matrix rote;
-        rote.makeRatateYawPitchRoll(m_yaw, m_pitch, m_roll);
-        mat.makeScale(m_scale);
-        mat = rote * mat * m_matWorld;
-    }
-
-    void IModel::getTransformdAABB(AABB & aabb) const
-    {
-        Matrix mat;
-        Matrix rote;
-
-        rote.makeRatateYawPitchRoll(m_yaw, m_pitch, m_roll);
-        mat.makeScale(m_scale);
-
-        mat = rote * mat;
-
-        m_aabb.applyMatrix(aabb, mat);
-    }
-
     /** 播放动画*/
-    bool IModel::playAction(const std::wstring &, bool)
+    bool IModel::playAction(const std::string &, bool)
     {
         return false;
     }
@@ -86,11 +56,12 @@ namespace Lazy
     }
 
     /** 获得动画名称*/
-    void IModel::getActionName(std::wstring &, int) const
+    std::string IModel::getActionName(int) const
     {
+        return "";
     }
 
-    void IModel::setAnimSpeed(float)
+    void IModel::setActionSpeed(float)
     {
     }
 
