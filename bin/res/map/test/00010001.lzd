@@ -1,4 +1,10 @@
 #coding = utf-8
 
-savetime = [2014.7.13][20.19.27][221]
-items = ""
+savetime = [2014.11.29][23.41.27][129]
+shader = shader/terrain.fx
+textures
+{
+	layer0 = map/f.jpg
+	diffuse = map/diffuse.png
+}
+items = 

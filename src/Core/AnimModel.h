@@ -25,6 +25,7 @@ namespace Lazy
         /** 渲染*/
         virtual void render(IDirect3DDevice9* pDevice);
 
+        virtual int getType() const { return SceneNodeType::Model; }
         virtual void saveToStream(LZDataPtr data);
         virtual bool loadFromStream(LZDataPtr data);
 

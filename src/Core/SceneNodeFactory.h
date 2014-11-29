@@ -5,15 +5,6 @@
 
 namespace Lazy
 {
-    namespace SceneNodeType
-    {
-        const int Empty = 0;
-        const int Model = 1;
-        const int Entity = 2;
-
-        const int UserType = 0xff;
-    }
-
     class SceneNodeFactory
     {
     public:

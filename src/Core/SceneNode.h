@@ -14,6 +14,17 @@ namespace Lazy
     class SceneNode;
     typedef RefPtr<SceneNode> SceneNodePtr;
 
+
+    namespace SceneNodeType
+    {
+        const int Empty = 0;
+        const int Model = 1;
+        const int Entity = 2;
+
+        const int UserType = 0xff;
+    }
+
+
     /** 场景结点。
      *  一个结点可以拥有若干子结点，从而构成一个场景树。
      *  挂在场景树上的结点，每帧都可以被更新（update）和渲染（render）。
@@ -36,7 +47,7 @@ namespace Lazy
         SceneNode();
         ~SceneNode();
 
-        virtual int getType() const { return 0; }
+        virtual int getType() const { return SceneNodeType::Empty; }
 
         void    setScale(const Vector3 & scale);
         const Vector3 & getScale() const{ return m_scale; }
