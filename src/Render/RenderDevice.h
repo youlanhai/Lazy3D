@@ -57,6 +57,7 @@ namespace Lazy
 
         const Matrix & getInvView() const;
         const Matrix & getViewProj() const;
+        const Matrix & getWorldView() const;
         const Matrix & getWorldViewProj() const;
 
         void applyWorld();
@@ -99,6 +100,7 @@ namespace Lazy
         Matrix              m_matProj;
         mutable Matrix      m_matInvView;
         mutable Matrix      m_matViewProj;
+        mutable Matrix      m_matWorldView;
         mutable Matrix      m_matWorldViewProj;
         mutable uint32      m_matDirty;
     };

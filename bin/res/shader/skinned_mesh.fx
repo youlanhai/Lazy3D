@@ -1,10 +1,8 @@
 
-float4 lhtDir = {0.0f, 0.0f, -1.0f, 1.0f};    //light Direction 
-float4 lightDiffuse = {0.6f, 0.6f, 0.6f, 1.0f}; // Light Diffuse
-float4 MaterialAmbient /*: MATERIALAMBIENT*/ = {0.1f, 0.1f, 0.1f, 1.0f};
-float4 MaterialDiffuse /*: MATERIALDIFFUSE*/ = {0.8f, 0.8f, 0.8f, 1.0f};
+#include "light.fx"
 
 float4x4    mViewProj : VIEWPROJECTION;
+
 // Matrix Pallette
 static const int MAX_MATRICES = 32;
 float4x4    mWorldMatrixArray[MAX_MATRICES] ;//: WORLDMATRIXARRAY;
@@ -35,17 +33,6 @@ sampler textureSampler = sampler_state
     MinFilter = LINEAR;
     MagFilter = LINEAR;
 };
-
-float3 Diffuse(float3 Normal)
-{
-    float CosTheta;
-    
-    // N.L Clamped
-    CosTheta = max(0.0f, dot(Normal, lhtDir.xyz));
-       
-    // propogate scalar result to vector
-    return (CosTheta);
-}
 
 
 VS_OUTPUT VShade(VS_INPUT i, uniform int NumBones)
@@ -83,7 +70,7 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int NumBones)
     Normal = normalize(Normal);
 
     // Shade (Ambient + etc.)
-    o.Diffuse.xyz = MaterialAmbient.xyz + Diffuse(Normal) * MaterialDiffuse.xyz;
+    o.Diffuse.xyz = Light(Pos, Normal);
     o.Diffuse.w = 1.0f;
 
     // copy the input texture coordinate through

@@ -1,8 +1,4 @@
-
-float4 lhtDir = {0.0f, 0.0f, -1.0f, 1.0f};    //light Direction 
-float4 lightDiffuse = {0.6f, 0.6f, 0.6f, 1.0f}; // Light Diffuse
-float4 MaterialAmbient /*: MATERIALAMBIENT*/ = {0.1f, 0.1f, 0.1f, 1.0f};
-float4 MaterialDiffuse /*: MATERIALDIFFUSE*/ = {0.8f, 0.8f, 0.8f, 1.0f};
+#include "light.fx"
 
 float4x4    mWorld : WORLD;
 float4x4    mWorldViewProj : WORLDVIEWPROJECTION;
@@ -32,36 +28,20 @@ sampler textureSampler = sampler_state
     MagFilter = LINEAR;
 };
 
-float3 Diffuse(float3 Normal)
-{
-    float CosTheta;
-    
-    // N.L Clamped
-    CosTheta = max(0.0f, dot(Normal, lhtDir.xyz));
-       
-    // propogate scalar result to vector
-    return (CosTheta);
-}
-
-
 VS_OUTPUT VShade(VS_INPUT i)
 {
     VS_OUTPUT   o;
-     
-    // transform position from world space into view and then projection space
     o.Pos = mul(i.Pos, mWorldViewProj);
 
-    float3      Normal = mul(i.Normal, mWorld);    
-    // normalize normals
+    float3 Normal = mul(i.Normal, mWorld);    
     Normal = normalize(Normal);
 
-    // Shade (Ambient + etc.)
-    o.Diffuse.xyz = MaterialAmbient.xyz + Diffuse(Normal) * MaterialDiffuse.xyz;
+    float3 Pos = mul(i.Pos, mWorld);
+
+    o.Diffuse.xyz = Light(Pos, Normal);
     o.Diffuse.w = 1.0f;
 
-    // copy the input texture coordinate through
     o.Tex0  = i.Tex0.xy;
-
     return o;
 }
 

@@ -23,6 +23,7 @@ namespace Lazy
         const uint32 DirtyWorldViewProj = 1 << 0;
         const uint32 DirtyInView = 1 << 1;
         const uint32 DirtyViewProj = 1 << 2;
+        const uint32 DirtyWorldView = 1 << 3;
 
         const uint32 DirtyAll = 0xff;
     }
@@ -378,14 +379,14 @@ namespace Lazy
         assert(m_matWorlds.size() < 0xffff);
 
         m_matWorlds.push_back(matrix);
-        m_matDirty |= DirtyWorldViewProj;
+        m_matDirty |= DirtyWorldViewProj | DirtyWorldView;
     }
 
     void RenderDevice::popWorld()
     {
         assert(!m_matWorlds.empty());
         m_matWorlds.pop_back();
-        m_matDirty |= DirtyWorldViewProj;
+        m_matDirty |= DirtyWorldViewProj | DirtyWorldView;
     }
 
     const Matrix & RenderDevice::getWorld() const
@@ -397,7 +398,7 @@ namespace Lazy
     void RenderDevice::setView(const Matrix & matrix)
     {
         m_matView = matrix;
-        m_matDirty |= (DirtyWorldViewProj | DirtyViewProj | DirtyInView);
+        m_matDirty |= (DirtyWorldViewProj | DirtyViewProj | DirtyInView | DirtyWorldView);
     }
 
     const Matrix & RenderDevice::getView() const
@@ -434,6 +435,16 @@ namespace Lazy
             m_matDirty &= ~DirtyViewProj;
         }
         return m_matViewProj;
+    }
+
+    const Matrix & RenderDevice::getWorldView() const
+    {
+        if (m_matDirty & DirtyWorldView)
+        {
+            m_matWorldView = m_matWorlds.back() * m_matView;
+            m_matDirty &= ~DirtyWorldView;
+        }
+        return m_matWorldView;
     }
 
     const Matrix & RenderDevice::getWorldViewProj() const

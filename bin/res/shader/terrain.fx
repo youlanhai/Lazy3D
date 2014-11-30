@@ -1,5 +1,8 @@
 
-float4x4 g_worldViewProj;
+#include "light.fx"
+
+float4x4 g_world : WORLD;
+float4x4 g_worldViewProj : WORLDVIEWPROJECTION;
 
 texture g_texture0;
 texture g_texture1;
@@ -37,6 +40,7 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 pos : POSITION;
+    float4 diff : COLOR0;
     float2 uv1 : TEXCOORD0;
     float2 uv2 : TEXCOORD1;
 };
@@ -50,6 +54,11 @@ VS_OUTPUT vsMain(VS_INPUT input)
     output.pos = mul(input.pos, g_worldViewProj);
     output.uv1 = input.uv1;
     output.uv2 = input.uv2;
+
+    float3 wPos = mul(input.pos, g_world);
+    float3 wNormal = mul(input.nml, g_world);
+    output.diff.xyz = Light(wPos, normalize(wNormal));
+    output.diff.w = 1.0f;
     return output;
 }
 
@@ -61,9 +70,9 @@ float4 psMain_0(VS_OUTPUT input) : COLOR0
     float4 cr0 = tex2D(sampler0, input.uv1);
     float4 crDiffuse = tex2D(samplerDiffuse, input.uv2);
 
-    float4 color = cr0 * crDiffuse;
+    float4 color = cr0 /* * crDiffuse*/;
     color.a = cr0.a;
-    return color;
+    return color * input.diff;
 }
 
 float4 psMain_1(VS_OUTPUT input) : COLOR0
@@ -76,7 +85,7 @@ float4 psMain_1(VS_OUTPUT input) : COLOR0
 
     float4 color = (cr0 * crBlend.r + cr1 * crBlend.g) * crDiffuse;
     color.a = cr0.a;
-    return color;
+    return color * input.diff;
 }
 
 float4 psMain_2(VS_OUTPUT input) : COLOR0
@@ -92,7 +101,7 @@ float4 psMain_2(VS_OUTPUT input) : COLOR0
         cr1 * crBlend.g + \
         cr2 * crBlend.b) * crDiffuse;
     color.a = cr0.a;
-    return color;
+    return color * input.diff;
 }
 
 float4 psMain_3(VS_OUTPUT input) : COLOR0
@@ -110,7 +119,7 @@ float4 psMain_3(VS_OUTPUT input) : COLOR0
         cr2 * crBlend.b + \
         cr3 * crBlend.a) * crDiffuse;
     color.a = cr0.a;
-    return color;
+    return color * input.diff;
 }
 
 technique tech_0

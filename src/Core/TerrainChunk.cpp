@@ -646,8 +646,6 @@ namespace Lazy
         else
             m_shader->setTexture("g_textureDiffuse", NULL);
 
-        m_shader->setMatrix("g_worldViewProj", rcDevice()->getWorldViewProj());
-
         sprintf_s(buffer, 64, "tech_%d", maxTexIndex);
         if (!m_shader->setTechnique(buffer))
             return;

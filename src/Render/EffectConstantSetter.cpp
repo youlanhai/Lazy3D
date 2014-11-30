@@ -2,6 +2,9 @@
 #include "EffectConstantSetter.h"
 #include "RenderDevice.h"
 #include "Effect.h"
+#include "../Core/Camera.h"
+
+#include <algorithm>
 
 namespace Lazy
 {
@@ -52,9 +55,19 @@ namespace Lazy
         pConst->bindValue(rcDevice()->getViewProj());
     }
 
+    void effectApplyWorldView(EffectConstant *pConst)
+    {
+        pConst->bindValue(rcDevice()->getWorldView());
+    }
+
     void effectApplyWorldViewProj(EffectConstant *pConst)
     {
         pConst->bindValue(rcDevice()->getWorldViewProj());
+    }
+
+    void effectApplyCameraPosition(EffectConstant *pConst)
+    {
+        pConst->bindValue(getCamera()->getPosition());
     }
 
     void effectApplyAmbient(EffectConstant *pConst)
@@ -97,7 +110,10 @@ namespace Lazy
 
     /*static*/ EffectConstantSetter * EffectConstantSetter::get(const std::string & name)
     {
-        auto it = s_autoConstMap.find(name);
+        std::string tempName = name;
+        std::transform(tempName.begin(), tempName.end(), tempName.begin(), tolower);
+
+        auto it = s_autoConstMap.find(tempName);
         if (it != s_autoConstMap.end()) return it->second;
 
         return nullptr;
@@ -113,15 +129,17 @@ namespace Lazy
 #define REG_EFFECT_CONST_FACTORY(TYPE, FACTORY) \
     EffectConstantSetter::set(TYPE, new EffectConstantProxy(FACTORY))
         
-        REG_EFFECT_CONST_FACTORY("WORLD", effectApplyWorld);
-        REG_EFFECT_CONST_FACTORY("VIEW", effectApplyView);
-        REG_EFFECT_CONST_FACTORY("PROJECTION", effectApplyProj);
-        REG_EFFECT_CONST_FACTORY("VIEWPROJECTION", effectApplyViewProj);
-        REG_EFFECT_CONST_FACTORY("WORLDVIEWPROJECTION", effectApplyWorldViewProj);
-        REG_EFFECT_CONST_FACTORY("AmbientColor", effectApplyAmbient);
-        REG_EFFECT_CONST_FACTORY("OmitLight", effectApplyOmitLight);
-        REG_EFFECT_CONST_FACTORY("DirLight", effectApplyDirLight);
-        REG_EFFECT_CONST_FACTORY("SpotLight", effectApplySpotLight);
+        REG_EFFECT_CONST_FACTORY("world", effectApplyWorld);
+        REG_EFFECT_CONST_FACTORY("view", effectApplyView);
+        REG_EFFECT_CONST_FACTORY("projection", effectApplyProj);
+        REG_EFFECT_CONST_FACTORY("viewprojection", effectApplyViewProj);
+        REG_EFFECT_CONST_FACTORY("worldview", effectApplyWorldView);
+        REG_EFFECT_CONST_FACTORY("worldviewprojection", effectApplyWorldViewProj);
+        REG_EFFECT_CONST_FACTORY("ambientcolor", effectApplyAmbient);
+        REG_EFFECT_CONST_FACTORY("omitlight", effectApplyOmitLight);
+        REG_EFFECT_CONST_FACTORY("dirlight", effectApplyDirLight);
+        REG_EFFECT_CONST_FACTORY("spotlight", effectApplySpotLight);
+        REG_EFFECT_CONST_FACTORY("cameraposition", effectApplyCameraPosition);
         
 #undef REG_EFFECT_CONST_FACTORY
     }
