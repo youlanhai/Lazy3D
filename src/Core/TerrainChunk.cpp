@@ -624,7 +624,7 @@ namespace Lazy
         material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
         material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
         material.Specular = material.Diffuse;
-        material.Power = 128.0f;
+        material.Power = 80.f;
         rcDevice()->setMaterial(material);
 
         if (!m_mesh.valid() || !m_shader) return;

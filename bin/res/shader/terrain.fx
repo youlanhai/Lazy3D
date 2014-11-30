@@ -120,18 +120,17 @@ float4 psMain_3(VS_OUTPUT input) : COLOR0
 struct VS_OUTPUT_DLIGHT
 {
     float4 pos : POSITION;
-    float2 uv1 : TEXCOORD0;
-    float2 uv2 : TEXCOORD1;
-    float4 normal : COLOR0;
-    float4 eyeNml : COLOR1;
+    float4 uv : TEXCOORD0;
+    float4 normal : TEXCOORD1;
+    float4 eyeNml : TEXCOORD2;
 };
 
 VS_OUTPUT_DLIGHT vsMainDynamicLight(VS_INPUT input)
 {
     VS_OUTPUT_DLIGHT output;
     output.pos = mul(input.pos, g_worldViewProj);
-    output.uv1 = input.uv1;
-    output.uv2 = input.uv2;
+    output.uv.xy = input.uv1;
+    output.uv.zw = input.uv2;
 
     float3 wPos = mul(input.pos, g_world);
     float3 wNormal = mul(input.nml, g_world);
@@ -141,11 +140,11 @@ VS_OUTPUT_DLIGHT vsMainDynamicLight(VS_INPUT input)
 }
 
 float4 psMainDynamicLight_0(
-    float2 uv1 : TEXCOORD0,
-    float4 normal : COLOR0,
-    float4 eyeNml : COLOR1 ) : COLOR0
+    float4 uv : TEXCOORD0,
+    float4 normal : TEXCOORD1,
+    float4 eyeNml : TEXCOORD2 ) : COLOR0
 {
-    float4 cr0 = tex2D(sampler0, uv1);
+    float4 cr0 = tex2D(sampler0, uv.xy);
     float4 crDiffuse;
     crDiffuse.rgb = Light(normalize(eyeNml), normalize(normal));
     crDiffuse.a = 1.0f;

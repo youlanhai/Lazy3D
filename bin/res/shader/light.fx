@@ -1,10 +1,10 @@
 
 
 float3 lightDir = normalize(float3(0.0f, 1.0f, 1.0f));    //light Direction 
-float4 lightDiffuse = {0.6f, 0.6f, 0.6f, 1.0f}; // Light Diffuse
-float4 MaterialAmbient : MATERIALAMBIENT = {0.2f, 0.2f, 0.2f, 1.0f};
-float4 MaterialDiffuse : MATERIALDIFFUSE = {0.8f, 0.8f, 0.8f, 1.0f};
-float4 MaterialSpecular : MATERIALSPECULAR = {0.8f, 0.8f, 0.8f, 64.0f};
+
+float4 MaterialAmbient : MATERIALAMBIENT;
+float4 MaterialDiffuse : MATERIALDIFFUSE;
+float4 MaterialSpecular : MATERIALSPECULAR;
 
 float3 LightDiffuse(float3 Normal)
 {
@@ -41,5 +41,5 @@ float3 LightSpecularBiPhone(float3 EyeNormal, float3 Normal)
 
 float3 Light(float3 EyeNormal, float3 Normal)
 {
-	return MaterialAmbient.rgb + LightDiffuse(Normal) + LightSpecularPhone(EyeNormal, Normal);
+	return MaterialAmbient.rgb + LightDiffuse(Normal) + LightSpecularBiPhone(EyeNormal, Normal);
 }

@@ -291,7 +291,7 @@ namespace Lazy
             D3DXCOLOR diffuse = destMaterial->MatD3D.Diffuse;
             destMaterial->MatD3D.Ambient = diffuse * 0.25f;
             destMaterial->MatD3D.Specular = diffuse;
-            destMaterial->MatD3D.Power += 128.f;
+            destMaterial->MatD3D.Power = max(destMaterial->MatD3D.Power, 1.0f) * 10.f;
 
             //提取纹理
             if (destMaterial->pTextureFilename != NULL)

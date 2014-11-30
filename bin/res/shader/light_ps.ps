@@ -2,9 +2,9 @@
 struct VS_OUTPUT
 {
     float4  Pos     : POSITION;
-    float4  Normal  : COLOR0;
-    float4  EyeNml  : COLOR1;
     float2  Tex0    : TEXCOORD0;
+    float4  Normal  : TEXCOORD1;
+    float4  EyeNml  : TEXCOORD2;
 };
 
 float4 psVertexLight(
@@ -15,15 +15,12 @@ float4 psVertexLight(
 }
 
 float4 psPixelLight(
-    float4  Normal  : COLOR0,
-    float4  EyeNml  : COLOR1,
-    float2  Tex0    : TEXCOORD0) : COLOR
+    float2  Tex0    : TEXCOORD0,
+    float4  Normal  : TEXCOORD1,
+    float4  EyeNml  : TEXCOORD2) : COLOR
 {
     float4 Diffuse;
     Diffuse.rgb = Light(normalize(EyeNml.xyz), normalize(Normal.xyz));
     Diffuse.a = 1.0f;
     return tex2D(textureSampler, Tex0) * Diffuse;
-    //float4 cr = tex2D(textureSampler, Tex0) * Diffuse;
-    //cr.a = 1.0f;
-    //return cr;
 }
