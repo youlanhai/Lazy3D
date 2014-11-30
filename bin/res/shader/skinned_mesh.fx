@@ -3,8 +3,18 @@
 #include "skinned.fx"
 
 float4x4    mViewProj : VIEWPROJECTION;
-float3 CameraPosition : CAMERAPOSITION;
+float3 g_cameraPosition : CAMERAPOSITION;
 
+texture g_texture;
+sampler textureSampler = sampler_state
+{
+    Texture = <g_texture>;
+    MipFilter = LINEAR;
+    MinFilter = LINEAR;
+    MagFilter = LINEAR;
+};
+
+#include "light_ps.ps"
 ///////////////////////////////////////////////////////
 struct VS_INPUT
 {
@@ -15,25 +25,6 @@ struct VS_INPUT
     float3  Tex0            : TEXCOORD0;
 };
 
-struct VS_OUTPUT
-{
-    float4  Pos     : POSITION;
-    float4  EyeNormal: COLOR0;
-    float4  Normal  : COLOR1;
-    float2  Tex0    : TEXCOORD0;
-};
-
-texture g_texture;
-
-sampler textureSampler = sampler_state
-{
-    Texture = <g_texture>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-};
-
-
 VS_OUTPUT vsMain(VS_INPUT i, uniform int NumBones)
 {
     VS_OUTPUT   o;
@@ -42,7 +33,7 @@ VS_OUTPUT vsMain(VS_INPUT i, uniform int NumBones)
     skinTransform(i.Pos, i.Normal, NumBones, i.BlendWeights, i.BlendIndices, Pos, Normal);
 
     o.Pos = mul(float4(Pos.xyz, 1.0f), mViewProj);
-    o.EyeNormal = float4(normalize(CameraPosition - Pos), 0.0f);
+    o.EyeNml = float4(normalize(g_cameraPosition - Pos), 0.0f);
     o.Normal = float4(normalize(Normal), 0.0f);
     o.Tex0  = i.Tex0.xy;
     return o;
@@ -56,27 +47,14 @@ VertexShader vsArray[4] = {
     compile vs_2_0 vsMain(4)
 };
 
-
-float4 psMainLight(
-    float4  EyeNormal : COLOR0,
-    float4  Normal  : COLOR1,
-    float2  Tex0    : TEXCOORD0) : COLOR
-{
-    float4 Diffuse;
-    Diffuse.rgb = Light(normalize(EyeNormal.xyz), normalize(Normal.xyz));
-    Diffuse.a = 1.0f;
-    //return Diffuse;
-    return tex2D(textureSampler, Tex0) * Diffuse;
-}
-
 //////////////////////////////////////
 // Techniques specs follow
 //////////////////////////////////////
-technique t0
+technique pixelLight
 {
     pass p0
     {
         VertexShader = (vsArray[CurNumBones]);
-        PixelShader = compile ps_2_0 psMainLight();
+        PixelShader = compile ps_2_0 psPixelLight();
     }
 }

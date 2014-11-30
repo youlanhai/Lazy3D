@@ -1,4 +1,11 @@
 
+struct VS_OUTPUT
+{
+    float4  Pos     : POSITION;
+    float4  Normal  : COLOR0;
+    float4  EyeNml  : COLOR1;
+    float2  Tex0    : TEXCOORD0;
+};
 
 float4 psVertexLight(
     float4  Diffuse : COLOR0,

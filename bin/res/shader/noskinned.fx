@@ -4,21 +4,6 @@ float4x4    mWorld : WORLD;
 float4x4    mWorldViewProj : WORLDVIEWPROJECTION;
 float3      g_cameraPosition : CAMERAPOSITION;
 
-struct VS_INPUT
-{
-    float4  Pos     : POSITION;
-    float3  Normal  : NORMAL;
-    float3  Tex0    : TEXCOORD0;
-};
-
-struct VS_OUTPUT
-{
-    float4  Pos     : POSITION;
-    float4  Normal  : COLOR0;
-    float4  EyeNml  : COLOR1;
-    float2  Tex0    : TEXCOORD0;
-};
-
 texture g_texture;
 sampler textureSampler = sampler_state
 {
@@ -28,9 +13,18 @@ sampler textureSampler = sampler_state
     MagFilter = LINEAR;
 };
 
+#include "light_ps.ps"
+
 //////////////////////////////////////////////////
 /// vertex shader
 //////////////////////////////////////////////////
+
+struct VS_INPUT
+{
+    float4  Pos     : POSITION;
+    float3  Normal  : NORMAL;
+    float3  Tex0    : TEXCOORD0;
+};
 
 VS_OUTPUT vsVertexLight(VS_INPUT i)
 {
@@ -60,7 +54,6 @@ VS_OUTPUT vsPixelLight(VS_INPUT i)
     return o;
 }
 
-#include "light_ps.ps"
 //////////////////////////////////////
 // Techniques specs follow
 //////////////////////////////////////
