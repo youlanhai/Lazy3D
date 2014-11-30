@@ -205,6 +205,7 @@ namespace Lazy
 
         //防止时间为0，引发浮点数除0。
         if (m_fElapse < 0.00001f) return;
+        m_fps.update();
 
         oldUpdateTime = curTime;
 

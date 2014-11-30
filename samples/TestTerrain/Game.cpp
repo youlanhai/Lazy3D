@@ -74,7 +74,7 @@ bool CGame::onEvent(const SEvent & event)
 
 
 CGame::CGame()
-    : m_pGuiMgr(nullptr)
+    : m_guimgr(nullptr)
     , m_bGameStart(false)
     , m_bUseLineMode(false)
 {
@@ -87,14 +87,13 @@ void CGame::clear()
     //TerrainMap::instance()->saveMap("");
     Lazy::LoadingMgr::instance()->fini();
 
-    m_pGuiMgr->destroy();
+    m_guimgr->destroy();
     CApp::clear();
 
     LOG_DEBUG(_T("Clear finished."));
 }
 CGame::~CGame()
 {
-    delete m_pGuiMgr;
 }
 
 /*游戏初始化*/
@@ -110,7 +109,9 @@ bool CGame::init(void)
         return false;
     }
 
-    m_pGuiMgr = new GUIMgr(m_pd3dDevice, m_hWnd, m_hInstance);
+    m_guimgr = new GUIMgr(m_pd3dDevice, m_hWnd, m_hInstance);
+    m_fpsLabel = new Label();
+    m_guimgr->addChild(m_fpsLabel.get());
 
     g_player = new Player();
     g_player->setPhysics(new IPhysics());
@@ -173,6 +174,11 @@ bool CGame::init(void)
 void CGame::update()
 {
     CApp::update();
+
+    tstring text;
+    formatString(text, _T("FPS: %g"), m_fps.getFps());
+    m_fpsLabel->setText(text);
+    m_guimgr->update(m_fElapse);
 
     Lazy::LoadingMgr::instance()->dispatchFinishTask();
 
@@ -264,6 +270,7 @@ void CGame::render()
     }
 
     CApp::render();
+    m_guimgr->render(m_pd3dDevice);
 }
 
 ///////////////////class CGame end/////////////////////////

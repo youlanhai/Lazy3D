@@ -41,6 +41,8 @@ public:
 	RefPtr<Camera>	        m_pCamera;
     Projection              m_projection;
     bool                    m_bUseLineMode;
-    GUIMgr *                m_pGuiMgr;
+    RefPtr<GUIMgr>          m_guimgr;
+    RefPtr<Label>           m_fpsLabel;
+
     RefPtr<SkyBox>          m_pSkyBox;
 };

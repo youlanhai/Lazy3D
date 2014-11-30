@@ -2,6 +2,7 @@
 #pragma once
 
 #include "../utility/UtilConfig.h"
+#include "../utility/FPS.h"
 
 #include "Keyboard.h"
 #include "RenderTask.h"
@@ -175,6 +176,7 @@ namespace Lazy
         tstring             m_caption;	        //窗口标题
         float               m_fElapse;
         float               m_timeScale;
+        Fps                 m_fps;
 
         bool	            m_bFullScreen;		//是否全屏
         bool                m_bMsgHooked;
