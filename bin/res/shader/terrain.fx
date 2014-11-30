@@ -41,7 +41,6 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4 pos : POSITION;
-    float4 diff : COLOR0;
     float2 uv1 : TEXCOORD0;
     float2 uv2 : TEXCOORD1;
 };
@@ -55,11 +54,6 @@ VS_OUTPUT vsMain(VS_INPUT input)
     output.pos = mul(input.pos, g_worldViewProj);
     output.uv1 = input.uv1;
     output.uv2 = input.uv2;
-
-    float3 wPos = mul(input.pos, g_world);
-    float3 wNormal = mul(input.nml, g_world);
-    output.diff.xyz = Light(normalize(g_cameraPosition - wPos), normalize(wNormal));
-    output.diff.w = 1.0f;
     return output;
 }
 
@@ -70,10 +64,7 @@ float4 psMain_0(VS_OUTPUT input) : COLOR0
 { 
     float4 cr0 = tex2D(sampler0, input.uv1);
     float4 crDiffuse = tex2D(samplerDiffuse, input.uv2);
-
-    float4 color = cr0 /* * crDiffuse*/;
-    color.a = cr0.a;
-    return color * input.diff;
+    return cr0 * crDiffuse;
 }
 
 float4 psMain_1(VS_OUTPUT input) : COLOR0
@@ -86,7 +77,7 @@ float4 psMain_1(VS_OUTPUT input) : COLOR0
 
     float4 color = (cr0 * crBlend.r + cr1 * crBlend.g) * crDiffuse;
     color.a = cr0.a;
-    return color * input.diff;
+    return color;
 }
 
 float4 psMain_2(VS_OUTPUT input) : COLOR0
@@ -102,7 +93,7 @@ float4 psMain_2(VS_OUTPUT input) : COLOR0
         cr1 * crBlend.g + \
         cr2 * crBlend.b) * crDiffuse;
     color.a = cr0.a;
-    return color * input.diff;
+    return color;
 }
 
 float4 psMain_3(VS_OUTPUT input) : COLOR0
@@ -120,15 +111,58 @@ float4 psMain_3(VS_OUTPUT input) : COLOR0
         cr2 * crBlend.b + \
         cr3 * crBlend.a) * crDiffuse;
     color.a = cr0.a;
-    return color * input.diff;
+    return color;
 }
 
+//////////////////////////////////////////////////
+///
+//////////////////////////////////////////////////
+struct VS_OUTPUT_DLIGHT
+{
+    float4 pos : POSITION;
+    float2 uv1 : TEXCOORD0;
+    float2 uv2 : TEXCOORD1;
+    float4 normal : COLOR0;
+    float4 eyeNml : COLOR1;
+};
+
+VS_OUTPUT_DLIGHT vsMainDynamicLight(VS_INPUT input)
+{
+    VS_OUTPUT_DLIGHT output;
+    output.pos = mul(input.pos, g_worldViewProj);
+    output.uv1 = input.uv1;
+    output.uv2 = input.uv2;
+
+    float3 wPos = mul(input.pos, g_world);
+    float3 wNormal = mul(input.nml, g_world);
+    output.normal = float4(normalize(wNormal), 0.0f);
+    output.eyeNml = float4(normalize(g_cameraPosition - wPos), 0.0f);
+    return output;
+}
+
+float4 psMainDynamicLight_0(
+    float2 uv1 : TEXCOORD0,
+    float4 normal : COLOR0,
+    float4 eyeNml : COLOR1 ) : COLOR0
+{
+    float4 cr0 = tex2D(sampler0, uv1);
+    float4 crDiffuse;
+    crDiffuse.rgb = Light(normalize(eyeNml), normalize(normal));
+    crDiffuse.a = 1.0f;
+    return cr0 * crDiffuse;
+}
+
+//////////////////////////////////////////////////
+///
+//////////////////////////////////////////////////
 technique tech_0
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 vsMain();
-        PixelShader = compile ps_2_0 psMain_0();
+        //VertexShader = compile vs_2_0 vsMain();
+        //PixelShader = compile ps_2_0 psMain_0();
+        VertexShader = compile vs_2_0 vsMainDynamicLight();
+        PixelShader = compile ps_2_0 psMainDynamicLight_0();
     }
 }
 

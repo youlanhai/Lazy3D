@@ -491,4 +491,5 @@ namespace Lazy
     {
         return m_device->DrawPrimitiveUP(type, num, stream, stride);
     }
+
 }

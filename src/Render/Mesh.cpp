@@ -253,6 +253,7 @@ namespace Lazy
         }
         else
         {
+            D3DXComputeNormals(pMesh, NULL);
             pMeshContainer->MeshData.pMesh = pMesh;
             pMeshContainer->MeshData.pMesh->AddRef();
         }
@@ -276,8 +277,11 @@ namespace Lazy
         else
         {
             ZeroMemory(&pMeshContainer->pMaterials[0].MatD3D, sizeof(D3DXMATERIAL));
-            D3DCOLORVALUE color = { 0.5f, 0.5f, 0.5f, 1.0f };
+            D3DCOLORVALUE color = { 1.0f, 1.0f, 1.0f, 1.0f };
             pMeshContainer->pMaterials[0].MatD3D.Diffuse = color;
+            pMeshContainer->pMaterials[0].MatD3D.Specular = color;
+            pMeshContainer->pMaterials[0].MatD3D.Diffuse = color;
+            pMeshContainer->pMaterials[0].MatD3D.Power = 64.0f;
         }
 
         for (DWORD i = 0; i < pMeshContainer->NumMaterials; ++i)
@@ -285,10 +289,9 @@ namespace Lazy
             //复制材质
             LPD3DXMATERIAL destMaterial = pMeshContainer->pMaterials + i;
             D3DXCOLOR diffuse = destMaterial->MatD3D.Diffuse;
-
-            destMaterial->MatD3D.Ambient = diffuse * 0.5f;
+            destMaterial->MatD3D.Ambient = diffuse * 0.25f;
             destMaterial->MatD3D.Specular = diffuse;
-            destMaterial->MatD3D.Power = 1.0f;
+            destMaterial->MatD3D.Power += 128.f;
 
             //提取纹理
             if (destMaterial->pTextureFilename != NULL)
@@ -633,20 +636,7 @@ namespace Lazy
                 continue;
 
             pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
-
-            EffectConstant *pMaterialDiffuse = effect->getConstant("MaterialDiffuse");
-            if (pMaterialDiffuse)
-                pMaterialDiffuse->bindValue(pMeshContainer->pMaterials[AttribID].MatD3D.Diffuse);
-
-            EffectConstant *pMaterialAmbient = effect->getConstant("MaterialAmbient");
-            if (pMaterialAmbient)
-            {
-                // Sum of all ambient and emissive contribution
-                D3DXCOLOR color1(pMeshContainer->pMaterials[AttribID].MatD3D.Ambient);
-                color1 += D3DXCOLOR(pMeshContainer->pMaterials[AttribID].MatD3D.Emissive);
-
-                pMaterialAmbient->bindValue(color1);
-            }
+            rcDevice()->setMaterial(pMeshContainer->pMaterials[AttribID].MatD3D);
 
             UINT numPasses;
             if (effect->begin(numPasses))
@@ -683,13 +673,14 @@ namespace Lazy
         if (!effect)
             return;
 
-        EffectConstant *pConst = effect->getConstant("mWorldMatrixArray");
-        if (!pConst)
+        EffectConstant *pMatrixArray = effect->getConstant("mWorldMatrixArray");
+        if (!pMatrixArray)
             return;
 
-        EffectConstant *pMaterialDiffuse = effect->getConstant("MaterialDiffuse");
-        EffectConstant *pMaterialAmbient = effect->getConstant("MaterialAmbient");
         EffectConstant *pCurNumBones = effect->getConstant("CurNumBones");
+        if (!pCurNumBones)
+            return;
+
         EffectConstant *pTexture = effect->getConstant("g_texture");
 
         LPDIRECT3DDEVICE9 pd3dDevice = Lazy::rcDevice()->getDevice();
@@ -718,26 +709,10 @@ namespace Lazy
                 }
             }
 
-            pConst->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries);
-            
-            // set material color properties 
-            if (pMaterialDiffuse)
-                pMaterialDiffuse->bindValue(pMeshContainer->pMaterials[AttribID].MatD3D.Diffuse);
-
-            if (pMaterialAmbient)
-            {
-                // Sum of all ambient and emissive contribution
-                D3DXCOLOR color1(pMeshContainer->pMaterials[AttribID].MatD3D.Ambient);
-                color1 += D3DXCOLOR(pMeshContainer->pMaterials[AttribID].MatD3D.Emissive);
-                pMaterialAmbient->bindValue(color1);
-            }
-
-            // setup the material of the mesh subset - REMEMBER to use the original pre-skinning attribute id to get the correct material id
+            pMatrixArray->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries);
+            pCurNumBones->bindValue(int(pMeshContainer->NumInfl) - 1);
             pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
-
-            // Set CurNumBones to select the correct vertex shader for the number of bones
-            if (pCurNumBones)
-                pCurNumBones->bindValue(int(pMeshContainer->NumInfl) - 1);
+            rcDevice()->setMaterial(pMeshContainer->pMaterials[AttribID].MatD3D);
 
             // Start the effect now all parameters have been updated
             UINT numPasses;

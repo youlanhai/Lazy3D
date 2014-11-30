@@ -70,14 +70,23 @@ namespace Lazy
         pConst->bindValue(getCamera()->getPosition());
     }
 
-    void effectApplyAmbient(EffectConstant *pConst)
+    void effectApplyMaterialAmbient(EffectConstant *pConst)
     {
-        /*Color color;
+        D3DXCOLOR ambient = rcDevice()->getMaterial().Ambient;
+        D3DXCOLOR emissive = rcDevice()->getMaterial().Emissive;
+        pConst->bindValue(ambient + emissive);
+    }
 
-        LightContainerPtr lights =  renderDev()->getLightContainer();
-        if(lights) color = lights->getAmbientColor();
+    void effectApplyMaterialDiffuse(EffectConstant *pConst)
+    {
+        pConst->bindValue(rcDevice()->getMaterial().Diffuse);
+    }
 
-        pConst->bindValue(color);*/
+    void effectApplyMaterialSpecular(EffectConstant *pConst)
+    {
+        D3DXCOLOR cr = rcDevice()->getMaterial().Specular;
+        cr.a = rcDevice()->getMaterial().Power;
+        pConst->bindValue(cr);
     }
 
     void effectApplyOmitLight(EffectConstant *pConst)
@@ -135,7 +144,9 @@ namespace Lazy
         REG_EFFECT_CONST_FACTORY("viewprojection", effectApplyViewProj);
         REG_EFFECT_CONST_FACTORY("worldview", effectApplyWorldView);
         REG_EFFECT_CONST_FACTORY("worldviewprojection", effectApplyWorldViewProj);
-        REG_EFFECT_CONST_FACTORY("ambientcolor", effectApplyAmbient);
+        REG_EFFECT_CONST_FACTORY("materialambient", effectApplyMaterialAmbient);
+        REG_EFFECT_CONST_FACTORY("materialdiffuse", effectApplyMaterialDiffuse);
+        REG_EFFECT_CONST_FACTORY("materialspecular", effectApplyMaterialSpecular);
         REG_EFFECT_CONST_FACTORY("omitlight", effectApplyOmitLight);
         REG_EFFECT_CONST_FACTORY("dirlight", effectApplyDirLight);
         REG_EFFECT_CONST_FACTORY("spotlight", effectApplySpotLight);

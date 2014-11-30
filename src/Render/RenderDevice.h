@@ -74,6 +74,9 @@ namespace Lazy
         ///重置设备
         bool resetDevice();
 
+        void setMaterial(const D3DMATERIAL9 & material){ m_material = material; }
+        const D3DMATERIAL9 & getMaterial() const{ return m_material; }
+
     protected:
 
         void fillPresentParameter();
@@ -92,6 +95,7 @@ namespace Lazy
         D3DPRESENT_PARAMETERS m_d3dpp;
         D3DDISPLAYMODE m_d3dmm;
         D3DCAPS9    m_d3dcaps;
+        D3DMATERIAL9  m_material;
 
         std::vector<std::pair<DWORD, DWORD>>  m_rsStack;
 

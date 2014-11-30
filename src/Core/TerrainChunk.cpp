@@ -191,7 +191,7 @@ namespace Lazy
     {
         if(!m_pMesh) return;
 
-       // D3DXComputeNormals(m_pMesh, NULL);
+        D3DXComputeNormals(m_pMesh, NULL);
     }
 
 
@@ -618,6 +618,14 @@ namespace Lazy
     void TerrainChunk::renderTerrain(IDirect3DDevice9* pDevice)
     {
         RSHolder holder(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
+
+        D3DMATERIAL9 material;
+        material.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);
+        material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+        material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+        material.Specular = material.Diffuse;
+        material.Power = 128.0f;
+        rcDevice()->setMaterial(material);
 
         if (!m_mesh.valid() || !m_shader) return;
 
