@@ -1,0 +1,8 @@
+#coding = utf-8
+
+rows = 5
+cols = 5
+idAllocator = 100
+texture = map/f.jpg
+onGround = true
+heightMap = map/test2/heightmap.lzd

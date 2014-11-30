@@ -1,0 +1,10 @@
+#coding = utf-8
+
+savetime = [2014.11.30][22.26.11][481]
+shader = shader/terrain.fx
+textures
+{
+	layer0 = map/f.jpg
+	diffuse = map/diffuse.png
+}
+items = 

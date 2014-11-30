@@ -1,7 +1,7 @@
 #coding = utf-8
 
 sky = gui/sky/01/%d.jpg
-map = map/test/
+map = map/test2/
 
 camera
 {

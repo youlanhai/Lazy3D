@@ -1,0 +1,10 @@
+
+origin = -125 -2.492938 -125
+rows = 125
+cols = 125
+gridSize = 2
+
+heightScale = 0.0006 #0.0012488058
+
+rawFile = map/test2/heightmap.raw
+rawBit = 16

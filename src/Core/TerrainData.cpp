@@ -25,15 +25,14 @@ namespace Lazy
 
     template<typename T>
     static void parseHeightMap(std::vector<float> & output, 
-        int rows, int cols, float scale, const std::vector<char> & input)
+        int rows, int cols, float scale, const T * input)
     {
         T val;
-        size_t i = 0;
         for (int r = 0; r < rows; ++r)
         {
             for (int c = 0; c < cols; ++c)
             {
-                val = *((T*) &input[i++]);
+                val = *(input++);
                 output.push_back(val * scale);
             }
         }
@@ -93,23 +92,24 @@ namespace Lazy
             return false;
         }
 
-        if (depth == 16)
-            parseHeightMap<uint16>(m_rawdata, m_rows, m_cols, heightScale, rawdata);
+        m_rawdata.clear();
+
+        if (depth == 8)
+            parseHeightMap<uint8>(m_rawdata, m_rows, m_cols, heightScale, (uint8*) rawdata.data());
+        else if (depth == 16)
+            parseHeightMap<uint16>(m_rawdata, m_rows, m_cols, heightScale, (uint16*) rawdata.data());
         else if (depth == 32)
-            parseHeightMap<uint32>(m_rawdata, m_rows, m_cols, heightScale, rawdata);
+            parseHeightMap<uint32>(m_rawdata, m_rows, m_cols, heightScale, (uint32*) rawdata.data());
         else
-            parseHeightMap<uint8> (m_rawdata, m_rows, m_cols, heightScale, rawdata);
-        
+            assert(0);
+
         return true;
     }
 
     float HeightMap::getAbsHeight(int row, int col) const
     {
-        if (row >= m_rows) row = m_rows - 1;
-        else if (row < 0) row = 0;
-
-        if (col >= m_cols) col = m_cols - 1;
-        else if (col < 0) col = 0;
+        if (row >= m_rows || row < 0 || col >= m_cols || col < 0)
+            return 0.0f;
 
         return m_rawdata[row * m_cols + col];
     }
@@ -137,7 +137,7 @@ namespace Lazy
         float D = getAbsHeight(row + 1, col + 1);
 
         float height;
-#if 1
+#if 0
         height = (A + B + C + D) * 0.25f;
 #else
         float dx = x - col;
