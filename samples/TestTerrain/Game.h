@@ -43,6 +43,7 @@ public:
     bool                    m_bUseLineMode;
     RefPtr<GUIMgr>          m_guimgr;
     RefPtr<Label>           m_fpsLabel;
+    RefPtr<Label>           m_playerInfo;
 
     RefPtr<SkyBox>          m_pSkyBox;
 };

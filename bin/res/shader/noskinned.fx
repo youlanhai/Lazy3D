@@ -2,7 +2,7 @@
 
 float4x4    mWorld : WORLD;
 float4x4    mWorldViewProj : WORLDVIEWPROJECTION;
-
+float3      CameraPosition : CAMERAPOSITION;
 ///////////////////////////////////////////////////////
 struct VS_INPUT
 {
@@ -34,11 +34,10 @@ VS_OUTPUT VShade(VS_INPUT i)
     o.Pos = mul(i.Pos, mWorldViewProj);
 
     float3 Normal = mul(i.Normal, mWorld);    
-    Normal = normalize(Normal);
 
     float3 Pos = mul(i.Pos, mWorld);
 
-    o.Diffuse.xyz = Light(Pos, Normal);
+    o.Diffuse.xyz = Light(normalize(CameraPosition - Pos), normalize(Normal));
     o.Diffuse.w = 1.0f;
 
     o.Tex0  = i.Tex0.xy;

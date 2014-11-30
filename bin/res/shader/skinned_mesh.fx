@@ -7,6 +7,8 @@ float4x4    mViewProj : VIEWPROJECTION;
 static const int MAX_MATRICES = 32;
 float4x4    mWorldMatrixArray[MAX_MATRICES] ;//: WORLDMATRIXARRAY;
 
+float3 CameraPosition : CAMERAPOSITION;
+
 ///////////////////////////////////////////////////////
 struct VS_INPUT
 {
@@ -20,7 +22,9 @@ struct VS_INPUT
 struct VS_OUTPUT
 {
     float4  Pos     : POSITION;
-    float4  Diffuse : COLOR;
+    //float4  Diffuse : COLOR;
+    float4  EyeNormal: COLOR0;
+    float4  Normal  : COLOR1;
     float2  Tex0    : TEXCOORD0;
 };
 
@@ -66,12 +70,12 @@ VS_OUTPUT VShade(VS_INPUT i, uniform int NumBones)
     // transform position from world space into view and then projection space
     o.Pos = mul(float4(Pos.xyz, 1.0f), mViewProj);
 
-    // normalize normals
-    Normal = normalize(Normal);
-
     // Shade (Ambient + etc.)
-    o.Diffuse.xyz = Light(Pos, Normal);
-    o.Diffuse.w = 1.0f;
+    //o.Diffuse.xyz = Light(Pos, Normal);
+    //o.Diffuse.w = 1.0f;
+
+    o.EyeNormal = float4(normalize(CameraPosition - Pos), 0.0f);
+    o.Normal = float4(normalize(Normal), 0.0f);
 
     // copy the input texture coordinate through
     o.Tex0  = i.Tex0.xy;
@@ -95,6 +99,18 @@ float4 PSShade(
     return tex2D(textureSampler, Tex0) * Diffuse;
 }
 
+float4 PSLight(
+    float4  EyeNormal : COLOR0,
+    float4  Normal  : COLOR1,
+    float2  Tex0    : TEXCOORD0) : COLOR
+{
+    float4 Diffuse;
+    Diffuse.rgb = Light(normalize(EyeNormal.xyz), normalize(Normal.xyz));
+    Diffuse.a = 1.0f;
+    //return Diffuse;
+    return tex2D(textureSampler, Tex0) * Diffuse;
+}
+
 //////////////////////////////////////
 // Techniques specs follow
 //////////////////////////////////////
@@ -103,7 +119,8 @@ technique t0
     pass p0
     {
         VertexShader = (vsArray[CurNumBones]);
-        PixelShader = compile ps_2_0 PSShade();
+        //PixelShader = compile ps_2_0 PSShade();
+        PixelShader = compile ps_2_0 PSLight();
     }
 }
 

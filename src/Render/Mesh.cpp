@@ -286,7 +286,7 @@ namespace Lazy
             LPD3DXMATERIAL destMaterial = pMeshContainer->pMaterials + i;
             D3DXCOLOR diffuse = destMaterial->MatD3D.Diffuse;
 
-            destMaterial->MatD3D.Ambient = diffuse * 0.25f;
+            destMaterial->MatD3D.Ambient = diffuse * 0.5f;
             destMaterial->MatD3D.Specular = diffuse;
             destMaterial->MatD3D.Power = 1.0f;
 
@@ -432,6 +432,8 @@ namespace Lazy
         dx::Device* pDevice = rcDevice()->getDevice();
 
         m_dwTrangleCnt = 0;
+
+        RSHolder holder1(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
 
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);

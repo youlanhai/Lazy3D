@@ -114,13 +114,13 @@ namespace Lazy
             for (T c = 0; c < grid; ++c)
             {
                 T n = r * vertices + c;
-                pIndex[i] = n;
-                pIndex[i + 1] = n + 1;
-                pIndex[i + 2] = n + vertices;
+                pIndex[i + 0] = n;
+                pIndex[i + 1] = n + vertices;
+                pIndex[i + 2] = n + 1;
 
                 pIndex[i + 3] = n + 1;
-                pIndex[i + 4] = n + vertices + 1;
-                pIndex[i + 5] = n + vertices;
+                pIndex[i + 4] = n + vertices;
+                pIndex[i + 5] = n + vertices + 1;
 
                 i += 6;
             }
@@ -617,6 +617,8 @@ namespace Lazy
 
     void TerrainChunk::renderTerrain(IDirect3DDevice9* pDevice)
     {
+        RSHolder holder(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
+
         if (!m_mesh.valid() || !m_shader) return;
 
         int maxTexIndex = -1;

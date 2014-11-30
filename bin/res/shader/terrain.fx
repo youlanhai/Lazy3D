@@ -3,6 +3,7 @@
 
 float4x4 g_world : WORLD;
 float4x4 g_worldViewProj : WORLDVIEWPROJECTION;
+float3   g_cameraPosition : CAMERAPOSITION;
 
 texture g_texture0;
 texture g_texture1;
@@ -57,7 +58,7 @@ VS_OUTPUT vsMain(VS_INPUT input)
 
     float3 wPos = mul(input.pos, g_world);
     float3 wNormal = mul(input.nml, g_world);
-    output.diff.xyz = Light(wPos, normalize(wNormal));
+    output.diff.xyz = Light(normalize(g_cameraPosition - wPos), normalize(wNormal));
     output.diff.w = 1.0f;
     return output;
 }

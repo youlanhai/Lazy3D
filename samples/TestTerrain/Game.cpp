@@ -111,11 +111,19 @@ bool CGame::init(void)
 
     m_guimgr = new GUIMgr(m_pd3dDevice, m_hWnd, m_hInstance);
     m_fpsLabel = new Label();
+    m_fpsLabel->setPosition(0, 0);
     m_guimgr->addChild(m_fpsLabel.get());
+
+    m_playerInfo = new Label();
+    m_playerInfo->setPosition(0, 20);
+    m_playerInfo->setMutiLine(true);
+    m_playerInfo->setSize(500, 20);
+    m_guimgr->addChild(m_playerInfo.get());
 
     g_player = new Player();
     g_player->setPhysics(new IPhysics());
     g_player->setSpeed(Vector3(8.0f, 8.0, 8.0f));
+    g_player->setPosition(Vector3(-31, 69.0f, 39.0f));
     EntityMgr::instance()->add(g_player);
     
     ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x");
@@ -137,7 +145,8 @@ bool CGame::init(void)
         ptrPos->readFloat(L"y"),
         ptrPos->readFloat(L"z")));
     m_pCamera->setSpeed(ptrRoot->readFloat(L"camera/speed", 20.0f));
-    m_pCamera->setDistRange(2.0f, 20.0f);
+    m_pCamera->setDistRange(1.8f, 20.0f);
+    m_pCamera->setHeight(1.0f);
 
     m_projection.setPerspective(D3DX_PI / 4.0f, float(m_nWidth) / m_nHeight, 1.0f, 1000.0f);
 
@@ -175,9 +184,19 @@ void CGame::update()
 {
     CApp::update();
 
-    tstring text;
-    formatString(text, _T("FPS: %g"), m_fps.getFps());
-    m_fpsLabel->setText(text);
+    {
+        tstring text;
+        formatString(text, _T("FPS: %g"), m_fps.getFps());
+        m_fpsLabel->setText(text);
+
+        Vector3 pos = g_player->getPosition();
+        Vector3 look = g_player->getLook();
+        formatString(text, _T("Position: %g %g %g\nLook: %g %g %g"),
+            pos.x, pos.y, pos.z,
+            look.x, look.y, look.z);
+        m_playerInfo->setText(text);
+    }
+
     m_guimgr->update(m_fElapse);
 
     Lazy::LoadingMgr::instance()->dispatchFinishTask();
