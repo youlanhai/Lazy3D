@@ -1,0 +1,19 @@
+
+
+float4 psVertexLight(
+    float4  Diffuse : COLOR0,
+    float2  Tex0    : TEXCOORD0) : COLOR
+{
+    return tex2D(textureSampler, Tex0) * Diffuse;
+}
+
+float4 psPixelLight(
+    float4  Normal  : COLOR0,
+    float4  EyeNml  : COLOR1,
+    float2  Tex0    : TEXCOORD0) : COLOR
+{
+    float4 Diffuse;
+    Diffuse.rgb = Light(normalize(EyeNml.xyz), normalize(Normal.xyz));
+    Diffuse.a = 1.0f;
+    return tex2D(textureSampler, Tex0) * Diffuse;
+}

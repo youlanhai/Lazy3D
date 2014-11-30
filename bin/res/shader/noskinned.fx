@@ -2,24 +2,24 @@
 
 float4x4    mWorld : WORLD;
 float4x4    mWorldViewProj : WORLDVIEWPROJECTION;
-float3      CameraPosition : CAMERAPOSITION;
-///////////////////////////////////////////////////////
+float3      g_cameraPosition : CAMERAPOSITION;
+
 struct VS_INPUT
 {
-    float4  Pos             : POSITION;
-    float3  Normal          : NORMAL;
-    float3  Tex0            : TEXCOORD0;
+    float4  Pos     : POSITION;
+    float3  Normal  : NORMAL;
+    float3  Tex0    : TEXCOORD0;
 };
 
 struct VS_OUTPUT
 {
     float4  Pos     : POSITION;
-    float4  Diffuse : COLOR;
+    float4  Normal  : COLOR0;
+    float4  EyeNml  : COLOR1;
     float2  Tex0    : TEXCOORD0;
 };
 
 texture g_texture;
-
 sampler textureSampler = sampler_state
 {
     Texture = <g_texture>;
@@ -28,38 +28,56 @@ sampler textureSampler = sampler_state
     MagFilter = LINEAR;
 };
 
-VS_OUTPUT VShade(VS_INPUT i)
+//////////////////////////////////////////////////
+/// vertex shader
+//////////////////////////////////////////////////
+
+VS_OUTPUT vsVertexLight(VS_INPUT i)
 {
-    VS_OUTPUT   o;
+    VS_OUTPUT o = (VS_OUTPUT)0;
     o.Pos = mul(i.Pos, mWorldViewProj);
 
     float3 Normal = mul(i.Normal, mWorld);    
-
     float3 Pos = mul(i.Pos, mWorld);
 
-    o.Diffuse.xyz = Light(normalize(CameraPosition - Pos), normalize(Normal));
-    o.Diffuse.w = 1.0f;
-
+    o.Normal.xyz = Light(normalize(g_cameraPosition - Pos), normalize(Normal));
+    o.Normal.w = 1.0f;
     o.Tex0  = i.Tex0.xy;
     return o;
 }
 
-float4 PSShade(
-    float4  Diffuse : COLOR,
-    float2  Tex0    : TEXCOORD0) : COLOR
+VS_OUTPUT vsPixelLight(VS_INPUT i)
 {
-    return tex2D(textureSampler, Tex0) * Diffuse;
+    VS_OUTPUT o;
+
+    o.Pos = mul(i.Pos, mWorldViewProj);
+    float3 Pos = mul(i.Pos, mWorld);
+    float3 Normal = mul(i.Normal, mWorld);    
+
+    o.EyeNml = float4(normalize(g_cameraPosition - Pos), 0.0f);
+    o.Normal = float4(normalize(Normal), 0.0f);
+    o.Tex0   = i.Tex0.xy;
+    return o;
 }
 
+#include "light_ps.ps"
 //////////////////////////////////////
 // Techniques specs follow
 //////////////////////////////////////
-technique t0
+technique pixelLight
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 VShade();
-        PixelShader = compile ps_2_0 PSShade();
+        VertexShader = compile vs_2_0 vsPixelLight();
+        PixelShader  = compile ps_2_0 psPixelLight();
     }
 }
 
+technique vertexLight
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 vsVertexLight();
+        PixelShader  = compile ps_2_0 psVertexLight();
+    }
+}
