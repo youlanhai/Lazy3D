@@ -105,8 +105,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TerrainChunk.cpp" />
-    <ClCompile Include="TerrinData.cpp" />
-    <ClCompile Include="TerrinMap.cpp" />
+    <ClCompile Include="TerrainData.cpp" />
+    <ClCompile Include="TerrainMap.cpp" />
     <ClCompile Include="TopBoard.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -142,8 +142,8 @@
     <ClInclude Include="Sound.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="TerrainChunk.h" />
-    <ClInclude Include="TerrinData.h" />
-    <ClInclude Include="TerrinMap.h" />
+    <ClInclude Include="TerrainData.h" />
+    <ClInclude Include="TerrainMap.h" />
     <ClInclude Include="TopBoard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

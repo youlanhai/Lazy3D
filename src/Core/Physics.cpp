@@ -2,7 +2,7 @@
 #include "stdafx.h"
 
 #include "Camera.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "App.h"
 
 #include "Physics.h"

@@ -4,7 +4,7 @@
 #include "TopBoard.h"
 #include "SceneNode.h"
 
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "App.h"
 
 namespace Lazy

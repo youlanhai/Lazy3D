@@ -32,12 +32,6 @@
     <ClCompile Include="TerrainChunk.cpp">
       <Filter>terrain</Filter>
     </ClCompile>
-    <ClCompile Include="TerrinData.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrinMap.cpp">
-      <Filter>terrain</Filter>
-    </ClCompile>
     <ClCompile Include="Collision.cpp">
       <Filter>scene</Filter>
     </ClCompile>
@@ -83,7 +77,15 @@
     <ClCompile Include="Keyboard.cpp">
       <Filter>app</Filter>
     </ClCompile>
-    <ClCompile Include="SceneNodeFactory.cpp" />
+    <ClCompile Include="TerrainData.cpp">
+      <Filter>terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainMap.cpp">
+      <Filter>terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneNodeFactory.cpp">
+      <Filter>scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -123,13 +125,7 @@
     <ClInclude Include="Snow.h">
       <Filter>pariticle</Filter>
     </ClInclude>
-    <ClInclude Include="TerrinMap.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
     <ClInclude Include="TerrainChunk.h">
-      <Filter>terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrinData.h">
       <Filter>terrain</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
@@ -186,7 +182,15 @@
     <ClInclude Include="CachedList.h">
       <Filter>pariticle</Filter>
     </ClInclude>
-    <ClInclude Include="SceneNodeFactory.h" />
+    <ClInclude Include="TerrainData.h">
+      <Filter>terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainMap.h">
+      <Filter>terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneNodeFactory.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="pariticle">

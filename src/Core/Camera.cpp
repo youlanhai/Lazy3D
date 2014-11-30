@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "Camera.h"
 #include "App.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "Collision.h"
 
 namespace Lazy

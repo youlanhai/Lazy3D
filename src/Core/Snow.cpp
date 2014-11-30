@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Snow.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 
 namespace Lazy
 {

@@ -5,7 +5,7 @@
  *  MapNode就是这样的子地图。
 */
 
-#include "TerrinData.h"
+#include "TerrainData.h"
 #include "SceneNode.h"
 
 #include "../Physics/Octree.h"

@@ -6,7 +6,7 @@
 #include "../Physics/Physics.h"
 #include "Material.h"
 
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 
 #include "../Render/Texture.h"
 #include "../Render/RenderDevice.h"

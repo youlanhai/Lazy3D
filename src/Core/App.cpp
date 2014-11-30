@@ -3,7 +3,7 @@
 #include "stdafx.h"
 #include "App.h"
 
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "Pick.h"
 #include "Sound.h"
 #include "Entity.h"

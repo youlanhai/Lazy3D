@@ -3,7 +3,7 @@
 
 #include "Pick.h"
 #include "Entity.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 
 #include "App.h"
 

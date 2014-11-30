@@ -31,7 +31,7 @@
 #include "Snow.h"
 #include "Sound.h"
 
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "TopBoard.h"
 
 //////////////////////////////////////////////////////////////////////////

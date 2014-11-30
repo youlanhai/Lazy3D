@@ -1,6 +1,6 @@
 ﻿
 #include "stdafx.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "Pick.h"
 #include "Physics.h"
 #include "Camera.h"

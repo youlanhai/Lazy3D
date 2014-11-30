@@ -2,7 +2,7 @@
 #include "stdafx.h"
 #include "Collision.h"
 #include "App.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 
 
 //////////////////////////////////////////////////////////////////////////

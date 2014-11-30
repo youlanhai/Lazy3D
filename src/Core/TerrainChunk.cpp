@@ -4,7 +4,7 @@
 #include "Entity.h"
 #include "TerrainChunk.h"
 #include "App.h"
-#include "TerrinMap.h"
+#include "TerrainMap.h"
 #include "SceneNodeFactory.h"
 
 #include "../Physics/Physics.h"

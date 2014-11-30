@@ -1,7 +1,7 @@
 ﻿
 
 #include "stdafx.h"
-#include "TerrinData.h"
+#include "TerrainData.h"
 #include "../utility/Utility.h"
 
 namespace Lazy
