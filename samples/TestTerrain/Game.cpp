@@ -126,7 +126,9 @@ bool CGame::init(void)
     g_player->setPosition(Vector3(-31, 69.0f, 39.0f));
     EntityMgr::instance()->add(g_player);
     
-    ModelPtr model = ModelFactory::loadModel(L"model/jingtian/jingtian.x");
+    tstring resource = L"model/jingtian/jingtian.x";
+    //tstring resource = L"model/1000/m.x";
+    ModelPtr model = ModelFactory::loadModel(resource);
     if (model)
     {
         model->setScale(Vector3(0.025f, 0.025f, 0.025f));

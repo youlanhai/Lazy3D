@@ -253,7 +253,7 @@ namespace Lazy
         }
         else
         {
-            D3DXComputeNormals(pMesh, NULL);
+            //D3DXComputeNormals(pMesh, NULL);
             pMeshContainer->MeshData.pMesh = pMesh;
             pMeshContainer->MeshData.pMesh->AddRef();
         }
@@ -437,6 +437,7 @@ namespace Lazy
         m_dwTrangleCnt = 0;
 
         RSHolder holder1(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
+        //RSHolder holder2(pDevice, D3DRS_ALPHABLENDENABLE, FALSE);
 
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_WRAP);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);

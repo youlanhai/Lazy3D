@@ -23,4 +23,7 @@ float4 psPixelLight(
     Diffuse.rgb = Light(normalize(EyeNml.xyz), normalize(Normal.xyz));
     Diffuse.a = 1.0f;
     return tex2D(textureSampler, Tex0) * Diffuse;
+    //float4 cr = tex2D(textureSampler, Tex0) * Diffuse;
+    //cr.a = 1.0f;
+    //return cr;
 }
