@@ -123,7 +123,7 @@ bool CGame::init(void)
     g_player = new Player();
     g_player->setPhysics(new IPhysics());
     g_player->setSpeed(Vector3(8.0f, 8.0, 8.0f));
-    g_player->setPosition(Vector3(-31, 69.0f, 39.0f));
+    g_player->setPosition(Vector3(-32, 4.0f, 46.0f));
     EntityMgr::instance()->add(g_player);
     
     tstring resource = L"model/jingtian/jingtian.x";

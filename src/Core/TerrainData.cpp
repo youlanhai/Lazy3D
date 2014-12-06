@@ -134,6 +134,14 @@ namespace Lazy
         float h00 = getAbsHeight(xOff, zOff);
         float h11 = getAbsHeight(xOff + 1, zOff + 1);
 
+        /*
+        *  h00--h10
+        *   |\   |
+        *   | \  |
+        *   |  \ |
+        *  h01--h11
+        */
+
         // Work out which triangle we are in and calculate the interpolated
         // height.
         if (xf > zf)
