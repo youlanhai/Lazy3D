@@ -41,6 +41,9 @@
     <ClInclude Include="LzpyEmbed.h">
       <Filter>embed</Filter>
     </ClInclude>
+    <ClInclude Include="LzpyExtendType.h">
+      <Filter>extend</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp" />
@@ -73,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="LzpyEmbed.cpp">
       <Filter>embed</Filter>
+    </ClCompile>
+    <ClCompile Include="LzpyExtendType.cpp">
+      <Filter>extend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

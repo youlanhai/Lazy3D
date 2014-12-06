@@ -234,7 +234,7 @@ void doTestObject();
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    Py_SetPythonHome(L"../../src/third_part/python33");
+    Py_SetPythonHome(L"../../third_party/python33");
     PyImport_AppendInittab("Lzpy", PyInit_LazyPy);
     PyImport_AppendInittab("noddy2", PyInit_noddy2);
     PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
