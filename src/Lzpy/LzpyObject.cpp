@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "LzpyObject.h"
 #include "LzpyTuple.h"
 #include "LzpyStr.h"

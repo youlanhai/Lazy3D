@@ -70,7 +70,7 @@ def replace_in_file(fpath):
 	if existBom and content == source:
 		return False
 	
-	#print "replaced: ", fpath
+	print "replaced: ", fpath
 
 	handle = open(fpath, "wb")
 	if not existBom: handle.write(UTF8_BOM)

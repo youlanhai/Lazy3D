@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "Effect.h"
 #include "RenderDevice.h"
@@ -23,7 +23,7 @@ namespace Lazy
             it != m_manualConstants.end(); ++it)
             delete it->second;
 
-        // EffectConstantSetter ÊÇ¹«ÓÃµÄ£¬²»ÐèÒªÔÚÕâÀïÊÍ·Å¡£
+        // EffectConstantSetter æ˜¯å…¬ç”¨çš„ï¼Œä¸éœ€è¦åœ¨è¿™é‡Œé‡Šæ”¾ã€‚
         for (AutoConstants::iterator it = m_autoConstants.begin();
             it != m_autoConstants.end(); ++it)
             delete it->second;
@@ -107,7 +107,7 @@ namespace Lazy
 
          s_pCurrentEffect = this;
 
-        // ÉèÖÃ×Ô¶¯±äÁ¿
+        // è®¾ç½®è‡ªåŠ¨å˜é‡
         for (AutoConstants::iterator it = m_autoConstants.begin();
             it != m_autoConstants.end(); ++it)
             it->first->apply(it->second);

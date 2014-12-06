@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "../utility/Event.h"
 #include <functional>

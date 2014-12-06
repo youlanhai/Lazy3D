@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifndef LAZPY_SCRIPT_H
 #define LAZPY_SCRIPT_H

@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 
 #include "LzpyBase.h"
 
 namespace Lzpy
 {
-    ///ÓÃÓÚpythonÊä³öÖØ¶¨Ïò
+    ///ç”¨äºpythonè¾“å‡ºé‡å®šå‘
     class PyOutput : public PyBase
     {
         LZPY_DEF(PyOutput, PyBase);

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #ifdef USE_BOOST_PYTHON_H
 #include <boost/python.hpp>

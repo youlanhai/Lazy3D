@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "LzpyDict.h"
 #include "LzpyList.h"
 

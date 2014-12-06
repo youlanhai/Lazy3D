@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "ModelFactory.h"
 
 #include "AnimModel.h"

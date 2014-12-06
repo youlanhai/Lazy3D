@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "LPyMisc.h"
 #include "LPyEntity.h"
 #include "LPyPhysics.h"

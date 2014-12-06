@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Plane.h"
 #include "Line.h"
 #include "Triangle.h"

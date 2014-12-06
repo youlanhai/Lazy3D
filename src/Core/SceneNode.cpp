@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "SceneNode.h"
 #include "../Math/MathTool.h"
 
@@ -265,7 +265,7 @@ namespace Lazy
             m_parent->delChild(this);
     }
 
-    /** µ±½áµã¼ÓÈë³¡¾°Ê÷ºó£¬»á±»µ÷ÓÃ¡£*/
+    /** å½“ç»“ç‚¹åŠ å…¥åœºæ™¯æ ‘åï¼Œä¼šè¢«è°ƒç”¨ã€‚*/
     void SceneNode::onEnterWorld()
     {
         assert(!m_inWorld && "SceneNode::onEnterWorld - this node has been in world.");
@@ -277,7 +277,7 @@ namespace Lazy
         m_children.unlock();
     }
 
-    /** µ±½áµã´Ó³¡¾°Ê÷ÒÆ³ıÖ®Ç°£¬»á±»µ÷ÓÃ¡£*/
+    /** å½“ç»“ç‚¹ä»åœºæ™¯æ ‘ç§»é™¤ä¹‹å‰ï¼Œä¼šè¢«è°ƒç”¨ã€‚*/
     void SceneNode::onLeaveWorld()
     {
         assert(m_inWorld && "SceneNode::onLeaveWorld - this node has been leave world.");
@@ -307,7 +307,7 @@ namespace Lazy
         }
     }
 
-    ///»­ÃæäÖÈ¾
+    ///ç”»é¢æ¸²æŸ“
     void SceneNode::render(IDirect3DDevice9 * pDevice)
     {
         m_children.lock();
@@ -318,7 +318,7 @@ namespace Lazy
         m_children.unlock();
     }
 
-    ///Âß¼­¸üĞÂ
+    ///é€»è¾‘æ›´æ–°
     void SceneNode::update(float elapse)
     {
         m_children.lock();

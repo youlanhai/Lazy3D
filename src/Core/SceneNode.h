@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Base.h"
 #include "RenderInterface.h"
@@ -25,9 +25,9 @@ namespace Lazy
     }
 
 
-    /** ³¡¾°½áµã¡£
-     *  Ò»¸ö½áµã¿ÉÒÔÓµÓĞÈô¸É×Ó½áµã£¬´Ó¶ø¹¹³ÉÒ»¸ö³¡¾°Ê÷¡£
-     *  ¹ÒÔÚ³¡¾°Ê÷ÉÏµÄ½áµã£¬Ã¿Ö¡¶¼¿ÉÒÔ±»¸üĞÂ£¨update£©ºÍäÖÈ¾£¨render£©¡£
+    /** åœºæ™¯ç»“ç‚¹ã€‚
+     *  ä¸€ä¸ªç»“ç‚¹å¯ä»¥æ‹¥æœ‰è‹¥å¹²å­ç»“ç‚¹ï¼Œä»è€Œæ„æˆä¸€ä¸ªåœºæ™¯æ ‘ã€‚
+     *  æŒ‚åœ¨åœºæ™¯æ ‘ä¸Šçš„ç»“ç‚¹ï¼Œæ¯å¸§éƒ½å¯ä»¥è¢«æ›´æ–°ï¼ˆupdateï¼‰å’Œæ¸²æŸ“ï¼ˆrenderï¼‰ã€‚
      */
     class SceneNode : public IBase, public IRenderable
     {
@@ -98,7 +98,7 @@ namespace Lazy
         const std::string & getName() const { return m_name; }
         BOOL inWorld() const { return m_inWorld; }
 
-        /** ¸ù¾İÃû³Æ²éÕÒ×Ó½áµã¡£name¿ÉÒÔÎªÂ·¾¶ĞÎÊ½£¬Èç "parent/child1" */
+        /** æ ¹æ®åç§°æŸ¥æ‰¾å­ç»“ç‚¹ã€‚nameå¯ä»¥ä¸ºè·¯å¾„å½¢å¼ï¼Œå¦‚ "parent/child1" */
         SceneNodePtr findChild(const std::string & name);
 
         void addChild(SceneNodePtr child);
@@ -116,15 +116,15 @@ namespace Lazy
         TChildren::iterator         end() { return m_children.end(); }
         TChildren::const_iterator   end() const { return m_children.end(); }
 
-        /** µ±½áµã¼ÓÈë³¡¾°Ê÷ºó£¬»á±»µ÷ÓÃ¡£*/
+        /** å½“ç»“ç‚¹åŠ å…¥åœºæ™¯æ ‘åï¼Œä¼šè¢«è°ƒç”¨ã€‚*/
         virtual void onEnterWorld();
-        /** µ±½áµã´Ó³¡¾°Ê÷ÒÆ³ıÖ®Ç°£¬»á±»µ÷ÓÃ¡£*/
+        /** å½“ç»“ç‚¹ä»åœºæ™¯æ ‘ç§»é™¤ä¹‹å‰ï¼Œä¼šè¢«è°ƒç”¨ã€‚*/
         virtual void onLeaveWorld();
 
-        ///»­ÃæäÖÈ¾
+        ///ç”»é¢æ¸²æŸ“
         virtual void render(IDirect3DDevice9 * pDevice);
 
-        ///Âß¼­¸üĞÂ
+        ///é€»è¾‘æ›´æ–°
         virtual void update(float elapse);
 
         virtual void saveToStream(LZDataPtr data);

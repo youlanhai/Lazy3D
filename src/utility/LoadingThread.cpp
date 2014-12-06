@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "LoadingThread.h"
 #include "Misc.h"
 
