@@ -38,11 +38,6 @@ namespace Lazy
         }
     }
 
-    static float lerp(float a, float b, float t)
-    {
-        return a - (a * t) + (b * t);
-    }
-
     DWORD TerrinVertex::FVF = D3DFVF_XYZ | D3DFVF_NORMAL | D3DFVF_TEX2; //<灵活顶点格式
     int TerrinVertex::SIZE = sizeof(TerrinVertex);
 
@@ -51,6 +46,7 @@ namespace Lazy
         , m_cols(0)
         , m_gridSize(0.0f)
         , m_origin(MathConst::vec3Zero)
+        , m_diagonalDistanceX4(0.0f)
     {}
 
     bool HeightMap::load(const tstring & filename)
@@ -67,6 +63,9 @@ namespace Lazy
         m_cols = root->readInt(L"cols");
         m_gridSize = root->readFloat(L"gridSize", 1.0f);
         readVector3(root, L"origin", m_origin);
+
+        // sqrt( x * x + z * z)
+        m_diagonalDistanceX4 = sqrt(m_gridSize * m_gridSize * 2.0f) * 4.0f;
 
         tstring rawfile = root->readString(L"rawFile");
         int depth = root->readInt(L"rawBit");
@@ -116,49 +115,99 @@ namespace Lazy
 
     float HeightMap::getHeight(float x, float z) const
     {
-        x = (x - m_origin.x) / m_gridSize;
-        z = (z - m_origin.z) / m_gridSize;
+        // calculate the x and z positions on the height map.
+        float xs = (x - m_origin.x) / m_gridSize;
+        float zs = (z - m_origin.z) / m_gridSize;
 
-        //计算x,z坐标所在的行列值
-        int col = int(x);//向下取整
-        int row = int(z);
+        // calculate the fractional coverage for the x/z positions
+        float xf = xs - floorf(xs);
+        float zf = zs - floorf(zs);
 
-        // 获取如下图4个顶点的高度
-        //
-        //  A   B
-        //  *---*
-        //  | / |
-        //  *---*
-        //  C   D
+        // find the height map start cell of this height
+        int32 xOff = int32(floorf(xs));
+        int32 zOff = int32(floorf(zs));
 
-        float A = getAbsHeight(row, col);
-        float B = getAbsHeight(row, col + 1);
-        float C = getAbsHeight(row + 1, col);
-        float D = getAbsHeight(row + 1, col + 1);
+        float ret = 0;
 
-        float height;
-#if 0
-        height = (A + B + C + D) * 0.25f;
-#else
-        float dx = x - col;
-        float dz = z - row;
+        // the cells diagonal goes from top left to bottom right.
+        // Get the heights for the diagonal
+        float h00 = getAbsHeight(xOff, zOff);
+        float h11 = getAbsHeight(xOff + 1, zOff + 1);
 
-        if (dz < 1.0f - dx)//(x,z)点在ABC三角形上
+        // Work out which triangle we are in and calculate the interpolated
+        // height.
+        if (xf > zf)
         {
-            float uy = B - A;
-            float vy = C - A;
-
-            height = A + lerp(0.0f, uy, dx) + lerp(0.0f, vy, dz);//线形插值得到高度
+            float h10 = getAbsHeight(xOff + 1, zOff);
+            ret = h10 + (h00 - h10) * (1.f - xf) + (h11 - h10) * zf;
         }
-        else//(x,z)点在BCD三角形上
+        else
         {
-            float uy = C - D;
-            float vy = B - D;
-
-            height = D + lerp(0.0f, uy, 1.0f - dx) + lerp(0.0f, vy, 1.0f - dz);
+            float h01 = getAbsHeight(xOff, zOff + 1);
+            ret = h01 + (h11 - h01) * xf + (h00 - h01) * (1.f - zf);
         }
-#endif
-        return height + m_origin.y;
+
+        return ret;
+    }
+
+
+    Vector3 HeightMap::getNormal(int x, int z) const
+    {
+       const float diagonalMultiplier = 0.7071067811f;// sqrt( 0.5 )
+
+        Vector3 ret;
+        ret.y = m_diagonalDistanceX4 + (m_gridSize * 2 + m_gridSize * 2);
+        ret.x = getAbsHeight(x - 1, z) - getAbsHeight(x + 1, z);
+        ret.z = getAbsHeight(x, z - 1) - getAbsHeight(x, z + 1);
+
+        float val = getAbsHeight(x - 1, z - 1) - getAbsHeight(x + 1, z + 1);
+        val *= diagonalMultiplier;
+
+        ret.x += val;
+        ret.z += val;
+
+        val = getAbsHeight(x - 1, z + 1) - getAbsHeight(x + 1, z - 1);
+        val *= diagonalMultiplier;
+
+        ret.x += val;
+        ret.z -= val;
+        ret.normalize();
+
+        return ret;
+    }
+
+
+    Vector3  HeightMap::getNormal(float x, float z) const
+    {
+        float xf = (x - m_origin.x) / m_gridSize;
+        float zf = (z - m_origin.z) / m_gridSize;
+
+        Vector3 ret;
+        float xFrac = xf - ::floorf(xf);
+        float zFrac = zf - ::floorf(zf);
+
+        xf -= xFrac;
+        zf -= zFrac;
+
+        int xfi = (int) xf;
+        int zfi = (int) zf;
+        Vector3 n1 = getNormal(xfi, zfi);
+        Vector3 n2 = getNormal(xfi + 1, zfi);
+        Vector3 n3 = getNormal(xfi, zfi + 1);
+        Vector3 n4 = getNormal(xfi + 1, zfi + 1);
+
+        n1 *= (1 - xFrac)*(1 - zFrac);
+        n2 *= (xFrac) *(1 - zFrac);
+        n3 *= (1 - xFrac)*(zFrac);
+        n4 *= (xFrac) *(zFrac);
+
+        ret = n1;
+        ret += n2;
+        ret += n3;
+        ret += n4;
+
+        ret.normalize();
+        return ret;
     }
 
 } // end namespace Lazy

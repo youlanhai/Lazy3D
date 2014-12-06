@@ -31,6 +31,7 @@ namespace Lazy
 
         /** 获得物理高度*/
         float getHeight(float x, float z) const;
+        HeightMapPtr getHeightMap() const { return m_heightmap; }
 
         const tstring & getMapName() const { return m_mapName; }
 

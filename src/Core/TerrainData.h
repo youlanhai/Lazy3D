@@ -77,9 +77,11 @@ namespace Lazy
 
         /** 根据(x, z)坐标返回插值之后的y坐标。如果(x, z)超出边界，则返回m_origin.y。*/
         float getHeight(float x, float z) const;
-        
         float getAbsHeight(int row, int col) const;
 
+        Vector3 getNormal(float x, float z) const;
+        Vector3 getNormal(int x, int z) const;
+        
     private:
         tstring                 m_resource;
         std::vector<float>      m_rawdata;
@@ -89,6 +91,7 @@ namespace Lazy
         float                   m_gridSize;
         int                     m_rows;
         int                     m_cols;
+        float                   m_diagonalDistanceX4;
     };
 
     typedef RefPtr<HeightMap>   HeightMapPtr;

@@ -307,7 +307,7 @@ namespace Lazy
 
         root->writeInt(L"rows", m_chunkRows);
         root->writeInt(L"cols", m_chunkCols);
-        root->writeBool(L"onGround", m_objOnGround);
+        root->writeBool(L"onGround", m_objOnGround != FALSE);
 
         if (!saveSection(root, filename))
         {

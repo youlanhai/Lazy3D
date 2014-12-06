@@ -108,21 +108,18 @@ namespace Lazy
 
         T vertices = (T)nVertices;
         T grid = vertices - 1;
-        T i = 0;
         for (T r = 0; r < grid; ++r)
         {
             for (T c = 0; c < grid; ++c)
             {
                 T n = r * vertices + c;
-                pIndex[i + 0] = n;
-                pIndex[i + 1] = n + vertices;
-                pIndex[i + 2] = n + 1;
+                *pIndex++ = n;
+                *pIndex++ = n + vertices + 1;
+                *pIndex++ = n + 1;
 
-                pIndex[i + 3] = n + 1;
-                pIndex[i + 4] = n + vertices;
-                pIndex[i + 5] = n + vertices + 1;
-
-                i += 6;
+                *pIndex++ = n;
+                *pIndex++ = n + vertices;
+                *pIndex++ = n + vertices + 1;
             }
         }
 
@@ -482,6 +479,8 @@ namespace Lazy
             return;
         }
 
+        HeightMapPtr heightmap = m_pMap->getHeightMap();
+
         //以下是创建网格数据
         const int nVertices = MapConfig::NbChunkVertex;
         TerrinVertex *p;
@@ -494,11 +493,9 @@ namespace Lazy
                 p = pVertex + i;
                 p->pos.x = m_rect.left + c * m_gridSize;
                 p->pos.z = m_rect.top + r * m_gridSize;
-                p->pos.y = m_pMap->getHeight(p->pos.x, p->pos.z);
+                p->pos.y = heightmap->getHeight(p->pos.x, p->pos.z);
 
-                p->nml.x = 0.0f;
-                p->nml.y = 1.0f;
-                p->nml.z = 0.0f;
+                p->nml = heightmap->getNormal(p->pos.x, p->pos.z);
 
                 p->uv1.x = p->pos.x * m_uvScale;
                 p->uv1.y = p->pos.z * m_uvScale;
@@ -509,7 +506,7 @@ namespace Lazy
         }
 
         m_mesh.unlockVB();
-        updateNormal();
+        //updateNormal();
     }
 
     bool TerrainChunk::save()
