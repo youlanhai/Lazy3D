@@ -1,6 +1,6 @@
 ﻿#include "stdafx.h"
 #include "SceneNode.h"
-#include "../Math/MathTool.h"
+#include "../Physics/MathTool.h"
 
 namespace Lazy
 {

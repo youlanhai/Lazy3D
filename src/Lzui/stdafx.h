@@ -13,7 +13,7 @@
 #include "UIConfig.h"
 
 #include "../utility/Utility.h"
-#include "../Math/Math.h"
+#include "../Physics/Math.h"
 
 #ifdef ENABLE_SCRIPT
 #include "../Lzpy/Lzpy.h"

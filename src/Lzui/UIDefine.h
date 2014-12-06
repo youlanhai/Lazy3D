@@ -13,7 +13,7 @@
 #include "../Render/Texture.h"
 #include "../Render/Effect.h"
 
-#include "../Font/Font.h"
+#include "../Render/Font.h"
 
 
 namespace Lazy

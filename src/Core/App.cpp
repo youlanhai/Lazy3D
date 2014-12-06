@@ -10,7 +10,7 @@
 #include "SceneNodeFactory.h"
 
 #include "../Render/Texture.h"
-#include "../Font/Font.h"
+#include "../Render/Font.h"
 #include "../Render/RenderDevice.h"
 
 #pragma comment(lib, "d3d9.lib")

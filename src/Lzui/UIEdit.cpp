@@ -2,7 +2,7 @@
 #include "UIEdit.h"
 #include "UIGuiMgr.h"
 #include "UISprite.h"
-#include "../Font/Font.h"
+#include "../Render/Font.h"
 #include "../Render/RenderDevice.h"
 
 namespace Lazy

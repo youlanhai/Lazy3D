@@ -5,7 +5,7 @@
 #include "TypeParser.h"
 
 #ifdef ENABLE_SCRIPT
-#include "../PyUI/LzpyLzd.h"
+#include "../PyScript/LzpyLzd.h"
 #endif
 
 namespace Lazy

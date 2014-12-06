@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "../Math/Math.h"
+#include "../Physics/Math.h"
 #include "../Physics/Physics.h"
 #include "../Lzpy/Lzpy.h"
 

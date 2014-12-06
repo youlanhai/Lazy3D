@@ -1,7 +1,7 @@
 ﻿#pragma once
 
-#include "../Math/Vector.h"
-#include "../Math/Matrix.h"
+#include "../Physics/Vector.h"
+#include "../Physics/Matrix.h"
 #include "UIDefine.h"
 
 namespace Lazy

@@ -15,7 +15,7 @@
 
 #include "../utility/Utility.h"
 #include "../Render/Config.h"
-#include "../Math/Math.h"
+#include "../Physics/Math.h"
 
 namespace Lazy
 {
