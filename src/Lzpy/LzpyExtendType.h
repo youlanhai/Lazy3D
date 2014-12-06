@@ -125,7 +125,7 @@ namespace Lzpy
         pytype_.tp_new = this->tp_new;
         pytype_.tp_init = this->tp_init;
         pytype_.tp_dealloc = this->tp_dealloc;
-        pytype_.tp_base = helper::py_type<class_type::BaseClass>();
+        pytype_.tp_base = py_type<class_type::BaseClass>();
 
         //We can do something in this function.
         class_type::s_initExtens();
