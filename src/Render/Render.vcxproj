@@ -47,6 +47,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>../../third_party/freetype;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -81,6 +82,8 @@
     <ClInclude Include="Effect.h" />
     <ClInclude Include="EffectConstant.h" />
     <ClInclude Include="EffectConstantSetter.h" />
+    <ClInclude Include="Font.h" />
+    <ClInclude Include="FontTextrue.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderDevice.h" />
     <ClInclude Include="ResFactory.h" />
@@ -97,6 +100,8 @@
     <ClCompile Include="Effect.cpp" />
     <ClCompile Include="EffectConstant.cpp" />
     <ClCompile Include="EffectConstantSetter.cpp" />
+    <ClCompile Include="Font.cpp" />
+    <ClCompile Include="FontTextrue.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
     <ClCompile Include="ResFactory.cpp" />

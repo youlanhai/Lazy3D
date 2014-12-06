@@ -84,6 +84,29 @@
   <ItemGroup>
     <ClInclude Include="main.h" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Core\Core.vcxproj">
+      <Project>{bf66b9b2-1853-4a8e-9953-fab9af8630db}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Lzpy\Lzpy.vcxproj">
+      <Project>{565187cb-a76b-4b7f-96a4-56dd1ffe9628}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Lzui\Lzui.vcxproj">
+      <Project>{528debdd-0756-491b-a2ab-5c993b0361e4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Physics\Physics.vcxproj">
+      <Project>{05a30c55-a7e9-45cb-a40a-46cabad6a77e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\PyScript\PyScript.vcxproj">
+      <Project>{d75fc8b3-2026-4d50-8e89-35950d042c83}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Render\Render.vcxproj">
+      <Project>{4719ec88-9005-4157-bef6-e77f304e3f24}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\utility\utility.vcxproj">
+      <Project>{88de6072-be2c-43ff-bbce-35b197ce66ea}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

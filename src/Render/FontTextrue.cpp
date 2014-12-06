@@ -1,5 +1,6 @@
 ﻿#include "StdAfx.h"
 #include "FontTextrue.h"
+#include "RenderDevice.h"
 
 namespace Lazy
 {

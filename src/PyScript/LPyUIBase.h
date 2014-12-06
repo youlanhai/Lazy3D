@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../Lzui/UIWidget.h"
+#include "../Lzui/UIGuiMgr.h"
 
 namespace Lzpy
 {

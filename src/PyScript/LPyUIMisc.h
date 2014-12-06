@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include "LzpyUIBase.h"
+#include "LPyUIBase.h"
 
 namespace Lzpy
 {

@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
-#include "LzpyUIMisc.h"
-#include "LzpyLzd.h"
-#include "LzpyConsole.h"
+#include "LPyUIMisc.h"
+#include "LPyLzd.h"
+#include "LPyConsole.h"
 
 namespace Lzpy
 {
