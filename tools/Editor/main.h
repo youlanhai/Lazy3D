@@ -3,6 +3,7 @@
 
 #include "Core/Core.h"
 #include "Lzui/Lzui.h"
+#include "PyScript/PyUI.h"
 
 using namespace Lazy;
 

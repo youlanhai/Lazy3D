@@ -29,7 +29,7 @@ static PyMethodDef pymethods[] = {
 //3.定义导出模块
 static PyModuleDef pymodule = {
     PyModuleDef_HEAD_INIT,
-    "LazyPy",
+    "Lzpy",
     NULL,
     -1,
     pymethods,
@@ -235,9 +235,9 @@ void doTestObject();
 int _tmain(int argc, _TCHAR* argv[])
 {
     Py_SetPythonHome(L"../../src/third_part/python33");
-    PyImport_AppendInittab("LazyPy", PyInit_LazyPy);
+    PyImport_AppendInittab("Lzpy", PyInit_LazyPy);
     PyImport_AppendInittab("noddy2", PyInit_noddy2);
-    PyImport_AppendInittab("helper", LazyPy::PyInit_helper);
+    PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
     Py_SetProgramName(argv[0]);
 
     Py_Initialize();
@@ -258,7 +258,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 void doTestObject()
 {
-    using namespace LazyPy;
+    using namespace Lzpy;
 
     //testCase("test false", false);
 
@@ -284,7 +284,7 @@ void doTestObject()
     //object x1 = 1; //语法错误，不能隐式构造
     int x1 = 9999;
     object x2 = build_object(x1);
-    testCase("object.parse", x2.parse<int>() == x1);
+    testCase("object.parse", parse_object<int>(x2) == x1);
     //x2.parse<char>(); //语法错误，不支持的类型
     //x2.parse<const char *>(); //语法错误，不支持的类型
 
@@ -293,13 +293,12 @@ void doTestObject()
     testCase("parse_object", x3 == x1);
 
     std::string x4("string.haha!");
-    object x5;
-    x5.build(x4);
-    testCase("object.build", x4 == x5.parse<char*>());
+    object x5 = build_object(x4);
+    testCase("object.build", parse_object<char*>(x5) == x4);
 
     float x6 = 3.14f;
     object x7 = build_object(x6);
-    testCase("build_object", x7.parse<float>() == x6);
+    testCase("build_object", parse_object<float>(x7) == x6);
 
     int x8 = 1234;
     object x9 = build_object("hello str");
@@ -318,24 +317,24 @@ void doTestObject()
 
 void doTest()
 {
-    LazyPy::addSysPath(L"./");
+    Lzpy::addSysPath(L"./");
 
 #if 0
     PyRun_SimpleString("import sys");
     PyRun_SimpleString("print(sys.path)");
 #endif
 
-    LazyPy::object module = LazyPy::import(L"LazyTest");
+    Lzpy::object module = Lzpy::import(L"LazyTest");
     if (module)
     {
 #if 0
-        LazyPy::object testFun = module.getattr(L"doTest");
+        Lzpy::object testFun = module.getattr(L"doTest");
         if (testFun) testFun();
         else std::cout << "doTest was not found!" << std::endl;
 #else
         module.call_method("doTest");
 #endif
-        LazyPy::object test2 = module.getattr("test2");
+        Lzpy::object test2 = module.getattr("test2");
         if (test2)
         {
             test2.call(L"hello world!");

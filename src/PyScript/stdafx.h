@@ -15,3 +15,4 @@
 //#include "../utility/Utility.h"
 #include "../Core/Core.h"
 #include "../Lzpy/Lzpy.h"
+#include "../Lzui/Lzui.h"

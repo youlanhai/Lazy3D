@@ -187,9 +187,7 @@ namespace Lazy
 
     void Slidebar::onSlide()
     {
-#ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("onSlide", m_rate);
-#endif
     }
 
 

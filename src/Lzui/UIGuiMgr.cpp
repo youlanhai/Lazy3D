@@ -33,11 +33,8 @@ namespace Lazy
 
     GUIMgr::~GUIMgr(void)
     {
-#ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("destroy");
-#else
         destroy();
-#endif
 
         g_ptrGUIMgr = NULL;
         delete m_render;

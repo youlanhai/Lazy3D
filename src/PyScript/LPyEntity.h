@@ -20,27 +20,13 @@ namespace Lzpy
     public:
         PyModel();
 
-        LZPY_DEF_GET(yaw, m_model->getYaw);
-        LZPY_DEF_SET(yaw, m_model->setYaw, float);
-
-        LZPY_DEF_GET(pitch, m_model->getPitch);
-        LZPY_DEF_SET(pitch, m_model->setPitch, float);
-
-        LZPY_DEF_GET(roll, m_model->getRoll);
-        LZPY_DEF_SET(roll, m_model->setRoll, float);
-
-        LZPY_DEF_GET(scale, m_model->getScale);
-        LZPY_DEF_SET(scale, m_model->setScale, float);
-
         LZPY_DEF_GET(resource, m_model->source);
 
-        LZPY_DEF_GET(isSkeleton, m_model->isSkeleton);
-        LZPY_DEF_GET(isMesh, m_model->isMesh);
         LZPY_DEF_GET(height, getHeight);
         LZPY_DEF_GET(aabb, getAABB);
 
-        LZPY_DEF_GET(aabbVisible, m_model->isBoundVisib);
-        LZPY_DEF_SET(aabbVisible, m_model->showBound, bool);
+        LZPY_DEF_GET(aabbVisible, m_model->getBBVisible);
+        LZPY_DEF_SET(aabbVisible, m_model->setBBVisible, bool);
 
         LZPY_DEF_METHOD(playAction);
         LZPY_DEF_METHOD_0(stopAction);
@@ -94,8 +80,8 @@ namespace Lzpy
         LZPY_DEF_GET(state, m_physics->getState);
         LZPY_DEF_SET(state, m_physics->setState, DWORD);
 
-        LZPY_DEF_GET(aiEnble, m_physics->isAIEnable);
-        LZPY_DEF_SET(aiEnble, m_physics->enableAI, bool);
+        LZPY_DEF_GET(aiEnble, m_physics->getAIEnable);
+        LZPY_DEF_SET(aiEnble, m_physics->setAIEnable, bool);
 
         LZPY_DEF_GET(enable, m_physics->isEnabled);
         LZPY_DEF_SET(enable, m_physics->enable, bool);
@@ -127,7 +113,7 @@ namespace Lzpy
         ///是否可以被鼠标选择
         virtual bool canSelect(void) const override;
 
-        virtual bool isPlayer(void) override;
+        virtual bool ifPlayer(void) const override;
 
         virtual void onFocusCursor(UINT msg) override;
 

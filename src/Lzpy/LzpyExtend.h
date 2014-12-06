@@ -9,7 +9,7 @@ namespace Lzpy
     ///测试导出类
     class PyTestClass : public PyBase
     {
-        LZPY_DEF(PyTestClass, PyBase);
+        LZPY_DEF(PyTestClass);
     public:
         PyTestClass();
 

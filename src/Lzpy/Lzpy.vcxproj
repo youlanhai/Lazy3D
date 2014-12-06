@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{565187CB-A76B-4B7F-96A4-56DD1FFE9628}</ProjectGuid>
+    <ProjectGuid>{112DF40C-B0C2-4A56-ADE9-B0DD0246144E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lzpy</RootNamespace>
   </PropertyGroup>
@@ -45,7 +45,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;ENABLE_SCRIPT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../third_party/python33/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

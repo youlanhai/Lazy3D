@@ -7,7 +7,7 @@ namespace Lzpy
     ///用于python输出重定向
     class PyOutput : public PyBase
     {
-        LZPY_DEF(PyOutput, PyBase);
+        LZPY_DEF(PyOutput);
     public:
         PyOutput();
 

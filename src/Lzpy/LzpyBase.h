@@ -11,7 +11,7 @@ namespace Lzpy
         ///导出基类
         class PyBase : public PyObject
         {
-            LZPY_DEF(PyBase, PyObject);
+            LZPY_DEF_COMMON(PyBase, PyObject);
         public:
             PyBase();
             ~PyBase();

@@ -83,6 +83,7 @@
     <ClInclude Include="LPyMap.h" />
     <ClInclude Include="LPyMisc.h" />
     <ClInclude Include="LPyPhysics.h" />
+    <ClInclude Include="LPySceneNode.h" />
     <ClInclude Include="LPyScript.h" />
     <ClInclude Include="LPyUIBase.h" />
     <ClInclude Include="LPyUIMisc.h" />
@@ -97,6 +98,7 @@
     <ClCompile Include="LPyMap.cpp" />
     <ClCompile Include="LPyMisc.cpp" />
     <ClCompile Include="LPyPhysics.cpp" />
+    <ClCompile Include="LPySceneNode.cpp" />
     <ClCompile Include="LPyUIBase.cpp" />
     <ClCompile Include="LPyUIMisc.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -143,7 +143,6 @@ namespace Lazy
         void setDrawable(bool enable) { m_drawable = enable; }
         bool getDrawable() const { return m_drawable; }
 
-#ifdef ENABLE_SCRIPT
 
         /** borrw reference */
         Lzpy::object_base getSelf() const { return m_self; }
@@ -156,8 +155,6 @@ namespace Lazy
         /** python端脚本，ui类不持有python引用计数。*/
         Lzpy::object_base   m_self;
         tstring             m_script;
-
-#endif
 
     public: //对子控件操作
 

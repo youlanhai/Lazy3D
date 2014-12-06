@@ -34,9 +34,7 @@ namespace Lazy
         {
             setCheck(!m_bCheck);
 
-#ifdef ENABLE_SCRIPT
             m_self.call_method_quiet("onButtonCheck", m_bCheck);
-#endif
         }
 
         return Button::onEvent(event);

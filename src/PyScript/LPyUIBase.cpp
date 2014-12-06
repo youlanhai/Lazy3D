@@ -2,9 +2,6 @@
 #include "LPyUIBase.h"
 #include "LPyLzd.h"
 
-#ifndef ENABLE_SCRIPT
-#error the flag ENABLE_SCRIPT doen't defined
-#endif
 
 namespace Lzpy
 {

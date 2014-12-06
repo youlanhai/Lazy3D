@@ -215,17 +215,13 @@ namespace Lazy
     void Edit::onFocusGet()
     {
         getGUIMgr()->activeEdit(this);
-#ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("onFocusGet");
-#endif
     }
 
     void Edit::onFocusLost()
     {
         getGUIMgr()->unactiveEdit(this);
-#ifdef ENABLE_SCRIPT
         m_self.call_method_quiet("onFocusLost");
-#endif
     }
 
     void Edit::updateText()

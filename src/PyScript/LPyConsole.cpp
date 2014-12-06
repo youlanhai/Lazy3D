@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "LzpyConsole.h"
+#include "LPyConsole.h"
 
 namespace Lzpy
 {
