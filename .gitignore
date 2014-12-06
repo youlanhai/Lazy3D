@@ -21,7 +21,8 @@
 *.sublime*
 __pycache__
 ipch
-[Dd]ebug
-[Rr]elease
-Debug_Script
-Release_Script
+[Dd]ebug/
+[Rr]elease/
+Debug_Script/
+Release_Script/
+
