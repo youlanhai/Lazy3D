@@ -9,6 +9,8 @@
 #include "Mesh.h"
 #include "EffectConstantSetter.h"
 
+#include "../Core/App.h"
+
 namespace Lazy
 {
 
@@ -101,15 +103,14 @@ namespace Lazy
             m_d3dpp.BackBufferHeight = m_d3dmm.Height;
             m_d3dpp.FullScreen_RefreshRateInHz = m_d3dmm.RefreshRate;
         }
+
+        getApp()->onCreateDevice(&m_d3dpp);
     }
 
     ///初始化
     bool RenderDevice::create(HWND hWnd, HINSTANCE hInstance, bool fullSrc)
     {
-        assert(hWnd && "RenderDevice::create");
-
-        if (m_device != nullptr)
-            throw(std::runtime_error("Dx Device has been created!"));
+        assert(m_device == nullptr && "RenderDevice::create - the device has been created!");
 
         m_hWnd = hWnd;
         m_hInstance = hInstance;
@@ -138,8 +139,21 @@ namespace Lazy
         }
         pd3d.delRef();
 
+        D3DADAPTER_IDENTIFIER9 adapterInfo;
+        if (FAILED(pd3d->GetAdapterIdentifier(D3DADAPTER_DEFAULT, 0, &adapterInfo)))
+        {
+            LOG_ERROR(L"Can't get the infomation of default video adapter.");
+            return false;
+        }
+
+        LOG_INFO(L"Driver: %S", adapterInfo.Driver);
+        LOG_INFO(L"Description: %S", adapterInfo.Description);
+        LOG_INFO(L"DeviceName: %S", adapterInfo.DeviceName);
+        LOG_INFO(L"DriverVersion: %d %u", adapterInfo.DriverVersion.HighPart, adapterInfo.DriverVersion.LowPart);
+
         if (FAILED(pd3d->GetDeviceCaps(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL, &m_d3dcaps)))
         {
+            LOG_ERROR(L"Doesn't support hardware device.");
             return false;
         }
 
@@ -166,9 +180,9 @@ namespace Lazy
             return false;
         }
 
-        m_device->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+        m_device->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
         m_device->SetRenderState(D3DRS_ZENABLE, TRUE);
-        m_device->SetRenderState(D3DRS_LIGHTING, TRUE);
+        m_device->SetRenderState(D3DRS_LIGHTING, FALSE);
         m_device->SetRenderState(D3DRS_AMBIENT, D3DCOLOR_XRGB(100, 100, 100));
 
         m_device->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);

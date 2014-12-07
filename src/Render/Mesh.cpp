@@ -23,7 +23,6 @@ namespace Lazy
 
         LPD3DXATTRIBUTERANGE	pAttributeTable;
         TexturePtr *            ppTextures;		//纹理数组
-        LPD3DXMESH				pOrigMesh;		//原始网格模型
         DWORD					NumInfl;		//每个顶点最多受多少骨骼的影响
         DWORD					NumAttributeGroups;		//属性组数量,即子网格的数量
         LPD3DXBUFFER			pBoneCombinationBuf;	//骨骼组合表
@@ -47,7 +46,6 @@ namespace Lazy
         pSkinInfo = nullptr;
 
         pAttributeTable = nullptr;
-        pOrigMesh = nullptr;		//原始网格模型
         NumInfl = 0;		//每个顶点最多受多少骨骼的影响
         NumAttributeGroups = 0;		//属性组数量,即子网格的数量
         pBoneCombinationBuf = nullptr;	//骨骼组合表
@@ -71,7 +69,6 @@ namespace Lazy
         SafeRelease(pBoneCombinationBuf);
         SafeRelease(MeshData.pMesh);
         SafeRelease(pSkinInfo);
-        SafeRelease(pOrigMesh);
 
         if (pNextMeshContainer)
         {
@@ -314,18 +311,6 @@ namespace Lazy
             pMeshContainer->pSkinInfo = pSkinInfo;
             pMeshContainer->pSkinInfo->AddRef();
 
-            //复制网格信息
-            pMeshContainer->pOrigMesh = pMesh;
-            pMeshContainer->pOrigMesh->AddRef();
-
-            //复制骨骼信息
-            DWORD nBones = pSkinInfo->GetNumBones();
-            pMeshContainer->pBoneOffsetMatrices = new Matrix[nBones];
-            for (DWORD i = 0; i < nBones; ++i)
-            {
-                pMeshContainer->pBoneOffsetMatrices[i] = *(pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(i));
-            }
-
             //生成蒙皮网格模型
             hr = m_pMesh->generateSkinnedMesh(pMeshContainer);
 
@@ -473,48 +458,62 @@ namespace Lazy
     {
         assert(pMeshContainer);
 
-        if (pMeshContainer->pSkinInfo == NULL) 
-            return S_OK;
+        LPD3DXSKININFO pSkinInfo = pMeshContainer->pSkinInfo;
+        assert(pSkinInfo != NULL);
 
-        SafeRelease(pMeshContainer->MeshData.pMesh);
+        //复制骨骼信息
+        const DWORD nBones = pSkinInfo->GetNumBones();
+        pMeshContainer->pBoneOffsetMatrices = new Matrix[nBones];
+        for (DWORD i = 0; i < nBones; ++i)
+        {
+            pMeshContainer->pBoneOffsetMatrices[i] = *(pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(i));
+        }
+
+        //转换成蒙皮网格
+        HRESULT hr;
+        LPD3DXMESH pOrigMesh = pMeshContainer->MeshData.pMesh;
+        pMeshContainer->MeshData.pMesh = NULL;
         SafeRelease(pMeshContainer->pBoneCombinationBuf);
-    
-        const D3DCAPS9 * pCaps = Lazy::rcDevice()->getCaps();
+        do
+        {
+            DWORD NumMaxFaceInfl;
 
-        DWORD NumMaxFaceInfl;
-        DWORD Flags = D3DXMESHOPT_VERTEXCACHE | D3DXMESH_MANAGED;
-        //获取网格模型的索引缓冲区
-        LPDIRECT3DINDEXBUFFER9 pIB;
-        HRESULT hr = pMeshContainer->pOrigMesh->GetIndexBuffer(&pIB);
-        if (FAILED(hr))
-            return hr;
+            //获取网格模型的索引缓冲区
+            LPDIRECT3DINDEXBUFFER9 pIB;
+            hr = pOrigMesh->GetIndexBuffer(&pIB);
+            if (FAILED(hr))
+                break;
 
-        //影响一个面的矩阵不会超过12个，自己画就晓得了
-        hr = pMeshContainer->pSkinInfo->GetMaxFaceInfluences(
-            pIB,
-            pMeshContainer->pOrigMesh->GetNumFaces(),
-            &NumMaxFaceInfl);
-        pIB->Release();
-        if (FAILED(hr))
-            return hr;
+            //影响一个面的矩阵不会超过12个，自己画就晓得了
+            hr = pSkinInfo->GetMaxFaceInfluences(
+                pIB,
+                pOrigMesh->GetNumFaces(),
+                &NumMaxFaceInfl);
 
-        NumMaxFaceInfl = min<DWORD>(NumMaxFaceInfl, 12);
-        pMeshContainer->NumPaletteEntries = pMeshContainer->pSkinInfo->GetNumBones();
+            pIB->Release();
+            if (FAILED(hr))
+                break;
 
-        //生成蒙皮网格模型
-        hr = pMeshContainer->pSkinInfo->ConvertToIndexedBlendedMesh(
-            pMeshContainer->pOrigMesh,
-            Flags,
-            pMeshContainer->NumPaletteEntries,
-            pMeshContainer->pAdjacency,
-            NULL,
-            NULL,
-            NULL,
-            &pMeshContainer->NumInfl,
-            &pMeshContainer->NumAttributeGroups,
-            &pMeshContainer->pBoneCombinationBuf,
-            &pMeshContainer->MeshData.pMesh);
+            NumMaxFaceInfl = min<DWORD>(NumMaxFaceInfl, 12);
+            pMeshContainer->NumPaletteEntries = nBones;
 
+
+            //生成蒙皮网格模型
+            hr = pSkinInfo->ConvertToIndexedBlendedMesh(
+                pOrigMesh,
+                D3DXMESHOPT_VERTEXCACHE | D3DXMESH_MANAGED,
+                pMeshContainer->NumPaletteEntries,
+                pMeshContainer->pAdjacency,
+                NULL,
+                NULL,
+                NULL,
+                &pMeshContainer->NumInfl,
+                &pMeshContainer->NumAttributeGroups,
+                &pMeshContainer->pBoneCombinationBuf,
+                &pMeshContainer->MeshData.pMesh);
+
+        } while (0);
+        pOrigMesh->Release();
         return hr;
     }
 

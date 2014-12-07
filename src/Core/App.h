@@ -190,6 +190,8 @@ namespace Lazy
         RenderTaskPtr       m_pRenderTaskMgr;   //< 渲染队列
         RenderTaskPtr       m_pUpdateTaskMgr;   //< 更新队列
         KeyboardPtr	        m_pKeyboard;
+
+        friend class RenderDevice;
     };
 
 }// end namespace Lazy
