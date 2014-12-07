@@ -54,10 +54,10 @@
     <ClInclude Include="LPyUIMisc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PyUI.h">
+    <ClInclude Include="LPySceneNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LPySceneNode.h">
+    <ClInclude Include="LPyModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -90,6 +90,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="LPySceneNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LPyScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LPyModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

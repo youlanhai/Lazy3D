@@ -7,8 +7,6 @@ namespace Lzpy
 {
     using namespace Lazy;
 
-    void exportPyPhsicis(const char * module);
-
     object build_object(const Vector2 & v);
     bool parse_object(Vector2 & v, object o);
 

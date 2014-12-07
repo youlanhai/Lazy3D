@@ -2,9 +2,6 @@
 
 namespace Lzpy
 {
-    ///导出模块方法
-    LZPY_DEF_MODULE(lzd);
-
     class PyLazyData : public PyBase
     {
         LZPY_DEF(PyLazyData);
@@ -48,6 +45,9 @@ namespace Lzpy
 
         Lazy::LZDataPtr m_data;
     };
+
+    object make_object(Lazy::LZDataBase * ptr);
+    bool parse_object(Lazy::LZDataBase *& ptr, object o);
 
     object make_object(Lazy::LZDataPtr ptr);
     bool parse_object(Lazy::LZDataPtr & ptr, object o);

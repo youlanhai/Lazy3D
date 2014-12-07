@@ -34,6 +34,8 @@ namespace Lazy
         void setBBVisible(BOOL visible) { m_bbVisible = visible; }
         BOOL getBBVisible() const { return m_bbVisible; }
 
+        float getHeight() const;
+
     public://动画相关
 
         /** 播放动画*/

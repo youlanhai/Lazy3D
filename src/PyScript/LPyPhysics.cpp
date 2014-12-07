@@ -247,7 +247,7 @@ namespace Lzpy
     //////////////////////////////////////////////////////////////////////
     /// export entry
     //////////////////////////////////////////////////////////////////////
-    void exportPyPhsicis(const char * module)
+    void exportPhysics(const char * module)
     {
         LZPY_REGISTER_CLASS(Vector2, PyVector2);
         LZPY_REGISTER_CLASS(Vector3, PyVector3);

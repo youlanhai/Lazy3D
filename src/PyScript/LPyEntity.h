@@ -2,6 +2,7 @@
 
 #include "../Core/Entity.h"
 #include "LPyPhysics.h"
+#include "LPySceneNode.h"
 
 namespace Lzpy
 {
@@ -9,37 +10,6 @@ namespace Lzpy
 
     class PyEntity;
 
-
-    ////////////////////////////////////////////////////////////////////
-    //model
-    ////////////////////////////////////////////////////////////////////
-
-    class PyModel : public PyBase
-    {
-        LZPY_DEF(PyModel, PyBase);
-    public:
-        PyModel();
-
-        LZPY_DEF_GET(resource, m_model->source);
-
-        LZPY_DEF_GET(height, getHeight);
-        LZPY_DEF_GET(aabb, getAABB);
-
-        LZPY_DEF_GET(aabbVisible, m_model->getBBVisible);
-        LZPY_DEF_SET(aabbVisible, m_model->setBBVisible, bool);
-
-        LZPY_DEF_METHOD(playAction);
-        LZPY_DEF_METHOD_0(stopAction);
-        LZPY_DEF_METHOD_0(getActionCount);
-        LZPY_DEF_METHOD_1(getActionName);
-        LZPY_DEF_METHOD_1(setAnimSpeed);
-        LZPY_DEF_METHOD_1(showAABB);
-
-        float getHeight();
-        object getAABB();
-
-        ModelPtr m_model;
-    };
 
     ////////////////////////////////////////////////////////////////////
     //physics

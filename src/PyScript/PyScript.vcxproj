@@ -82,12 +82,12 @@
     <ClInclude Include="LPyLzd.h" />
     <ClInclude Include="LPyMap.h" />
     <ClInclude Include="LPyMisc.h" />
+    <ClInclude Include="LPyModel.h" />
     <ClInclude Include="LPyPhysics.h" />
     <ClInclude Include="LPySceneNode.h" />
     <ClInclude Include="LPyScript.h" />
     <ClInclude Include="LPyUIBase.h" />
     <ClInclude Include="LPyUIMisc.h" />
-    <ClInclude Include="PyUI.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -97,8 +97,10 @@
     <ClCompile Include="LPyLzd.cpp" />
     <ClCompile Include="LPyMap.cpp" />
     <ClCompile Include="LPyMisc.cpp" />
+    <ClCompile Include="LPyModel.cpp" />
     <ClCompile Include="LPyPhysics.cpp" />
     <ClCompile Include="LPySceneNode.cpp" />
+    <ClCompile Include="LPyScript.cpp" />
     <ClCompile Include="LPyUIBase.cpp" />
     <ClCompile Include="LPyUIMisc.cpp" />
     <ClCompile Include="stdafx.cpp">

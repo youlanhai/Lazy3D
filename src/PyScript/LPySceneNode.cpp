@@ -4,49 +4,7 @@
 
 namespace Lzpy
 {
-    object build_object(SceneNode * v)
-    {
-        if (nullptr == v)
-            return none_object;
-
-        if (v->getScript())
-            return v->getScript();
-
-        LPySceneNode * p = new_instance_ex<LPySceneNode>();
-        p->m_node = v;
-        p->m_node->setScript(object_base(p));
-        return new_reference(p);
-    }
-
-    bool parse_object(SceneNode *& v, object o)
-    {
-        if (o.is_none())
-        {
-            v = nullptr;
-            return true;
-        }
-
-        if (!CHECK_INSTANCE(LPySceneNode, o.get()))
-            return false;
-
-        v = o.cast<LPySceneNode>()->m_node.get();
-        return true;
-    }
-
-    object build_object(SceneNodePtr v)
-    {
-        return build_object(v.get());
-    }
-
-    bool parse_object(SceneNodePtr & v, object o)
-    {
-        SceneNode *p;
-        bool ret = parse_object(p, o);
-        v = p;
-        return ret;
-    }
-
-    LZPY_CLASS_EXPORT(LPySceneNode)
+    LZPY_CLASS_EXPORT(PySceneNode)
     {
         LZPY_GET(type);
         LZPY_GET(inWorld);
@@ -74,24 +32,24 @@ namespace Lzpy
         LZPY_METHOD_1(loadFromStream);
     }
 
-    LZPY_IMP_INIT(LPySceneNode)
+    LZPY_IMP_INIT(PySceneNode)
     {
-        PyErr_SetString(PyExc_RuntimeError, "LPySceneNode can't initialize directly!");
+        PyErr_SetString(PyExc_RuntimeError, "PySceneNode can't initialize directly!");
         return false;
     }
 
-    LPySceneNode::LPySceneNode()
+    PySceneNode::PySceneNode()
     {
     }
 
 
-    LPySceneNode::~LPySceneNode()
+    PySceneNode::~PySceneNode()
     {
         if (m_node)
             m_node->setScript(null_object);
     }
 
-    LZPY_IMP_METHOD_1(LPySceneNode, findChild)
+    LZPY_IMP_METHOD_1(PySceneNode, findChild)
     {
         std::string name;
         if (!parse_object(name, value))
@@ -101,37 +59,37 @@ namespace Lzpy
         return build_object(child);
     }
 
-    LZPY_IMP_METHOD_1(LPySceneNode, addChild)
+    LZPY_IMP_METHOD_1(PySceneNode, addChild)
     {
-        if (!CHECK_INSTANCE(LPySceneNode, value.get()))
+        if (!CHECK_INSTANCE(PySceneNode, value.get()))
             return null_object;
 
-        m_node->addChild(value.cast<LPySceneNode>()->m_node);
+        m_node->addChild(value.cast<PySceneNode>()->m_node);
         return none_object;
     }
 
-    LZPY_IMP_METHOD_1(LPySceneNode, delChild)
+    LZPY_IMP_METHOD_1(PySceneNode, delChild)
     {
-        if (!CHECK_INSTANCE(LPySceneNode, value.get()))
+        if (!CHECK_INSTANCE(PySceneNode, value.get()))
             return null_object;
 
-        m_node->delChild(value.cast<LPySceneNode>()->m_node);
+        m_node->delChild(value.cast<PySceneNode>()->m_node);
         return none_object;
     }
 
-    LZPY_IMP_METHOD_0(LPySceneNode, clearChildren)
+    LZPY_IMP_METHOD_0(PySceneNode, clearChildren)
     {
         m_node->clearChildren();
         return none_object;
     }
 
-    LZPY_IMP_METHOD_0(LPySceneNode, removeFromeParent)
+    LZPY_IMP_METHOD_0(PySceneNode, removeFromeParent)
     {
         m_node->removeFromParent();
         return none_object;
     }
 
-    LZPY_IMP_METHOD_1(LPySceneNode, saveToStream)
+    LZPY_IMP_METHOD_1(PySceneNode, saveToStream)
     {
         if (!CHECK_INSTANCE(PyLazyData, value.get()))
             return null_object;
@@ -140,7 +98,7 @@ namespace Lzpy
         return none_object;
     }
 
-    LZPY_IMP_METHOD_1(LPySceneNode, loadFromStream)
+    LZPY_IMP_METHOD_1(PySceneNode, loadFromStream)
     {
         if (!CHECK_INSTANCE(PyLazyData, value.get()))
             return null_object;

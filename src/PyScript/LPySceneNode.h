@@ -13,14 +13,14 @@ namespace Lzpy
     object build_object(SceneNodePtr v);
     bool parse_object(SceneNodePtr & v, object o);
 
-    class LPySceneNode : public PyBase
+    class PySceneNode : public PyBase
     {
-        LZPY_DEF(LPySceneNode);
+        LZPY_DEF(PySceneNode);
         
     public:
 
-        LPySceneNode();
-        ~LPySceneNode();
+        PySceneNode();
+        ~PySceneNode();
 
         LZPY_DEF_GET(type, m_node->getType);
         LZPY_DEF_GET(inWorld, m_node->inWorld);
@@ -59,5 +59,63 @@ namespace Lzpy
 
         SceneNodePtr m_node;
     };
+
+
+
+    template<typename TPy, typename TCxx>
+    object build_scene_node(TCxx * v)
+    {
+        if (nullptr == v)
+            return none_object;
+
+        if (v->getScript())
+            return v->getScript();
+
+        TPy * p = new_instance_ex<TPy>();
+        p->m_node = v;
+        p->m_node->setScript(object_base(p));
+        return new_reference(p);
+    }
+
+    template<typename TPy, typename TCxx>
+    bool parse_scene_node(TCxx *& v, object o)
+    {
+        if (o.is_none())
+        {
+            v = nullptr;
+            return true;
+        }
+
+        if (!CHECK_INSTANCE(TPy, o.get()))
+            return false;
+
+        v = static_cast<TCxx*>( o.cast<TPy>()->m_node.get() );
+        return true;
+    }
+
+
+#define BUILD_AND_PARSE_SCENE_NODE(TYPE_PY, TYPE_CXX) \
+    inline object build_object(TYPE_CXX * v)\
+    {\
+        return build_scene_node<TYPE_PY, TYPE_CXX>(v); \
+    }\
+    inline bool parse_object(TYPE_CXX *& v, object o)\
+    {\
+        return parse_scene_node<TYPE_PY, TYPE_CXX>(v, o); \
+    }\
+    inline object build_object(RefPtr<TYPE_CXX> v)\
+    {\
+        return build_scene_node<TYPE_PY, TYPE_CXX>(v.get()); \
+    }\
+    inline bool parse_object(RefPtr<TYPE_CXX> & v, object o)\
+    {\
+        TYPE_CXX *p = nullptr; \
+        bool ret = parse_scene_node<TYPE_PY, TYPE_CXX>(p, o); \
+        v = p; \
+        return ret; \
+    }
+
+
+    BUILD_AND_PARSE_SCENE_NODE(PySceneNode, SceneNode);
 
 }// end namespace Lzpy

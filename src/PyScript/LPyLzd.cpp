@@ -6,18 +6,42 @@ using namespace Lazy;
 namespace Lzpy
 {
 
-    object make_object(LZDataPtr ptr)
+    object make_object(Lazy::LZDataBase * ptr)
     {
         PyLazyData *p = new_instance_ex<PyLazyData>();
         p->m_data = ptr;
         return new_reference(p);
     }
 
+    bool parse_object(Lazy::LZDataBase *& ptr, object o)
+    {
+        if (o.is_none())
+        {
+            ptr = nullptr;
+            return true;
+        }
+
+        if (!CHECK_INSTANCE(PyLazyData, o.get()))
+            return false;
+
+        ptr = o.cast<PyLazyData>()->m_data.get();
+        return true;
+    }
+
+    object make_object(LZDataPtr ptr)
+    {
+        return make_object(ptr.get());
+    }
+
     bool parse_object(LZDataPtr & ptr, object o)
     {
-        if (!CHECK_INSTANCE(PyLazyData, o.get())) return false;
-        ptr = (o.cast<PyLazyData>())->m_data;
-        return true;
+        Lazy::LZDataBase * p;
+        if (parse_object(p, o))
+        {
+            ptr = p;
+            return true;
+        }
+        return false;
     }
 
     ////////////////////////////////////////////////////////////////////
@@ -330,15 +354,15 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
 
-    PyObject * _openLzdWithType(tuple arg, Lazy::DataType type)
+    PyObject * _openLzdWithType(PyObject *pArgs, Lazy::DataType type)
     {
-        Lazy::tstring path;
-        bool loadIfMiss = false;
+        const wchar_t * path;
+        int createIfMiss = 0;
 
-        if (!arg.parse_tuple_default(1, &path, &loadIfMiss))
+        if (!PyArg_ParseTuple(pArgs, "u|i", &path, &createIfMiss))
             return nullptr;
 
-        LZDataPtr ptr = Lazy::openSection(path, loadIfMiss, type);
+        LZDataPtr ptr = Lazy::openSection(path, createIfMiss != 0, type);
         if (!ptr) Py_RETURN_NONE;
 
         PyLazyData *pData = new_instance_ex<PyLazyData>();
@@ -349,12 +373,12 @@ namespace Lzpy
 
     LZPY_DEF_FUN(openLzd)
     {
-        return _openLzdWithType(tuple(arg), Lazy::DataType::Lzd);
+        return _openLzdWithType(arg, Lazy::DataType::Lzd);
     }
 
     LZPY_DEF_FUN(openXml)
     {
-        return _openLzdWithType(tuple(arg), Lazy::DataType::Xml);
+        return _openLzdWithType(arg, Lazy::DataType::Xml);
     }
 
     LZPY_DEF_FUN(saveSection)
@@ -372,10 +396,11 @@ namespace Lzpy
         return xincref(build_object(ret).get());
     }
 
-    LZPY_MODULE_BEG(lzd)
-    LZPY_REGISTER_CLASS(lzd, PyLazyData);
-    LZPY_FUN(openLzd);
-    LZPY_FUN(openXml);
-    LZPY_FUN(saveSection);
-    LZPY_MODULE_END();
+    void exportLZD(const char *module)
+    {
+        LZPY_REGISTER_CLASS(lzd, PyLazyData);
+        LZPY_FUN(openLzd);
+        LZPY_FUN(openXml);
+        LZPY_FUN(saveSection);
+    }
 }

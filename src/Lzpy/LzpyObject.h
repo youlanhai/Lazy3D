@@ -138,7 +138,7 @@ namespace Lzpy
     public:
 
         template<typename T>
-        T* cast() const { return (T*) m_ptr; }
+        T* cast() const { return static_cast<T*>(m_ptr); }
 
         inline PyObject *get() const {  return m_ptr; }
 

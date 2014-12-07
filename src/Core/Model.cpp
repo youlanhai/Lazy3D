@@ -67,4 +67,11 @@ namespace Lazy
     {
     }
 
+    float IModel::getHeight() const
+    {
+        AABB aabb = getWorldBoundingBox();
+        aabb.normalization();
+        return aabb.max.y - aabb.min.y;
+    }
+
 } // end namespace Lazy
