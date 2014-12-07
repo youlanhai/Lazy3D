@@ -1,4 +1,7 @@
 ﻿//Game.cpp
+
+#include "targetver.h"
+
 #include "main.h"
 #include "Physics/PhysicsDebug.h"
 
@@ -45,8 +48,8 @@ EntityPtr g_player;
 /*注册窗口类消息。请实现该消息来修改窗口风格。*/
 void CGame::onRegisterClass(WNDCLASSEX *pwc)
 {
-    //pwc->hIcon = LoadIcon(m_hInstance,MAKEINTRESOURCE(IDI_LZ));
-    //pwc->hIconSm = pwc->hIcon;
+    pwc->hIcon = LoadIcon(m_hInstance, MAKEINTRESOURCE(IDI_TESTPY));
+    pwc->hIconSm = pwc->hIcon;
 }
 
 /*创建设备消息。实现该方法来修改设备。*/
