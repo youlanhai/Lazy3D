@@ -1,5 +1,5 @@
 ﻿#include "stdafx.h"
-#include "LzpyLzd.h"
+#include "LPyLzd.h"
 
 using namespace Lazy;
 
@@ -8,7 +8,7 @@ namespace Lzpy
 
     object make_object(LZDataPtr ptr)
     {
-        PyLazyData *p = helper::new_instance_ex<PyLazyData>();
+        PyLazyData *p = new_instance_ex<PyLazyData>();
         p->m_data = ptr;
         return new_reference(p);
     }
@@ -78,7 +78,7 @@ namespace Lzpy
         wchar_t *value = L"";
         if (!PyArg_ParseTuple(arg.get(), "|uu", &tag, &value)) return null_object;
 
-        PyLazyData *p = helper::new_instance_ex<PyLazyData>();
+        PyLazyData *p = new_instance_ex<PyLazyData>();
         p->m_data = m_data->newOne(tag, value);
         return new_reference(p);
     }
@@ -93,7 +93,7 @@ namespace Lzpy
         LZDataPtr ptr = m_data->read(tag);
         if (!ptr) return none_object;
 
-        PyLazyData *py = helper::new_instance_ex<PyLazyData>();
+        PyLazyData *py = new_instance_ex<PyLazyData>();
         py->m_data = ptr;
 
         return new_reference(py);
@@ -108,7 +108,7 @@ namespace Lzpy
         LZDataPtr ptr = m_data->write(tag, value);
         if (!ptr) return none_object;
 
-        PyLazyData *py = helper::new_instance_ex<PyLazyData>();
+        PyLazyData *py = new_instance_ex<PyLazyData>();
         py->m_data = ptr;
 
         return new_reference(py);
@@ -134,7 +134,7 @@ namespace Lzpy
         tuple children(n);
         for (int i = 0; i < n; ++i)
         {
-            PyLazyData *py = helper::new_instance_ex<PyLazyData>();
+            PyLazyData *py = new_instance_ex<PyLazyData>();
             py->m_data = m_data->getChild(i);
             children.setitem(i, new_reference(py));
         }
@@ -341,7 +341,7 @@ namespace Lzpy
         LZDataPtr ptr = Lazy::openSection(path, loadIfMiss, type);
         if (!ptr) Py_RETURN_NONE;
 
-        PyLazyData *pData = helper::new_instance_ex<PyLazyData>();
+        PyLazyData *pData = new_instance_ex<PyLazyData>();
         pData->m_data = ptr;
 
         return pData;

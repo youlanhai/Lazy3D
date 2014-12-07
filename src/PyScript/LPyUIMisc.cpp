@@ -258,9 +258,9 @@ namespace Lzpy
 
 
     LZPY_MODULE_BEG(lui);
-    LZPY_REGISTER_CLASS(IControl, LzpyControl);
+    LZPY_REGISTER_CLASS(Widget, LzpyControl);
     LZPY_REGISTER_CLASS(Label, LzpyLabel);
-    LZPY_REGISTER_CLASS(Form, LzpyForm);
+    LZPY_REGISTER_CLASS(Window, LzpyForm);
     LZPY_REGISTER_CLASS(Button, LzpyButton);
     LZPY_REGISTER_CLASS(CheckBox, LzpySelect);
     LZPY_REGISTER_CLASS(Slidebar, LzpySlidebar);
@@ -300,7 +300,7 @@ namespace Lzpy
 
             void init() override
             {
-                s_root = helper::new_instance_ex<LzpyControl>();
+                s_root = new_instance_ex<LzpyControl>();
 
                 s_root->m_control = getGUIMgr();
                 s_root->m_control->setSelf(object_base(s_root));

@@ -70,7 +70,7 @@ namespace Lzpy
 
     class PyConsoleOutput : public PyBase
     {
-        LZPY_DEF(PyConsoleOutput, PyBase);
+        LZPY_DEF(PyConsoleOutput);
     public:
         PyConsoleOutput();
 

@@ -6,7 +6,7 @@ namespace Lzpy
 
     class LPySceneNode : public PyBase
     {
-        LZPY_DEF(LPySceneNode, PyBase);
+        LZPY_DEF(LPySceneNode);
         
     public:
 
@@ -18,6 +18,8 @@ namespace Lzpy
 
         LZPY_DEF_GETSET_MEMBER(speed, m_entity->m_vSpeed);
         LZPY_DEF_GETSET_MEMBER(scale, m_entity->m_vScale);
+
+    
     };
 
 }// end namespace Lzpy

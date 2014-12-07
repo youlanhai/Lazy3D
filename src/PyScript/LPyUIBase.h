@@ -22,7 +22,7 @@ namespace Lzpy
     //此类及其派生类，不得出现虚函数。
     class LzpyControl : public PyBase
     {
-        LZPY_DEF(LzpyControl, PyBase);
+        LZPY_DEF(LzpyControl);
 
     public:
         LzpyControl();

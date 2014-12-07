@@ -94,6 +94,7 @@
     <ClCompile Include="MemoryCheck.cpp" />
     <ClCompile Include="MemoryPool.cpp" />
     <ClCompile Include="Misc.cpp" />
+    <ClCompile Include="Object.cpp" />
     <ClCompile Include="SmartPtr.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -130,6 +131,7 @@
     <ClInclude Include="MemoryCheck.h" />
     <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="Misc.h" />
+    <ClInclude Include="Object.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="SmartPtr.h" />
     <ClInclude Include="stdafx.h" />

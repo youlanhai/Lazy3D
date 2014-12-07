@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{112DF40C-B0C2-4A56-ADE9-B0DD0246144E}</ProjectGuid>
+    <ProjectGuid>{565187CB-A76B-4B7F-96A4-56DD1FFE9628}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>Lzpy</RootNamespace>
   </PropertyGroup>

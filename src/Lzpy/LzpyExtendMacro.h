@@ -7,7 +7,7 @@
 
 ///链接额外属性
 #define LZPY_LINK_ATTR(NAME, FUN) \
-    helper::py_type<ThisClass>()->NAME = FUN
+    py_type<ThisClass>()->NAME = FUN
 
 ///定义init方法
 #define LZPY_IMP_INIT(CLASS) \

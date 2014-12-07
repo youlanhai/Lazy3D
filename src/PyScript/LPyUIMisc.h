@@ -7,7 +7,7 @@ namespace Lzpy
 
     class LzpyLabel : public LzpyControl
     {
-        LZPY_DEF(LzpyLabel, LzpyControl);
+        LZPY_DEF(LzpyLabel);
     public:
         LzpyLabel();
 
@@ -40,7 +40,7 @@ namespace Lzpy
 
     class LzpyForm : public LzpyControl
     {
-        LZPY_DEF(LzpyForm, LzpyControl);
+        LZPY_DEF(LzpyForm);
     public:
         LzpyForm();
 
@@ -53,7 +53,7 @@ namespace Lzpy
 
     class LzpySlidebar : public LzpyForm
     {
-        LZPY_DEF(LzpySlidebar, LzpyForm);
+        LZPY_DEF(LzpySlidebar);
     public:
         LzpySlidebar();
 
@@ -84,7 +84,7 @@ namespace Lzpy
 
     class LzpyButton : public LzpyControl
     {
-        LZPY_DEF(LzpyButton, LzpyControl);
+        LZPY_DEF(LzpyButton);
     public:
         LzpyButton();
 
@@ -102,7 +102,7 @@ namespace Lzpy
 
     class LzpySelect : public LzpyButton
     {
-        LZPY_DEF(LzpySelect, LzpyButton);
+        LZPY_DEF(LzpySelect);
     public:
         LzpySelect();
 
@@ -115,7 +115,7 @@ namespace Lzpy
 
     class LzpyEditorCtl : public LzpyControl
     {
-        LZPY_DEF(LzpyEditorCtl, LzpyControl);
+        LZPY_DEF(LzpyEditorCtl);
     public:
         LzpyEditorCtl();
 
@@ -127,7 +127,7 @@ namespace Lzpy
 
     class LzpyImage : public LzpyControl
     {
-        LZPY_DEF(LzpyImage, LzpyControl);
+        LZPY_DEF(LzpyImage);
     public:
         LzpyImage();
 
@@ -142,7 +142,7 @@ namespace Lzpy
 
     class LzpyEdit : public LzpyControl
     {
-        LZPY_DEF(LzpyEdit, LzpyControl);
+        LZPY_DEF(LzpyEdit);
     public:
         LzpyEdit();
 
@@ -155,7 +155,7 @@ namespace Lzpy
 
     class LzpyUIProxy : public LzpyControl
     {
-        LZPY_DEF(LzpyUIProxy, LzpyControl);
+        LZPY_DEF(LzpyUIProxy);
     public:
         LzpyUIProxy();
 

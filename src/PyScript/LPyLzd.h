@@ -7,7 +7,7 @@ namespace Lzpy
 
     class PyLazyData : public PyBase
     {
-        LZPY_DEF(PyLazyData, PyBase);
+        LZPY_DEF(PyLazyData);
 
     public:
         PyLazyData();

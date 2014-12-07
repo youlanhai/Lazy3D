@@ -5,39 +5,19 @@
 #ifndef LAZY3D_SMARTPTR_H
 #define LAZY3D_SMARTPTR_H
 
+#include "Object.h"
 
 namespace Lazy
 {
-
-    /** 引用计数类*/
-    class IBase
+    inline void incrementRef(Object * p)
     {
-    public:
-        IBase(void);
-        IBase(const IBase &);
-        virtual ~IBase(void);
+        p->incRef();
+    }
 
-        const IBase & operator = (const IBase &);
-
-        /** 增加引用计数*/
-        void addRef(void);
-
-        /** 减少引用计数*/
-        void delRef(void);
-
-        /** 获得引用计数*/
-        int getRef(void) const;
-
-        bool isRefUnique() const;
-
-        virtual void destroyThis(void) { delete this; }
-
-    private:
-        int     m_nRefCounter_;//引用计数
-    };
-
-#define SAFE_ADD_REF(p) if(p) p->addRef()
-#define SAFE_DEL_REF(p) if(p) p->delRef()
+    inline void decrementRef(Object *p)
+    {
+        p->decRef();
+    }
 
 
     /** 侵入式智能指针*/
@@ -162,12 +142,14 @@ namespace Lazy
 
         inline void safeAddRef(type * ptr)
         {
-            if (ptr != nullptr) ptr->addRef();
+            if (ptr != nullptr)
+                incrementRef(ptr);
         }
 
         inline void safeDelRef(type * ptr)
         {
-            if (ptr != nullptr) ptr->delRef();
+            if (ptr != nullptr)
+                decrementRef(ptr);
         }
 
         type* m_ptr;

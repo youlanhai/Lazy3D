@@ -138,9 +138,9 @@ inline bool _check_instance(const char * desc, const char * func, const char * f
 }
 
 #define CHECK_INSTANCE(CLASS, INSTANCE) \
-    (::Lzpy::helper::has_instance<CLASS>(INSTANCE, true) || \
+    (::Lzpy::has_instance<CLASS>(INSTANCE, true) || \
     _check_instance("CHECK_INSTANCE(" #CLASS ", " #INSTANCE ")", __FUNCTION__, __FILE__, __LINE__))
 
 #define CHECK_SUBCLASS(CLASS, SUBCLASS) \
-    (::Lzpy::helper::has_sub_class<CLASS>(SUBCLASS, true) || \
+    (::Lzpy::has_sub_class<CLASS>(SUBCLASS, true) || \
     _check_instance("CHECK_SUBCLASS(" #CLASS ", " #SUBCLASS ")", __FUNCTION__, __FILE__, __LINE__))
