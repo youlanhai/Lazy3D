@@ -16,7 +16,7 @@ namespace Lzpy
 
     PySkyBox::PySkyBox()
     {
-        m_sky = getApp()->getSkyBox();
+        m_sky = new SkyBox();
     }
 
     PySkyBox::~PySkyBox()
@@ -26,7 +26,6 @@ namespace Lzpy
 
     LZPY_IMP_INIT(PySkyBox)
     {
-        PyErr_SetString(PyExc_RuntimeError, "Can't create an instance of Lazy.SkyBox");
         return false;
     }
 
@@ -50,7 +49,7 @@ namespace Lzpy
         else if (CHECK_INSTANCE(PyEntity, v.get()))
         {
             m_source = v;
-            m_sky->setSource(m_source->m_entity.get());
+            m_sky->setSource(m_source->entity());
         }
     }
 
@@ -114,37 +113,33 @@ namespace Lzpy
         else if (CHECK_INSTANCE(PyEntity, v.get()))
         {
             m_source = v;
-            m_topboard->setSource(m_source->m_entity.get());
+            m_topboard->setSource(m_source->entity());
         }
     }
 
     ////////////////////////////////////////////////////////////////////
 
-    class PyCallObj : public Lazy::CallableNode
+    class PyCallObj : public Lazy::ITimerDelegate
     {
     public:
-        PyCallObj(float time, PyObject * pCall, PyObject *pArg)
-            : Lazy::CallableNode(time)
-            , m_func(pCall)
+        PyCallObj(PyObject * pCall, PyObject *pArg)
+            : m_func(pCall)
             , m_args(pArg)
         {}
 
-        virtual void onDead() override
+
+        virtual void onCall()
         {
             m_func.call_python(m_args);
         }
+
+        virtual void onCancel() {}
+        virtual void onExit() {}
 
     private:
         object m_func;
         object m_args;
     };
-
-    static PySkyBox *s_pSkyBox = nullptr;
-
-    LZPY_DEF_FUN_0(getSkyBox)
-    {
-        return xincref(s_pSkyBox);
-    }
 
     LZPY_DEF_FUN(callback)
     {
@@ -166,17 +161,17 @@ namespace Lzpy
             return nullptr;
         }
 
-        size_t id = Lazy::CallbackMgr::instance()->add(new PyCallObj(time, pFun, pFunArg));
+        TTimeHandle id = TimerMgr::instance()->addTimer(time, new PyCallObj(pFun, pFunArg));
         return xincref(build_object(id));
     }
 
     LZPY_DEF_FUN_1(cancelCallback)
     {
-        size_t id = 0;
+        TTimeHandle id = 0;
         if (!parse_object(id, object(value)))
             return nullptr;
 
-        Lazy::CallbackMgr::instance()->remove(id);
+        TimerMgr::instance()->remove(id);
         Py_RETURN_NONE;
     }
 
@@ -188,13 +183,10 @@ namespace Lzpy
 
             void init() override
             {
-                s_pSkyBox = helper::new_instance_ex<PySkyBox>();
             }
 
             void fini() override
             {
-                Py_DECREF(s_pSkyBox);
-                s_pSkyBox = nullptr;
             }
         };
 
@@ -202,16 +194,12 @@ namespace Lzpy
     }
 
 
-    LZPY_MODULE_BEG(Lazy);
-    exportPyEntity(module);
-    exportPyMap(module);
-    exportPyPhsicis(module);
+    void exportMisc(const char * module)
+    {
+        LZPY_REGISTER_CLASS(Topboard, PyTopboard);
+        LZPY_REGISTER_CLASS(SkyBox, PySkyBox);
 
-    LZPY_REGISTER_CLASS(Topboard, PyTopboard);
-    LZPY_REGISTER_CLASS(SkyBox, PySkyBox);
-
-    LZPY_FUN_0(getSkyBox);
-    LZPY_FUN(callback);
-    LZPY_FUN_1(cancelCallback);
-    LZPY_MODULE_END();
+        LZPY_FUN(callback);
+        LZPY_FUN_1(cancelCallback);
+    }
 }

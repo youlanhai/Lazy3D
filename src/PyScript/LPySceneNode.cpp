@@ -46,7 +46,7 @@ namespace Lzpy
     PySceneNode::~PySceneNode()
     {
         if (m_node)
-            m_node->setScript(null_object);
+            m_node->setScript(nullptr);
     }
 
     LZPY_IMP_METHOD_1(PySceneNode, findChild)

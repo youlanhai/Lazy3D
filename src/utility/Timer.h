@@ -20,7 +20,7 @@ namespace Lazy
     typedef RefPtr<ITimerDelegate> TimerDelegatePtr;
 
     typedef double TTimeValue;
-    typedef uint64 TTimeHandle;
+    typedef uint32 TTimeHandle;
 
     class TimerNode
     {

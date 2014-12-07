@@ -8,7 +8,7 @@ namespace Lzpy
 
     class PySkyBox : public PyBase
     {
-        LZPY_DEF(PySkyBox, PyBase);
+        LZPY_DEF(PySkyBox);
     public:
         PySkyBox();
         ~PySkyBox();
@@ -35,7 +35,7 @@ namespace Lzpy
 
     class PyTopboard : public PyBase
     {
-        LZPY_DEF(PyTopboard, PyBase);
+        LZPY_DEF(PyTopboard);
     public:
         PyTopboard();
         ~PyTopboard();
@@ -59,5 +59,4 @@ namespace Lzpy
         object_ptr<PyEntity>  m_source;
     };
 
-    LZPY_DEF_MODULE(Lazy);
 }

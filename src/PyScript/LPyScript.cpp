@@ -7,7 +7,7 @@ namespace Lzpy
     void exportPhysics(const char *module);
     void exportEntity(const char * module);
     void exportMap(const char * module);
-    
+    void exportMisc(const char * module);
 
     LZPY_MODULE_BEG(Lazy)
         exportLZD(module);
@@ -15,5 +15,6 @@ namespace Lzpy
         LZPY_REGISTER_CLASS(SceneNode, PySceneNode);
         exportEntity(module);
         exportMap(module);
+        exportMisc(module);
     LZPY_MODULE_END()
 }
