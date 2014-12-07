@@ -151,11 +151,109 @@ namespace Lzpy
     }
 
     //////////////////////////////////////////////////////////////////////
+    /// PyVector4
+    //////////////////////////////////////////////////////////////////////
+
+    LZPY_CLASS_EXPORT(PyVector4)
+    {
+        LZPY_LINK_ATTR(tp_str, PyVector4::reprfunc);
+
+        LZPY_MEMEBER(x, T_FLOAT, m_vector.x);
+        LZPY_MEMEBER(y, T_FLOAT, m_vector.y);
+        LZPY_METHOD(set);
+    }
+
+    PyVector4::PyVector4()
+    {}
+
+    /*static*/ PyObject * PyVector4::reprfunc(PyObject * self)
+    {
+        PyVector4 * pThis = (PyVector4*) self;
+
+        std::wostringstream os;
+        os << pThis->m_vector.x << ", " << pThis->m_vector.y << ", "
+            << pThis->m_vector.z << ", " << pThis->m_vector.w;
+        std::wstring str = os.str();
+        return PyUnicode_FromWideChar(str.c_str(), str.size());
+    }
+
+    LZPY_IMP_METHOD(PyVector4, set)
+    {
+        if (!arg.parse_tuple(&m_vector.x, &m_vector.y, &m_vector.z, &m_vector.w))
+            return null_object;
+
+        return none_object;
+    }
+    //////////////////////////////////////////////////////////////////////
+    /// PyQuaternion
+    //////////////////////////////////////////////////////////////////////
+
+    LZPY_CLASS_EXPORT(PyQuaternion)
+    {
+        LZPY_LINK_ATTR(tp_str, PyQuaternion::reprfunc);
+
+        LZPY_MEMEBER(x, T_FLOAT, m_value.x);
+        LZPY_MEMEBER(y, T_FLOAT, m_value.y);
+        LZPY_METHOD(set);
+    }
+
+    PyQuaternion::PyQuaternion()
+    {}
+
+    /*static*/ PyObject * PyQuaternion::reprfunc(PyObject * self)
+    {
+        PyQuaternion * pThis = (PyQuaternion*) self;
+
+        std::wostringstream os;
+        os << pThis->m_value.x << ", " << pThis->m_value.y << ", "
+            << pThis->m_value.z << ", " << pThis->m_value.w;
+        std::wstring str = os.str();
+        return PyUnicode_FromWideChar(str.c_str(), str.size());
+    }
+
+    LZPY_IMP_METHOD(PyQuaternion, set)
+    {
+        if (!arg.parse_tuple(&m_value.x, &m_value.y, &m_value.z, &m_value.w))
+            return null_object;
+
+        return none_object;
+    }
+    //////////////////////////////////////////////////////////////////////
+    /// PyAABB
+    //////////////////////////////////////////////////////////////////////
+
+    LZPY_CLASS_EXPORT(PyAABB)
+    {
+        LZPY_LINK_ATTR(tp_str, PyAABB::reprfunc);
+
+        LZPY_GETSET(min);
+        LZPY_GETSET(max);
+    }
+
+    PyAABB::PyAABB()
+    {}
+
+    /*static*/ PyObject * PyAABB::reprfunc(PyObject * self)
+    {
+        PyAABB * pThis = (PyAABB*) self;
+
+        std::wostringstream os;
+        os << pThis->m_aabb.min.x << ", " << pThis->m_aabb.min.y << ", " << pThis->m_aabb.min.z << ", "
+            << pThis->m_aabb.max.x << ", " << pThis->m_aabb.max.y << ", " << pThis->m_aabb.max.z;
+        std::wstring str = os.str();
+        return PyUnicode_FromWideChar(str.c_str(), str.size());
+    }
+
+    //////////////////////////////////////////////////////////////////////
     /// export entry
     //////////////////////////////////////////////////////////////////////
     void exportPyPhsicis(const char * module)
     {
+        LZPY_REGISTER_CLASS(Vector2, PyVector2);
         LZPY_REGISTER_CLASS(Vector3, PyVector3);
+        LZPY_REGISTER_CLASS(Vector4, PyVector4);
+        LZPY_REGISTER_CLASS(Quaternion, PyQuaternion);
+        LZPY_REGISTER_CLASS(AABB, PyAABB);
     }
 
 
@@ -209,4 +307,71 @@ namespace Lzpy
         return false;
     }
 
+
+    object build_object(const Vector4 & v)
+    {
+        PyVector4 * p = new_instance_ex<PyVector4>();
+        p->m_vector = v;
+        return new_reference(p);
+    }
+
+    bool parse_object(Vector4 & v, object o)
+    {
+        if (has_instance<PyVector4>(o.get()))
+        {
+            v = (o.cast<PyVector4>())->m_vector;
+            return true;
+        }
+        else if (o.is_tuple())
+        {
+            tuple arg(o);
+            if (arg.parse_tuple(&v.x, &v.y, &v.z, &v.w))
+                return true;
+        }
+
+        PyErr_SetString(PyExc_TypeError, "Must be a Vector4 or tuple4!");
+        return false;
+    }
+
+
+    object build_object(const Quaternion & v)
+    {
+        PyQuaternion * p = new_instance_ex<PyQuaternion>();
+        p->m_value = v;
+        return new_reference(p);
+    }
+
+    bool parse_object(Quaternion & v, object o)
+    {
+        if (has_instance<PyQuaternion>(o.get()))
+        {
+            v = (o.cast<PyQuaternion>())->m_value;
+            return true;
+        }
+        else if (o.is_tuple())
+        {
+            tuple arg(o);
+            if (arg.parse_tuple(&v.x, &v.y, &v.z, &v.w))
+                return true;
+        }
+
+        PyErr_SetString(PyExc_TypeError, "Must be a Quaternion or tuple4!");
+        return false;
+    }
+
+    object build_object(const AABB & v)
+    {
+        PyAABB *p = new_instance_ex<PyAABB>();
+        p->m_aabb = v;
+        return new_reference(p);
+    }
+
+    bool parse_object(AABB & v, object o)
+    {
+        if (!CHECK_INSTANCE(PyAABB, o.get()))
+            return false;
+
+        o.cast<PyAABB>()->m_aabb = v;
+        return true;
+    }
 }

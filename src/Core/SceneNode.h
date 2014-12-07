@@ -4,6 +4,8 @@
 #include "RenderInterface.h"
 #include "../utility/VisitPool.h"
 
+#include "../Lzpy/Lzpy.h"
+
 #define SCENE_NODE_HEADER(CLASS)        \
     typedef This    Base;               \
     typedef CLASS   This;               \
@@ -89,14 +91,20 @@ namespace Lazy
         void setVisible(bool visible) { m_visible = visible ? 0 : 1; }
         bool getVisible() const { return m_visible != 0; }
 
-        void setBoundingBox(const AABB & aabb){ m_aabb = aabb; }
-        const AABB & getBoundingBox() const { return m_aabb; }
-        AABB getWorldBoundingBox() const;
+        void                setBoundingBox(const AABB & aabb){ m_aabb = aabb; }
+        const AABB &        getBoundingBox() const { return m_aabb; }
+        AABB                getWorldBoundingBox() const;
 
-        SceneNode * getParent() { return m_parent; }
-        const SceneNode * getParent() const { return m_parent; }
+        SceneNode *         getParent() { return m_parent; }
+        const SceneNode *   getParent() const { return m_parent; }
+
         const std::string & getName() const { return m_name; }
+        void                setName(const std::string & name){ m_name = name; }
+
         BOOL inWorld() const { return m_inWorld; }
+
+        void setScript(Lzpy::object_base script){ m_script = script; }
+        Lzpy::object_base getScript() const { return m_script; }
 
         /** 根据名称查找子结点。name可以为路径形式，如 "parent/child1" */
         SceneNodePtr findChild(const std::string & name);
@@ -141,6 +149,7 @@ namespace Lazy
         BOOL                    m_inWorld;
         BOOL                    m_visible;
         AABB                    m_aabb;
+        Lzpy::object_base       m_script;
 
     private:
         Vector3                 m_position;
