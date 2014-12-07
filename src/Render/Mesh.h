@@ -18,7 +18,8 @@ namespace Lazy
         BoneFrame*  find(const char * name);
         void        updateMatrix(const Matrix & matParent);
 
-        Matrix      CombinedTransformationMatrix;
+        //当前骨骼的世界变换矩阵
+        Matrix      WorldTransformationMatrix;
     };
 
     ///蒙皮骨骼动画
@@ -40,8 +41,11 @@ namespace Lazy
 
         const AABB & getAABB() const { return m_aabb; }
 
-        /** 克隆动画控制器。*/
+        /** 克隆动画控制器。对于所有的Model而言，mesh是公用的（包括骨骼和mesh容器），
+        *   但动画的播放进度是不共享，所以每个Model都需要自己克隆一份动画控制器。
+        */
         dx::AnimController* cloneAnimaCtrl(void);
+
         dx::AnimController* getAnimationContrl() const { return m_pAnimController; }
 
     private:
@@ -49,10 +53,17 @@ namespace Lazy
         int		                m_dwTrangleCnt; ///< 渲染的三角形数量
         AABB                    m_aabb;         ///<aabb包围盒
         dx::AnimController*     m_pAnimController;  ///< 动画控制器
+
+        /** 将所有的MeshContainer集中到一起渲染，避免了每次渲染时，
+        *   需要遍历骨骼框架带来的多余开销。
+        */
         std::vector<MeshContainer*> m_subMeshes;
 
+        //渲染蒙皮网格的着色器
         static EffectPtr s_skinnedEffect;
+        //渲染无蒙皮网格的着色器
         static EffectPtr s_noskinnedEffect;
+
 
         friend class CAllocateHierarchy;
 

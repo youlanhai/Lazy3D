@@ -7,8 +7,10 @@
 
 namespace Lazy
 {
-    const int MaxNumBone = 16;
-    static Matrix g_pBoneMatrices[MaxNumBone];
+    //蒙皮mesh在一次draw的过程中，所依赖的最大骨骼数量。
+    //这个数量必须与shader中的数量保存一致。
+    const int MaxNumSkinBone = 16;
+    static Matrix g_bonePalette[MaxNumSkinBone];
 
     //////////////////////////////////////////////////////////////////////
     // MeshContainer
@@ -29,7 +31,6 @@ namespace Lazy
         Matrix**			    ppBoneMatrixPtrs;		//存放骨骼的组合变换矩阵
         Matrix*				    pBoneOffsetMatrices;	//存放骨骼的初始变换矩阵
         DWORD					NumPaletteEntries;		//骨骼数量上限
-        DWORD					iAttributeSW;
     };
 
     MeshContainer::MeshContainer(const char * name)
@@ -52,7 +53,6 @@ namespace Lazy
         ppBoneMatrixPtrs = nullptr;		//存放骨骼的组合变换矩阵
         pBoneOffsetMatrices = nullptr;	//存放骨骼的初始变换矩阵
         NumPaletteEntries = 0;		//骨骼数量上限
-        iAttributeSW = 0;
     }
 
     MeshContainer::~MeshContainer()
@@ -90,7 +90,7 @@ namespace Lazy
         pFrameFirstChild = nullptr;
 
         D3DXMatrixIdentity(&TransformationMatrix);
-        D3DXMatrixIdentity(&CombinedTransformationMatrix);
+        D3DXMatrixIdentity(&WorldTransformationMatrix);
     }
 
     BoneFrame::~BoneFrame()
@@ -135,7 +135,7 @@ namespace Lazy
 
     void BoneFrame::updateMatrix(const Matrix & matParent)
     {
-        D3DXMatrixMultiply(&CombinedTransformationMatrix, &TransformationMatrix, &matParent);
+        D3DXMatrixMultiply(&WorldTransformationMatrix, &TransformationMatrix, &matParent);
 
         if (pFrameSibling != NULL)
         {
@@ -144,7 +144,7 @@ namespace Lazy
 
         if (pFrameFirstChild != NULL)
         {
-            ((BoneFrame*) pFrameFirstChild)->updateMatrix(static_cast<Matrix&>(CombinedTransformationMatrix));
+            ((BoneFrame*) pFrameFirstChild)->updateMatrix(static_cast<Matrix&>(WorldTransformationMatrix));
         }
     }
 
@@ -500,7 +500,7 @@ namespace Lazy
                 break;
 
             NumMaxFaceInfl = min<DWORD>(NumMaxFaceInfl, 12);
-            pMeshContainer->NumPaletteEntries = min<DWORD>(MaxNumBone, nBones);
+            pMeshContainer->NumPaletteEntries = min<DWORD>(MaxNumSkinBone, nBones);
 
             //生成蒙皮网格模型
             hr = pSkinInfo->ConvertToIndexedBlendedMesh(
@@ -567,7 +567,7 @@ namespace Lazy
                 BoneFrame *pFrame = m_bone->find(pSkinInfo->GetBoneName(i));
                 if (pFrame != NULL)
                 {
-                    pMeshContainer->ppBoneMatrixPtrs[i] = &pFrame->CombinedTransformationMatrix;
+                    pMeshContainer->ppBoneMatrixPtrs[i] = &pFrame->WorldTransformationMatrix;
                 }
                 else
                 {
@@ -578,7 +578,7 @@ namespace Lazy
         else
         {
             pMeshContainer->ppBoneMatrixPtrs = new Matrix*[1];
-            pMeshContainer->ppBoneMatrixPtrs[0] = &( pOwner->CombinedTransformationMatrix );
+            pMeshContainer->ppBoneMatrixPtrs[0] = &( pOwner->WorldTransformationMatrix );
         }
 
         return S_OK;
@@ -626,7 +626,7 @@ namespace Lazy
             return;
         }
      
-        if (pMeshContainer->NumPaletteEntries > MaxNumBone)
+        if (pMeshContainer->NumPaletteEntries > MaxNumSkinBone)
             return;
 
         EffectPtr effect = s_skinnedEffect;
@@ -657,13 +657,13 @@ namespace Lazy
                 DWORD iMatrixIndex = pBoneComb[iAttrib].BoneId[iPaletteEntry];
                 if (iMatrixIndex != UINT_MAX)
                 {
-                    D3DXMatrixMultiply(&g_pBoneMatrices[iPaletteEntry],
+                    D3DXMatrixMultiply(&g_bonePalette[iPaletteEntry],
                         &pMeshContainer->pBoneOffsetMatrices[iMatrixIndex],
                         pMeshContainer->ppBoneMatrixPtrs[iMatrixIndex]);
                 }
             }
 
-            pMatrixArray->bindValue(g_pBoneMatrices, pMeshContainer->NumPaletteEntries);
+            pMatrixArray->bindValue(g_bonePalette, pMeshContainer->NumPaletteEntries);
             pCurNumBones->bindValue(int(pMeshContainer->NumInfl) - 1);
             pTexture->bindValue(pMeshContainer->ppTextures[AttribID]);
             rcDevice()->setMaterial(pMeshContainer->pMaterials[AttribID].MatD3D);
