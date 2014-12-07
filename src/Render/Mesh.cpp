@@ -7,7 +7,7 @@
 
 namespace Lazy
 {
-    const int MaxNumBone = 64;
+    const int MaxNumBone = 16;
     static Matrix g_pBoneMatrices[MaxNumBone];
 
     //////////////////////////////////////////////////////////////////////
@@ -500,8 +500,7 @@ namespace Lazy
                 break;
 
             NumMaxFaceInfl = min<DWORD>(NumMaxFaceInfl, 12);
-            pMeshContainer->NumPaletteEntries = nBones;
-
+            pMeshContainer->NumPaletteEntries = min<DWORD>(MaxNumBone, nBones);
 
             //生成蒙皮网格模型
             hr = pSkinInfo->ConvertToIndexedBlendedMesh(
