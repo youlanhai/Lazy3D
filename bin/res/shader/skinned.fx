@@ -1,6 +1,6 @@
 
 // Matrix Pallette
-static const int MAX_MATRICES = 32;
+static const int MAX_MATRICES = 64;
 float4x4    mWorldMatrixArray[MAX_MATRICES] ;//: WORLDMATRIXARRAY;
 
 void skinTransform(float4 position, float3 normal, 

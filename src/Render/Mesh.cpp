@@ -7,7 +7,7 @@
 
 namespace Lazy
 {
-    const int MaxNumBone = 32;
+    const int MaxNumBone = 64;
     static Matrix g_pBoneMatrices[MaxNumBone];
 
     //////////////////////////////////////////////////////////////////////
@@ -30,7 +30,6 @@ namespace Lazy
         Matrix**			    ppBoneMatrixPtrs;		//存放骨骼的组合变换矩阵
         Matrix*				    pBoneOffsetMatrices;	//存放骨骼的初始变换矩阵
         DWORD					NumPaletteEntries;		//骨骼数量上限
-        BOOL					UseSoftwareVP;			//是否使用软件顶点处理
         DWORD					iAttributeSW;
     };
 
@@ -55,7 +54,6 @@ namespace Lazy
         ppBoneMatrixPtrs = nullptr;		//存放骨骼的组合变换矩阵
         pBoneOffsetMatrices = nullptr;	//存放骨骼的初始变换矩阵
         NumPaletteEntries = 0;		//骨骼数量上限
-        UseSoftwareVP = TRUE;			//是否使用软件顶点处理
         iAttributeSW = 0;
     }
 
@@ -333,6 +331,7 @@ namespace Lazy
 
             if (FAILED(hr))
             {
+                LOG_ERROR(_T("Failed generateSkinnedMesh: %x"), hr);
                 delete pMeshContainer;
                 return hr;
             }
@@ -483,7 +482,7 @@ namespace Lazy
         const D3DCAPS9 * pCaps = Lazy::rcDevice()->getCaps();
 
         DWORD NumMaxFaceInfl;
-        DWORD Flags = D3DXMESHOPT_VERTEXCACHE;
+        DWORD Flags = D3DXMESHOPT_VERTEXCACHE | D3DXMESH_MANAGED;
         //获取网格模型的索引缓冲区
         LPDIRECT3DINDEXBUFFER9 pIB;
         HRESULT hr = pMeshContainer->pOrigMesh->GetIndexBuffer(&pIB);
@@ -500,24 +499,7 @@ namespace Lazy
             return hr;
 
         NumMaxFaceInfl = min<DWORD>(NumMaxFaceInfl, 12);
-        if (pCaps->MaxVertexBlendMatrixIndex + 1 < NumMaxFaceInfl)
-        {
-            pMeshContainer->NumPaletteEntries = min<DWORD>(
-                256, 
-                pMeshContainer->pSkinInfo->GetNumBones());
-
-            pMeshContainer->UseSoftwareVP = TRUE;
-            Flags |= D3DXMESH_SYSTEMMEM;
-        }
-        else
-        {
-            pMeshContainer->NumPaletteEntries = min2(
-                (pCaps->MaxVertexBlendMatrixIndex + 1) / 2,
-                pMeshContainer->pSkinInfo->GetNumBones());
-
-            pMeshContainer->UseSoftwareVP = FALSE;
-            Flags |= D3DXMESH_MANAGED;
-        }
+        pMeshContainer->NumPaletteEntries = pMeshContainer->pSkinInfo->GetNumBones();
 
         //生成蒙皮网格模型
         hr = pMeshContainer->pSkinInfo->ConvertToIndexedBlendedMesh(
@@ -684,12 +666,6 @@ namespace Lazy
 
         EffectConstant *pTexture = effect->getConstant("g_texture");
 
-        LPDIRECT3DDEVICE9 pd3dDevice = Lazy::rcDevice()->getDevice();
-        if (pMeshContainer->UseSoftwareVP)
-        {
-            pd3dDevice->SetSoftwareVertexProcessing(TRUE);
-        }
-
         LPD3DXBONECOMBINATION pBoneComb = reinterpret_cast<LPD3DXBONECOMBINATION>(
             pMeshContainer->pBoneCombinationBuf->GetBufferPointer());
         for (DWORD iAttrib = 0; iAttrib < pMeshContainer->NumAttributeGroups; iAttrib++)
@@ -731,13 +707,6 @@ namespace Lazy
                 effect->end();
             }
         }
-
-        // remember to reset back to hw vertex processing if software was required
-        if (pMeshContainer->UseSoftwareVP)
-        {
-            pd3dDevice->SetSoftwareVertexProcessing(FALSE);
-        }
-
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
     }
 
