@@ -50,7 +50,7 @@ namespace Lzpy
         cls_ = cls;
 
 #ifdef ENABLE_EXPORT_MSG
-        Lazy::debugMessageA("Register class to %s.%s", mod_.c_str(), cls_.c_str());
+        //Lazy::debugMessageA("Register class to %s.%s", mod_.c_str(), cls_.c_str());
 #endif
 
         helper::getExtenClasses(mod_)->push_back(this);

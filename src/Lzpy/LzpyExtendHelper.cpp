@@ -93,7 +93,7 @@ namespace Lzpy
     void pyExtenFunction(const char *modulename, const char *funname,
                          PyCFunction func, int argFlag, char *doc)
     {
-        Lazy::debugMessageA("Register export function %s.%s", modulename, funname);
+        //Lazy::debugMessageA("Register export function %s.%s", modulename, funname);
 
         PyMethodDef def = { funname, func, argFlag, doc };
 
