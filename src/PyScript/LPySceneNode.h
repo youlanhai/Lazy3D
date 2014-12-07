@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../Core/SceneNode.h"
+
 namespace Lzpy
 {
     using namespace Lazy;
@@ -14,12 +16,9 @@ namespace Lzpy
         ~LPySceneNode();
 
 
-        LZPY_DEF_GETSET_MEMBER(position, m_entity->m_vPos);
-
-        LZPY_DEF_GETSET_MEMBER(speed, m_entity->m_vSpeed);
-        LZPY_DEF_GETSET_MEMBER(scale, m_entity->m_vScale);
 
     
+        SceneNodePtr m_node;
     };
 
 }// end namespace Lzpy

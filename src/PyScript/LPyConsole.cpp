@@ -134,7 +134,7 @@ namespace Lzpy
     {
         if (!m_pyOutput)
         {
-            m_pyOutput = new_reference(helper::new_instance<PyConsoleOutput>());
+            m_pyOutput = new_reference(new_instance<PyConsoleOutput>());
         }
 
         if (!m_pyLocal)

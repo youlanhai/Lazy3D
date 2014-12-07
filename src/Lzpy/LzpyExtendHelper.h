@@ -33,7 +33,7 @@ namespace Lzpy
     }
 
 
-    ///创建python实例，并调用python的__init__方法。
+    /** 创建python实例，并调用python的__init__方法。*/
     template < typename class_type>
     class_type* new_instance(PyObject * args = nullptr, PyObject *kwds = nullptr)
     {
@@ -49,7 +49,7 @@ namespace Lzpy
         return (class_type*) p;
     }
 
-    ///创建python实例，不调用python的__init__方法。
+    /** 创建python实例，不调用python的__init__方法。*/
     template < typename class_type>
     class_type* new_instance_ex()
     {

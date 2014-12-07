@@ -122,10 +122,14 @@
 ////////////////////////////////////////////////////////////////////////
 
 ///导出方法开始
-#define LZPY_CLASS_BEG(ClassType)               \
+#define LZPY_CLASS_EXPORT(ClassType)                \
     PyExtenClass<ClassType>  ClassType::s_factory;  \
-    void ClassType::s_initExtens(void)              \
-    {                                               \
+    void ClassType::s_initExtens(void)
+
+///导出方法开始
+#define LZPY_CLASS_BEG(ClassType)               \
+    LZPY_CLASS_EXPORT(ClassType)                \
+    {                                           \
         typedef ClassType ThisClass;
 
 ///导出方法
