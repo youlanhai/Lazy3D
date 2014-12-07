@@ -2,7 +2,7 @@
 #include "main.h"
 #include "Physics/PhysicsDebug.h"
 
-//#include "resource.h"
+#include "resource.h"
 
 static const char * compileTime = __DATE__ " " __TIME__;
 
@@ -17,10 +17,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
     Lazy::changeCurDirectory();
     Lazy::getfs()->addResPath(L"res/");
 
-    INIT_LOG(_T("TestTerrain.log"));
+    INIT_LOG(_T("Editor.log"));
     LOG_DEBUG(L"compile time: %S", compileTime);
 
-    if (g_game.create(hInstance, L"Terrain", 900, 600, false))
+    if (g_game.create(hInstance, L"Editor", 900, 600, false))
     {
         g_game.mainLoop();
     }
