@@ -13,9 +13,10 @@
 #include "LPyUIMisc.h"
 #include "LPyConsole.h"
 
-
-///导出模块方法
-LZPY_DEF_MODULE(Lazy);
-
+namespace Lzpy
+{
+    ///导出模块方法
+    LZPY_DEF_MODULE(Lazy);
+}
 
 #endif //LAZPY_SCRIPT_H

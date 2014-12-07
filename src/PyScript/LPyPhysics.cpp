@@ -22,6 +22,11 @@ namespace Lzpy
     PyVector2::PyVector2()
     {}
 
+    LZPY_IMP_INIT(PyVector2)
+    {
+        return true;
+    }
+
     /*static*/ PyObject * PyVector2::reprfunc(PyObject * self)
     {
         PyVector2 * pThis = (PyVector2*) self;
@@ -166,6 +171,11 @@ namespace Lzpy
     PyVector4::PyVector4()
     {}
 
+    LZPY_IMP_INIT(PyVector4)
+    {
+        return true;
+    }
+
     /*static*/ PyObject * PyVector4::reprfunc(PyObject * self)
     {
         PyVector4 * pThis = (PyVector4*) self;
@@ -200,6 +210,11 @@ namespace Lzpy
     PyQuaternion::PyQuaternion()
     {}
 
+    LZPY_IMP_INIT(PyQuaternion)
+    {
+        return true;
+    }
+
     /*static*/ PyObject * PyQuaternion::reprfunc(PyObject * self)
     {
         PyQuaternion * pThis = (PyQuaternion*) self;
@@ -233,6 +248,11 @@ namespace Lzpy
     PyAABB::PyAABB()
     {}
 
+    LZPY_IMP_INIT(PyAABB)
+    {
+        return true;
+    }
+
     /*static*/ PyObject * PyAABB::reprfunc(PyObject * self)
     {
         PyAABB * pThis = (PyAABB*) self;
@@ -261,6 +281,11 @@ namespace Lzpy
 
     PyFRect::PyFRect()
     {}
+
+    LZPY_IMP_INIT(PyFRect)
+    {
+        return true;
+    }
 
     /*static*/ PyObject * PyFRect::reprfunc(PyObject * self)
     {

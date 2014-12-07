@@ -7,7 +7,13 @@
 
 #include "resource.h"
 
-static const char * compileTime = __DATE__ " " __TIME__;
+const char * compileTime = __DATE__ " " __TIME__;
+
+namespace
+{
+    const Lazy::tstring ConfigFile = _T("editor.lzd");
+    std::wstring gameModule;
+}
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -83,34 +89,157 @@ CGame::CGame()
 {
 }
 
-void CGame::clear()
-{
-    LOG_DEBUG(_T("Start clear..."));
-
-    //TerrainMap::instance()->saveMap("");
-    Lazy::LoadingMgr::instance()->fini();
-
-    m_guimgr->destroy();
-    CApp::clear();
-
-    LOG_DEBUG(_T("Clear finished."));
-}
 CGame::~CGame()
 {
+}
+
+bool initPython()
+{
+    Lazy::LZDataPtr root = Lazy::openSection(ConfigFile);
+
+    std::wstring pyHome = root->readString(L"python/home");
+    if (pyHome.empty())
+    {
+        LOG_ERROR(L"Python home was not found in config file!");
+        return false;
+    }
+
+    Lazy::LZDataPtr paths = root->read(L"python/paths");
+    if (!paths)
+    {
+        LOG_ERROR(L"Python script path was not found in config file!");
+        return false;
+    }
+
+    gameModule = root->readString(L"python/entry");
+    if (gameModule.empty())
+    {
+        LOG_ERROR(L"Invalid python entry module.");
+        return false;
+    }
+
+    Py_SetPythonHome(&pyHome[0]);
+
+    PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
+    PyImport_AppendInittab("lui", Lzpy::PyInit_lui);
+    PyImport_AppendInittab("Lazy", Lzpy::PyInit_Lazy);
+
+    Py_Initialize();
+    if (!Py_IsInitialized())
+    {
+        LOG_ERROR(L"Initialize python failed!");
+        return false;
+    }
+
+    try
+    {
+        //初始化内置模块
+        Lzpy::import("helper");
+        Lzpy::import("lui");
+        Lzpy::import("Lazy");
+
+        Lzpy::LzpyResInterface::initAll();
+
+        //输出重定向
+        Lzpy::object sys = Lzpy::import(L"sys");
+        if (!sys) return false;
+
+        Lzpy::object out = Lzpy::new_reference(Lzpy::new_instance_ex<Lzpy::PyOutput>());
+        sys.setattr("stdout", out);
+        sys.setattr("stderr", out);
+        PyRun_SimpleString("print('---------1234')");
+
+
+        //设置脚本路径
+        for (Lazy::LZDataPtr lzd : (*paths))
+        {
+            if (lzd->tag() == L"path")
+            {
+                Lazy::tstring path;
+                if (!Lazy::getfs()->getRealPath(path, lzd->value()))
+                {
+                    LOG_ERROR(L"Invalid script path %s", path.c_str());
+                    continue;
+                }
+
+                LOG_INFO(L"add script path: %s", path.c_str());
+                Lzpy::addSysPath(path);
+            }
+        }
+
+        //脚本入口
+        Lzpy::object mygame = Lzpy::import(gameModule);
+        if (!mygame)
+        {
+            if (PyErr_Occurred())
+                PyErr_Print();
+
+            LOG_ERROR(L"Can't find script %s!", gameModule.c_str());
+            return false;
+        }
+
+        if (!mygame.call_method("init"))
+        {
+            if (PyErr_Occurred())
+                PyErr_Print();
+
+            LOG_ERROR(L"init script failed!");
+            return false;
+        }
+    }
+    catch (Lzpy::python_error & e)
+    {
+        LOG_ERROR(L"Python Error in initPython: %S", e.what());
+
+        if (PyErr_Occurred())
+            PyErr_Print();
+        return false;
+    }
+
+    return true;
+}
+
+bool finiPython()
+{
+    if (!Py_IsInitialized())
+    {
+        return false;
+    }
+
+    try
+    {
+        Lzpy::object mygame = Lzpy::import(gameModule);
+        mygame.call_method("fini");
+
+        Lzpy::LzpyResInterface::finiAll();
+    }
+    catch (Lzpy::python_error & e)
+    {
+        LOG_ERROR(L"Python Error in finiPython : %S", e.what());
+
+        if (PyErr_Occurred())
+            PyErr_Print();
+        return false;
+    }
+
+
+    Py_Finalize();
+    return true;
 }
 
 /*游戏初始化*/
 bool CGame::init(void)
 {
-    LOG_ERROR(_T("Start initialize..."));
+    LOG_DEBUG(_T("Start initialize..."));
     CApp::init();
 
-    Lazy::LZDataPtr ptrRoot = Lazy::openSection(L"terrain.lzd");
+    Lazy::LZDataPtr ptrRoot = Lazy::openSection(ConfigFile);
     if (!ptrRoot)
     {
         LOG_DEBUG(_T("load game config failed!"));
         return false;
     }
+
 
     m_guimgr = new GUIMgr(m_pd3dDevice, m_hWnd, m_hInstance);
     m_fpsLabel = new Label();
@@ -179,9 +308,26 @@ bool CGame::init(void)
 
     Lazy::LoadingMgr::instance()->init();
 
+    if (!initPython())
+        return false;
+
     LOG_DEBUG(_T("Initialize finished."));
     m_bGameStart = true;
     return true;
+}
+
+void CGame::clear()
+{
+    LOG_DEBUG(_T("Start clear..."));
+
+    finiPython();
+
+    Lazy::LoadingMgr::instance()->fini();
+
+    m_guimgr->destroy();
+    CApp::clear();
+
+    LOG_DEBUG(_T("Clear finished."));
 }
 
 //更新

@@ -1,0 +1,25 @@
+#coding = utf-8
+
+sky = gui/sky/01/%d.jpg
+map = map/test2/
+
+camera
+{
+	pos
+	{
+		x = 0.0f
+		y = 0.0f
+		z = 0.0f
+	}
+	speed = 20
+}
+
+python
+{
+    home = ../third_party/python33
+    paths
+    {
+        path = res/script
+    }
+	entry = main
+}

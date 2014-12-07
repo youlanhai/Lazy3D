@@ -77,7 +77,7 @@ namespace Lzpy
 
         int getID() { return entity()->getID(); }
         void setPhysics(object physics);
-        object getPhysics();
+        object getPhysics(){ return m_physics; }
 
         object_ptr<PyEntityPhysics>     m_physics;
     };
