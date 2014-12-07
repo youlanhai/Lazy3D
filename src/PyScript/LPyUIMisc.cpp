@@ -192,9 +192,9 @@ namespace Lzpy
     object LzpyUIProxy::getHost()
     {
         Widget * p = getUI()->getHost();
-        if (!p || !p->getSelf()) return none_object;
+        if (!p || !p->Object::getScript()) return none_object;
 
-        return object(p->getSelf());
+        return object(p->Object::getScript());
     }
 
     ///////////////////////////////////////////////////////////////////
@@ -303,7 +303,7 @@ namespace Lzpy
                 s_root = new_instance_ex<LzpyControl>();
 
                 s_root->m_control = getGUIMgr();
-                s_root->m_control->setSelf(object_base(s_root));
+                s_root->m_control->Object::setScript(s_root);
 
                // setEditorUICreateFun(pyEditorUICreateFun);
             }

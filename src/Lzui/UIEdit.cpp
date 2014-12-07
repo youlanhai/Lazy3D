@@ -5,6 +5,8 @@
 #include "../Render/Font.h"
 #include "../Render/RenderDevice.h"
 
+#include "../Lzpy/Lzpy.h"
+
 namespace Lazy
 {
 
@@ -215,13 +217,13 @@ namespace Lazy
     void Edit::onFocusGet()
     {
         getGUIMgr()->activeEdit(this);
-        m_self.call_method_quiet("onFocusGet");
+        Lzpy::object_base(m_pScript).call_method_quiet("onFocusGet");
     }
 
     void Edit::onFocusLost()
     {
+        Lzpy::object_base(m_pScript).call_method_quiet("onFocusLost");
         getGUIMgr()->unactiveEdit(this);
-        m_self.call_method_quiet("onFocusLost");
     }
 
     void Edit::updateText()

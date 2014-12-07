@@ -13,9 +13,9 @@
 #include "../Render/Font.h"
 #include "../Render/RenderDevice.h"
 
-#pragma comment(lib, "d3d9.lib")
-#pragma comment(lib, "d3dx9.lib")
-#pragma comment(lib, "winmm.lib")
+//#pragma comment(lib, "d3d9.lib")
+//#pragma comment(lib, "d3dx9.lib")
+//#pragma comment(lib, "winmm.lib")
 
 #define CLASS_NAME _T("Lazy3dClass")
 

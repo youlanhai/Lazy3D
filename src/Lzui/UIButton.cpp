@@ -3,6 +3,8 @@
 #include "UIButton.h"
 #include "UISprite.h"
 
+#include "../Lzpy/Lzpy.h"
+
 namespace Lazy
 {
 
@@ -144,7 +146,7 @@ namespace Lazy
                 fillGuiEvent(evt, GuiMsg::buttonClick, 0, 0);
                 delegate.onEvent(evt);
 
-                m_self.call_method_quiet("onButtonClick");
+                Lzpy::object_base(m_pScript).call_method_quiet("onButtonClick");
             }
         }
 

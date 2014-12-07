@@ -5,6 +5,8 @@
 #include "UIFactory.h"
 #include "UIRender.h"
 
+#include "../Lzpy/Lzpy.h"
+
 namespace Lazy
 {
     //gui管理器
@@ -33,7 +35,7 @@ namespace Lazy
 
     GUIMgr::~GUIMgr(void)
     {
-        m_self.call_method_quiet("destroy");
+        Lzpy::object_base(m_pScript).call_method_quiet("destroy");
         destroy();
 
         g_ptrGUIMgr = NULL;

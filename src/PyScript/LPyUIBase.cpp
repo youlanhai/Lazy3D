@@ -70,7 +70,7 @@ namespace Lzpy
             clearChildren();
 
             m_control->removeFromParent();
-            m_control->setSelf(null_object);
+            m_control->Object::setScript(nullptr);
             m_control = nullptr;
         }
 
@@ -140,7 +140,7 @@ namespace Lzpy
         m_control = uiFactory()->create(type);
         if (m_control)
         {
-            m_control->setSelf(object_base(this));
+            m_control->Object::setScript(this);
 
             if (parent) parent->addChild(object(this));
         }
@@ -153,7 +153,8 @@ namespace Lzpy
     {
         if (m_control && m_control->getParent())
         {
-            return m_control->getParent()->getSelf();
+            PyObject * pyParent = m_control->getParent()->Object::getScript();
+            return object_base(  pyParent );
         }
 
         return object_base();
@@ -291,8 +292,8 @@ namespace Lzpy
         if (!arg.parse_tuple(&name)) return null_object;
 
         Widget * child = m_control->getChild(name);
-        if(child && child->getSelf())
-            return child->getSelf();
+        if (child && child->Object::getScript())
+            return object( child->Object::getScript() );
 
         return none_object;
     }
@@ -322,9 +323,9 @@ namespace Lzpy
         const WidgetChildren & children = m_control->getChildren();
         for (const WidgetPtr & child : children)
         {
-            if (child->getSelf())
+            if (child->Object::getScript())
             {
-                lst.append(child->getSelf());
+                lst.append(child->Object::getScript());
             }
         }
 
@@ -338,9 +339,9 @@ namespace Lzpy
         if (!arg.parse_tuple(&pt.x, &pt.y, &resculy)) return null_object;
 
         Widget * p = m_control->findChildByPos(pt, resculy);
-        if (!p || !p->getSelf()) return none_object;
+        if (!p || !p->Object::getScript()) return none_object;
 
-        return object(p->getSelf());
+        return object(p->Object::getScript());
     }
 
     LZPY_IMP_METHOD(LzpyControl, destroy)
@@ -357,7 +358,7 @@ namespace Lzpy
 
         m_control->clearChildren();
         m_control->removeFromParent();
-        m_control->setSelf(null_object);
+        m_control->Object::setScript(nullptr);
         m_control = nullptr;
 
         PyDict_Clear(m_pyDict);

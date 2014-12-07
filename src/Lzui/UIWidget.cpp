@@ -4,7 +4,7 @@
 #include "UIFactory.h"
 #include "TypeParser.h"
 
-#include "../PyScript/LPyLzd.h"
+#include "../Lzpy/Lzpy.h"
 
 namespace Lazy
 {
@@ -274,7 +274,7 @@ namespace Lazy
         }
 
         processed |= delegate.onEvent(event);
-        processed |= ScriptEvent::onEvent(m_self, event);
+        processed |= ScriptEvent::onEvent(Lzpy::object_base(m_pScript), event);
 
         return processed;
     }
@@ -378,7 +378,7 @@ namespace Lazy
             child->onParentResize(newSize, oldSize);
         }
 
-        m_self.call_method_quiet("onSizeChange");
+        Lzpy::object_base(m_pScript).call_method_quiet("onSizeChange");
     }
 
     CRect Widget::getControlRect(void) const
@@ -773,7 +773,7 @@ namespace Lazy
 
     void Widget::destroy()
     {
-        m_self.call_method_quiet("onDestroy");
+        Lzpy::object_base(m_pScript).call_method_quiet("onDestroy");
         clearChildren();
         clearSkin();
 

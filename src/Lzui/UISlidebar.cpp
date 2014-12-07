@@ -4,6 +4,8 @@
 #include "UIFactory.h"
 #include "TypeParser.h"
 
+#include "../Lzpy/Lzpy.h"
+
 namespace Lazy
 {
     template<typename T>
@@ -187,7 +189,7 @@ namespace Lazy
 
     void Slidebar::onSlide()
     {
-        m_self.call_method_quiet("onSlide", m_rate);
+        Lzpy::object_base(m_pScript).call_method_quiet("onSlide", m_rate);
     }
 
 

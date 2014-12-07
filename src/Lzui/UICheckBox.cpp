@@ -2,6 +2,8 @@
 #include "UICheckBox.h"
 #include "UISprite.h"
 
+#include "../Lzpy/Lzpy.h"
+
 namespace Lazy
 {
 
@@ -34,7 +36,7 @@ namespace Lazy
         {
             setCheck(!m_bCheck);
 
-            m_self.call_method_quiet("onButtonCheck", m_bCheck);
+            Lzpy::object_base(m_pScript).call_method_quiet("onButtonCheck", m_bCheck);
         }
 
         return Button::onEvent(event);
