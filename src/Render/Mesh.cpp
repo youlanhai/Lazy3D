@@ -322,6 +322,7 @@ namespace Lazy
             }
         }
 
+        m_pMesh->m_subMeshes.push_back(pMeshContainer);
         *ppNewMeshContainer = pMeshContainer;
         return hr;
     }
@@ -387,9 +388,10 @@ namespace Lazy
             return false;
         }
 
-        if (FAILED(setupBoneMatrixPointers(m_bone)))
+        hr = bindBone(m_bone);
+        if (FAILED(hr))
         {
-            LOG_ERROR(L"Load Mesh '%s' failed! hr=0x%x, code=0x%x",
+            LOG_ERROR(L"Failed bindBone Mesh '%s' failed! hr=0x%x, code=0x%x",
                 realPath.c_str(), hr, GetLastError());
             return false;
         }
@@ -427,7 +429,10 @@ namespace Lazy
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_WRAP);
 
         m_bone->updateMatrix(rcDevice()->getWorld());
-        drawFrame(m_bone);
+        for (MeshContainer *pMesh : m_subMeshes)
+        {
+            drawMeshContainer(pMesh);
+        }
 
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
         pDevice->SetSamplerState(0, D3DSAMP_ADDRESSV, D3DTADDRESS_CLAMP);
@@ -517,99 +522,76 @@ namespace Lazy
         return hr;
     }
 
-
-    //desc	调用SetupBoneMatrixPointersOnMesh递归为各框架安置组合变换矩阵
-    HRESULT Mesh::setupBoneMatrixPointers(LPD3DXFRAME pFrame)
+    HRESULT Mesh::bindBone(BoneFrame *pFrame)
     {
         assert(pFrame);
 
         HRESULT hr;
-        if (pFrame->pMeshContainer != NULL)
+         
+        LPD3DXMESHCONTAINER pMeshContainer = pFrame->pMeshContainer;
+        while (pMeshContainer != NULL)
         {
-            hr = setupBoneMatrixPointersOnMesh(pFrame->pMeshContainer);
+            hr = bindBoneToMesh(pFrame, (MeshContainer*) pMeshContainer);
             if (FAILED(hr)) return hr;
+
+            pMeshContainer = pMeshContainer->pNextMeshContainer;
         }
 
         //如果存在兄弟骨骼
         if (pFrame->pFrameSibling != NULL)
         {
-            hr = setupBoneMatrixPointers(pFrame->pFrameSibling);
+            hr = bindBone( (BoneFrame*) pFrame->pFrameSibling );
             if (FAILED(hr)) return hr;
         }
 
         //如果存在子骨骼
         if (pFrame->pFrameFirstChild != NULL)
         {
-            hr = setupBoneMatrixPointers(pFrame->pFrameFirstChild);
+            hr = bindBone( (BoneFrame*) pFrame->pFrameFirstChild );
             if (FAILED(hr)) return hr;
         }
 
         return S_OK;
     }
 
-    //-----------------------------------------------------------
-    //desc: 设置每个骨骼的组合变换矩阵
-    HRESULT Mesh::setupBoneMatrixPointersOnMesh(LPD3DXMESHCONTAINER pMeshContainerBase)
+    HRESULT Mesh::bindBoneToMesh(BoneFrame *pOwner, MeshContainer *pMeshContainer)
     {
-        //先转换成新的类
-        MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
         LPD3DXSKININFO pSkinInfo = pMeshContainer->pSkinInfo;
 
-        //只有蒙皮网格模型才有骨骼矩阵
-        if (NULL == pSkinInfo) return S_OK;
-
-        //得到骨骼数量
-        DWORD nBones = pSkinInfo->GetNumBones();
-        pMeshContainer->ppBoneMatrixPtrs = new Matrix*[nBones];
-
-        for (DWORD i = 0; i < nBones; ++i)
+        if (pSkinInfo != NULL)
         {
-            BoneFrame *pFrame = m_bone->find(pSkinInfo->GetBoneName(i));
-            if (pFrame != NULL)
+            DWORD nBones = pSkinInfo->GetNumBones();
+            pMeshContainer->ppBoneMatrixPtrs = new Matrix*[nBones];
+
+            for (DWORD i = 0; i < nBones; ++i)
             {
-                pMeshContainer->ppBoneMatrixPtrs[i] = &pFrame->CombinedTransformationMatrix;
-            }
-            else
-            {
-                pMeshContainer->ppBoneMatrixPtrs[i] = NULL;
+                BoneFrame *pFrame = m_bone->find(pSkinInfo->GetBoneName(i));
+                if (pFrame != NULL)
+                {
+                    pMeshContainer->ppBoneMatrixPtrs[i] = &pFrame->CombinedTransformationMatrix;
+                }
+                else
+                {
+                    pMeshContainer->ppBoneMatrixPtrs[i] = NULL;
+                }
             }
         }
+        else
+        {
+            pMeshContainer->ppBoneMatrixPtrs = new Matrix*[1];
+            pMeshContainer->ppBoneMatrixPtrs[0] = &( pOwner->CombinedTransformationMatrix );
+        }
+
         return S_OK;
     }
 
-
-
-    //-----------------------------------------------------
-    // desc: 绘制框架: 还是和安置矩阵一样递归渲染各框架
-    void Mesh::drawFrame(LPD3DXFRAME pFrame)
-    {
-        LPD3DXMESHCONTAINER pMeshContainer;
-
-        pMeshContainer = pFrame->pMeshContainer;
-        while (pMeshContainer != NULL)
-        {
-            drawMeshContainer(pMeshContainer, pFrame);
-            pMeshContainer = pMeshContainer->pNextMeshContainer;
-        }
-
-        if (pFrame->pFrameSibling != NULL)
-        {
-            drawFrame(pFrame->pFrameSibling);
-        }
-
-        if (pFrame->pFrameFirstChild != NULL)
-        {
-            drawFrame(pFrame->pFrameFirstChild);
-        }
-    }
-
-    void Mesh::drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame)
+    void Mesh::drawMeshOnly(MeshContainer *pMeshContainer)
     {
         EffectPtr effect = s_noskinnedEffect;
         if (!effect)
             return;
 
-        rcDevice()->pushWorld(pFrame->CombinedTransformationMatrix);
+        rcDevice()->pushWorld( *(pMeshContainer->ppBoneMatrixPtrs[0]) );
 
         for (DWORD AttribID = 0; AttribID < pMeshContainer->NumMaterials; ++AttribID)
         {
@@ -637,14 +619,11 @@ namespace Lazy
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
     }
 
-    void Mesh::drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase)
+    void Mesh::drawMeshContainer(MeshContainer *pMeshContainer)
     {
-        MeshContainer *pMeshContainer = (MeshContainer*) pMeshContainerBase;
-        BoneFrame *pFrame = (BoneFrame*) pFrameBase;
-
         if (pMeshContainer->pSkinInfo == NULL)
         {
-            drawMeshOnly(pMeshContainer, pFrame);
+            drawMeshOnly(pMeshContainer);
             return;
         }
      

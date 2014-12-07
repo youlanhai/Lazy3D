@@ -34,7 +34,6 @@ namespace Lazy
         /** 获得资源类型*/
         virtual int getType(void) const override { return rt::mesh; }
 
-        /** 渲染*/
         void render();
 
         int getNbDrawTrangle() const { return m_dwTrangleCnt; }
@@ -46,10 +45,11 @@ namespace Lazy
         dx::AnimController* getAnimationContrl() const { return m_pAnimController; }
 
     private:
-        BoneFrame*      m_bone;		///< 根骨节点
-        int		        m_dwTrangleCnt; ///< 渲染的三角形数量
-        AABB            m_aabb;         ///<aabb包围盒
-        dx::AnimController* m_pAnimController;  ///< 动画控制器
+        BoneFrame*              m_bone;		///< 根骨节点
+        int		                m_dwTrangleCnt; ///< 渲染的三角形数量
+        AABB                    m_aabb;         ///<aabb包围盒
+        dx::AnimController*     m_pAnimController;  ///< 动画控制器
+        std::vector<MeshContainer*> m_subMeshes;
 
         static EffectPtr s_skinnedEffect;
         static EffectPtr s_noskinnedEffect;
@@ -60,12 +60,11 @@ namespace Lazy
         /** 生成蒙皮网格*/
         HRESULT generateSkinnedMesh(MeshContainer *pMeshContainer);
 
-        void drawFrame(LPD3DXFRAME pFrame);
-        void drawMeshContainer(LPD3DXMESHCONTAINER pMeshContainerBase, LPD3DXFRAME pFrameBase);
-        void drawMeshOnly(MeshContainer *pMeshContainer, BoneFrame *pFrame);
+        void drawMeshContainer(MeshContainer *pMeshContainer);
+        void drawMeshOnly(MeshContainer *pMeshContainer);
 
-        HRESULT setupBoneMatrixPointers(LPD3DXFRAME pFrame);
-        HRESULT setupBoneMatrixPointersOnMesh(LPD3DXMESHCONTAINER pMeshContainerBase);
+        HRESULT bindBone(BoneFrame *pFrame);
+        HRESULT bindBoneToMesh(BoneFrame *pOwner, MeshContainer *pMeshContainer);
     };
 
 
