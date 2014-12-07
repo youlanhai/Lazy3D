@@ -2,7 +2,7 @@
 
 #include "../Core/Entity.h"
 #include "LPyPhysics.h"
-#include "LPySceneNode.h"
+#include "LPyModel.h"
 
 namespace Lzpy
 {
@@ -14,38 +14,14 @@ namespace Lzpy
     ////////////////////////////////////////////////////////////////////
     //physics
     ////////////////////////////////////////////////////////////////////
-
-    class EntityPhysics : public IPhysics
-    {
-    public:
-        EntityPhysics(PyObject *self);
-
-        ///触发AI。
-        virtual void onAITrigger() override;
-
-        ///移动完毕
-        virtual void onMoveToFinished(bool succed) override;
-
-        virtual void onMoveToEntityFinish(bool succed) override;
-
-        virtual void onSearchToFinished(bool succed) override;
-
-        ///状态发生变化
-        virtual void onStateChange(DWORD oldState) override;
-
-    public:
-        object_base m_self;
-    };
-
-
     class PyEntityPhysics : public PyBase
     {
-        LZPY_DEF(PyEntityPhysics, PyBase);
+        LZPY_DEF(PyEntityPhysics);
     public:
         PyEntityPhysics();
         ~PyEntityPhysics();
 
-        LZPY_DEF_GET_MEMBER(source, m_source);
+        LZPY_DEF_GET(source, m_physics->getSource);
 
         LZPY_DEF_GET(state, m_physics->getState);
         LZPY_DEF_SET(state, m_physics->setState, DWORD);
@@ -67,75 +43,51 @@ namespace Lzpy
         LZPY_DEF_METHOD_1(moveToEntity);
         LZPY_DEF_METHOD_0(breakAutoMove);
 
-        RefPtr<EntityPhysics>   m_physics;
-        object_ptr<PyEntity>    m_source;
+        RefPtr<IPhysics>   m_physics;
     };
 
 
     ////////////////////////////////////////////////////////////////////
     //entity
     ////////////////////////////////////////////////////////////////////
-    class Entity : public IEntity
+    class PyEntity : public PySceneNode
     {
-    public:
-        Entity(PyObject * self);
-
-        ///是否可以被鼠标选择
-        virtual bool canSelect(void) const override;
-
-        virtual bool ifPlayer(void) const override;
-
-        virtual void onFocusCursor(UINT msg) override;
-
-        object_base m_self;
-    };
-
-    class PyEntity : public PyBase
-    {
-        LZPY_DEF(PyEntity, PyBase);
+        LZPY_DEF(PyEntity);
     public:
         PyEntity();
         ~PyEntity();
 
-        LZPY_DEF_GET(id, getId);
+        inline IEntity * entity() { return m_node.cast<IEntity>(); }
 
-        LZPY_DEF_GETSET_MEMBER(position, m_entity->m_vPos);
+        LZPY_DEF_GET(id, entity()->getID);
 
-        LZPY_DEF_GETSET_MEMBER(speed, m_entity->m_vSpeed);
-        LZPY_DEF_GETSET_MEMBER(scale, m_entity->m_vScale);
+        LZPY_DEF_GET(model, entity()->getModel);
+        LZPY_DEF_SET(model, entity()->setModel, IModel*);
 
-        LZPY_DEF_GET_MEMBER(model, m_model);
-        LZPY_DEF_SET(model, setModel, object);
-
-        LZPY_DEF_GET_MEMBER(physics, m_physics);
+        LZPY_DEF_GET(physics, getPhysics);
         LZPY_DEF_SET(physics, setPhysics, object);
 
-        LZPY_DEF_GET(fadeDistance, m_entity->getShowDistance);
-        LZPY_DEF_SET(fadeDistance, m_entity->setShowDistance, float);
+        LZPY_DEF_GET(fadeDistance, entity()->getShowDistance);
+        LZPY_DEF_SET(fadeDistance, entity()->setShowDistance, float);
 
-        LZPY_DEF_GET(lockHeight, m_entity->getLockHeight);
-        LZPY_DEF_SET(lockHeight, m_entity->setLockHeight, float);
-
-        LZPY_DEF_GET(visible, m_entity->visible);
-        LZPY_DEF_SET(visible, m_entity->show, bool);
-
-        LZPY_DEF_GET(distToCamera, m_entity->distToCamera);
-        LZPY_DEF_GET(distToPlayer, m_entity->distToPlayer);
+        LZPY_DEF_GET(distToCamera, entity()->distToCamera);
+        LZPY_DEF_GET(distToPlayer, entity()->distToPlayer);
 
         LZPY_DEF_METHOD_1(lookAtPosition);
 
-        int getId();
-        void setModel(object model);
+        int getID() { return entity()->getID(); }
         void setPhysics(object physics);
+        object getPhysics();
 
-        RefPtr<Entity>  m_entity;
-        object_ptr<PyModel>  m_model;
-        object_ptr<PyEntityPhysics>  m_physics;
+        object_ptr<PyEntityPhysics>     m_physics;
     };
 
+    ////////////////////////////////////////////////////////////////////
+    //entity mgr
+    ////////////////////////////////////////////////////////////////////
     class PyEntityMgr : public PyBase
     {
-        LZPY_DEF(PyEntityMgr, PyBase);
+        LZPY_DEF(PyEntityMgr);
     public:
         PyEntityMgr();
         ~PyEntityMgr();
@@ -150,6 +102,4 @@ namespace Lzpy
         dict m_entities;
     };
 
-
-    void exportPyEntity(const char * module);
 }

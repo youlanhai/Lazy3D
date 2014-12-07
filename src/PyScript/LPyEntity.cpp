@@ -5,64 +5,38 @@
 
 namespace Lzpy
 {
-    ////////////////////////////////////////////////////////////////////
-    ///
-    ////////////////////////////////////////////////////////////////////
-    EntityPhysics::EntityPhysics(PyObject *self)
-        : m_self(self)
-    {}
-
-    void EntityPhysics::onAITrigger()
-    {
-        m_self.call_method_quiet("onAITrigger");
-    }
-
-    void EntityPhysics::onMoveToFinished(bool succed)
-    {
-        m_self.call_method_quiet("onMoveToFinished", succed);
-    }
-
-    void EntityPhysics::onMoveToEntityFinish(bool succed)
-    {
-        m_self.call_method_quiet("onMoveToEntityFinish", succed);
-    }
-
-    void EntityPhysics::onSearchToFinished(bool succed)
-    {
-        m_self.call_method_quiet("onSearchToFinished", succed);
-    }
-
-    void EntityPhysics::onStateChange(DWORD oldState)
-    {
-        m_self.call_method_quiet("onStateChange", oldState);
-    }
 
     ////////////////////////////////////////////////////////////////////
     ///
     ////////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(PyEntityPhysics);
-    LZPY_GET(source);
-    LZPY_GETSET(state);
-    LZPY_GETSET(enable);
-    LZPY_GETSET(aiEnble);
-    LZPY_GETSET(aiInterval);
+    LZPY_CLASS_EXPORT(PyEntityPhysics)
+    {
+        LZPY_GET(source);
+        LZPY_GETSET(state);
+        LZPY_GETSET(enable);
+        LZPY_GETSET(aiEnble);
+        LZPY_GETSET(aiInterval);
 
-    LZPY_METHOD_1(searchPath);
-    LZPY_METHOD_1(faceTo);
-    LZPY_METHOD_1(faceToDir);
-    LZPY_METHOD_1(moveTo);
-    LZPY_METHOD_1(moveToEntity);
-    LZPY_METHOD_0(breakAutoMove);
-    LZPY_CLASS_END();
+        LZPY_METHOD_1(searchPath);
+        LZPY_METHOD_1(faceTo);
+        LZPY_METHOD_1(faceToDir);
+        LZPY_METHOD_1(moveTo);
+        LZPY_METHOD_1(moveToEntity);
+        LZPY_METHOD_0(breakAutoMove);
+    }
 
     PyEntityPhysics::PyEntityPhysics()
-        : m_source(none_object)
     {
-        m_physics = new EntityPhysics(this);
+        m_physics = new IPhysics();
+        m_physics->setScript(this);
     }
 
     PyEntityPhysics::~PyEntityPhysics()
     {
+        if (m_physics)
+        {
+            m_physics->setScript(nullptr);
+        }
     }
 
     LZPY_IMP_INIT(PyEntityPhysics)
@@ -115,7 +89,7 @@ namespace Lzpy
             return null_object;
 
         PyEntity *pEnt = value.cast<PyEntity>();
-        m_physics->moveToEntity(pEnt->m_entity.get());
+        m_physics->moveToEntity(pEnt->entity());
 
         return none_object;
     }
@@ -130,93 +104,40 @@ namespace Lzpy
     ///
     ////////////////////////////////////////////////////////////////////
 
-    Entity::Entity(PyObject * self)
-        : m_self(self)
-    {}
-
-    ///是否可以被鼠标选择
-    bool Entity::canSelect(void) const
+    LZPY_CLASS_EXPORT(PyEntity)
     {
-        object ret = const_cast<object_base &>(m_self).call_method_quiet("canSelect");
+        LZPY_GET(id);
 
-        return parse_object<bool>(ret);
+        LZPY_GETSET(model);
+        LZPY_GETSET(physics);
+        LZPY_GETSET(fadeDistance);
+        LZPY_GETSET(visible);
+        LZPY_GET(distToCamera);
+        LZPY_GET(distToPlayer);
+
+        LZPY_METHOD_1(lookAtPosition);
     }
-
-    bool Entity::isPlayer(void)
-    {
-        if (!m_self.hasattr("isPlayer")) return false;
-
-        object ret = m_self.call_method_quiet("isPlayer");
-        return parse_object<bool>(ret);
-    }
-
-    void Entity::onFocusCursor(UINT msg)
-    {
-        m_self.call_method_quiet("onFocusCursor", msg);
-    }
-
-    LZPY_CLASS_BEG(PyEntity);
-    LZPY_GET(id);
-    LZPY_GETSET(position);
-    LZPY_GETSET(speed);
-    LZPY_GETSET(scale);
-    LZPY_GETSET(model);
-    LZPY_GETSET(physics);
-    LZPY_GETSET(fadeDistance);
-    LZPY_GETSET(lockHeight);
-    LZPY_GETSET(visible);
-    LZPY_GET(distToCamera);
-    LZPY_GET(distToPlayer);
-
-    LZPY_METHOD_1(lookAtPosition);
-    LZPY_CLASS_END();
 
 
     PyEntity::PyEntity()
     {
-        m_entity = new Entity(this);
-        m_model = none_object;
+        m_node = new IEntity();
         m_physics = none_object;
     }
 
     PyEntity::~PyEntity()
     {
-        if (m_entity)
+        if (entity())
         {
-            m_entity->setPhysics(nullptr);
-            m_entity->setModel(nullptr);
+            entity()->setPhysics(nullptr);
+            entity()->setModel(nullptr);
         }
-        m_entity = nullptr;
-        m_model = null_object;
         m_physics = null_object;
-    }
-
-    int PyEntity::getId()
-    {
-        if (m_entity) return m_entity->getID();
-        return 0;
     }
 
     LZPY_IMP_INIT(PyEntity)
     {
         return true;
-    }
-
-    void PyEntity::setModel(object model)
-    {
-        if (m_model == model)
-            return;
-
-        if (model.is_none())
-        {
-            m_model = model;
-            m_entity->setModel(nullptr);
-        }
-        else if (CHECK_INSTANCE(PyModel, model.get()))
-        {
-            m_model = model;
-            m_entity->setModel(model.cast<PyModel>()->m_model);
-        }
     }
 
     void PyEntity::setPhysics(object physics)
@@ -228,9 +149,8 @@ namespace Lzpy
         {
             m_physics.call_method_quiet("onActive", false);
 
-            m_physics->m_source = none_object;
+            entity()->setPhysics(nullptr);
             m_physics = none_object;
-            m_entity->setPhysics(nullptr);
         }
 
         if (physics.is_none())
@@ -240,8 +160,7 @@ namespace Lzpy
         else if (CHECK_INSTANCE(PyEntityPhysics, physics.get()))
         {
             m_physics = physics;
-            m_physics->m_source = object(this);
-            m_entity->setPhysics(m_physics->m_physics);
+            entity()->setPhysics(m_physics->m_physics);
 
             m_physics.call_method_quiet("onActive", true);
         }
@@ -253,18 +172,21 @@ namespace Lzpy
         if (!parse_object(vec, value))
             return null_object;
 
-        m_entity->lookAtPosition(vec);
+        Vector3 look = vec - entity()->getPosition();
+        look.normalize();
+        entity()->faceToDir(look);
         return none_object;
     }
 
     ////////////////////////////////////////////////////////////////////
     ///
     ////////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(PyEntityMgr);
-    LZPY_METHOD_1(addEntity);
-    LZPY_METHOD_1(delEntity);
-    LZPY_METHOD_1(getEntity);
-    LZPY_CLASS_END();
+    LZPY_CLASS_EXPORT(PyEntityMgr)
+    {
+        LZPY_METHOD_1(addEntity);
+        LZPY_METHOD_1(delEntity);
+        LZPY_METHOD_1(getEntity);
+    }
 
     PyEntityMgr::PyEntityMgr()
     {
@@ -311,8 +233,8 @@ namespace Lzpy
             return false;
 
         PyEntity *pEnt = entity.cast<PyEntity>();
-        EntityMgr::instance()->add(pEnt->m_entity);
-        m_entities.setitem(pEnt->getId(), entity);
+        EntityMgr::instance()->add(pEnt->entity());
+        m_entities.setitem(pEnt->getID(), entity);
 
         entity.call_method_quiet("enterWorld");
         return true;
@@ -326,9 +248,9 @@ namespace Lzpy
         entity.call_method_quiet("leaveWorld");
 
         PyEntity *pEnt = entity.cast<PyEntity>();
-        EntityMgr::instance()->remove(pEnt->m_entity);
+        EntityMgr::instance()->remove(pEnt->entity());
 
-        m_entities.delitem(entity.cast<PyEntity>()->getId());
+        m_entities.delitem(entity.cast<PyEntity>()->getID());
         return true;
     }
 
@@ -368,7 +290,7 @@ namespace Lzpy
 
         s_pEntityMgr->addEntity(entity);
 
-        int id = entity.cast<PyEntity>()->getId();
+        int id = entity.cast<PyEntity>()->getID();
         return xincref(build_object(id));
     }
 
@@ -381,15 +303,13 @@ namespace Lzpy
     LZPY_DEF_FUN(loadModel)
     {
         wchar_t *source;
-        int type;
-        if (!PyArg_ParseTuple(arg, "ui", &source, &type)) return NULL;
+        if (!PyArg_ParseTuple(arg, "u", &source)) return NULL;
 
-        ModelPtr model = ModelFactory::loadModel(source, type);
+        ModelPtr model = ModelFactory::loadModel(source);
         if (!model) Py_RETURN_NONE;
 
-        PyModel *pModel = helper::new_instance_ex<PyModel>();
-        pModel->m_model = model;
-        return pModel;
+        object m = build_object(model);
+        return xincref(m);
     }
 
     LZPY_DEF_FUN_0(player)
@@ -408,7 +328,7 @@ namespace Lzpy
         }
         else if (CHECK_INSTANCE(PyEntity, value))
         {
-            player = ((PyEntity*) value)->m_entity.get();
+            player = ((PyEntity*) value)->entity();
         }
         else
         {
@@ -435,7 +355,7 @@ namespace Lzpy
 
             virtual void init() override
             {
-                s_pEntityMgr = helper::new_instance_ex<PyEntityMgr>();
+                s_pEntityMgr = new_instance_ex<PyEntityMgr>();
 
                 s_pPlayer = (PyEntity*) Py_None;
                 Py_INCREF(s_pPlayer);
@@ -455,7 +375,7 @@ namespace Lzpy
         static EntityResInterface s_resInterface;
     }
 
-    void exportPyEntity(const char * module)
+    void exportEntity(const char * module)
     {
         LZPY_REGISTER_CLASS(Model, PyModel);
         LZPY_REGISTER_CLASS(Entity, PyEntity);

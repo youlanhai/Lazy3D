@@ -69,11 +69,11 @@ namespace Lzpy
             return none_object;
 
         if (v->getScript())
-            return v->getScript();
+            return object( v->getScript() );
 
         TPy * p = new_instance_ex<TPy>();
         p->m_node = v;
-        p->m_node->setScript(object_base(p));
+        p->m_node->setScript(p);
         return new_reference(p);
     }
 

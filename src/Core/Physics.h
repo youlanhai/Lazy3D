@@ -102,12 +102,12 @@ namespace Lazy
         void updateHeight(float elapse);
 
         bool            m_enable;       //< 物理是否可用
-        IEntity *     m_pSource;
+        IEntity *       m_pSource;
         DWORD           m_state;        //< 状态
         //自动行走相关
         bool            m_autoMove;     //< 是否在自动行走
         bool            m_bMoveToEntity; //< 是否移动到entity
-        IEntity *     m_pMoveToTarget;
+        IEntity *       m_pMoveToTarget;
         Vector3         m_nextPos;      //< 下一个目标点
         Vector3         m_prevPos;      //< 前一个点
 

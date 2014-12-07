@@ -1,5 +1,8 @@
 ﻿#pragma once
 
+#include <Python.h>
+#include <string>
+
 namespace Lzpy
 {
     class object_base;

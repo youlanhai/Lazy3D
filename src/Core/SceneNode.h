@@ -4,8 +4,6 @@
 #include "RenderInterface.h"
 #include "../utility/VisitPool.h"
 
-#include "../Lzpy/Lzpy.h"
-
 #define SCENE_NODE_HEADER(CLASS)        \
     typedef This    Base;               \
     typedef CLASS   This;               \
@@ -103,9 +101,6 @@ namespace Lazy
 
         BOOL inWorld() const { return m_inWorld; }
 
-        void setScript(Lzpy::object_base script){ m_script = script; }
-        Lzpy::object_base getScript() const { return m_script; }
-
         /** 根据名称查找子结点。name可以为路径形式，如 "parent/child1" */
         SceneNodePtr findChild(const std::string & name);
 
@@ -149,7 +144,6 @@ namespace Lazy
         BOOL                    m_inWorld;
         BOOL                    m_visible;
         AABB                    m_aabb;
-        Lzpy::object_base       m_script;
 
     private:
         Vector3                 m_position;
