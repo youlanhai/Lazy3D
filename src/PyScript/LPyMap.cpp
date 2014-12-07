@@ -7,23 +7,20 @@
 namespace Lzpy
 {
 
-    LZPY_CLASS_BEG(PyMap);
+    LZPY_CLASS_EXPORT(PyMap)
+    {
 
-    LZPY_GET(name);
-    LZPY_GET(width);
-    LZPY_GET(height);
-    LZPY_GET(isUsefull);
-    LZPY_GET(boundry);
+        LZPY_GET(name);
+        LZPY_GET(isUsefull);
+        LZPY_GET(rect);
 
-    LZPY_GETSET(showLevel);
-    LZPY_GETSET(showRadius);
+        LZPY_GETSET(showRadius);
+        LZPY_GETSET(source);
 
-    LZPY_METHOD_1(loadMap);
-    LZPY_METHOD_1(saveMap);
-    LZPY_METHOD(createMap);
-    LZPY_METHOD_1(setSource);
-
-    LZPY_CLASS_END();
+        LZPY_METHOD_1(loadMap);
+        LZPY_METHOD_1(saveMap);
+        LZPY_METHOD(createMap);
+    }
 
     PyMap::PyMap()
     {
@@ -61,27 +58,6 @@ namespace Lzpy
         return none_object;
     }
 
-    LZPY_IMP_METHOD_1(PyMap, setSource)
-    {
-        if (value.is_none())
-        {
-            m_map->setSource(nullptr);
-        }
-        else if (CHECK_INSTANCE(PyEntity, value.get()))
-        {
-            m_map->setSource(value.cast<PyEntity>()->m_entity.get());
-        }
-
-        return none_object;
-    }
-
-
-    object PyMap::getBoundry()
-    {
-        return build_tuple(m_map->xMin(), m_map->zMin(),
-                           m_map->xMax(), m_map->zMax());
-    }
-
     LZPY_IMP_METHOD(PyMap, createMap)
     {
         tstring name;
@@ -109,7 +85,7 @@ namespace Lzpy
         public:
             void init() override
             {
-                s_pMap = helper::new_instance_ex<PyMap>();
+                s_pMap = new_instance_ex<PyMap>();
             }
 
             void fini() override
@@ -121,7 +97,7 @@ namespace Lzpy
         static ResLoader s_resLoader;
     }
 
-    void exportPyMap(const char * module)
+    void exportMap(const char * module)
     {
         LZPY_REGISTER_CLASS(Map, PyMap);
 

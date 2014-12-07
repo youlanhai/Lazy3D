@@ -41,6 +41,7 @@ namespace Lazy
     public:
         /** 地图将以该source进行优化绘制。source往往是玩家。*/
         void setSource(SceneNode* pSource) { m_pSource = pSource; }
+        SceneNode * getSource() { return m_pSource; }
 
         ///获取和设置显示范围
         float getShowRadius() const { return m_showRadius; }

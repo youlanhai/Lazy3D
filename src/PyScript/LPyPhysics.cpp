@@ -243,7 +243,43 @@ namespace Lzpy
         std::wstring str = os.str();
         return PyUnicode_FromWideChar(str.c_str(), str.size());
     }
+    //////////////////////////////////////////////////////////////////////
+    /// PyFRect
+    //////////////////////////////////////////////////////////////////////
 
+    LZPY_CLASS_EXPORT(PyFRect)
+    {
+        LZPY_LINK_ATTR(tp_str, PyFRect::reprfunc);
+
+        LZPY_MEMEBER(left, T_FLOAT, m_rc.left);
+        LZPY_MEMEBER(top, T_FLOAT, m_rc.top);
+        LZPY_MEMEBER(right, T_FLOAT, m_rc.right);
+        LZPY_MEMEBER(bottom, T_FLOAT, m_rc.bottom);
+
+        LZPY_METHOD(set);
+    }
+
+    PyFRect::PyFRect()
+    {}
+
+    /*static*/ PyObject * PyFRect::reprfunc(PyObject * self)
+    {
+        PyFRect * pThis = (PyFRect*) self;
+
+        std::wostringstream os;
+        os << pThis->m_rc.left << ", " << pThis->m_rc.top << ", "
+            << pThis->m_rc.right << ", " << pThis->m_rc.bottom;
+        std::wstring str = os.str();
+        return PyUnicode_FromWideChar(str.c_str(), str.size());
+    }
+
+    LZPY_IMP_METHOD(PyFRect, set)
+    {
+        if (!arg.parse_tuple(&m_rc.left, &m_rc.top, &m_rc.right, &m_rc.bottom))
+            return null_object;
+
+        return none_object;
+    }
     //////////////////////////////////////////////////////////////////////
     /// export entry
     //////////////////////////////////////////////////////////////////////
@@ -254,6 +290,7 @@ namespace Lzpy
         LZPY_REGISTER_CLASS(Vector4, PyVector4);
         LZPY_REGISTER_CLASS(Quaternion, PyQuaternion);
         LZPY_REGISTER_CLASS(AABB, PyAABB);
+        LZPY_REGISTER_CLASS(FRect, PyFRect);
     }
 
 
@@ -373,5 +410,30 @@ namespace Lzpy
 
         o.cast<PyAABB>()->m_aabb = v;
         return true;
+    }
+
+    object build_object(const FRect & v)
+    {
+        PyFRect * p = new_instance_ex<PyFRect>();
+        p->m_rc = v;
+        return new_reference(p);
+    }
+
+    bool parse_object(FRect & v, object o)
+    {
+        if (has_instance<PyFRect>(o.get()))
+        {
+            v = (o.cast<PyFRect>())->m_rc;
+            return true;
+        }
+        else if (o.is_tuple())
+        {
+            tuple arg(o);
+            if (arg.parse_tuple(&v.left, &v.top, &v.right, &v.bottom))
+                return true;
+        }
+
+        PyErr_SetString(PyExc_TypeError, "Must be a FRect or tuple4!");
+        return false;
     }
 }

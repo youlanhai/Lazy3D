@@ -22,6 +22,9 @@ namespace Lzpy
     object build_object(const AABB & v);
     bool parse_object(AABB & v, object o);
 
+    object build_object(const FRect & v);
+    bool parse_object(FRect & v, object o);
+
 
     class PyVector2 : public PyBase
     {
@@ -97,4 +100,16 @@ namespace Lzpy
         AABB m_aabb;
     };
 
+
+    class PyFRect : public PyBase
+    {
+        LZPY_DEF(PyFRect);
+    public:
+        PyFRect();
+
+        static PyObject * reprfunc(PyObject * self);
+        LZPY_DEF_METHOD(set);
+
+        FRect m_rc;
+    };
 }
