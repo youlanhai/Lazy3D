@@ -67,45 +67,10 @@ namespace Lzpy
             Py_DECREF(pStr);
         }
 #endif
-
-        if (m_object)
-        {
-            clearChildren();
-
-            m_object->removeFromParent();
-            m_object->setScript(null_object);
-            m_object = nullptr;
-        }
-
         if (m_pyWeakreflist != NULL)
             PyObject_ClearWeakRefs(this);
 
         Py_DECREF(m_pyDict);
-    }
-
-    void PyWidget::clearChildren()
-    {
-        m_object->clearChildren();
-    }
-
-    bool PyWidget::addChild(object_base child)
-    {
-        if (!CHECK_INSTANCE(PyWidget, child.get())) return false;
-
-        PyWidget *p = child.cast<PyWidget>();
-        m_object->addChild(p->m_object);
-
-        return true;
-    }
-
-    bool PyWidget::delChild(object_base child)
-    {
-        if (!CHECK_INSTANCE(PyWidget, child.get())) return false;
-
-        PyWidget *p = child.cast<PyWidget>();
-        m_object->delChild(p->m_object);
-
-        return true;
     }
 
     LZPY_IMP_METHOD(PyWidget, loadFromFile)
@@ -129,13 +94,10 @@ namespace Lzpy
 
     LZPY_IMP_METHOD(PyWidget, addChild)
     {
-        object_base child;
-        if (!arg.parse_tuple(&child))
-            return null_object;
+        Widget * child;
+        if (!arg.parse_tuple(&child)) return null_object;
 
-        if (!addChild(child))
-            return null_object;
-
+        m_object->addChild(child);
         return none_object;
     }
 
@@ -145,27 +107,21 @@ namespace Lzpy
         if (!arg.parse_tuple(&name)) return null_object;
 
         Widget * child = m_object->getChild(name);
-        if (child && child->getSelf())
-            return child->getSelf();
-
-        return none_object;
+        return build_object(child);
     }
 
     LZPY_IMP_METHOD(PyWidget, delChild)
     {
-        object_base child;
-        if (!arg.parse_tuple(&child))
-            return null_object;
+        Widget * child;
+        if (!arg.parse_tuple(&child)) return null_object;
 
-        if (!delChild(child))
-            return null_object;
-
+        m_object->delChild(child);
         return none_object;
     }
 
     LZPY_IMP_METHOD(PyWidget, clearChildren)
     {
-        clearChildren();
+        m_object->clearChildren();
         return none_object;
     }
 
@@ -176,10 +132,7 @@ namespace Lzpy
         const WidgetChildren & children = m_object->getChildren();
         for (const WidgetPtr & child : children)
         {
-            if (child->getSelf())
-            {
-                lst.append(child->getSelf());
-            }
+            lst.append(child.get());
         }
 
         return lst;
@@ -192,15 +145,12 @@ namespace Lzpy
         if (!arg.parse_tuple(&pt.x, &pt.y, &resculy)) return null_object;
 
         Widget * p = m_object->findChildByPos(pt, resculy);
-        if (!p || !p->getSelf()) return none_object;
-
-        return p->getSelf();
+        return build_object(p);
     }
 
     LZPY_IMP_METHOD(PyWidget, destroy)
     {
         m_object->destroy();
-        m_object = nullptr;
 
         PyDict_Clear(m_pyDict);
         return none_object;

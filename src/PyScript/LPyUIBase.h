@@ -105,10 +105,6 @@ namespace Lzpy
         LZPY_DEF_METHOD(findChildByPos);
         LZPY_DEF_METHOD(destroy);
 
-        bool addChild(object_base child);
-        bool delChild(object_base child);
-        void clearChildren();
-
         PyObject *      m_pyDict;
         PyObject *      m_pyWeakreflist;
         Widget *        m_object;
