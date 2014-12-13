@@ -39,14 +39,13 @@ namespace Lzpy
     }
 
     PySceneNode::PySceneNode()
+        : m_object(nullptr)
     {
     }
 
 
     PySceneNode::~PySceneNode()
     {
-        if (m_node)
-            m_node->setScript(nullptr);
     }
 
     LZPY_IMP_METHOD_1(PySceneNode, findChild)
@@ -55,7 +54,7 @@ namespace Lzpy
         if (!parse_object(name, value))
             return null_object;
 
-        SceneNodePtr child = m_node->findChild(name);
+        SceneNodePtr child = m_object->findChild(name);
         return build_object(child);
     }
 
@@ -64,7 +63,7 @@ namespace Lzpy
         if (!CHECK_INSTANCE(PySceneNode, value.get()))
             return null_object;
 
-        m_node->addChild(value.cast<PySceneNode>()->m_node);
+        m_object->addChild(value.cast<PySceneNode>()->m_object);
         return none_object;
     }
 
@@ -73,19 +72,19 @@ namespace Lzpy
         if (!CHECK_INSTANCE(PySceneNode, value.get()))
             return null_object;
 
-        m_node->delChild(value.cast<PySceneNode>()->m_node);
+        m_object->delChild(value.cast<PySceneNode>()->m_object);
         return none_object;
     }
 
     LZPY_IMP_METHOD_0(PySceneNode, clearChildren)
     {
-        m_node->clearChildren();
+        m_object->clearChildren();
         return none_object;
     }
 
     LZPY_IMP_METHOD_0(PySceneNode, removeFromeParent)
     {
-        m_node->removeFromParent();
+        m_object->removeFromParent();
         return none_object;
     }
 
@@ -94,7 +93,7 @@ namespace Lzpy
         if (!CHECK_INSTANCE(PyLazyData, value.get()))
             return null_object;
 
-        m_node->saveToStream(value.cast<PyLazyData>()->m_data);
+        m_object->saveToStream(value.cast<PyLazyData>()->m_data);
         return none_object;
     }
 
@@ -103,7 +102,7 @@ namespace Lzpy
         if (!CHECK_INSTANCE(PyLazyData, value.get()))
             return null_object;
 
-        bool ret = m_node->loadFromStream(value.cast<PyLazyData>()->m_data);
+        bool ret = m_object->loadFromStream(value.cast<PyLazyData>()->m_data);
         return build_object(ret);
     }
 

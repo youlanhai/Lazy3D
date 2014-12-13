@@ -70,7 +70,7 @@ namespace Lzpy
             return NULL;
 
         PyScriptProxy * p = (PyScriptProxy*) o;
-        return PyObject_GetAttr(p->script(), attr_name);
+        return PyObject_GetAttr(p->pScript(), attr_name);
     }
 
     /*static*/ int PyScriptProxy::PySetAttr(PyObject * o, PyObject *attr_name, PyObject * value)
@@ -79,6 +79,6 @@ namespace Lzpy
             return -1;
 
         PyScriptProxy * p = (PyScriptProxy*) o;
-        return PyObject_SetAttr(p->script(), attr_name, value);
+        return PyObject_SetAttr(p->pScript(), attr_name, value);
     }
 }

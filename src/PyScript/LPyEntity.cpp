@@ -27,21 +27,15 @@ namespace Lzpy
 
     PyEntityPhysics::PyEntityPhysics()
     {
-        m_physics = new IPhysics();
-        m_physics->setScript(this);
     }
 
     PyEntityPhysics::~PyEntityPhysics()
     {
-        if (m_physics)
-        {
-            m_physics->setScript(nullptr);
-        }
     }
 
     LZPY_IMP_INIT(PyEntityPhysics)
     {
-        return true;
+        return false;
     }
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, searchPath)
@@ -50,7 +44,7 @@ namespace Lzpy
         if (!parse_object(vec, value))
             return null_object;
 
-        return build_object(m_physics->searchPath(vec));
+        return build_object(m_object->searchPath(vec));
     }
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, faceTo)
@@ -59,7 +53,7 @@ namespace Lzpy
         if (!parse_object(vec, value))
             return null_object;
 
-        m_physics->faceTo(vec);
+        m_object->faceTo(vec);
         return none_object;
     }
 
@@ -69,7 +63,7 @@ namespace Lzpy
         if (!parse_object(vec, value))
             return null_object;
 
-        m_physics->faceToDir(vec);
+        m_object->faceToDir(vec);
         return none_object;
     }
 
@@ -79,24 +73,23 @@ namespace Lzpy
         if (!parse_object(vec, value))
             return null_object;
 
-        m_physics->moveTo(vec);
+        m_object->moveTo(vec);
         return none_object;
     }
 
     LZPY_IMP_METHOD_1(PyEntityPhysics, moveToEntity)
     {
-        if (!CHECK_INSTANCE(PyEntity, value.get()))
+        IEntity *pEnt;
+        if (!parse_object(pEnt, value))
             return null_object;
 
-        PyEntity *pEnt = value.cast<PyEntity>();
-        m_physics->moveToEntity(pEnt->entity());
-
+        m_object->moveToEntity(pEnt);
         return none_object;
     }
 
     LZPY_IMP_METHOD_0(PyEntityPhysics, breakAutoMove)
     {
-        m_physics->breakAutoMove();
+        m_object->breakAutoMove();
         return none_object;
     }
 
@@ -121,49 +114,15 @@ namespace Lzpy
 
     PyEntity::PyEntity()
     {
-        m_node = new IEntity();
-        m_physics = none_object;
     }
 
     PyEntity::~PyEntity()
     {
-        if (entity())
-        {
-            entity()->setPhysics(nullptr);
-            entity()->setModel(nullptr);
-        }
-        m_physics = null_object;
     }
 
     LZPY_IMP_INIT(PyEntity)
     {
         return true;
-    }
-
-    void PyEntity::setPhysics(object physics)
-    {
-        if (m_physics == physics)
-            return;
-
-        if (m_physics)
-        {
-            m_physics.call_method_quiet("onActive", false);
-
-            entity()->setPhysics(nullptr);
-            m_physics = none_object;
-        }
-
-        if (physics.is_none())
-        {
-
-        }
-        else if (CHECK_INSTANCE(PyEntityPhysics, physics.get()))
-        {
-            m_physics = physics;
-            entity()->setPhysics(m_physics->m_physics);
-
-            m_physics.call_method_quiet("onActive", true);
-        }
     }
 
     LZPY_IMP_METHOD_1(PyEntity, lookAtPosition)

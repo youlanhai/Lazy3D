@@ -11,7 +11,7 @@ namespace Lzpy
     public:
         PyLabel();
 
-        Label * getUI() { return (Label *) m_control; }
+        Label * getUI() { return (Label *) m_object; }
 
         LZPY_DEF_GET(text, getUI()->getText);
         LZPY_DEF_SET(text, getUI()->setText, tstring);
@@ -44,7 +44,7 @@ namespace Lzpy
     public:
         PyWindow();
 
-        Window * getUI() { return (Window *)m_control; }
+        Window * getUI() { return (Window *)m_object; }
 
         LZPY_DEF_GET(enableClip, getUI()->getClipable);
         LZPY_DEF_SET(enableClip, getUI()->setClipable, bool);
@@ -57,7 +57,7 @@ namespace Lzpy
     public:
         PySlidebar();
 
-        Slidebar * getUI() { return (Slidebar *) m_control; }
+        Slidebar * getUI() { return (Slidebar *) m_object; }
 
         LZPY_DEF_GET(vertical, getUI()->getVertical);
         LZPY_DEF_SET(vertical, getUI()->setVertical, bool);
@@ -88,7 +88,7 @@ namespace Lzpy
     public:
         PyButton();
 
-        Button * getUI() { return (Button *)m_control; }
+        Button * getUI() { return (Button *)m_object; }
 
         LZPY_DEF_GET(textAlign, getUI()->getTextAlign);
         LZPY_DEF_SET(textAlign, getUI()->setTextAlign, uint32);
@@ -106,7 +106,7 @@ namespace Lzpy
     public:
         PyCheckBox();
 
-        CheckBox * getUI() { return (CheckBox *)m_control; }
+        CheckBox * getUI() { return (CheckBox *)m_object; }
 
         LZPY_DEF_GET(check, getUI()->getCheck);
         LZPY_DEF_SET(check, getUI()->setCheck, bool);
@@ -119,7 +119,7 @@ namespace Lzpy
     public:
         PyEditorCtl();
 
-        EditorCtl * getUI() { return (EditorCtl *)m_control; }
+        EditorCtl * getUI() { return (EditorCtl *)m_object; }
 
         LZPY_DEF_GET(edgeSize, getUI()->getEdgeSize);
         LZPY_DEF_SET(edgeSize, getUI()->setEdgeSize, int);
@@ -131,7 +131,7 @@ namespace Lzpy
     public:
         PyImage();
 
-        Image * getUI() { return (Image *)m_control; }
+        Image * getUI() { return (Image *)m_object; }
 
         LZPY_DEF_GET(image, getUI()->getImage);
         LZPY_DEF_SET(image, getUI()->setImage, tstring);
@@ -146,7 +146,7 @@ namespace Lzpy
     public:
         PyEdit();
 
-        Edit * getUI() { return (Edit *)m_control; }
+        Edit * getUI() { return (Edit *)m_object; }
 
         LZPY_DEF_GET(mutiline, getUI()->isMutiLine);
         LZPY_DEF_SET(mutiline, getUI()->setMutiLine, bool);
@@ -159,7 +159,7 @@ namespace Lzpy
     public:
         PyUIProxy();
 
-        UIProxy * getUI() { return (UIProxy *)m_control; }
+        UIProxy * getUI() { return (UIProxy *)m_object; }
 
         LZPY_DEF_GET(host, getHost);
         LZPY_DEF_METHOD(loadHost);

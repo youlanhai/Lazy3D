@@ -27,7 +27,7 @@ namespace Lazy
     class IEntity;
 
     /** 物理类*/
-    class LZDLL_API IPhysics : public IBase
+    class LZDLL_API IPhysics : public ScriptObject
     {
     public:
         IPhysics(void);

@@ -12,7 +12,7 @@ namespace Lzpy
     public:
         PyModel();
 
-        inline IModel * model() { return m_node.cast<IModel>(); }
+        inline IModel * model() { return (IModel*)m_object; }
 
         LZPY_DEF_GET(resource, model()->source);
         LZPY_DEF_GET(height, model()->getHeight);
@@ -27,7 +27,7 @@ namespace Lzpy
         LZPY_DEF_METHOD_1(setActionSpeed);
     };
 
-    BUILD_AND_PARSE_SCENE_NODE(PyModel, IModel);
+    BUILD_AND_PARSE_SCRIPT_OBJECT(PyModel, IModel);
 
 
 }

@@ -8,6 +8,7 @@ namespace Lzpy
     void exportEntity(const char * module);
     void exportMap(const char * module);
     void exportMisc(const char * module);
+    void exportUI(const char *module);
 
     LZPY_MODULE_BEG(Lazy)
         exportLZD(module);
@@ -16,5 +17,6 @@ namespace Lzpy
         exportEntity(module);
         exportMap(module);
         exportMisc(module);
+        exportUI(module);
     LZPY_MODULE_END()
 }

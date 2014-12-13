@@ -20,7 +20,7 @@ namespace Lzpy
     {
     }
 
-    LZPY_IMP_INIT_LUI(PyLabel, Label);
+    LZPY_IMP_INIT_LUI(PyLabel);
 
     object PyLabel::getTextSize()
     {
@@ -38,7 +38,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyWindow, Form);
+    LZPY_IMP_INIT_LUI(PyWindow);
 
 
     ///////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PySlidebar, Slidebar);
+    LZPY_IMP_INIT_LUI(PySlidebar);
 
     void PySlidebar::setSliderSize(tuple size)
     {
@@ -118,7 +118,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyButton, Button);
+    LZPY_IMP_INIT_LUI(PyButton);
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyCheckBox)
@@ -130,7 +130,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyCheckBox, Check);
+    LZPY_IMP_INIT_LUI(PyCheckBox);
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyEditorCtl)
@@ -142,7 +142,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyEditorCtl, EditorCtl)
+    LZPY_IMP_INIT_LUI(PyEditorCtl)
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyImage);
@@ -154,7 +154,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyImage, Image)
+    LZPY_IMP_INIT_LUI(PyImage)
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyEdit)
@@ -166,7 +166,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyEdit, Edit)
+    LZPY_IMP_INIT_LUI(PyEdit)
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyUIProxy)
@@ -179,7 +179,7 @@ namespace Lzpy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyUIProxy, Proxy);
+    LZPY_IMP_INIT_LUI(PyUIProxy);
 
     LZPY_IMP_METHOD(PyUIProxy, loadHost)
     {
@@ -200,29 +200,9 @@ namespace Lzpy
     ///////////////////////////////////////////////////////////////////
     //函数定义
     ///////////////////////////////////////////////////////////////////
-
-    static PyWidget * s_root = nullptr;
-    static object s_uiFactoryMethod;
-
     LZPY_DEF_FUN(root)
     {
-        return xincref(s_root);
-    }
-
-    LZPY_DEF_FUN(regUIFactory)
-    {
-        PyObject *method;
-        if (!PyArg_ParseTuple(arg, "O", &method)) return NULL;
-
-        s_uiFactoryMethod = object(method);
-        Py_RETURN_NONE;
-    }
-
-    object createPythonUI(LZDataPtr config)
-    {
-        assert(s_uiFactoryMethod && "The factory method must not be null!");
-
-        return s_uiFactoryMethod.call(make_object(config));
+        return PyScriptProxy::New(getGUIMgr());
     }
 
     LZPY_DEF_FUN(param2Position)
@@ -257,67 +237,24 @@ namespace Lzpy
     ///////////////////////////////////////////////////////////////////
 
 
-    LZPY_MODULE_BEG(lui);
-    LZPY_REGISTER_CLASS(Widget, PyWidget);
-    LZPY_REGISTER_CLASS(Label, PyLabel);
-    LZPY_REGISTER_CLASS(Window, PyWindow);
-    LZPY_REGISTER_CLASS(Button, PyButton);
-    LZPY_REGISTER_CLASS(CheckBox, PyCheckBox);
-    LZPY_REGISTER_CLASS(Slidebar, PySlidebar);
-    LZPY_REGISTER_CLASS(Image, PyImage);
-    LZPY_REGISTER_CLASS(Edit, PyEdit);
-    LZPY_REGISTER_CLASS(UIProxy, PyUIProxy);
-    LZPY_REGISTER_CLASS(EditorCtl, PyEditorCtl);
-    LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
-
-    LZPY_FUN(root);
-    LZPY_FUN(param2Position);
-    LZPY_FUN(position2Param);
-    LZPY_FUN(regUIFactory);
-    LZPY_FUN(isVkDown);
-
-    LZPY_MODULE_END();
-
-
-    static Widget* pyEditorUICreateFun(Widget *pParent, LZDataPtr config)
+    void exportUI(const char *module)
     {
-        object pyChild = createPythonUI(config);
-        if (!pyChild) return nullptr;
+        LZPY_REGISTER_CLASS(Widget, PyWidget);
+        LZPY_REGISTER_CLASS(Label, PyLabel);
+        LZPY_REGISTER_CLASS(Window, PyWindow);
+        LZPY_REGISTER_CLASS(Button, PyButton);
+        LZPY_REGISTER_CLASS(CheckBox, PyCheckBox);
+        LZPY_REGISTER_CLASS(Slidebar, PySlidebar);
+        LZPY_REGISTER_CLASS(Image, PyImage);
+        LZPY_REGISTER_CLASS(Edit, PyEdit);
+        LZPY_REGISTER_CLASS(UIProxy, PyUIProxy);
+        LZPY_REGISTER_CLASS(EditorCtl, PyEditorCtl);
+        LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
 
-        //加入缓存池，用于保持引用计数。防止子控件析构。
-        (pyChild.cast<PyWidget>())->setManaged(true);
-
-        //加载控件数据，并加入到panel中。
-        return (pyChild.cast<PyWidget>())->m_control.get();
-    }
-
-
-    namespace _py_lui
-    {
-        class ResLoader : public LzpyResInterface
-        {
-        public:
-
-            void init() override
-            {
-                s_root = new_instance_ex<PyWidget>();
-
-                s_root->m_control = getGUIMgr();
-                s_root->m_control->setScript(object(s_root));
-
-               // setEditorUICreateFun(pyEditorUICreateFun);
-            }
-
-            void fini() override
-            {
-                Py_XDECREF(s_root);
-                s_root = nullptr;
-
-                s_uiFactoryMethod = null_object;
-            }
-        };
-
-        static ResLoader s_resLoader;
+        LZPY_FUN(root);
+        LZPY_FUN(param2Position);
+        LZPY_FUN(position2Param);
+        LZPY_FUN(isVkDown);
     }
 
 }// end namespace Lzpy
