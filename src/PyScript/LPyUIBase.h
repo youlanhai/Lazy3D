@@ -89,7 +89,10 @@ namespace Lzpy
         LZPY_DEF_SET(drawable, m_control->setDrawable, bool);
 
         LZPY_DEF_GET(script, m_control->getScript);
-        LZPY_DEF_SET(script, m_control->setScript, tstring);
+        LZPY_DEF_SET(script, m_control->setScript, object);
+
+        LZPY_DEF_GET(scriptName, m_control->getScriptName);
+        LZPY_DEF_SET(scriptName, m_control->setScriptName, tstring);
 
         LZPY_DEF_GET_MEMBER(__dict__, m_pyDict);
 
@@ -119,13 +122,9 @@ namespace Lzpy
         bool delChild(object_base child);
         void clearChildren();
 
-        void setManaged(bool managed);
-        bool getManaged() const { return m_managed; }
-
-        PyObject    *m_pyDict;
-        PyObject    *m_pyWeakreflist;
-        WidgetPtr   m_control;
-        bool        m_managed;
+        PyObject *      m_pyDict;
+        PyObject *      m_pyWeakreflist;
+        Widget *        m_control;
     };
 
 }//end namespace Lzpy

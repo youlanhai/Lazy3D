@@ -146,7 +146,7 @@ namespace Lazy
                 fillGuiEvent(evt, GuiMsg::buttonClick, 0, 0);
                 delegate.onEvent(evt);
 
-                Lzpy::object_base(m_pScript).call_method_quiet("onButtonClick");
+                m_script.call_method_quiet("onButtonClick");
             }
         }
 

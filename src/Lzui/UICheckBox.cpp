@@ -36,7 +36,7 @@ namespace Lazy
         {
             setCheck(!m_bCheck);
 
-            Lzpy::object_base(m_pScript).call_method_quiet("onButtonCheck", m_bCheck);
+            m_script.call_method_quiet("onButtonCheck", m_bCheck);
         }
 
         return Button::onEvent(event);

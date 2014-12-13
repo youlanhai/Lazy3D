@@ -3,6 +3,7 @@
 #include "Base.h"
 #include "RenderInterface.h"
 #include "../utility/VisitPool.h"
+#include "../Lzpy/LzpyEmbed.h"
 
 #define SCENE_NODE_HEADER(CLASS)        \
     typedef This    Base;               \
@@ -29,7 +30,7 @@ namespace Lazy
      *  一个结点可以拥有若干子结点，从而构成一个场景树。
      *  挂在场景树上的结点，每帧都可以被更新（update）和渲染（render）。
      */
-    class SceneNode : public IBase, public IRenderable
+    class SceneNode : public ScriptObject, public IRenderable
     {
     public:
         typedef SceneNode This;

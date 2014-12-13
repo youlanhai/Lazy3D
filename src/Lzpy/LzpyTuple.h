@@ -59,7 +59,7 @@ namespace Lzpy
         }
     private:
 
-        inline bool _parse_tuple(size_t i) const
+        inline bool _parse_tuple(size_t /*i*/) const
         {
             return true;
         }
@@ -89,7 +89,7 @@ namespace Lzpy
         return tp;
     }
 
-    inline void set_tuple_item(tuple & tp, size_t i)
+    inline void set_tuple_item(tuple & /*tp*/, size_t /*i*/)
     {}
 
     template<typename T, typename... Args>

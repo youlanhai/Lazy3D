@@ -217,12 +217,12 @@ namespace Lazy
     void Edit::onFocusGet()
     {
         getGUIMgr()->activeEdit(this);
-        Lzpy::object_base(m_pScript).call_method_quiet("onFocusGet");
+        m_script.call_method_quiet("onFocusGet");
     }
 
     void Edit::onFocusLost()
     {
-        Lzpy::object_base(m_pScript).call_method_quiet("onFocusLost");
+        m_script.call_method_quiet("onFocusLost");
         getGUIMgr()->unactiveEdit(this);
     }
 

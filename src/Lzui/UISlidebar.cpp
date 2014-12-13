@@ -189,7 +189,7 @@ namespace Lazy
 
     void Slidebar::onSlide()
     {
-        Lzpy::object_base(m_pScript).call_method_quiet("onSlide", m_rate);
+        m_script.call_method_quiet("onSlide", m_rate);
     }
 
 

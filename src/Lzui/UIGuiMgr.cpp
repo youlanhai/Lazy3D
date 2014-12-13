@@ -35,7 +35,7 @@ namespace Lazy
 
     GUIMgr::~GUIMgr(void)
     {
-        Lzpy::object_base(m_pScript).call_method_quiet("destroy");
+        m_script.call_method_quiet("destroy");
         destroy();
 
         g_ptrGUIMgr = NULL;

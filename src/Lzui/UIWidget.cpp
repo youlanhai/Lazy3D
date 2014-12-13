@@ -5,6 +5,7 @@
 #include "TypeParser.h"
 
 #include "../Lzpy/Lzpy.h"
+#include "../PyScript/LPyUIBase.h"
 
 namespace Lazy
 {
@@ -274,7 +275,7 @@ namespace Lazy
         }
 
         processed |= delegate.onEvent(event);
-        processed |= ScriptEvent::onEvent(Lzpy::object_base(m_pScript), event);
+        processed |= ScriptEvent::onEvent(m_script, event);
 
         return processed;
     }
@@ -378,7 +379,7 @@ namespace Lazy
             child->onParentResize(newSize, oldSize);
         }
 
-        Lzpy::object_base(m_pScript).call_method_quiet("onSizeChange");
+        m_script.call_method_quiet("onSizeChange");
     }
 
     CRect Widget::getControlRect(void) const
@@ -773,7 +774,7 @@ namespace Lazy
 
     void Widget::destroy()
     {
-        Lzpy::object_base(m_pScript).call_method_quiet("onDestroy");
+        m_script.call_method_quiet("onDestroy");
         clearChildren();
         clearSkin();
 
@@ -894,6 +895,14 @@ namespace Lazy
         }
 
         delete pWidget;
+    }
+
+    Lzpy::object Widget::createScriptSelf() const
+    {
+        using namespace Lzpy;
+        LzpyControl *pSelf = new_instance_ex<LzpyControl>();
+        pSelf->m_control = const_cast<Widget*>(this);
+        return new_reference(pSelf);
     }
 
     ////////////////////////////////////////////////////////////////////

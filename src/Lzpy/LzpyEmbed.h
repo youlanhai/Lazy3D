@@ -41,28 +41,31 @@ namespace Lazy
         Lzpy::object getSelf() const 
         {
             if (m_self.is_null())
-                const_cast<ScriptObject*>(this)->m_self = createScriptSelf();
+                m_self = createScriptSelf();
+
             return m_self;
         }
 
-        Lzpy::object getScriptListener() const
+        Lzpy::object getScript() const
         { 
-            return m_scriptListener;
+            return m_script;
         }
 
-        void setScriptListener(Lzpy::object script)
+        void setScript(Lzpy::object script)
         {
-            m_scriptListener.call_method_quiet("onUnbind", getSelf());
-            m_scriptListener = script;
-            m_scriptListener.call_method_quiet("onBind", getSelf());
+            m_script.call_method_quiet("onUnbind", getSelf());
+            m_script = script;
+            m_script.call_method_quiet("onBind", getSelf());
         }
 
     protected:
-        /** 与c++对应的python对象。*/
-        Lzpy::object        m_self;
-
         /** 用于接收消息的python对象。*/
-        Lzpy::object        m_scriptListener;
+        Lzpy::object            m_script;
+
+    private:
+
+        /** 与c++对应的python对象。*/
+        mutable Lzpy::object    m_self;
     };
 
 } // end namespace Lazy

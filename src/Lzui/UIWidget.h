@@ -3,6 +3,8 @@
 #include "UIDelegate.h"
 #include "UIDefine.h"
 
+#include "../Lzpy/LzpyEmbed.h"
+
 namespace Lazy
 {
     /** UI控件接口
@@ -10,7 +12,7 @@ namespace Lazy
      *  GUIMgr，管理了整个UI系统，将所有的UI关联起来，形成一颗UI树。实现了UI消息传递，
      *  以及统一更新和渲染。详见GUIMgr。
      */
-    class LZUI_API Widget : public IBase
+    class LZUI_API Widget : public ScriptObject
     {
     public:
         MAKE_UI_HEADER(Widget, IBase);
@@ -143,11 +145,14 @@ namespace Lazy
         void setDrawable(bool enable) { m_drawable = enable; }
         bool getDrawable() const { return m_drawable; }
 
-        const tstring & getScript() const { return m_script; }
-        void setScript(const tstring & script) { m_script = script; }
+
+        virtual Lzpy::object createScriptSelf() const override;
+
+        const tstring & getScriptName() const { return m_scriptName; }
+        void setScriptName(const tstring & script) { m_scriptName = script; }
 
     protected:
-        tstring             m_script;
+        tstring             m_scriptName;
 
     public: //对子控件操作
 

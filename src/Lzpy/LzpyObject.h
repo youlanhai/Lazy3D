@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <Python.h>
+#include "LzpyConfig.h"
 #include <string>
 
 namespace Lzpy
@@ -145,9 +145,9 @@ namespace Lzpy
 
         inline PyObject *get() const {  return m_ptr; }
 
-        inline void addRef() { Py_XINCREF(m_ptr); }
+        inline void addRef() const { Py_XINCREF(m_ptr); }
 
-        inline void delRef() { Py_XDECREF(m_ptr); }
+        inline void delRef() const { Py_XDECREF(m_ptr); }
 
     public:
 
