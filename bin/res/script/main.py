@@ -10,7 +10,13 @@ from share import share
 
 def init() :
 	print("game init.")
-	print("lui:", dir(Lazy))
+	print("Lazy:", dir(Lazy))
+
+	window = Lazy.createUI("Window")
+	print("window:", window, window.object)
+
+	window.position = (100, 100)
+	Lazy.uiroot().addChild(window)
 	
 	return True
 

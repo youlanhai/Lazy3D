@@ -46,14 +46,23 @@ namespace Lazy
             return m_self;
         }
 
-        PyObject * getPSelf() { return m_self.get(); }
+        PyObject * getPSelf() 
+        {
+            if (m_self.is_null())
+                m_self = createScriptSelf();
+
+            return m_self.get(); 
+        }
 
         Lzpy::object getScript() const
         { 
             return m_script;
         }
 
-        PyObject * getPScript() { return m_script.get(); }
+        PyObject * getPScript() 
+        { 
+            return m_script.get();
+        }
 
         void setScript(Lzpy::object script)
         {

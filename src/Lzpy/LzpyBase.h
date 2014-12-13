@@ -46,13 +46,8 @@ namespace Lzpy
 
         static PyScriptProxy * New(Lazy::ScriptObject *pObject);
 
-        LZPY_DEF_GET(object, m_object->getSelf);
-
-        LZPY_DEF_GET(script, m_object->getScript);
-        LZPY_DEF_SET(script, m_object->setScript, object);
-
-        PyObject * pScript() { return m_object->getPScript(); }
-        object script() { return m_object->getScript(); }
+        PyObject * pScript() { return m_object->getPSelf(); }
+        object script() { return m_object->getSelf(); }
 
         Lazy::ScriptObject * get() { return m_object; }
 

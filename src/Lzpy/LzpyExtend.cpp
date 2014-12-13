@@ -103,7 +103,6 @@ namespace Lzpy
         Py_RETURN_NONE;
     }
 
-
     LZPY_MODULE_BEG(helper);
         LZPY_REGISTER_CLASS(Base, PyBase);
         LZPY_REGISTER_CLASS(ScriptProxy, PyScriptProxy);

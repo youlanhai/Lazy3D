@@ -26,9 +26,6 @@ namespace Lzpy
     //////////////////////////////////////////////
     LZPY_CLASS_EXPORT(PyScriptProxy)
     {
-        LZPY_GET(object);
-        LZPY_GETSET(script);
-
         LZPY_LINK_ATTR(tp_getattro, PyGetAttr);
         LZPY_LINK_ATTR(tp_setattro, PySetAttr);
     }
@@ -70,6 +67,12 @@ namespace Lzpy
             return NULL;
 
         PyScriptProxy * p = (PyScriptProxy*) o;
+        if (p->pScript() == NULL)
+            return NULL;
+
+        if (PyUnicode_CompareWithASCIIString(attr_name, "object") == 0)
+            return xincref(p->pScript());
+
         return PyObject_GetAttr(p->pScript(), attr_name);
     }
 
@@ -79,6 +82,9 @@ namespace Lzpy
             return -1;
 
         PyScriptProxy * p = (PyScriptProxy*) o;
+        if (p->pScript() == NULL)
+            return -1;
+
         return PyObject_SetAttr(p->pScript(), attr_name, value);
     }
 }

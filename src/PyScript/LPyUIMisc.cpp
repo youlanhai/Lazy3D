@@ -200,7 +200,7 @@ namespace Lzpy
     ///////////////////////////////////////////////////////////////////
     //函数定义
     ///////////////////////////////////////////////////////////////////
-    LZPY_DEF_FUN(root)
+    LZPY_DEF_FUN(uiroot)
     {
         return PyScriptProxy::New(getGUIMgr());
     }
@@ -232,6 +232,16 @@ namespace Lzpy
         return PyBool_FromLong(isDown);
     }
 
+    LZPY_DEF_FUN(createUI)
+    {
+        wchar_t * type;
+        if (!PyArg_ParseTuple(arg, "u", &type))
+            return NULL;
+
+        Widget * p = uiFactory()->create(type);
+        return PyScriptProxy::New(p);
+    }
+
     ///////////////////////////////////////////////////////////////////
     //函数导出
     ///////////////////////////////////////////////////////////////////
@@ -251,7 +261,8 @@ namespace Lzpy
         LZPY_REGISTER_CLASS(EditorCtl, PyEditorCtl);
         LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
 
-        LZPY_FUN(root);
+        LZPY_FUN(uiroot);
+        LZPY_FUN(createUI);
         LZPY_FUN(param2Position);
         LZPY_FUN(position2Param);
         LZPY_FUN(isVkDown);
