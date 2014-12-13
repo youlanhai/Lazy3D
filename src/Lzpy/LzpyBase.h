@@ -36,4 +36,29 @@ namespace Lzpy
         this->readyType();
     }
 
+
+    class PyScriptProxy : public PyBase
+    {
+        LZPY_DEF(PyScriptProxy);
+    public:
+        PyScriptProxy();
+        ~PyScriptProxy();
+
+        static PyScriptProxy * New(Lazy::ScriptObject *pObject);
+
+        LZPY_DEF_GET(object, m_object->getSelf);
+
+        LZPY_DEF_GET(script, m_object->getScript);
+        LZPY_DEF_SET(script, m_object->setScript, object);
+
+        Lazy::ScriptObject * get() { return m_object; }
+        const Lazy::ScriptObject * get() const { return m_object; }
+
+    private:
+        static PyObject *   PyGetAttr(PyObject * o, PyObject *attr_name);
+        static int          PySetAttr(PyObject * o, PyObject *attr_name, PyObject * value);
+
+        Lazy::ScriptObject * m_object;
+    };
+
 }// end namespace Lzpy
