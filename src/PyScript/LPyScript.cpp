@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "LPyScript.h"
+#include "LPyPoint.h"
 
 namespace Lzpy
 {
@@ -14,6 +15,8 @@ namespace Lzpy
         exportLZD(module);
         exportPhysics(module);
         LZPY_REGISTER_CLASS(SceneNode, PySceneNode);
+        LZPY_REGISTER_CLASS(Point, PyPoint);
+        LZPY_REGISTER_CLASS(Rect, PyRect);
         exportEntity(module);
         exportMap(module);
         exportMisc(module);

@@ -3,6 +3,8 @@
 #include "../Lzui/UIWidget.h"
 #include "../Lzui/UIGuiMgr.h"
 
+#include "LPyPoint.h"
+
 namespace Lzpy
 {
     using namespace Lazy;
@@ -30,32 +32,20 @@ namespace Lzpy
         PyWidget();
         ~PyWidget();
 
-        object getSize();
-        void setSize(object v);
-
-        object getPosition();
-        void setPosition(object v);
-
-        object getAbsPosition();
-        void setAbsPosition(object v);
-
-        object getGlobalPosition();
-        void setGlobalPosition(object v);
-
         LZPY_DEF_GET(parent, m_object->getParent);
         LZPY_DEF_GET(type, m_object->getType);
 
-        LZPY_DEF_GET(size, getSize);
-        LZPY_DEF_SET(size, setSize, object);
+        LZPY_DEF_GET(size, m_object->getSize);
+        LZPY_DEF_SET(size, m_object->setSize, CPoint);
 
-        LZPY_DEF_GET(position, getPosition);
-        LZPY_DEF_SET(position, setPosition, object);
+        LZPY_DEF_GET(position, m_object->getPosition);
+        LZPY_DEF_SET(position, m_object->setPosition, CPoint);
 
-        LZPY_DEF_GET(absPosition, getAbsPosition);
-        LZPY_DEF_SET(absPosition, setAbsPosition, object);
+        LZPY_DEF_GET(absPosition, m_object->getAbsPosition);
+        LZPY_DEF_SET(absPosition, m_object->setAbsPosition, CPoint);
 
-        LZPY_DEF_GET(globalPosition, getGlobalPosition);
-        LZPY_DEF_SET(globalPosition, setGlobalPosition, object);
+        LZPY_DEF_GET(globalPosition, m_object->getGlobalPosition);
+        LZPY_DEF_SET(globalPosition, m_object->setGlobalPosition, CPoint);
 
         LZPY_DEF_GET(name, m_object->getName);
         LZPY_DEF_SET(name, m_object->setName, tstring);
@@ -98,10 +88,8 @@ namespace Lzpy
 
         LZPY_DEF_GET_MEMBER(__dict__, m_pyDict);
 
-        tuple getGlobalRect();
-        void setGlobalRect(tuple rect);
-        LZPY_DEF_GET(globalRect, getGlobalRect);
-        LZPY_DEF_SET(globalRect, setGlobalRect, tuple);
+        LZPY_DEF_GET(globalRect, m_object->getGlobalRect);
+        LZPY_DEF_SET(globalRect, m_object->setGlobalRect, CRect);
 
         //坐标转换
         LZPY_DEF_METHOD(loadFromFile);

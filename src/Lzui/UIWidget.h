@@ -86,8 +86,14 @@ namespace Lazy
         void setLayer(const tstring & layer);
 
         void setGlobalPosition(int x, int y);
+        void setGlobalPosition(const CPoint & pt){ setGlobalPosition(pt.x, pt.y); }
+
         void setAbsPosition(int x, int y);
+        void setAbsPosition(const CPoint & pt){ setAbsPosition(pt.x, pt.y); }
+
         void setPosition(int x, int y);
+        void setPosition(const CPoint & pt){ setPosition(pt.x, pt.y); }
+
         void setZOrder(int z);
 
         const CPoint & getGlobalPosition() const{ return m_globalPosition; }
@@ -97,6 +103,8 @@ namespace Lazy
 
         ///设置尺寸
         virtual void setSize(int w, int h);
+        void setSize(const CPoint & pt){ setSize(pt.x, pt.y); }
+
         void setWidth(int width);
         void setHeight(int height);
 

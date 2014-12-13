@@ -84,6 +84,7 @@
     <ClInclude Include="LPyMisc.h" />
     <ClInclude Include="LPyModel.h" />
     <ClInclude Include="LPyPhysics.h" />
+    <ClInclude Include="LPyPoint.h" />
     <ClInclude Include="LPySceneNode.h" />
     <ClInclude Include="LPyScript.h" />
     <ClInclude Include="LPyUIBase.h" />
@@ -99,6 +100,7 @@
     <ClCompile Include="LPyMisc.cpp" />
     <ClCompile Include="LPyModel.cpp" />
     <ClCompile Include="LPyPhysics.cpp" />
+    <ClCompile Include="LPyPoint.cpp" />
     <ClCompile Include="LPySceneNode.cpp" />
     <ClCompile Include="LPyScript.cpp" />
     <ClCompile Include="LPyUIBase.cpp" />
