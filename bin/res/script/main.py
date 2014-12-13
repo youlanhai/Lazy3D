@@ -3,7 +3,6 @@
 import traceback
 
 import helper
-import lui
 import Lazy
 
 from share import share
@@ -11,7 +10,7 @@ from share import share
 
 def init() :
 	print("game init.")
-	print("lui:", dir(lui))
+	print("lui:", dir(Lazy))
 	
 	return True
 
