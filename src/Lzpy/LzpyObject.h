@@ -197,16 +197,6 @@ namespace Lzpy
         object();
         ~object();
 
-#if 0
-        explicit object(PyObject *v);
-        object(const object & v);
-        object(const object_base & v);
-        object(const new_reference & v);
-        const object & operator = (const object & v);
-        const object & operator = (const object_base & v);
-        const object & operator = (const new_reference & v);
-#endif
-
     protected:
 
         //borrowed refrence

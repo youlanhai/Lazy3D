@@ -560,46 +560,6 @@ namespace Lzpy
         delRef();
     }
 
-#if 0
-    object::object(PyObject *v)
-    {
-        m_ptr = xincref(v);
-    }
-
-    object::object(const object & v)
-    {
-        m_ptr = xincref(v.get());
-    }
-
-    object::object(const object_base & v)
-    {
-        m_ptr = xincref(v.get());
-    }
-
-    object::object(const new_reference & v)
-    {
-        m_ptr = v.get();
-    }
-
-    const object & object::operator = (const object & v)
-    {
-        set_borrow(v.get());
-        return *this;
-    }
-
-    const object & object::operator = (const object_base & v)
-    {
-        set_borrow(v.get());
-        return *this;
-    }
-
-    const object & object::operator = (const new_reference & v)
-    {
-        set_new(v.get());
-        return *this;
-    }
-#endif
-
     //borrowed refrence
     void object::set_borrow(PyObject *p)
     {

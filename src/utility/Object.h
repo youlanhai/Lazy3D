@@ -1,7 +1,5 @@
 #pragma once
 
-struct _object;
-
 namespace Lazy
 {
 
@@ -47,19 +45,8 @@ namespace Lazy
             delete this;
         }
 
-        void setScript(struct _object *p)
-        {
-            m_pScript = p;
-        }
-
-        struct _object * getScript() const
-        {
-            return const_cast<Object*>(this)->m_pScript;
-        }
-
     protected:
         long                m_nRefCounter;  ///<引用计数
-        struct _object*     m_pScript; ///< 脚本对象指针
     };
 
     /** 引用计数操作线程安全*/
