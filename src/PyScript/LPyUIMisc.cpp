@@ -3,7 +3,7 @@
 #include "LPyLzd.h"
 #include "LPyConsole.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     ///////////////////////////////////////////////////////////////////
@@ -268,4 +268,4 @@ namespace Lzpy
         LZPY_FUN(isVkDown);
     }
 
-}// end namespace Lzpy
+}// end namespace Lazy

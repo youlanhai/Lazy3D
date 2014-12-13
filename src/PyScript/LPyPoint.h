@@ -2,11 +2,8 @@
 
 #include "../utility/Tools2d.h"
 
-namespace Lzpy
+namespace Lazy
 {
-    using Lazy::CPoint;
-    using Lazy::CRect;
-
     class PyPoint : public PyBase
     {
         LZPY_DEF(PyPoint);
@@ -41,4 +38,4 @@ namespace Lzpy
     object build_object(const CRect & pt);
     bool parse_object(CRect & pt, object o);
 
-} //end namespace Lzpy
+} //end namespace Lazy

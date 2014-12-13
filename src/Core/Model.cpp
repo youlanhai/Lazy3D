@@ -2,6 +2,7 @@
 #include "Model.h"
 #include "../Physics/PhysicsDebug.h"
 #include "../utility/MemoryCheck.h"
+#include "../PyScript/LPyEntity.h"
 
 namespace Lazy
 {
@@ -72,6 +73,13 @@ namespace Lazy
         AABB aabb = getWorldBoundingBox();
         aabb.normalization();
         return aabb.max.y - aabb.min.y;
+    }
+
+    object IModel::createScriptSelf()
+    {
+        PyModel * p = new_instance_ex<PyModel>();
+        p->m_object = this;
+        return new_reference(p);
     }
 
 } // end namespace Lazy

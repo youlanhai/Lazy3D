@@ -1,6 +1,7 @@
 ﻿#include "stdafx.h"
 #include "SceneNode.h"
 #include "../Physics/MathTool.h"
+#include "../PyScript/LPySceneNode.h"
 
 namespace Lazy
 {
@@ -353,6 +354,13 @@ namespace Lazy
         readAABB(data, L"bb", m_aabb);
 
         return true;
+    }
+
+    object SceneNode::createScriptSelf()
+    {
+        PySceneNode * pySelf = new_instance_ex<PySceneNode>();
+        pySelf->m_object = this;
+        return new_reference(pySelf);
     }
 
 } // end namespace Lazy

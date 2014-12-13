@@ -2,7 +2,7 @@
 
 #include "LzpyObject.h"
 
-namespace Lzpy
+namespace Lazy
 {
     class list;
 

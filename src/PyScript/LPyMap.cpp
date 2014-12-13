@@ -4,7 +4,7 @@
 #include "LPyMap.h"
 #include "LPyEntity.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     LZPY_CLASS_EXPORT(PyMap)
@@ -40,7 +40,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyMap, loadMap)
     {
-        Lazy::tstring name;
+        tstring name;
         if (!parse_object(name, value))
             return null_object;
 
@@ -50,7 +50,7 @@ namespace Lzpy
 
     LZPY_IMP_METHOD_1(PyMap, saveMap)
     {
-        Lazy::tstring name;
+        tstring name;
         if (!parse_object(name, value))
             return null_object;
 

@@ -4,7 +4,7 @@
 #include "LPyPhysics.h"
 #include "LPyMap.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     LZPY_CLASS_BEG(PySkyBox);
@@ -119,7 +119,7 @@ namespace Lzpy
 
     ////////////////////////////////////////////////////////////////////
 
-    class PyCallObj : public Lazy::ITimerDelegate
+    class PyCallObj : public ITimerDelegate
     {
     public:
         PyCallObj(PyObject * pCall, PyObject *pArg)

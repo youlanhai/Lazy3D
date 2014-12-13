@@ -2,7 +2,7 @@
 #include "LzpyOutput.h"
 
 
-namespace Lzpy
+namespace Lazy
 {
     LZPY_CLASS_BEG(PyOutput);
     LZPY_METHOD_1(write);

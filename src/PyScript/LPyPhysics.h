@@ -3,10 +3,8 @@
 #include "../Physics/Math.h"
 #include "../Lzpy/Lzpy.h"
 
-namespace Lzpy
+namespace Lazy
 {
-    using namespace Lazy;
-
     object build_object(const Vector2 & v);
     bool parse_object(Vector2 & v, object o);
 

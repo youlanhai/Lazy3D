@@ -2,7 +2,7 @@
 #include "LzpyTuple.h"
 
 
-namespace Lzpy
+namespace Lazy
 {
     tuple::tuple()
     {

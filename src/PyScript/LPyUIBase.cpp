@@ -3,7 +3,7 @@
 #include "LPyLzd.h"
 
 
-namespace Lzpy
+namespace Lazy
 {
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_EXPORT(PyWidget)
@@ -157,5 +157,5 @@ namespace Lzpy
     }
 
 
-}//end namespace Lzpy
+}//end namespace Lazy
 

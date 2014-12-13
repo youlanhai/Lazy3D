@@ -2,7 +2,7 @@
 
 #include "LPyUIBase.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     class PyLabel : public PyWidget
@@ -169,5 +169,5 @@ namespace Lzpy
 
     };
 
-}// end namespace Lzpy
+}// end namespace Lazy
 

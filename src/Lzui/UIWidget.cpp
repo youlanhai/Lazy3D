@@ -36,7 +36,7 @@ namespace Lazy
     class ScriptEvent
     {
     public:
-        static bool onEvent(Lzpy::object pyScript, const SEvent & event)
+        static bool onEvent(object pyScript, const SEvent & event)
         {
             if (!pyScript) return false;
 
@@ -61,7 +61,7 @@ namespace Lazy
 
     private:
 
-        static bool onGuiEvent(Lzpy::object pyScript, const SEvent::SGuiEvent & event)
+        static bool onGuiEvent(object pyScript, const SEvent::SGuiEvent & event)
         {
             if (!pyScript.hasattr("onGuiEvent")) return false;
 
@@ -69,21 +69,21 @@ namespace Lazy
 
         }
 
-        static bool onKeyEvent(Lzpy::object pyScript, const SEvent::SKeyEvent & event)
+        static bool onKeyEvent(object pyScript, const SEvent::SKeyEvent & event)
         {
             if (!pyScript.hasattr("onKeyEvent")) return false;
 
             return pyScript.call_method("onKeyEvent", event.down, (int) event.key);
         }
 
-        static bool onCharEvent(Lzpy::object pyScript, const SEvent::SCharEvent & event)
+        static bool onCharEvent(object pyScript, const SEvent::SCharEvent & event)
         {
             if (!pyScript.hasattr("onCharEvent")) return false;
 
             return pyScript.call_method("onCharEvent", (int) event.ch);
         }
 
-        static bool onMouseEvent(Lzpy::object pyScript, const SEvent::SMouseEvent & event)
+        static bool onMouseEvent(object pyScript, const SEvent::SMouseEvent & event)
         {
             if (event.event == EME_MOUSE_WHEEL)
                 return onMouseWheel(pyScript, event);
@@ -92,13 +92,13 @@ namespace Lazy
             return pyScript.call_method("onMouseEvent", (int) event.event, event.x, event.y);
         }
 
-        static bool onMouseWheel(Lzpy::object pyScript, const SEvent::SMouseEvent & event)
+        static bool onMouseWheel(object pyScript, const SEvent::SMouseEvent & event)
         {
             if (!pyScript.hasattr("onMouseWheel")) return false;
             return pyScript.call_method("onMouseWheel", event.x, event.y, event.wheel);
         }
 
-        static bool onSysEvent(Lzpy::object pyScript, const SEvent::SSysEvent & event)
+        static bool onSysEvent(object pyScript, const SEvent::SSysEvent & event)
         {
             if (!pyScript.hasattr("onSysEvent")) return false;
 
@@ -897,11 +897,10 @@ namespace Lazy
         delete pWidget;
     }
 
-    Lzpy::object Widget::createScriptSelf() const
+    object Widget::createScriptSelf()
     {
-        using namespace Lzpy;
         PyWidget *pSelf = new_instance_ex<PyWidget>();
-        pSelf->m_object = const_cast<Widget*>(this);
+        pSelf->m_object = this;
         return new_reference(pSelf);
     }
 

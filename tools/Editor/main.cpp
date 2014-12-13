@@ -120,8 +120,8 @@ bool initPython()
 
     Py_SetPythonHome(&pyHome[0]);
 
-    PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
-    PyImport_AppendInittab("Lazy", Lzpy::PyInit_Lazy);
+    PyImport_AppendInittab("helper", Lazy::PyInit_helper);
+    PyImport_AppendInittab("Lazy", Lazy::PyInit_Lazy);
 
     Py_Initialize();
     if (!Py_IsInitialized())
@@ -133,16 +133,16 @@ bool initPython()
     try
     {
         //初始化内置模块
-        Lzpy::import("helper");
-        Lzpy::import("Lazy");
+        Lazy::import("helper");
+        Lazy::import("Lazy");
 
-        Lzpy::LzpyResInterface::initAll();
+        Lazy::LzpyResInterface::initAll();
 
         //输出重定向
-        Lzpy::object sys = Lzpy::import(L"sys");
+        Lazy::object sys = Lazy::import(L"sys");
         if (!sys) return false;
 
-        Lzpy::object out = Lzpy::new_reference(Lzpy::new_instance_ex<Lzpy::PyOutput>());
+        Lazy::object out = Lazy::new_reference(Lazy::new_instance_ex<Lazy::PyOutput>());
         sys.setattr("stdout", out);
         sys.setattr("stderr", out);
         PyRun_SimpleString("print('---------1234')");
@@ -161,12 +161,12 @@ bool initPython()
                 }
 
                 LOG_INFO(L"add script path: %s", path.c_str());
-                Lzpy::addSysPath(path);
+                Lazy::addSysPath(path);
             }
         }
 
         //脚本入口
-        Lzpy::object mygame = Lzpy::import(gameModule);
+        Lazy::object mygame = Lazy::import(gameModule);
         if (!mygame)
         {
             if (PyErr_Occurred())
@@ -185,7 +185,7 @@ bool initPython()
             return false;
         }
     }
-    catch (Lzpy::python_error & e)
+    catch (Lazy::python_error & e)
     {
         LOG_ERROR(L"Python Error in initPython: %S", e.what());
 
@@ -206,12 +206,12 @@ bool finiPython()
 
     try
     {
-        Lzpy::object mygame = Lzpy::import(gameModule);
+        Lazy::object mygame = Lazy::import(gameModule);
         mygame.call_method("fini");
 
-        Lzpy::LzpyResInterface::finiAll();
+        Lazy::LzpyResInterface::finiAll();
     }
-    catch (Lzpy::python_error & e)
+    catch (Lazy::python_error & e)
     {
         LOG_ERROR(L"Python Error in finiPython : %S", e.what());
 

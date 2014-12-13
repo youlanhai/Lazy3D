@@ -3,10 +3,8 @@
 #include "../Core/SceneNode.h"
 #include "LPyPhysics.h"
 
-namespace Lzpy
+namespace Lazy
 {
-    using namespace Lazy;
-
     object build_object(SceneNode * v);
     bool parse_object(SceneNode *& v, object o);
 
@@ -59,4 +57,4 @@ namespace Lzpy
 
     BUILD_AND_PARSE_SCRIPT_OBJECT(PySceneNode, SceneNode);
 
-}// end namespace Lzpy
+}// end namespace Lazy

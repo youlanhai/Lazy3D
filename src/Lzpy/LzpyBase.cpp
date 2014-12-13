@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "LzpyBase.h"
 
-namespace Lzpy
+namespace Lazy
 {
     LZPY_CLASS_EXPORT(PyBase)
     {

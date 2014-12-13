@@ -36,6 +36,8 @@ namespace Lazy
 
         float getHeight() const;
 
+        object createScriptSelf();
+
     public://动画相关
 
         /** 播放动画*/

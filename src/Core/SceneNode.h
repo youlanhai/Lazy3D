@@ -134,6 +134,8 @@ namespace Lazy
         virtual void saveToStream(LZDataPtr data);
         virtual bool loadFromStream(LZDataPtr data);
 
+        virtual object createScriptSelf() override;
+
     protected:
         void setParent(SceneNode * parent);
         void setDirtyFlag(int flag);

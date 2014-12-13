@@ -2,7 +2,7 @@
 
 #include "LzpyBase.h"
 
-namespace Lzpy
+namespace Lazy
 {
     ///用于python输出重定向
     class PyOutput : public PyBase
@@ -17,5 +17,5 @@ namespace Lzpy
         std::wstring m_msg;
     };
 
-}// end namespace Lzpy
+}// end namespace Lazy
 

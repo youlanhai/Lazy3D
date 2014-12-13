@@ -2,7 +2,7 @@
 #include "LzpyExtend.h"
 #include "LzpyOutput.h"
 
-namespace Lzpy
+namespace Lazy
 {
     ////////////////////////////////////////////////////////////////////
 

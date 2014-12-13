@@ -2,7 +2,7 @@
 #include "LzpyDict.h"
 #include "LzpyList.h"
 
-namespace Lzpy
+namespace Lazy
 {
     dict::dict()
     {

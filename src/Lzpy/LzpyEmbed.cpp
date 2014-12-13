@@ -1,7 +1,7 @@
 ﻿#include "StdAfx.h"
 #include "LzpyEmbed.h"
 
-namespace Lzpy
+namespace Lazy
 {
     object import(const std::wstring & name)
     {

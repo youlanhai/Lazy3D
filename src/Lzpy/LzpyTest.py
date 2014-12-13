@@ -2,8 +2,8 @@
 
 #测试 lazy py
 def doTest():
-	import Lzpy
-	Lzpy.print('hello python!')
+	import Lazy
+	Lazy.print('hello python!')
 
 	import noddy2
 	a = noddy2.Noddy('you', 'lanhai', 23)

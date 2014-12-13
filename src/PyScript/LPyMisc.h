@@ -1,9 +1,7 @@
 ﻿#pragma once
 
-namespace Lzpy
+namespace Lazy
 {
-    using namespace Lazy;
-
     class PyEntity;
 
     class PySkyBox : public PyBase

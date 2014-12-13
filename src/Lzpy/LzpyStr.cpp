@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "LzpyStr.h"
 
-namespace Lzpy
+namespace Lazy
 {
     str::str()
     {

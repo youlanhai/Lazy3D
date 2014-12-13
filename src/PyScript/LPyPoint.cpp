@@ -3,7 +3,7 @@
 
 #include <sstream>
 
-namespace Lzpy
+namespace Lazy
 {
     LZPY_CLASS_EXPORT(PyPoint)
     {
@@ -142,4 +142,4 @@ namespace Lzpy
         return false;
     }
 
-}// end namespace Lzpy
+}// end namespace Lazy

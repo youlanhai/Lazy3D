@@ -2,7 +2,7 @@
 #include "LzpyList.h"
 #include "LzpyTuple.h"
 
-namespace Lzpy
+namespace Lazy
 {
     list::list()
     {

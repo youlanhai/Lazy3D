@@ -1,19 +1,17 @@
 ﻿#include "stdafx.h"
 #include "LPyLzd.h"
 
-using namespace Lazy;
-
-namespace Lzpy
+namespace Lazy
 {
 
-    object make_object(Lazy::LZDataBase * ptr)
+    object make_object(LZDataBase * ptr)
     {
         PyLazyData *p = new_instance_ex<PyLazyData>();
         p->m_data = ptr;
         return new_reference(p);
     }
 
-    bool parse_object(Lazy::LZDataBase *& ptr, object o)
+    bool parse_object(LZDataBase *& ptr, object o)
     {
         if (o.is_none())
         {
@@ -35,7 +33,7 @@ namespace Lzpy
 
     bool parse_object(LZDataPtr & ptr, object o)
     {
-        Lazy::LZDataBase * p;
+        LZDataBase * p;
         if (parse_object(p, o))
         {
             ptr = p;
@@ -354,7 +352,7 @@ namespace Lzpy
 
     ///////////////////////////////////////////////////////////////////
 
-    PyObject * _openLzdWithType(PyObject *pArgs, Lazy::DataType type)
+    PyObject * _openLzdWithType(PyObject *pArgs, DataType type)
     {
         const wchar_t * path;
         int createIfMiss = 0;
@@ -362,7 +360,7 @@ namespace Lzpy
         if (!PyArg_ParseTuple(pArgs, "u|i", &path, &createIfMiss))
             return nullptr;
 
-        LZDataPtr ptr = Lazy::openSection(path, createIfMiss != 0, type);
+        LZDataPtr ptr = openSection(path, createIfMiss != 0, type);
         if (!ptr) Py_RETURN_NONE;
 
         PyLazyData *pData = new_instance_ex<PyLazyData>();
@@ -373,12 +371,12 @@ namespace Lzpy
 
     LZPY_DEF_FUN(openLzd)
     {
-        return _openLzdWithType(arg, Lazy::DataType::Lzd);
+        return _openLzdWithType(arg, DataType::Lzd);
     }
 
     LZPY_DEF_FUN(openXml)
     {
-        return _openLzdWithType(arg, Lazy::DataType::Xml);
+        return _openLzdWithType(arg, DataType::Xml);
     }
 
     LZPY_DEF_FUN(saveSection)

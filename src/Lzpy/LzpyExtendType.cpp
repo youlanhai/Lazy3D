@@ -1,13 +1,13 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include "LzpyExtendType.h"
 #include "LzpyExtendHelper.h"
 
-namespace Lzpy
+namespace Lazy
 {
     namespace helper
     {
-        //¼ÇÂ¼Ä£¿éµÄÀàĞÅÏ¢
+        //è®°å½•æ¨¡å—çš„ç±»ä¿¡æ¯
         typedef std::vector<PyExtenInterface*> ExtenClassArray;
         typedef std::map<std::string, ExtenClassArray> ExtenClassMap;
 
@@ -61,7 +61,7 @@ namespace Lzpy
         addMethod(name, fun, METH_VARARGS, "");
     }
 
-    ///Ìí¼ÓÀà·½·¨
+    ///æ·»åŠ ç±»æ–¹æ³•
     void PyExtenInterface::addMethod(const char *name, PyCFunction fun, int meth, const char *doc)
     {
         PyMethodDef def = { name, fun, meth, doc };
@@ -74,7 +74,7 @@ namespace Lzpy
         addMember(name, type, offset, 0, "");
     }
 
-    ///Ìí¼ÓÀà³ÉÔ±±äÁ¿
+    ///æ·»åŠ ç±»æˆå‘˜å˜é‡
     void PyExtenInterface::addMember(const char *name, int type, Py_ssize_t offset, int flags, char *doc)
     {
         assert(name);
@@ -88,7 +88,7 @@ namespace Lzpy
         addGetSet(name, get, set, nullptr, nullptr);
     }
 
-    ///Ìí¼ÓÀàÊôĞÔ
+    ///æ·»åŠ ç±»å±æ€§
     void PyExtenInterface::addGetSet(const char *name, getter get, setter set, char *doc, void *closure)
     {
         assert(name);
@@ -97,4 +97,4 @@ namespace Lzpy
         getsets_.push_back(def);
     }
 
-} // end namespace Lzpy
+} // end namespace Lazy

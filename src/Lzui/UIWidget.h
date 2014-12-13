@@ -154,7 +154,7 @@ namespace Lazy
         bool getDrawable() const { return m_drawable; }
 
 
-        virtual Lzpy::object createScriptSelf() const override;
+        virtual object createScriptSelf() override;
 
         const tstring & getScriptName() const { return m_scriptName; }
         void setScriptName(const tstring & script) { m_scriptName = script; }

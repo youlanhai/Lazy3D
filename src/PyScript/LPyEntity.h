@@ -4,10 +4,8 @@
 #include "LPyPhysics.h"
 #include "LPyModel.h"
 
-namespace Lzpy
+namespace Lazy
 {
-    using namespace Lazy;
-
     class PyEntity;
 
 

@@ -3,7 +3,7 @@
 #include "../Core/Model.h"
 #include "LPySceneNode.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     class PyModel : public PySceneNode

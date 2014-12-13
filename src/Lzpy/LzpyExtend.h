@@ -4,7 +4,7 @@
 #include "LzpyBase.h"
 
 ///python交互
-namespace Lzpy
+namespace Lazy
 {
     ///测试导出类
     class PyTestClass : public PyBase

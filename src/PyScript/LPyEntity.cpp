@@ -3,7 +3,7 @@
 #include "LPyPhysics.h"
 #include "../utility/MemoryCheck.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     ////////////////////////////////////////////////////////////////////

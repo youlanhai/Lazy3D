@@ -2,7 +2,7 @@
 #include "LPySceneNode.h"
 #include "LPyLzd.h"
 
-namespace Lzpy
+namespace Lazy
 {
     LZPY_CLASS_EXPORT(PySceneNode)
     {
@@ -106,4 +106,4 @@ namespace Lzpy
         return build_object(ret);
     }
 
-} // end namespace Lzpy
+} // end namespace Lazy

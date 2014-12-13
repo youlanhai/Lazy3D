@@ -2,7 +2,7 @@
 #include "LPyScript.h"
 #include "LPyPoint.h"
 
-namespace Lzpy
+namespace Lazy
 {
     void exportLZD(const char *module);
     void exportPhysics(const char *module);

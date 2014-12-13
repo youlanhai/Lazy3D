@@ -2,10 +2,8 @@
 
 #include "LPySceneNode.h"
 
-namespace Lzpy
+namespace Lazy
 {
-    using namespace Lazy;
-
     class PyMap : public PyBase
     {
         LZPY_DEF(PyMap);

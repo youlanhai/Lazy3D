@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-namespace Lzpy
+namespace Lazy
 {
     class PyLazyData : public PyBase
     {
@@ -43,13 +43,13 @@ namespace Lzpy
         LZPY_DEF_METHOD(readString);
         LZPY_DEF_METHOD(writeString);
 
-        Lazy::LZDataPtr m_data;
+        LZDataPtr m_data;
     };
 
-    object make_object(Lazy::LZDataBase * ptr);
-    bool parse_object(Lazy::LZDataBase *& ptr, object o);
+    object make_object(LZDataBase * ptr);
+    bool parse_object(LZDataBase *& ptr, object o);
 
-    object make_object(Lazy::LZDataPtr ptr);
-    bool parse_object(Lazy::LZDataPtr & ptr, object o);
+    object make_object(LZDataPtr ptr);
+    bool parse_object(LZDataPtr & ptr, object o);
 
-}//end namespace Lzpy
+}//end namespace Lazy

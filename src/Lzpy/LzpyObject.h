@@ -3,7 +3,7 @@
 #include "LzpyConfig.h"
 #include <string>
 
-namespace Lzpy
+namespace Lazy
 {
     class object_base;
     class object;
@@ -257,5 +257,5 @@ namespace Lzpy
         reference operator * () const { return *get(); }
     };
 
-}// end namespace Lzpy
+}// end namespace Lazy
 

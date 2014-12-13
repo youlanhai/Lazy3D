@@ -1,38 +1,38 @@
-#pragma once
+ï»¿#pragma once
 
-namespace Lzpy
+namespace Lazy
 {
 
-    ///ÓÃÓÚµ¼³öµÄ½Ó¿Ú
+    ///ç”¨äºå¯¼å‡ºçš„æ¥å£
     class PyExtenInterface
     {
     public:
-        ///ÔÚµ¼³öµÄÊ±ºò£¬»áÖ´ĞĞ´Ë¶ÔÏóµÄextenMethod·½·¨¡£
+        ///åœ¨å¯¼å‡ºçš„æ—¶å€™ï¼Œä¼šæ‰§è¡Œæ­¤å¯¹è±¡çš„extenMethodæ–¹æ³•ã€‚
         PyExtenInterface();
         virtual ~PyExtenInterface();
 
         void registerForExten(const std::string & mod, const std::string & cls);
 
-        ///µ¼³öµÄÊ±ºò£¬»áÖ´ĞĞ´Ë·½·¨¡£
+        ///å¯¼å‡ºçš„æ—¶å€™ï¼Œä¼šæ‰§è¡Œæ­¤æ–¹æ³•ã€‚
         virtual void extenMethod() = 0;
 
-        ///ÕæÕıÖ´ĞĞµ¼³ö
+        ///çœŸæ­£æ‰§è¡Œå¯¼å‡º
         virtual void readyType() = 0;
 
         bool isTypeReady() { return pytype_.tp_dict != nullptr; }
 
-        ///ÀàÀàĞÍ
+        ///ç±»ç±»å‹
         PyTypeObject* pytype() { return &pytype_; }
 
-        ///Ìí¼ÓÀà·½·¨
+        ///æ·»åŠ ç±»æ–¹æ³•
         void addMethod(const char* name, PyCFunction fun);
         void addMethod(const char *name, PyCFunction fun, int meth, const char *doc);
 
-        ///Ìí¼ÓÀà³ÉÔ±±äÁ¿
+        ///æ·»åŠ ç±»æˆå‘˜å˜é‡
         void addMember(const char *name, int type, Py_ssize_t offset);
         void addMember(const char *name, int type, Py_ssize_t offset, int flags, char *doc);
 
-        ///Ìí¼ÓÀàÊôĞÔ
+        ///æ·»åŠ ç±»å±æ€§
         void addGetSet(const char *name, getter get, setter set);
         void addGetSet(const char *name, getter get, setter set, char *doc, void *closure);
 
@@ -42,11 +42,11 @@ namespace Lzpy
         std::vector<PyMemberDef> members_;
         std::vector<PyGetSetDef> getsets_;
 
-        std::string cls_;///<Ä£¿éÃû³Æ
-        std::string mod_;///<µ¼³öÀàÃû³Æ
+        std::string cls_;///<æ¨¡å—åç§°
+        std::string mod_;///<å¯¼å‡ºç±»åç§°
     };
 
-    ///ÓÃÓÚµ¼³öÀà
+    ///ç”¨äºå¯¼å‡ºç±»
     template<class Type>
     class PyExtenClass : public PyExtenInterface
     {
@@ -63,8 +63,8 @@ namespace Lzpy
         virtual void readyType() override;
 
 
-        ///µ¼³öÀàÄÚ´æ·ÖÅä
-        static PyObject* tp_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+        ///å¯¼å‡ºç±»å†…å­˜åˆ†é…
+        static PyObject* tp_new(PyTypeObject *type, PyObject * /*args*/, PyObject * /*kwds*/)
         {
             class_type* self = static_cast<class_type*> (type->tp_alloc(type, 0));
             if (self == nullptr)
@@ -74,14 +74,14 @@ namespace Lzpy
             return self;
         }
 
-        ///µ¼³öÀàÄÚ´æ»ØÊÕ
+        ///å¯¼å‡ºç±»å†…å­˜å›æ”¶
         static void tp_dealloc(PyObject* self)
         {
             ((class_type*) self)->~class_type();
             Py_TYPE(self)->tp_free(self);
         }
 
-        ///µ¼³öÀà¹¹Ôì·½·¨
+        ///å¯¼å‡ºç±»æ„é€ æ–¹æ³•
         static int tp_init(PyObject *self, PyObject *args, PyObject *kwds)
         {
             bool ret = ((class_type*) self)->init(args, kwds);
@@ -149,4 +149,4 @@ namespace Lzpy
         PyModule_AddObject(module, cls_.c_str(), (PyObject *) &pytype_);
     }
 
-} // end namespace Lzpy
+} // end namespace Lazy

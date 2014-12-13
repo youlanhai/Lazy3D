@@ -7,13 +7,9 @@
 
 #include <queue>
 
-namespace Lzpy
+namespace Lazy
 {
     class PyConsoleOutput;
-
-    using Lazy::Widget;
-    using Lazy::Edit;
-    using Lazy::Window;
 
     class ConsoleEdit : public Edit
     {
@@ -23,7 +19,7 @@ namespace Lzpy
         ConsoleEdit();
         ~ConsoleEdit();
 
-        virtual bool onSysKey(bool isKeyDown, Lazy::EKEY_CODE key) override;
+        virtual bool onSysKey(bool isKeyDown, EKEY_CODE key) override;
 
         void clearText();
     };
@@ -49,8 +45,8 @@ namespace Lzpy
         void updateResult();
 
     private:
-        Lazy::Label m_staticLabel;
-        Lazy::Label m_markLabel;
+        Label m_staticLabel;
+        Label m_markLabel;
         ConsoleEdit  m_cmdEdit;
 
         std::wstring m_strResult;
@@ -80,4 +76,4 @@ namespace Lzpy
         std::wstring m_msg;
     };
 
-}//end namespace Lzpy
+}//end namespace Lazy

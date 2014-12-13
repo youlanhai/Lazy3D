@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "LPyConsole.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     bool str1NCmp(std::wstring const & str1, std::wstring const & str2, size_t start, size_t n)
@@ -35,7 +35,7 @@ namespace Lzpy
 
     }
 
-    bool ConsoleEdit::onSysKey(bool isKeyDown, Lazy::EKEY_CODE key)
+    bool ConsoleEdit::onSysKey(bool isKeyDown, EKEY_CODE key)
     {
         if (!m_parent) return false;
 
@@ -61,7 +61,7 @@ namespace Lzpy
 
         m_strResult = L"python console.";
 
-        m_staticLabel.setAlign(Lazy::RelativeAlign::left);
+        m_staticLabel.setAlign(RelativeAlign::left);
         m_staticLabel.setMutiLine(true);
         addChild(&m_staticLabel);
 
@@ -111,7 +111,7 @@ namespace Lzpy
         else if (key == VK_RETURN)
         {
             std::wstring text = m_cmdEdit.getText();
-            Lazy::trimStringW(text);
+            trimStringW(text);
 
             if (text.empty())
             {
@@ -193,7 +193,7 @@ namespace Lzpy
         m_strResult.append(cmd);
 
         std::string cmdAsc;
-        Lazy::wcharToChar(cmdAsc, cmd);
+        wcharToChar(cmdAsc, cmd);
 
         PyObject *pRet = PyRun_StringFlags(cmdAsc.c_str(), Py_single_input,
                                            m_pyGlobal.get(), m_pyLocal.get(), nullptr);
@@ -219,8 +219,8 @@ namespace Lzpy
     {
         m_staticLabel.setText(m_strResult);
 
-        Lazy::CSize size = m_staticLabel.getTextSize();
-        Lazy::CSize size2 = m_markLabel.getTextSize();
+        CSize size = m_staticLabel.getTextSize();
+        CSize size2 = m_markLabel.getTextSize();
 
         m_markLabel.setPosition(0, size.cy);
         m_cmdEdit.setPosition(size2.cx, size.cy);
@@ -259,4 +259,4 @@ namespace Lzpy
         return none_object;
     }
 
-}//end namespace Lzpy
+}//end namespace Lazy

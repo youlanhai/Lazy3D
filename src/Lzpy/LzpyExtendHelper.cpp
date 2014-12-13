@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "LzpyExtendHelper.h"
 
-namespace Lzpy
+namespace Lazy
 {
 
     namespace helper

@@ -15,7 +15,7 @@ public:                                                         \
 #define LZPY_DEF(ClassType) LZPY_DEF_COMMON(ClassType, ThisClass)
 
 ///python交互
-namespace Lzpy
+namespace Lazy
 {
 
     ///导出基类
@@ -99,4 +99,4 @@ namespace Lzpy
         return parse_script_object<TYPE_PY, TYPE_CXX>(v, o); \
     }
 
-}// end namespace Lzpy
+}// end namespace Lazy

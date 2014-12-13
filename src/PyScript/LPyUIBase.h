@@ -5,10 +5,8 @@
 
 #include "LPyPoint.h"
 
-namespace Lzpy
+namespace Lazy
 {
-    using namespace Lazy;
-
 #define LZPY_IMP_INIT_LUI(PY_CLASS)\
     LZPY_IMP_INIT(PY_CLASS)\
     {\
@@ -108,5 +106,5 @@ namespace Lzpy
 
     BUILD_AND_PARSE_SCRIPT_OBJECT(PyWidget, Widget);
 
-}//end namespace Lzpy
+}//end namespace Lazy
 

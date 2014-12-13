@@ -11,17 +11,14 @@
 #include "LzpyList.h"
 #include "LzpyDict.h"
 
-namespace Lzpy
+namespace Lazy
 {
     object import(const std::wstring & str);
     object import(const char *name);
     void addSysPath(const std::wstring & path);
     void addSysPaths(const std::vector<std::wstring> & paths);
-} // end namespace Lzpy
 
 
-namespace Lazy
-{
     class ScriptObject : public Object
     {
     public:
@@ -32,16 +29,19 @@ namespace Lazy
         ~ScriptObject()
         {}
 
-        virtual Lzpy::object createScriptSelf() const
+        virtual object createScriptSelf()
         { 
-            return Lzpy::none_object;
+            return none_object;
         }
 
         /** 如果self还没有创建出来，这里会调用createScriptSelf函数进行创建。*/
-        Lzpy::object getSelf() const 
+        object getSelf() const 
         {
             if (m_self.is_null())
-                m_self = createScriptSelf();
+            {
+                ScriptObject * pThis = const_cast<ScriptObject*>(this);
+                pThis->m_self = pThis->createScriptSelf();
+            }
 
             return m_self;
         }
@@ -54,7 +54,7 @@ namespace Lazy
             return m_self.get(); 
         }
 
-        Lzpy::object getScript() const
+        object getScript() const
         { 
             return m_script;
         }
@@ -64,7 +64,7 @@ namespace Lazy
             return m_script.get();
         }
 
-        void setScript(Lzpy::object script)
+        void setScript(object script)
         {
             m_script.call_method_quiet("onUnbind", getSelf());
             m_script = script;
@@ -73,12 +73,12 @@ namespace Lazy
 
     protected:
         /** 用于接收消息的python对象。*/
-        Lzpy::object            m_script;
+        object            m_script;
 
     private:
 
         /** 与c++对应的python对象。*/
-        mutable Lzpy::object    m_self;
+        object            m_self;
     };
 
 } // end namespace Lazy
