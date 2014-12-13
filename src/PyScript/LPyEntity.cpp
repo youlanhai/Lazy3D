@@ -267,7 +267,7 @@ namespace Lzpy
         ModelPtr model = ModelFactory::loadModel(source);
         if (!model) Py_RETURN_NONE;
 
-        object m = build_object(model);
+        object m = build_object(model.get());
         return xincref(m);
     }
 

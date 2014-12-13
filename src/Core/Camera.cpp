@@ -5,6 +5,8 @@
 #include "TerrainMap.h"
 #include "Collision.h"
 
+#include "../Render/EffectConstant.h"
+
 namespace Lazy
 {
 
@@ -19,6 +21,12 @@ namespace Lazy
     {
         return g_pCamera_;
     }
+
+    void effectApplyCameraPosition(EffectConstant *pConst)
+    {
+        pConst->bindValue(getCamera()->getPosition());
+    }
+
     //////////////////////////////////////////////////////////////////////////
 
     Camera::Camera(CameraType type /*= THIRD*/)

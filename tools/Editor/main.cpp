@@ -121,7 +121,6 @@ bool initPython()
     Py_SetPythonHome(&pyHome[0]);
 
     PyImport_AppendInittab("helper", Lzpy::PyInit_helper);
-    PyImport_AppendInittab("lui", Lzpy::PyInit_lui);
     PyImport_AppendInittab("Lazy", Lzpy::PyInit_Lazy);
 
     Py_Initialize();
@@ -135,7 +134,6 @@ bool initPython()
     {
         //初始化内置模块
         Lzpy::import("helper");
-        Lzpy::import("lui");
         Lzpy::import("Lazy");
 
         Lzpy::LzpyResInterface::initAll();
@@ -265,7 +263,7 @@ bool CGame::init(void)
     {
         model->setScale(Vector3(0.025f, 0.025f, 0.025f));
         model->rotationY(D3DX_PI);
-        g_player->setModel(model);
+        g_player->setModel(model.get());
     }
 
     TerrainMap::instance()->setSource(g_player.get());

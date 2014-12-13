@@ -88,9 +88,9 @@ namespace Lazy
 
         bool intersectWithCursor();
 
-        void onChunkLoaded(ChunkPtr chunk);
-        void onChunkUnloaded(ChunkPtr chunk);
-        bool ifChunkOutside(ChunkPtr chunk);
+        void onChunkLoaded(TerrainChunk * chunk);
+        void onChunkUnloaded(TerrainChunk* chunk);
+        bool ifChunkOutside(TerrainChunk* chunk);
 
     protected:
 

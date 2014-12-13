@@ -10,9 +10,6 @@ namespace Lzpy
     object build_object(SceneNode * v);
     bool parse_object(SceneNode *& v, object o);
 
-    object build_object(SceneNodePtr v);
-    bool parse_object(SceneNodePtr & v, object o);
-
     class PySceneNode : public PyBase
     {
         LZPY_DEF(PySceneNode);

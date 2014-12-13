@@ -13,6 +13,10 @@ namespace Lzpy
         LZPY_METHOD(set);
     }
 
+    LZPY_IMP_INIT(PyPoint)
+    {
+        return true;
+    }
 
     PyPoint::PyPoint()
     {
@@ -79,6 +83,10 @@ namespace Lzpy
         LZPY_METHOD(set);
     }
 
+    LZPY_IMP_INIT(PyRect)
+    {
+        return true;
+    }
 
     PyRect::PyRect()
     {

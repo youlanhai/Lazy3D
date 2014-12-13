@@ -59,12 +59,12 @@ namespace Lazy
         ///朝向某方向
         void faceToDir(const Vector3 & pos);
 
-        ModelPtr getModel(void) const { return m_model; }
-        void setModel(ModelPtr pModel);
+        IModel* getModel(void) const { return m_model.get(); }
+        void setModel(IModel* pModel);
 
         ///物理系统
-        void setPhysics(PhysicsPtr p);
-        PhysicsPtr getPhysics(void) const { return m_physics; }
+        void setPhysics(IPhysics* p);
+        IPhysics* getPhysics(void) const { return m_physics.get(); }
 
         ///头顶板
         void setTopboard(RefPtr<TopBoard> pboard) { m_topboard = pboard; }

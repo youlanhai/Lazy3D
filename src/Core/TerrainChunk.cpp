@@ -457,7 +457,7 @@ namespace Lazy
             return;
         }
 
-        addChild(item);
+        addChild(item.get());
     }
 
     void TerrainChunk::updateVertices()

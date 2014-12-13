@@ -54,7 +54,7 @@ namespace Lzpy
         if (!parse_object(name, value))
             return null_object;
 
-        SceneNodePtr child = m_object->findChild(name);
+        SceneNode* child = m_object->findChild(name);
         return build_object(child);
     }
 

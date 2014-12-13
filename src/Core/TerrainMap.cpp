@@ -547,17 +547,17 @@ namespace Lazy
         return m_rect.isIn(x, z);
     }
 
-    void TerrainMap::onChunkLoaded(ChunkPtr chunk)
+    void TerrainMap::onChunkLoaded(TerrainChunk* chunk)
     {
         m_root->addChild(chunk);
     }
 
-    void TerrainMap::onChunkUnloaded(ChunkPtr chunk)
+    void TerrainMap::onChunkUnloaded(TerrainChunk* chunk)
     {
         m_root->delChild(chunk);
     }
 
-    bool TerrainMap::ifChunkOutside(ChunkPtr chunk)
+    bool TerrainMap::ifChunkOutside(TerrainChunk* chunk)
     {
         if (m_loadAll)
             return false;

@@ -199,7 +199,7 @@ namespace Lazy
         return aabb;
     }
 
-    SceneNodePtr SceneNode::findChild(const std::string & name)
+    SceneNode* SceneNode::findChild(const std::string & name)
     {
         SceneNodePtr child;
         size_t pos = name.find("/");
@@ -218,10 +218,10 @@ namespace Lazy
 
         if (pos != name.npos)
             child = findChild(name.substr(pos + 1));
-        return child;
+        return child.get();
     }
 
-    void SceneNode::addChild(SceneNodePtr child)
+    void SceneNode::addChild(SceneNode* child)
     {
         assert(!child->inWorld() && "SceneNode::addChild - the child has been in world.");
         m_children.add(child);
@@ -231,7 +231,7 @@ namespace Lazy
             child->onEnterWorld();
     }
 
-    void SceneNode::delChild(SceneNodePtr child)
+    void SceneNode::delChild(SceneNode* child)
     {
         assert(child->m_parent == this && "SceneNode::delChild - the child doens't owned by this node.");
 
@@ -244,7 +244,7 @@ namespace Lazy
 
     void SceneNode::delChildByName(const std::string & name)
     {
-        SceneNodePtr child = findChild(name);
+        SceneNode* child = findChild(name);
         if (child)
             delChild(child);
     }

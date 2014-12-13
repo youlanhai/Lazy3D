@@ -96,7 +96,7 @@ namespace Lazy
 #endif
     }
 
-    void IEntity::setPhysics(PhysicsPtr p)
+    void IEntity::setPhysics(IPhysics* p)
     {
         if (m_physics == p) return;
 
@@ -105,16 +105,16 @@ namespace Lazy
         if (m_physics) m_physics->setSource(this);
     }
 
-    void IEntity::setModel(ModelPtr pModel)
+    void IEntity::setModel(IModel* pModel)
     {
         if (m_model)
-            this->delChild(m_model);
+            this->delChild(m_model.get());
 
         m_model = pModel;
         if (m_model)
         {
             m_aabb = m_model->getWorldBoundingBox();
-            this->addChild(m_model);
+            this->addChild(m_model.get());
         }
     }
 

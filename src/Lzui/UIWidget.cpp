@@ -901,7 +901,7 @@ namespace Lazy
     {
         using namespace Lzpy;
         PyWidget *pSelf = new_instance_ex<PyWidget>();
-        pSelf->m_control = const_cast<Widget*>(this);
+        pSelf->m_object = const_cast<Widget*>(this);
         return new_reference(pSelf);
     }
 

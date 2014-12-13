@@ -19,10 +19,6 @@ namespace Lzpy
     object build_object(Widget * v);
     bool parse_object(Widget *& v, object o);
 
-    object build_object(WidgetPtr v);
-    bool parse_object(WidgetPtr & v, object o);
-
-
     //此类及其派生类，不得出现虚函数。
     class PyWidget : public PyBase
     {

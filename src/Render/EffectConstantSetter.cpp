@@ -2,7 +2,6 @@
 #include "EffectConstantSetter.h"
 #include "RenderDevice.h"
 #include "Effect.h"
-#include "../Core/Camera.h"
 
 #include <algorithm>
 
@@ -65,10 +64,8 @@ namespace Lazy
         pConst->bindValue(rcDevice()->getWorldViewProj());
     }
 
-    void effectApplyCameraPosition(EffectConstant *pConst)
-    {
-        pConst->bindValue(getCamera()->getPosition());
-    }
+    // implemented in Core/Camera.cpp
+    void effectApplyCameraPosition(EffectConstant *pConst);
 
     void effectApplyMaterialAmbient(EffectConstant *pConst)
     {

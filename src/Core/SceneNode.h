@@ -103,10 +103,10 @@ namespace Lazy
         BOOL inWorld() const { return m_inWorld; }
 
         /** 根据名称查找子结点。name可以为路径形式，如 "parent/child1" */
-        SceneNodePtr findChild(const std::string & name);
+        SceneNode* findChild(const std::string & name);
 
-        void addChild(SceneNodePtr child);
-        void delChild(SceneNodePtr child);
+        void addChild(SceneNode* child);
+        void delChild(SceneNode* child);
         void delChildByName(const std::string & name);
         void clearChildren();
         void removeFromParent();

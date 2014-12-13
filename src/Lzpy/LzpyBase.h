@@ -102,17 +102,6 @@ namespace Lzpy
     inline bool parse_object(TYPE_CXX *& v, object o)\
     {\
         return parse_script_object<TYPE_PY, TYPE_CXX>(v, o); \
-    }\
-    inline object build_object(Lazy::RefPtr<TYPE_CXX> v)\
-    {\
-        return build_script_object<TYPE_PY, TYPE_CXX>(v.get()); \
-    }\
-    inline bool parse_object(Lazy::RefPtr<TYPE_CXX> & v, object o)\
-    {\
-        TYPE_CXX *p = nullptr; \
-        bool ret = parse_script_object<TYPE_PY, TYPE_CXX>(p, o); \
-        v = p; \
-        return ret; \
     }
 
 }// end namespace Lzpy
