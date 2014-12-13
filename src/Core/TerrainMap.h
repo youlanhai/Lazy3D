@@ -24,6 +24,9 @@ namespace Lazy
         void render(IDirect3DDevice9* pDevice);
         void update(float elapse);
 
+        /// 释放当前地图资源
+        void clearCurMap(void);
+
         bool loadMap(const tstring & mapName);
         bool saveMap(const tstring & mapName = _T(""));
         /** create a new map*/
@@ -93,9 +96,6 @@ namespace Lazy
         bool ifChunkOutside(TerrainChunk* chunk);
 
     protected:
-
-        /// 释放当前地图资源
-        void clearCurMap(void);
 
         ///加载chunk
         void initChunks(void);

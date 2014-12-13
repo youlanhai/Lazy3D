@@ -318,12 +318,16 @@ void CGame::clear()
 {
     LOG_DEBUG(_T("Start clear..."));
 
-    finiPython();
-
     Lazy::LoadingMgr::instance()->fini();
 
     m_guimgr->destroy();
+    m_guimgr = nullptr;
+
     CApp::clear();
+
+    TerrainMap::instance()->clearCurMap();
+
+    finiPython();
 
     LOG_DEBUG(_T("Clear finished."));
 }
