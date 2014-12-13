@@ -51,8 +51,9 @@ namespace Lzpy
         LZPY_DEF_GET(script, m_object->getScript);
         LZPY_DEF_SET(script, m_object->setScript, object);
 
+        PyObject * script() { return m_object->getPScript(); }
+
         Lazy::ScriptObject * get() { return m_object; }
-        const Lazy::ScriptObject * get() const { return m_object; }
 
     private:
         static PyObject *   PyGetAttr(PyObject * o, PyObject *attr_name);

@@ -1,12 +1,11 @@
 ﻿#include "stdafx.h"
 #include "LzpyBase.h"
-#include "../utility/MemoryCheck.h"
 
 namespace Lzpy
 {
     LZPY_CLASS_EXPORT(PyBase)
     {
-
+        LZPY_MEMEBER(refcount, T_INT, ob_refcnt);
     }
 
     PyBase::PyBase()
@@ -71,7 +70,7 @@ namespace Lzpy
             return NULL;
 
         PyScriptProxy * p = (PyScriptProxy*) o;
-        return PyObject_GetAttr(p->m_object->getPSelf(), attr_name);
+        return PyObject_GetAttr(p->script(), attr_name);
     }
 
     /*static*/ int PyScriptProxy::PySetAttr(PyObject * o, PyObject *attr_name, PyObject * value)
@@ -80,6 +79,6 @@ namespace Lzpy
             return -1;
 
         PyScriptProxy * p = (PyScriptProxy*) o;
-        return PyObject_SetAttr(p->m_object->getPSelf(), attr_name, value);
+        return PyObject_SetAttr(p->script(), attr_name, value);
     }
 }
