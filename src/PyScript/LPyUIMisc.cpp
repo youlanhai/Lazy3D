@@ -7,7 +7,7 @@ namespace Lzpy
 {
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyLabel);
+    LZPY_CLASS_BEG(PyLabel);
     LZPY_GETSET(lineSpace);
     LZPY_GETSET(textAlign);
     LZPY_GETSET(mutiline);
@@ -16,35 +16,35 @@ namespace Lzpy
     LZPY_CLASS_END();
 
 
-    LzpyLabel::LzpyLabel()
+    PyLabel::PyLabel()
     {
     }
 
-    LZPY_IMP_INIT_LUI(LzpyLabel, Label);
+    LZPY_IMP_INIT_LUI(PyLabel, Label);
 
-    object LzpyLabel::getTextSize()
+    object PyLabel::getTextSize()
     {
         const CSize & s = getUI()->getTextSize();
         return build_tuple(s.cx, s.cy);
     }
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyForm)
+    LZPY_CLASS_BEG(PyWindow)
     LZPY_GETSET(enableClip);
     LZPY_CLASS_END();
 
-    LzpyForm::LzpyForm()
+    PyWindow::PyWindow()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpyForm, Form);
+    LZPY_IMP_INIT_LUI(PyWindow, Form);
 
 
     ///////////////////////////////////////////////////////////////////
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpySlidebar)
+    LZPY_CLASS_BEG(PySlidebar)
     LZPY_GETSET(vertical);
     LZPY_GETSET(rate);
     LZPY_GETSET(sliderSize);
@@ -54,14 +54,14 @@ namespace Lzpy
     LZPY_METHOD_1(slideByWheel);
     LZPY_CLASS_END();
 
-    LzpySlidebar::LzpySlidebar()
+    PySlidebar::PySlidebar()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpySlidebar, Slidebar);
+    LZPY_IMP_INIT_LUI(PySlidebar, Slidebar);
 
-    void LzpySlidebar::setSliderSize(tuple size)
+    void PySlidebar::setSliderSize(tuple size)
     {
         if (size.size() != 2)
             throw(python_error("setSliderSize: tuple 2 needed!"));
@@ -71,25 +71,25 @@ namespace Lzpy
         getUI()->setSliderSize(sz.cx, sz.cy);
     }
 
-    tuple LzpySlidebar::getSliderSize()
+    tuple PySlidebar::getSliderSize()
     {
         CPoint size = getUI()->getSliderSize();
         return build_tuple(size.x, size.y);
     }
 
-    LZPY_IMP_METHOD_0(LzpySlidebar, slideForward)
+    LZPY_IMP_METHOD_0(PySlidebar, slideForward)
     {
         getUI()->slideForward();
         return none_object;
     }
 
-    LZPY_IMP_METHOD_0(LzpySlidebar, slideBackward)
+    LZPY_IMP_METHOD_0(PySlidebar, slideBackward)
     {
         getUI()->slideBackward();
         return none_object;
     }
 
-    LZPY_IMP_METHOD_1(LzpySlidebar, slideByWheel)
+    LZPY_IMP_METHOD_1(PySlidebar, slideByWheel)
     {
         float v;
         if (!parse_object(v, value)) return null_object;
@@ -107,81 +107,81 @@ namespace Lzpy
     }
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyButton);
+    LZPY_CLASS_BEG(PyButton);
     LZPY_GETSET(textAlign);
     LZPY_GETSET(colorFadable);
     LZPY_GETSET(posMovable);
     LZPY_CLASS_END();
 
-    LzpyButton::LzpyButton()
+    PyButton::PyButton()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpyButton, Button);
+    LZPY_IMP_INIT_LUI(PyButton, Button);
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpySelect)
+    LZPY_CLASS_BEG(PyCheckBox)
     LZPY_GETSET(check);
     LZPY_CLASS_END();
 
-    LzpySelect::LzpySelect()
+    PyCheckBox::PyCheckBox()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpySelect, Check);
+    LZPY_IMP_INIT_LUI(PyCheckBox, Check);
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyEditorCtl)
+    LZPY_CLASS_BEG(PyEditorCtl)
     LZPY_GETSET(edgeSize);
     LZPY_CLASS_END();
 
-    LzpyEditorCtl::LzpyEditorCtl()
+    PyEditorCtl::PyEditorCtl()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpyEditorCtl, EditorCtl)
+    LZPY_IMP_INIT_LUI(PyEditorCtl, EditorCtl)
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyImage);
+    LZPY_CLASS_BEG(PyImage);
 
     LZPY_CLASS_END();
 
-    LzpyImage::LzpyImage()
+    PyImage::PyImage()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpyImage, Image)
+    LZPY_IMP_INIT_LUI(PyImage, Image)
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyEdit)
+    LZPY_CLASS_BEG(PyEdit)
     LZPY_GETSET(mutiline);
     LZPY_CLASS_END();
 
-    LzpyEdit::LzpyEdit()
+    PyEdit::PyEdit()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpyEdit, Edit)
+    LZPY_IMP_INIT_LUI(PyEdit, Edit)
 
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_BEG(LzpyUIProxy)
+    LZPY_CLASS_BEG(PyUIProxy)
     LZPY_GET(host);
     LZPY_METHOD(loadHost);
     LZPY_CLASS_END();
 
-    LzpyUIProxy::LzpyUIProxy()
+    PyUIProxy::PyUIProxy()
     {
 
     }
 
-    LZPY_IMP_INIT_LUI(LzpyUIProxy, Proxy);
+    LZPY_IMP_INIT_LUI(PyUIProxy, Proxy);
 
-    LZPY_IMP_METHOD(LzpyUIProxy, loadHost)
+    LZPY_IMP_METHOD(PyUIProxy, loadHost)
     {
         tstring filename;
         if (!arg.parse_tuple(&filename)) return null_object;
@@ -189,7 +189,7 @@ namespace Lzpy
         return build_object(getUI()->loadHost(filename));
     }
 
-    object LzpyUIProxy::getHost()
+    object PyUIProxy::getHost()
     {
         Widget * p = getUI()->getHost();
         if (!p || !p->getScript()) return none_object;
@@ -201,7 +201,7 @@ namespace Lzpy
     //函数定义
     ///////////////////////////////////////////////////////////////////
 
-    static LzpyControl * s_root = nullptr;
+    static PyWidget * s_root = nullptr;
     static object s_uiFactoryMethod;
 
     LZPY_DEF_FUN(root)
@@ -258,16 +258,16 @@ namespace Lzpy
 
 
     LZPY_MODULE_BEG(lui);
-    LZPY_REGISTER_CLASS(Widget, LzpyControl);
-    LZPY_REGISTER_CLASS(Label, LzpyLabel);
-    LZPY_REGISTER_CLASS(Window, LzpyForm);
-    LZPY_REGISTER_CLASS(Button, LzpyButton);
-    LZPY_REGISTER_CLASS(CheckBox, LzpySelect);
-    LZPY_REGISTER_CLASS(Slidebar, LzpySlidebar);
-    LZPY_REGISTER_CLASS(Image, LzpyImage);
-    LZPY_REGISTER_CLASS(Edit, LzpyEdit);
-    LZPY_REGISTER_CLASS(UIProxy, LzpyUIProxy);
-    LZPY_REGISTER_CLASS(EditorCtl, LzpyEditorCtl);
+    LZPY_REGISTER_CLASS(Widget, PyWidget);
+    LZPY_REGISTER_CLASS(Label, PyLabel);
+    LZPY_REGISTER_CLASS(Window, PyWindow);
+    LZPY_REGISTER_CLASS(Button, PyButton);
+    LZPY_REGISTER_CLASS(CheckBox, PyCheckBox);
+    LZPY_REGISTER_CLASS(Slidebar, PySlidebar);
+    LZPY_REGISTER_CLASS(Image, PyImage);
+    LZPY_REGISTER_CLASS(Edit, PyEdit);
+    LZPY_REGISTER_CLASS(UIProxy, PyUIProxy);
+    LZPY_REGISTER_CLASS(EditorCtl, PyEditorCtl);
     LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
 
     LZPY_FUN(root);
@@ -285,10 +285,10 @@ namespace Lzpy
         if (!pyChild) return nullptr;
 
         //加入缓存池，用于保持引用计数。防止子控件析构。
-        (pyChild.cast<LzpyControl>())->setManaged(true);
+        (pyChild.cast<PyWidget>())->setManaged(true);
 
         //加载控件数据，并加入到panel中。
-        return (pyChild.cast<LzpyControl>())->m_control.get();
+        return (pyChild.cast<PyWidget>())->m_control.get();
     }
 
 
@@ -300,7 +300,7 @@ namespace Lzpy
 
             void init() override
             {
-                s_root = new_instance_ex<LzpyControl>();
+                s_root = new_instance_ex<PyWidget>();
 
                 s_root->m_control = getGUIMgr();
                 s_root->m_control->setScript(object(s_root));

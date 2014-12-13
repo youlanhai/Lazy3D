@@ -900,7 +900,7 @@ namespace Lazy
     Lzpy::object Widget::createScriptSelf() const
     {
         using namespace Lzpy;
-        LzpyControl *pSelf = new_instance_ex<LzpyControl>();
+        PyWidget *pSelf = new_instance_ex<PyWidget>();
         pSelf->m_control = const_cast<Widget*>(this);
         return new_reference(pSelf);
     }

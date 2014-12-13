@@ -6,7 +6,7 @@
 namespace Lzpy
 {
     ///////////////////////////////////////////////////////////////////
-    LZPY_CLASS_EXPORT(LzpyControl)
+    LZPY_CLASS_EXPORT(PyWidget)
     {
         LZPY_GET(parent);
         LZPY_GET(type);
@@ -42,17 +42,17 @@ namespace Lzpy
         LZPY_METHOD(loadFromFile);
         LZPY_METHOD(saveToFile);
 
-        LZPY_LINK_ATTR(tp_weaklistoffset, offsetof(LzpyControl, m_pyWeakreflist));
-        LZPY_LINK_ATTR(tp_dictoffset, offsetof(LzpyControl, m_pyDict));
+        LZPY_LINK_ATTR(tp_weaklistoffset, offsetof(PyWidget, m_pyWeakreflist));
+        LZPY_LINK_ATTR(tp_dictoffset, offsetof(PyWidget, m_pyDict));
     }
 
-    LZPY_IMP_INIT(LzpyControl)
+    LZPY_IMP_INIT(PyWidget)
     {
         PyErr_SetString(PyExc_TypeError, "PyWidget can't create an instance derectly!");
         return false;
     }
 
-    LzpyControl::LzpyControl()
+    PyWidget::PyWidget()
         : m_pyDict(nullptr)
         , m_pyWeakreflist(nullptr)
         , m_control(nullptr)
@@ -60,7 +60,7 @@ namespace Lzpy
         m_pyDict = PyDict_New();
     }
 
-    LzpyControl::~LzpyControl()
+    PyWidget::~PyWidget()
     {
 #ifdef _DEBUG
         {
@@ -87,40 +87,40 @@ namespace Lzpy
         Py_DECREF(m_pyDict);
     }
 
-    void LzpyControl::clearChildren()
+    void PyWidget::clearChildren()
     {
         m_control->clearChildren();
     }
 
-    bool LzpyControl::addChild(object_base child)
+    bool PyWidget::addChild(object_base child)
     {
-        if (!CHECK_INSTANCE(LzpyControl, child.get())) return false;
+        if (!CHECK_INSTANCE(PyWidget, child.get())) return false;
 
-        LzpyControl *p = child.cast<LzpyControl>();
+        PyWidget *p = child.cast<PyWidget>();
         m_control->addChild(p->m_control);
 
         return true;
     }
 
-    bool LzpyControl::delChild(object_base child)
+    bool PyWidget::delChild(object_base child)
     {
-        if (!CHECK_INSTANCE(LzpyControl, child.get())) return false;
+        if (!CHECK_INSTANCE(PyWidget, child.get())) return false;
 
-        LzpyControl *p = child.cast<LzpyControl>();
+        PyWidget *p = child.cast<PyWidget>();
         m_control->delChild(p->m_control);
 
         return true;
     }
 
-    bool LzpyControl::createUI(const tstring & type, PyObject *arg)
+    bool PyWidget::createUI(const tstring & type, PyObject *arg)
     {
-        LzpyControl * parent = nullptr;
+        PyWidget * parent = nullptr;
         if (!PyArg_ParseTuple(arg, "|O", &parent)) return false;
 
         if (parent == Py_None)
             parent = nullptr;
 
-        if (parent && !CHECK_INSTANCE(LzpyControl, parent))
+        if (parent && !CHECK_INSTANCE(PyWidget, parent))
         {
             return false;
         }
@@ -137,7 +137,7 @@ namespace Lzpy
     }
 
 
-    object_base LzpyControl::getParent()
+    object_base PyWidget::getParent()
     {
         if (m_control && m_control->getParent())
         {
@@ -147,13 +147,13 @@ namespace Lzpy
         return null_object;
     }
 
-    object LzpyControl::getSize()
+    object PyWidget::getSize()
     {
         const CPoint & pt = m_control->getSize();
         return build_tuple(pt.x, pt.y);
     }
 
-    void LzpyControl::setSize(object v)
+    void PyWidget::setSize(object v)
     {
         tuple arg(v);
         if (!arg.check() || arg.size() != 2)
@@ -167,13 +167,13 @@ namespace Lzpy
         m_control->setSize(size.cx, size.cy);
     }
 
-    object LzpyControl::getPosition()
+    object PyWidget::getPosition()
     {
         const CPoint & pt = m_control->getPosition();
         return build_tuple(pt.x, pt.y);
     }
 
-    void LzpyControl::setPosition(object v)
+    void PyWidget::setPosition(object v)
     {
         tuple arg(v);
         if (!arg.check() || arg.size() != 2)
@@ -187,13 +187,13 @@ namespace Lzpy
         m_control->setPosition(pt.x, pt.y);
     }
 
-    object LzpyControl::getAbsPosition()
+    object PyWidget::getAbsPosition()
     {
         const CPoint & pos = m_control->getAbsPosition();
         return build_tuple(pos.x, pos.y);
     }
 
-    void LzpyControl::setAbsPosition(object v)
+    void PyWidget::setAbsPosition(object v)
     {
         tuple arg(v);
         if (!arg.check() || arg.size() != 2)
@@ -208,13 +208,13 @@ namespace Lzpy
     }
 
 
-    object LzpyControl::getGlobalPosition()
+    object PyWidget::getGlobalPosition()
     {
         const CPoint & pos = m_control->getGlobalPosition();
         return build_tuple(pos.x, pos.y);
     }
 
-    void LzpyControl::setGlobalPosition(object v)
+    void PyWidget::setGlobalPosition(object v)
     {
         tuple arg(v);
         if (!arg.check() || arg.size() != 2)
@@ -228,13 +228,13 @@ namespace Lzpy
         m_control->setGlobalPosition(x, y);
     }
 
-    tuple LzpyControl::getGlobalRect()
+    tuple PyWidget::getGlobalRect()
     {
         CRect rc = m_control->getGlobalRect();
         return build_tuple(rc.left, rc.top, rc.right, rc.bottom);
     }
 
-    void LzpyControl::setGlobalRect(tuple rect)
+    void PyWidget::setGlobalRect(tuple rect)
     {
         CRect rc;
         if (!rect.parse_tuple(&rc.left, &rc.top, &rc.right, &rc.bottom)) return;
@@ -242,7 +242,7 @@ namespace Lzpy
         m_control->setGlobalRect(rc);
     }
 
-    LZPY_IMP_METHOD(LzpyControl, loadFromFile)
+    LZPY_IMP_METHOD(PyWidget, loadFromFile)
     {
         std::wstring fname;
         if (!arg.parse_tuple(&fname)) return null_object;
@@ -251,7 +251,7 @@ namespace Lzpy
         return build_object(ret);
     }
 
-    LZPY_IMP_METHOD(LzpyControl, saveToFile)
+    LZPY_IMP_METHOD(PyWidget, saveToFile)
     {
         std::wstring fname;
         if (!arg.parse_tuple(&fname)) return null_object;
@@ -261,7 +261,7 @@ namespace Lzpy
     }
 
 
-    LZPY_IMP_METHOD(LzpyControl, addChild)
+    LZPY_IMP_METHOD(PyWidget, addChild)
     {
         object_base child;
         if (!arg.parse_tuple(&child))
@@ -273,7 +273,7 @@ namespace Lzpy
         return none_object;
     }
 
-    LZPY_IMP_METHOD(LzpyControl, getChild)
+    LZPY_IMP_METHOD(PyWidget, getChild)
     {
         tstring name;
         if (!arg.parse_tuple(&name)) return null_object;
@@ -285,7 +285,7 @@ namespace Lzpy
         return none_object;
     }
 
-    LZPY_IMP_METHOD(LzpyControl, delChild)
+    LZPY_IMP_METHOD(PyWidget, delChild)
     {
         object_base child;
         if (!arg.parse_tuple(&child))
@@ -297,13 +297,13 @@ namespace Lzpy
         return none_object;
     }
 
-    LZPY_IMP_METHOD(LzpyControl, clearChildren)
+    LZPY_IMP_METHOD(PyWidget, clearChildren)
     {
         clearChildren();
         return none_object;
     }
 
-    LZPY_IMP_METHOD(LzpyControl, getChildren)
+    LZPY_IMP_METHOD(PyWidget, getChildren)
     {
         list lst;
 
@@ -319,7 +319,7 @@ namespace Lzpy
         return lst;
     }
 
-    LZPY_IMP_METHOD(LzpyControl, findChildByPos)
+    LZPY_IMP_METHOD(PyWidget, findChildByPos)
     {
         CPoint pt;
         bool resculy;
@@ -331,7 +331,7 @@ namespace Lzpy
         return p->getSelf();
     }
 
-    LZPY_IMP_METHOD(LzpyControl, destroy)
+    LZPY_IMP_METHOD(PyWidget, destroy)
     {
         m_control->destroy();
         m_control = nullptr;

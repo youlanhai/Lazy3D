@@ -7,26 +7,14 @@ namespace Lzpy
 {
     using namespace Lazy;
 
-    class LzpyControl;
-
-///实现ui的初始化方法
-#define LZPY_IMP_INIT_LUI(CLASS, TYPE)    \
-    LZPY_IMP_INIT(CLASS)                  \
-    {                                       \
-        return createUI(_T(#TYPE), arg); \
-    }
-
-    ///导出模块方法
-    LZPY_DEF_MODULE(lui);
-
     //此类及其派生类，不得出现虚函数。
-    class LzpyControl : public PyBase
+    class PyWidget : public PyBase
     {
-        LZPY_DEF(LzpyControl);
+        LZPY_DEF(PyWidget);
 
     public:
-        LzpyControl();
-        ~LzpyControl();
+        PyWidget();
+        ~PyWidget();
 
         object getSize();
         void setSize(object v);

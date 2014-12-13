@@ -5,13 +5,13 @@
 namespace Lzpy
 {
 
-    class LzpyLabel : public LzpyControl
+    class PyLabel : public PyWidget
     {
-        LZPY_DEF(LzpyLabel);
+        LZPY_DEF(PyLabel);
     public:
-        LzpyLabel();
+        PyLabel();
 
-        Label * getUI() { return m_control.cast<Label>(); }
+        Label * getUI() { return (Label *) m_control; }
 
         LZPY_DEF_GET(text, getUI()->getText);
         LZPY_DEF_SET(text, getUI()->setText, tstring);
@@ -38,26 +38,26 @@ namespace Lzpy
     };
 
 
-    class LzpyForm : public LzpyControl
+    class PyWindow : public PyWidget
     {
-        LZPY_DEF(LzpyForm);
+        LZPY_DEF(PyWindow);
     public:
-        LzpyForm();
+        PyWindow();
 
-        Window * getUI() { return m_control.cast<Window>(); }
+        Window * getUI() { return (Window *)m_control; }
 
         LZPY_DEF_GET(enableClip, getUI()->getClipable);
         LZPY_DEF_SET(enableClip, getUI()->setClipable, bool);
     };
 
 
-    class LzpySlidebar : public LzpyForm
+    class PySlidebar : public PyWindow
     {
-        LZPY_DEF(LzpySlidebar);
+        LZPY_DEF(PySlidebar);
     public:
-        LzpySlidebar();
+        PySlidebar();
 
-        Slidebar * getUI() { return m_control.cast<Slidebar>(); }
+        Slidebar * getUI() { return (Slidebar *) m_control; }
 
         LZPY_DEF_GET(vertical, getUI()->getVertical);
         LZPY_DEF_SET(vertical, getUI()->setVertical, bool);
@@ -82,13 +82,13 @@ namespace Lzpy
 
 
 
-    class LzpyButton : public LzpyControl
+    class PyButton : public PyWidget
     {
-        LZPY_DEF(LzpyButton);
+        LZPY_DEF(PyButton);
     public:
-        LzpyButton();
+        PyButton();
 
-        Button * getUI() { return m_control.cast<Button>(); }
+        Button * getUI() { return (Button *)m_control; }
 
         LZPY_DEF_GET(textAlign, getUI()->getTextAlign);
         LZPY_DEF_SET(textAlign, getUI()->setTextAlign, uint32);
@@ -100,38 +100,38 @@ namespace Lzpy
         LZPY_DEF_SET(posMovable, getUI()->setPosMovable, bool);
     };
 
-    class LzpySelect : public LzpyButton
+    class PyCheckBox : public PyButton
     {
-        LZPY_DEF(LzpySelect);
+        LZPY_DEF(PyCheckBox);
     public:
-        LzpySelect();
+        PyCheckBox();
 
-        CheckBox * getUI() { return m_control.cast<CheckBox>(); }
+        CheckBox * getUI() { return (CheckBox *)m_control; }
 
         LZPY_DEF_GET(check, getUI()->getCheck);
         LZPY_DEF_SET(check, getUI()->setCheck, bool);
     };
 
 
-    class LzpyEditorCtl : public LzpyControl
+    class PyEditorCtl : public PyWidget
     {
-        LZPY_DEF(LzpyEditorCtl);
+        LZPY_DEF(PyEditorCtl);
     public:
-        LzpyEditorCtl();
+        PyEditorCtl();
 
-        EditorCtl * getUI() { return m_control.cast<EditorCtl>(); }
+        EditorCtl * getUI() { return (EditorCtl *)m_control; }
 
         LZPY_DEF_GET(edgeSize, getUI()->getEdgeSize);
         LZPY_DEF_SET(edgeSize, getUI()->setEdgeSize, int);
     };
 
-    class LzpyImage : public LzpyControl
+    class PyImage : public PyWidget
     {
-        LZPY_DEF(LzpyImage);
+        LZPY_DEF(PyImage);
     public:
-        LzpyImage();
+        PyImage();
 
-        Image * getUI() { return m_control.cast<Image>(); }
+        Image * getUI() { return (Image *)m_control; }
 
         LZPY_DEF_GET(image, getUI()->getImage);
         LZPY_DEF_SET(image, getUI()->setImage, tstring);
@@ -140,26 +140,26 @@ namespace Lzpy
         LZPY_DEF_SET(color, getUI()->setColor, uint32);
     };
 
-    class LzpyEdit : public LzpyControl
+    class PyEdit : public PyWidget
     {
-        LZPY_DEF(LzpyEdit);
+        LZPY_DEF(PyEdit);
     public:
-        LzpyEdit();
+        PyEdit();
 
-        Edit * getUI() { return m_control.cast<Edit>(); }
+        Edit * getUI() { return (Edit *)m_control; }
 
         LZPY_DEF_GET(mutiline, getUI()->isMutiLine);
         LZPY_DEF_SET(mutiline, getUI()->setMutiLine, bool);
 
     };
 
-    class LzpyUIProxy : public LzpyControl
+    class PyUIProxy : public PyWidget
     {
-        LZPY_DEF(LzpyUIProxy);
+        LZPY_DEF(PyUIProxy);
     public:
-        LzpyUIProxy();
+        PyUIProxy();
 
-        UIProxy * getUI() { return m_control.cast<UIProxy>(); }
+        UIProxy * getUI() { return (UIProxy *)m_control; }
 
         LZPY_DEF_GET(host, getHost);
         LZPY_DEF_METHOD(loadHost);
