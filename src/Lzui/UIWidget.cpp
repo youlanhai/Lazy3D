@@ -4,9 +4,6 @@
 #include "UIFactory.h"
 #include "TypeParser.h"
 
-#include "../Lzpy/Lzpy.h"
-#include "../PyScript/LPyUIBase.h"
-
 namespace Lazy
 {
 
@@ -897,13 +894,6 @@ namespace Lazy
         }
 
         pWidget->destroy();
-    }
-
-    object Widget::createScriptSelf()
-    {
-        PyWidget *pSelf = new_instance_ex<PyWidget>();
-        pSelf->m_object = this;
-        return new_reference(pSelf);
     }
 
     void Widget::setScriptName(const tstring & script) 

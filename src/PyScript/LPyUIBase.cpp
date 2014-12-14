@@ -49,7 +49,7 @@ namespace Lazy
         LZPY_LINK_ATTR(tp_dictoffset, offsetof(PyWidget, m_pyDict));
     }
 
-    LZPY_IMP_INIT_LUI(PyWidget);
+    LZPY_IMP_INIT_LUI(PyWidget, Widget);
 
     PyWidget::PyWidget()
         : m_pyDict(nullptr)

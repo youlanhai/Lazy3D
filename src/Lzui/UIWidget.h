@@ -153,9 +153,6 @@ namespace Lazy
         void setDrawable(bool enable) { m_drawable = enable; }
         bool getDrawable() const { return m_drawable; }
 
-
-        virtual object createScriptSelf() override;
-
         const tstring & getScriptName() const { return m_scriptName; }
         void setScriptName(const tstring & script);
 

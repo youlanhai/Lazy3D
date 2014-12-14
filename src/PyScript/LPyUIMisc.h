@@ -50,6 +50,13 @@ namespace Lazy
         LZPY_DEF_SET(enableClip, getUI()->setClipable, bool);
     };
 
+    class PySlider : public PyWidget
+    {
+        LZPY_DEF(PySlider);
+    public:
+        PySlider();
+        Slider * getUI() { return (Slider *) m_object; }
+    };
 
     class PySlidebar : public PyWindow
     {
@@ -166,6 +173,19 @@ namespace Lazy
 
 
         object getHost();
+
+    };
+
+    class PyGUIMgr : public PyWidget
+    {
+        LZPY_DEF(PyGUIMgr);
+    public:
+        PyGUIMgr();
+
+        GUIMgr * getUI() { return (GUIMgr *) m_object; }
+
+        LZPY_DEF_GET(cursorPos, getUI()->getCursorPos);
+        LZPY_DEF_GET(lastCursorPos, getUI()->getLastCursorPos);
 
     };
 

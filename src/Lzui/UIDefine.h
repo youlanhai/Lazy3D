@@ -28,7 +28,8 @@ namespace Lazy
     typedef BASE Base;                                                  \
     static Widget * createSelf(){ return new CLASS(); }                 \
     static const tchar * getTypeS() { return _T(#CLASS); }              \
-    virtual const tchar * getType(void) const { return _T(#CLASS); }
+    virtual const tchar * getType(void) const { return _T(#CLASS); }    \
+    virtual object createScriptSelf();
 
     typedef RefPtr<class ITextSprite> TextSpritePtr;
 

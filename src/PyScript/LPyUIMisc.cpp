@@ -20,7 +20,7 @@ namespace Lazy
     {
     }
 
-    LZPY_IMP_INIT_LUI(PyLabel);
+    LZPY_IMP_INIT_LUI(PyLabel, Label);
 
     object PyLabel::getTextSize()
     {
@@ -38,11 +38,17 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyWindow);
+    LZPY_IMP_INIT_LUI(PyWindow, Window);
 
 
     ///////////////////////////////////////////////////////////////////
+    LZPY_CLASS_BEG(PySlider)
+    LZPY_CLASS_END();
 
+    PySlider::PySlider()
+    {}
+
+    LZPY_IMP_INIT_LUI(PySlider, Slider);
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PySlidebar)
     LZPY_GETSET(vertical);
@@ -59,7 +65,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PySlidebar);
+    LZPY_IMP_INIT_LUI(PySlidebar, Slidebar);
 
     void PySlidebar::setSliderSize(tuple size)
     {
@@ -118,7 +124,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyButton);
+    LZPY_IMP_INIT_LUI(PyButton, Button);
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyCheckBox)
@@ -130,7 +136,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyCheckBox);
+    LZPY_IMP_INIT_LUI(PyCheckBox, CheckBox);
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyEditorCtl)
@@ -142,7 +148,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyEditorCtl)
+    LZPY_IMP_INIT_LUI(PyEditorCtl, EditorCtl)
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyImage);
@@ -154,7 +160,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyImage)
+    LZPY_IMP_INIT_LUI(PyImage, Image)
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyEdit)
@@ -166,7 +172,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyEdit)
+    LZPY_IMP_INIT_LUI(PyEdit, Edit)
 
     ///////////////////////////////////////////////////////////////////
     LZPY_CLASS_BEG(PyUIProxy)
@@ -179,7 +185,7 @@ namespace Lazy
 
     }
 
-    LZPY_IMP_INIT_LUI(PyUIProxy);
+    LZPY_IMP_INIT_LUI(PyUIProxy, UIProxy);
 
     LZPY_IMP_METHOD(PyUIProxy, loadHost)
     {
@@ -196,7 +202,16 @@ namespace Lazy
 
         return object(p->getScript());
     }
+    ///////////////////////////////////////////////////////////////////
+    LZPY_CLASS_BEG(PyGUIMgr)
+        LZPY_GET(cursorPos);
+        LZPY_GET(lastCursorPos);
+    LZPY_CLASS_END();
 
+    PyGUIMgr::PyGUIMgr()
+    {}
+
+    LZPY_IMP_INIT_LUI(PyGUIMgr, GUIMgr)
     ///////////////////////////////////////////////////////////////////
     //函数定义
     ///////////////////////////////////////////////////////////////////
@@ -273,6 +288,8 @@ namespace Lazy
         LZPY_REGISTER_CLASS(UIProxy, PyUIProxy);
         LZPY_REGISTER_CLASS(EditorCtl, PyEditorCtl);
         LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
+        LZPY_REGISTER_CLASS(Slider, PySlider);
+        LZPY_REGISTER_CLASS(GUIMgr, PyGUIMgr);
 
         LZPY_FUN(uiroot);
         LZPY_FUN(createWidget);

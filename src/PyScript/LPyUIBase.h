@@ -7,12 +7,19 @@
 
 namespace Lazy
 {
-#define LZPY_IMP_INIT_LUI(PY_CLASS)\
+#define LZPY_IMP_INIT_LUI(PY_CLASS, CXX_CLASS)\
     LZPY_IMP_INIT(PY_CLASS)\
     {\
         PyErr_SetString(PyExc_TypeError, #PY_CLASS " can't create an instance derectly!"); \
         return false; \
+    }\
+    object CXX_CLASS::createScriptSelf()\
+    {\
+        PY_CLASS *pSelf = new_instance_ex<PY_CLASS>(); \
+        pSelf->m_object = this;\
+        return new_reference(pSelf);\
     }
+
 
     object build_object(Widget * v);
     bool parse_object(Widget *& v, object o);
