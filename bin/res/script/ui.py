@@ -2,38 +2,27 @@
 
 #此模块定义了游戏ui框架，以及一些常量。
 
-import lui
+import Lazy
 from share import share
 
-
-##################################################
-### ui 窗口
-##################################################
-
-class Window(lui.IControl):
-	def __init__(self, parent):
-		super(Window, self).__init__(parent)
-		self.enableChangeChildOrder = False
-		self.enableHandleSelfMsg = False
 
 ##################################################
 ###
 ##################################################
 #最先创建的会显示在最上
 
-root = lui.IControl(lui.root()) #整个ui的根节点
-root.enableChangeChildOrder = False
-root.enableHandleSelfMsg = False
-root.name = "PyUIRoot"
+root = Lazy.uiroot()
 
-uiRoot     = Window(root)
+uiRoot = root.createWidget("Window")
+uiRoot.enableChangeChildOrder = False
+uiRoot.enableHandleSelfMsg = False
 uiRoot.name = "uiRoot"
 
-editorRoot = lui.IControl(root)
+editorRoot = root.createWidget("Widget")
 editorRoot.name = "editorRoot"
 editorRoot.visible = False
 
-editorUILayer = lui.Form(editorRoot)
+editorUILayer = editorRoot.createWidget("Window")
 editorUILayer.name = "editorUILayer"
 editorUILayer.size = (640, 480)
 editorUILayer.position = (200, 50)
@@ -70,8 +59,8 @@ msg_lostActived     = 16
 ### ui类型
 ##################################################
 
-Control     = 1
-Form        = 3
+Widget      = 1
+Window      = 3
 Button      = 4
 Label       = 5
 Image       = 6
@@ -79,7 +68,7 @@ Edit        = 7
 Slidebar    = 9
 CheckBox    = 10
 SelectGroup = 11
-Slider     = 12
+Slider      = 12
 GuiMgr      = 13
 EditorCtl   = 14
 UIProxy     = 15

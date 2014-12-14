@@ -12,7 +12,7 @@ def init() :
 	print("game init.")
 	print("Lazy:", dir(Lazy))
 
-	window = Lazy.createUI("Window")
+	window = Lazy.createWidget("Window")
 	print("window:", window, window.object)
 
 	window.position = (100, 100)

@@ -99,6 +99,9 @@ namespace Lazy
         LZPY_DEF_METHOD(findChildByPos);
         LZPY_DEF_METHOD(destroy);
 
+        LZPY_DEF_METHOD_1(createWidget);
+        LZPY_DEF_METHOD_1(deleteWidget);
+
         PyObject *      m_pyDict;
         PyObject *      m_pyWeakreflist;
         Widget *        m_object;

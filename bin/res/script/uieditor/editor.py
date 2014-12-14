@@ -3,7 +3,7 @@
 #ui编辑器
 #import traceback
 
-import lui
+import Lazy
 import ui
 import vk
 import gui

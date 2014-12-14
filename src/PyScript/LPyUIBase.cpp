@@ -42,6 +42,9 @@ namespace Lazy
         LZPY_METHOD(loadFromFile);
         LZPY_METHOD(saveToFile);
 
+        LZPY_METHOD_1(createWidget);
+        LZPY_METHOD_1(deleteWidget);
+
         LZPY_LINK_ATTR(tp_weaklistoffset, offsetof(PyWidget, m_pyWeakreflist));
         LZPY_LINK_ATTR(tp_dictoffset, offsetof(PyWidget, m_pyDict));
     }
@@ -156,6 +159,26 @@ namespace Lazy
         return none_object;
     }
 
+
+    LZPY_IMP_METHOD_1(PyWidget, createWidget)
+    {
+        tstring type;
+        if (!parse_object(type, value))
+            return null_object;
+
+        Widget * p = m_object->createWidget(type);
+        return build_object(p);
+    }
+
+    LZPY_IMP_METHOD_1(PyWidget, deleteWidget)
+    {
+        Widget * p;
+        if (!parse_object(p, value))
+            return null_object;
+
+        m_object->deleteWidget(p);
+        return none_object;
+    }
 
 }//end namespace Lazy
 

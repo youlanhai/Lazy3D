@@ -157,7 +157,7 @@ namespace Lazy
         virtual object createScriptSelf() override;
 
         const tstring & getScriptName() const { return m_scriptName; }
-        void setScriptName(const tstring & script) { m_scriptName = script; }
+        void setScriptName(const tstring & script);
 
     protected:
         tstring             m_scriptName;

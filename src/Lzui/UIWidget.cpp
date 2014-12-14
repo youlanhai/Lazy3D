@@ -633,6 +633,10 @@ namespace Lazy
             CPoint pt = TypeParser::parsePoint(val->asString());
             setPosition(pt.x, pt.y);
         }
+        else if (key == L"align")
+        {
+            //do nothing
+        }
         else if (key == L"size")
         {
             CPoint pt = TypeParser::parsePoint(val->asString());
@@ -652,10 +656,8 @@ namespace Lazy
             setChildOrderable(val->asBool());
         else if (key == L"drawable")
             setDrawable(val->asBool());
-        else if (key == L"align")
-        {
-            //do nothing
-        }
+        else if (key == L"script")
+            setScriptName(val->asString());
         else
             return false;
 
@@ -884,17 +886,17 @@ namespace Lazy
     }
 
     ///销毁一个子widget
-    void Widget::deleteWidget(Widget *pWidget)
+    void Widget::deleteWidget(Widget *p)
     {
+        WidgetPtr pWidget = p; // keep a reference
         auto it = m_children.find(pWidget);
         if (it == m_children.end())
         {
             LOG_ERROR(L"Widget '%s' is not a child of '%s'",
                 pWidget->getName().c_str(), m_name.c_str());
-            return;
         }
 
-        delete pWidget;
+        pWidget->destroy();
     }
 
     object Widget::createScriptSelf()
@@ -904,6 +906,19 @@ namespace Lazy
         return new_reference(pSelf);
     }
 
+    void Widget::setScriptName(const tstring & script) 
+    { 
+        m_scriptName = script;
+
+        object method = import(script);
+        if (method.callable())
+            setScript(method.call());
+        else
+            setScript(null_object);
+    }
+
+    ////////////////////////////////////////////////////////////////////
+    ///
     ////////////////////////////////////////////////////////////////////
 
     Widget* loadUIFromFile(const tstring & layoutFile)

@@ -232,13 +232,26 @@ namespace Lazy
         return PyBool_FromLong(isDown);
     }
 
-    LZPY_DEF_FUN(createUI)
+    LZPY_DEF_FUN(createWidget)
     {
         wchar_t * type;
-        if (!PyArg_ParseTuple(arg, "u", &type))
+        PyWidget * pParent = nullptr;
+        if (!PyArg_ParseTuple(arg, "u|O", &type, &pParent))
             return NULL;
 
+        if (pParent == Py_None)
+            pParent = nullptr;
+
+        if (pParent != nullptr && !has_instance<PyWidget>(pParent))
+        {
+            PyErr_SetString(PyExc_TypeError, "createUI - arguent 2 need a PyWidget.");
+            return NULL;
+        }
+
         Widget * p = uiFactory()->create(type);
+        if (pParent != nullptr)
+            pParent->m_object->addChild(p);
+
         return PyScriptProxy::New(p);
     }
 
@@ -262,7 +275,7 @@ namespace Lazy
         LZPY_REGISTER_CLASS(ConsoleOutput, PyConsoleOutput);
 
         LZPY_FUN(uiroot);
-        LZPY_FUN(createUI);
+        LZPY_FUN(createWidget);
         LZPY_FUN(param2Position);
         LZPY_FUN(position2Param);
         LZPY_FUN(isVkDown);
