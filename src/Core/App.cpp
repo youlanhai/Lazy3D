@@ -250,38 +250,43 @@ namespace Lazy
     //创建窗口
     bool CApp::createWindow()
     {
-        DWORD dwStyle ;
-        int x, y;
-        int width, height;
+        CREATESTRUCT cs;
+        ZeroMemory(&cs, sizeof(cs));
+
         if (m_bFullScreen)
         {
-            dwStyle = WS_VISIBLE | WS_POPUP;
-            x = 0;
-            y = 0;
-            width = m_nWidth = GetSystemMetrics(SM_CXSCREEN);
-            height = m_nHeight = GetSystemMetrics(SM_CYSCREEN);
+            cs.style = WS_VISIBLE | WS_POPUP;
+            cs.cx = m_nWidth = GetSystemMetrics(SM_CXSCREEN);
+            cs.cy = m_nHeight = GetSystemMetrics(SM_CYSCREEN);
         }
         else
         {
-            width = m_nWidth + ::GetSystemMetrics(SM_CXBORDER) * 2;
-            height = m_nHeight + ::GetSystemMetrics(SM_CYBORDER) + ::GetSystemMetrics(SM_CYCAPTION);
+            cs.cx = m_nWidth + ::GetSystemMetrics(SM_CXBORDER) * 2;
+            cs.cy = m_nHeight + ::GetSystemMetrics(SM_CYBORDER) + ::GetSystemMetrics(SM_CYCAPTION);
 
-            x = (GetSystemMetrics(SM_CXSCREEN) - width) / 2;
-            y = (GetSystemMetrics(SM_CYSCREEN) - height - 30) / 2;
-            dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+            cs.x = (GetSystemMetrics(SM_CXSCREEN) - cs.cx) / 2;
+            cs.y = (GetSystemMetrics(SM_CYSCREEN) - cs.cy - 30) / 2;
+            cs.style = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
         }
-        m_hWnd = CreateWindowW(
-                     CLASS_NAME,
-                     m_caption.c_str(),
-                     dwStyle,
-                     x,
-                     y,
-                     width,
-                     height,
-                     NULL,
-                     NULL,
-                     m_hInstance,
-                     NULL);
+        cs.hInstance = m_hInstance;
+
+        onCreateWindow(&cs);
+
+        if (cs.lpszClass == NULL)
+            cs.lpszClass = CLASS_NAME;
+
+        if (cs.lpszName == NULL)
+            cs.lpszName = m_caption.c_str();
+
+        m_hWnd = CreateWindow(
+                     cs.lpszClass,
+                     cs.lpszName,
+                     cs.style,
+                     cs.x, cs.y, cs.cx, cs.cy,
+                     cs.hwndParent,
+                     cs.hMenu,
+                     cs.hInstance,
+                     cs.lpCreateParams);
 
         if (m_hWnd)
         {
@@ -302,12 +307,16 @@ namespace Lazy
         wc.hInstance = m_hInstance;
         wc.lpszClassName = CLASS_NAME;
         wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
-        wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
-        wc.hIconSm = wc.hIcon;
-        wc.hCursor = LoadCursor(NULL, IDC_ARROW);
         wc.style = CS_CLASSDC;
 
         onRegisterClass(&wc);
+
+        if (wc.hIcon == 0)
+            wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+        if (wc.hIconSm == 0)
+            wc.hIconSm = wc.hIcon;
+        if (wc.hCursor == 0)
+            wc.hCursor = LoadCursor(NULL, IDC_ARROW);
 
         RegisterClassEx(&wc);
     }
@@ -355,18 +364,6 @@ namespace Lazy
 
         FontMgr::instance()->fini();
         EntityMgr::instance()->clear();
-    }
-
-    /**注册窗口类消息。请实现该消息来修改窗口风格。*/
-    void CApp::onRegisterClass(WNDCLASSEX *)
-    {
-
-    }
-
-    /**创建设备消息。实现该方法来修改设备。*/
-    void CApp::onCreateDevice(D3DPRESENT_PARAMETERS *)
-    {
-
     }
 
     bool CApp::onEvent(const SEvent & event)

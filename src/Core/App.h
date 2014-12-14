@@ -19,25 +19,20 @@ namespace Lazy
     }
 
 
-    /**应用程序类*/
+    /** 应用程序类。可以从此类派生，定制自己的游戏。*/
     class LZDLL_API CApp : public IBase, public IEventReceiver
     {
     public:
         CApp(void);
-
         virtual ~CApp(void);
 
-    public:
-
-        //不同的两种创建方式
-        //方法1.会创建一个默认的windows窗口，使用默认的消息处理函数。
-
-        /** 游戏类初始化。
+        /** 应用程序初始化。创建窗口和渲染设备。
          *  @param hInstance  应用程序实例对象
          *  @param caption    窗口标题
          *  @param nWidth     窗口宽度
          *  @param nHeight    窗口高度
          *  @param bFullScreen 是否全屏
+         *  也可以使用已经创建的窗口构造游戏类，详见@createEx。
          */
         bool create(HINSTANCE hInstance,
                     const std::wstring & caption,
@@ -45,23 +40,10 @@ namespace Lazy
                     int nHeight,
                     bool bFullScreen);
 
-        ///消息处理
-        virtual bool onEvent(const SEvent & event) override;
-
-        ///退出游戏
-        void quitGame(void);
-
-        ///处理消息。返回false，表示程序退出。
-        bool processMessage();
-
-        ///消息循环
-        virtual void mainLoop();
-
-        //方法2.不创建窗口，利用外部创建好的窗口。
-        //外部需要在游戏循环的地方调用run，在游戏结束后调用clear；
-        //调用onEvent处理windows消息。
-
-        ///创建app。
+        /** 应用程序初始化。不创建窗口，可以利用外部创建好的窗口来初始化游戏。
+        *   注意：外部需要在游戏循环的地方调用run，在游戏结束后调用clear；
+        *   调用onEvent处理windows消息。
+        */
         bool createEx(HINSTANCE hInstance,
                       HWND hWnd,
                       const std::wstring & strCaption,
@@ -69,28 +51,46 @@ namespace Lazy
                       int nHeight,
                       bool bFullSrcreen);
 
-        ///运行
+        /** 消息处理。*/
+        virtual bool onEvent(const SEvent & event) override;
+
+        /** windows消息循环*/
+        virtual void mainLoop();
+
+        /** 游戏运行一帧。*/
         virtual void run(void) ;
 
-        ///释放资源
+        /** 释放游戏资源。*/
         virtual void clear(void) ;
+
+    public:
+        /** 退出游戏*/
+        void quitGame(void);
+
+        /** 循环处理windows窗口消息，直到消息队列为空。
+        *   返回false，表示程序退出。
+        */
+        bool processMessage();
 
     protected:
 
-        /**游戏初始化*/
+        /** 游戏初始化*/
         virtual bool init(void) ;
 
-        /**更新*/
+        /** 更新*/
         virtual void update(void);
 
-        /**渲染*/
+        /** 渲染*/
         virtual void render(void) ;
 
-        /**注册窗口类消息。请实现该消息来修改窗口风格。*/
-        virtual void onRegisterClass(WNDCLASSEX *pwc) ;
+        /** 注册窗口类。请实现该消息来修改窗口风格。*/
+        virtual void onRegisterClass(WNDCLASSEX * /*pwc*/){}
 
-        /**创建设备消息。实现该方法来修改设备。*/
-        virtual void onCreateDevice(D3DPRESENT_PARAMETERS * pParam) ;
+        /** 创建窗口。实现该方法来定制窗口风格。*/
+        virtual void onCreateWindow(CREATESTRUCT * /*pwin*/){}
+
+        /** 创建渲染设备。实现该方法来修改设备。*/
+        virtual void onCreateDevice(D3DPRESENT_PARAMETERS * /*pParam*/){}
 
         /** 释放单例资源。*/
         virtual void releaseSingleton();
@@ -100,13 +100,13 @@ namespace Lazy
 
     private:
 
-        /**注册窗口类*/
+        /** 注册窗口类*/
         void registerClass();
 
-        /**创建窗口*/
+        /** 创建窗口*/
         bool createWindow();
 
-        /**初始化渲染设备*/
+        /** 初始化渲染设备*/
         bool createDevice();
 
     public://属性
