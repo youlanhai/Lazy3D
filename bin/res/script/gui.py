@@ -97,30 +97,16 @@ class MethodProxy(object):
 ##################################################
 ###
 ##################################################
-class Label(lui.Label):
-	def __init__(self, parent, x, y, text):
-		super(Label, self).__init__(parent)
+class BaseScript(object):
+	def __init__(self):
+		super(BaseScript, self).__init__()
+		self.ui = None
 
-		self.position = (x, y)
-		self.text = text
+	def onBind(self, ui):
+		self.ui = ui
 
-##################################################
-###
-##################################################
-class Edit(lui.Edit):
-	pass
-	
-##################################################
-###
-##################################################
-class Button(lui.Button):
-	pass
-
-
-class CheckBox(lui.CheckBox):
-	def __init__(self, parent, x, y):
-		super(CheckBox, self).__init__(parent)
-		self.position = (x, y)
+	def onUnbind(self, ui):
+		self.ui = None
 
 ##################################################
 ### 列表
