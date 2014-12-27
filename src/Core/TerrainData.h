@@ -34,13 +34,14 @@ namespace Lazy
         ///最大chunk个数
         const int MaxNbChunks = 1024 * 1024;
 
+        ///每个chunk的网格规模。NbChunkGrid * NbChunkGrid
         const int NbChunkGrid = 50;
 
-        ///chunk行（列）顶点个数
-        const int NbChunkVertex = NbChunkGrid + 1;
-
-        ///chunk一个网格的尺寸
+        ///chunk的一个网格的尺寸
         const float ChunkGridSize = 1.0f;
+
+        ///chunk的顶点规模，行（列）顶点个数
+        const int NbChunkVertex = NbChunkGrid + 1;
 
         ///一个chunk的尺寸
         const float ChunkSize = NbChunkGrid * ChunkGridSize;
@@ -77,7 +78,8 @@ namespace Lazy
 
         /** 根据(x, z)坐标返回插值之后的y坐标。如果(x, z)超出边界，则返回m_origin.y。*/
         float getHeight(float x, float z) const;
-        float getAbsHeight(int row, int col) const;
+        /** 根据(列，行)坐标，获取高度图中的y坐标。*/
+        float getAbsHeight(int col, int row) const;
 
         Vector3 getNormal(float x, float z) const;
         Vector3 getNormal(int x, int z) const;

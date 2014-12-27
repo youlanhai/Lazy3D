@@ -105,7 +105,7 @@ namespace Lazy
         return true;
     }
 
-    float HeightMap::getAbsHeight(int row, int col) const
+    float HeightMap::getAbsHeight(int col, int row) const
     {
         if (row >= m_rows || row < 0 || col >= m_cols || col < 0)
             return 0.0f;

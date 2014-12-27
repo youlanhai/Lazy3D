@@ -17,6 +17,8 @@ def init() :
 
 	window.position = (100, 100)
 	Lazy.uiroot().addChild(window)
+
+	window.visible = False
 	
 	return True
 
