@@ -15,13 +15,19 @@ namespace Lazy
 
     inline PyObject * xincref(PyObject * p)
     {
-        Py_XINCREF(p);
+        if (p != nullptr)
+        {
+            Py_INCREF(p);
+        }
         return p;
     }
 
     inline PyObject * xdecref(PyObject * p)
     {
-        Py_XDECREF(p);
+        if (p != nullptr)
+        {
+            Py_DECREF(p);
+        }
         return p;
     }
 
@@ -145,9 +151,9 @@ namespace Lazy
 
         inline PyObject *get() const {  return m_ptr; }
 
-        inline void addRef() const { Py_XINCREF(m_ptr); }
+        inline void addRef() const { xincref(m_ptr); }
 
-        inline void delRef() const { Py_XDECREF(m_ptr); }
+        inline void delRef() const { xdecref(m_ptr); }
 
     public:
 

@@ -86,6 +86,7 @@
     <ClInclude Include="FontTextrue.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderDevice.h" />
+    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="ResFactory.h" />
     <ClInclude Include="ResMgr.h" />
     <ClInclude Include="Resource.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="FontTextrue.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
+    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResFactory.cpp" />
     <ClCompile Include="ResMgr.cpp" />
     <ClCompile Include="Resource.cpp" />

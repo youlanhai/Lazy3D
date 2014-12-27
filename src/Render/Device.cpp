@@ -3,60 +3,50 @@
 
 namespace Lazy
 {
-    /*static*/ bool IDevice::s_deviceRunning = true;
-    /*static*/ std::set<IDevice*> IDevice::s_devicePool;
-
     IDevice::IDevice()
     {
-        regDevice(this);
+        DeviceMgr::instance()->m_devices.insert(this);
     }
 
 
     IDevice::~IDevice()
     {
-        unregDevice(this);
+        if (DeviceMgr::hasInstance())
+            DeviceMgr::instance()->m_devices.erase(this);
     }
 
-    /*static*/ void IDevice::regDevice(IDevice *pDevice)
+    //////////////////////////////////////////////////////////////////////
+    ///
+    //////////////////////////////////////////////////////////////////////
+    IMPLEMENT_SINGLETON(DeviceMgr);
+
+    DeviceMgr::DeviceMgr()
+    {}
+
+    DeviceMgr::~DeviceMgr()
+    {}
+
+    void DeviceMgr::onCreateDevice()
     {
-        if (!s_deviceRunning) return;
-
-        s_devicePool.insert(pDevice);
+        for (IDevice * p : m_devices)
+            p->onCreateDevice();
     }
 
-    /*static*/ void IDevice::unregDevice(IDevice *pDevice)
+    void DeviceMgr::onCloseDevice()
     {
-        if (!s_deviceRunning) return;
-
-        s_devicePool.erase(pDevice);
+        for (IDevice * p : m_devices)
+            p->onCloseDevice();
     }
 
-    /*static*/ void IDevice::lostAllDevice()
+    void DeviceMgr::onLostDevice()
     {
-        for (IDevice * p : s_devicePool)
-        {
-            if (p) p->onLostDevice();
-        }
+        for (IDevice * p : m_devices)
+            p->onLostDevice();
     }
 
-    /*static*/ void IDevice::resetAllDevice()
+    void DeviceMgr::onResetDevice()
     {
-        for (IDevice * p : s_devicePool)
-        {
-            if (p) p->onResetDevice();
-        }
+        for (IDevice * p : m_devices)
+            p->onResetDevice();
     }
-
-    /*static*/ void IDevice::closeAllDevice()
-    {
-        s_deviceRunning = false;
-
-        for (IDevice * p : s_devicePool)
-        {
-            if (p) p->onCloseDevice();
-        }
-
-        s_devicePool.clear();
-    }
-
 }

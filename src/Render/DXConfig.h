@@ -9,6 +9,7 @@ namespace dx
     typedef IDirect3D9          D3D;
     typedef IDirect3DDevice9    Device;
     typedef ID3DXEffect         Effect;
+    typedef IDirect3DSurface9   Surface;
     typedef IDirect3DTexture9   Texture;
     typedef IDirect3DBaseTexture9 BaseTexture;
     typedef ID3DXFont           Font;

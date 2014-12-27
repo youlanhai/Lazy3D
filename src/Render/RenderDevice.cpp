@@ -77,11 +77,15 @@ namespace Lazy
         ZeroMemory(&m_d3dcaps, sizeof(m_d3dcaps));
 
         pushWorld(matIdentity);
+
+        DeviceMgr::initInstance();
     }
 
     RenderDevice::~RenderDevice()
     {
         destroy();
+
+        DeviceMgr::finiInstance();
     }
 
     void RenderDevice::fillPresentParameter()
@@ -207,6 +211,8 @@ namespace Lazy
         m_device->SetTextureStageState(0, D3DTSS_COLORARG1, D3DTA_TEXTURE);
         m_device->SetTextureStageState(0, D3DTSS_COLORARG2, D3DTA_DIFFUSE);
 
+        DeviceMgr::instance()->onCreateDevice();
+
         ResourceFactoryPtr factory = new ResFactory();
         TextureMgr::instance()->setResFacotry(factory);
         MeshMgr::instance()->setResFacotry(factory);
@@ -222,7 +228,7 @@ namespace Lazy
             return;
 
         EffectConstantSetter::fini();
-        IDevice::closeAllDevice();
+        DeviceMgr::instance()->onCloseDevice();
 
         m_device->Release();
         m_device = NULL;
@@ -234,7 +240,6 @@ namespace Lazy
     bool RenderDevice::resetDevice()
     {
         debugMessage(_T("INFO: reset device."));
-        IDevice::lostAllDevice();
 
         fillPresentParameter();
 
@@ -245,7 +250,8 @@ namespace Lazy
             return false;
         }
 
-        IDevice::resetAllDevice();
+        m_isLost = false;
+        DeviceMgr::instance()->onResetDevice();
         return true;
     }
 
@@ -317,7 +323,6 @@ namespace Lazy
             {
                 if (resetDevice())
                 {
-                    m_isLost = false;
                     break;
                 }
             }
@@ -332,17 +337,17 @@ namespace Lazy
     void RenderDevice::present()
     {
         HRESULT hr = m_device->Present(NULL, NULL, NULL, NULL);
-        if (SUCCEEDED(hr))
-        {
-            m_isLost = false;
-        }
-        else if (hr == D3DERR_DEVICELOST)
+        
+        if (hr == D3DERR_DEVICELOST)
         {
             debugMessage(_T("ERROR: Present Failed, Device Lost."));
-            m_isLost = true;
+            if (!m_isLost)
+            {
+                m_isLost = true;
+                DeviceMgr::instance()->onLostDevice();
+            }
         }
     }
-
 
     //////////////////////////////////////////////////////////////////////////
     //
