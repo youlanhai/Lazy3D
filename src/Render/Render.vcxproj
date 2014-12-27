@@ -90,7 +90,6 @@
     <ClInclude Include="ResFactory.h" />
     <ClInclude Include="ResMgr.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="SimpleFrame.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextTexture.h" />
@@ -109,7 +108,6 @@
     <ClCompile Include="ResFactory.cpp" />
     <ClCompile Include="ResMgr.cpp" />
     <ClCompile Include="Resource.cpp" />
-    <ClCompile Include="SimpleFrame.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

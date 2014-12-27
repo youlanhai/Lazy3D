@@ -64,10 +64,11 @@ namespace Lazy
         , m_hWnd(NULL)
         , m_hInstance(NULL)
         , m_isLost(false)
-        , m_windowWidth(640)
-        , m_windowHeight(480)
-        , m_fullScreen(false)
-        , m_oldStyle(0)
+        , m_isFullScreen(false)
+        , m_isRendering(false)
+        , m_backBuffWidth(0)
+        , m_backBuffHeight(0)
+        , m_backBuffFormat(D3DFMT_UNKNOWN)
         , m_matDirty(0)
     {
         assert(s_oneInstance == NULL && "initialize more tha once!");
@@ -93,7 +94,7 @@ namespace Lazy
         ZeroMemory(&m_d3dpp, sizeof(m_d3dpp));
 
         //设置D3DPRESENT_PARAMETERS结构, 准备创建Direct3D设备对象
-        m_d3dpp.Windowed = !m_fullScreen;
+        m_d3dpp.Windowed = !m_isFullScreen;
         m_d3dpp.SwapEffect = D3DSWAPEFFECT_DISCARD;
         m_d3dpp.EnableAutoDepthStencil = TRUE;
         m_d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
@@ -101,14 +102,25 @@ namespace Lazy
         m_d3dpp.BackBufferFormat = m_d3dmm.Format;
         m_d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_ONE;
 
-        if (m_fullScreen)
+        if (m_isFullScreen)
         {
             m_d3dpp.BackBufferWidth = m_d3dmm.Width;
             m_d3dpp.BackBufferHeight = m_d3dmm.Height;
             m_d3dpp.FullScreen_RefreshRateInHz = m_d3dmm.RefreshRate;
         }
+        else
+        {
+            CRect rc;
+            GetClientRect(m_hWnd, &rc);
+            m_d3dpp.BackBufferWidth = rc.width();
+            m_d3dpp.BackBufferHeight = rc.height();
+        }
 
         getApp()->onCreateDevice(&m_d3dpp);
+
+        m_backBuffFormat = m_d3dpp.BackBufferFormat;
+        m_backBuffWidth = m_d3dpp.BackBufferWidth;
+        m_backBuffHeight = m_d3dpp.BackBufferHeight;
     }
 
     ///初始化
@@ -118,21 +130,7 @@ namespace Lazy
 
         m_hWnd = hWnd;
         m_hInstance = hInstance;
-        m_fullScreen = fullSrc;
-
-        if (m_fullScreen)
-        {
-            m_windowWidth = ::GetSystemMetrics(SM_CXSCREEN);
-            m_windowHeight = ::GetSystemMetrics(SM_CYSCREEN);
-        }
-        else
-        {
-            CRect rect;
-            ::GetWindowRect(hWnd, &rect);
-
-            m_windowWidth = rect.width();
-            m_windowHeight = rect.height();
-        }
+        m_isFullScreen = fullSrc;
 
         //创建Direct3D对象, 该对象用于创建Direct3D设备对象
         ComPtr<dx::D3D> pd3d = Direct3DCreate9(D3D_SDK_VERSION);
@@ -239,74 +237,20 @@ namespace Lazy
     ///重置设备
     bool RenderDevice::resetDevice()
     {
-        debugMessage(_T("INFO: reset device."));
-
         fillPresentParameter();
 
         HRESULT hr = m_device->Reset(&m_d3dpp);
         if (FAILED(hr))
         {
-            debugMessage(_T("ERROR: Reset Device failed! 0x%x"), hr);
+            LOG_ERROR(_T("Reset Device failed! 0x%x"), hr);
             return false;
         }
+
+        LOG_INFO(_T("reset device. width=%d, height=%d"), m_backBuffWidth, m_backBuffHeight);
 
         m_isLost = false;
         DeviceMgr::instance()->onResetDevice();
         return true;
-    }
-
-    ///改变窗口尺寸
-    bool RenderDevice::changeSize(int width, int height)
-    {
-        if (m_fullScreen) return false;
-
-        if (m_windowWidth == width && m_windowHeight == height) return false;
-
-        m_windowWidth = width;
-        m_windowHeight = height;
-
-        RECT rect;
-        ::GetWindowRect(m_hWnd, &rect);
-        ::MoveWindow(m_hWnd, rect.left, rect.top, m_windowWidth, m_windowHeight, TRUE);
-
-        return resetDevice();
-    }
-
-    bool RenderDevice::changeFullScreen(bool fullSrc)
-    {
-        if (fullSrc == m_fullScreen) return false;
-        m_fullScreen = fullSrc;
-
-        int x = 0;
-        int y = 0;
-        DWORD style = 0;
-        if (fullSrc)
-        {
-            ::GetWindowRect(m_hWnd, &m_oldRect);
-            m_oldStyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
-
-            m_windowWidth = ::GetSystemMetrics(SM_CXSCREEN);
-            m_windowHeight = ::GetSystemMetrics(SM_CYSCREEN);
-
-            style = WS_VISIBLE | WS_POPUP;
-        }
-        else
-        {
-            m_windowWidth = m_oldRect.right - m_oldRect.left;
-            m_windowHeight = m_oldRect.bottom - m_oldRect.top;
-
-            x = m_oldRect.left;
-            y = m_oldRect.top;
-            style = m_oldStyle;
-        }
-
-        ::SetWindowLong(m_hWnd, GWL_STYLE, style);
-        ::MoveWindow(m_hWnd, x, y, m_windowWidth, m_windowHeight, TRUE);
-
-        debugMessage(_T("changeFullScreen full=%d (%d, %d, %d, %d)"),
-                     fullSrc, x, y, m_windowWidth, m_windowHeight);
-
-        return resetDevice();
     }
 
     void RenderDevice::clear(DWORD flag, D3DCOLOR cr, float z, DWORD stencil)
@@ -316,6 +260,8 @@ namespace Lazy
 
     bool RenderDevice::beginScene()
     {
+        assert(!m_isRendering);
+
         while(m_isLost)
         {
             HRESULT hr = testCooperativeLevel();
@@ -331,7 +277,19 @@ namespace Lazy
             return false;
         }
 
-        return SUCCEEDED(m_device->BeginScene());
+        if (FAILED(m_device->BeginScene()))
+            return false;
+
+        m_isRendering = true;
+        return true;
+    }
+
+    void RenderDevice::endScene()
+    { 
+        assert(m_isRendering);
+
+        m_device->EndScene();
+        m_isRendering = false;
     }
 
     void RenderDevice::present()
@@ -340,13 +298,28 @@ namespace Lazy
         
         if (hr == D3DERR_DEVICELOST)
         {
-            debugMessage(_T("ERROR: Present Failed, Device Lost."));
             if (!m_isLost)
             {
+                LOG_ERROR(_T("Present Failed, Device Lost."));
                 m_isLost = true;
                 DeviceMgr::instance()->onLostDevice();
             }
         }
+    }
+
+    bool RenderDevice::resetDeviceSafely()
+    {
+        if (m_isLost || m_isRendering) return false;
+
+        m_isLost = true;
+        DeviceMgr::instance()->onLostDevice();
+        return resetDevice();
+    }
+
+    bool RenderDevice::changeFullScreen(bool fullScreen)
+    {
+        m_isFullScreen = fullScreen;
+        return resetDeviceSafely();
     }
 
     //////////////////////////////////////////////////////////////////////////

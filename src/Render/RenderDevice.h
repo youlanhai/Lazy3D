@@ -18,27 +18,26 @@ namespace Lazy
         void destroy();
 
         ///设备是否丢失
-        bool isLost() const { return m_isLost; }
+        BOOL isLost() const { return m_isLost; }
 
         void clear(DWORD flag, D3DCOLOR cr, float z, DWORD stencil);
         bool beginScene();
-        void endScene() { m_device->EndScene(); }
+        void endScene();
         void present();
 
-        ///改变窗口尺寸
-        bool changeSize(int width, int height);
-        int windowWidth() const { return m_windowWidth; }
-        int windowHeight() const { return m_windowHeight; }
+        bool resetDeviceSafely();
+        bool changeFullScreen(bool fullScreen);
 
-        ///改变全屏
-        bool changeFullScreen(bool fullSrc);
+        int         getBackBufferWidth() const { return m_backBuffWidth; }
+        int         getBackBufferHeight() const { return m_backBuffHeight; }
+        D3DFORMAT   getBackBufferFormat() const { return m_backBuffFormat; }
 
         dx::Device *getDevice() { return m_device; }
         const D3DCAPS9 *getCaps() const { return &m_d3dcaps; }
 
         ///设置渲染参数
-        void setRenderState(dx::RSType type, DWORD value);
-        void getRenderState(dx::RSType type, DWORD & value);
+        void  setRenderState(dx::RSType type, DWORD value);
+        void  getRenderState(dx::RSType type, DWORD & value);
         DWORD getRenderState(dx::RSType type);
 
         void pushRS(dx::RSType type, DWORD value);
@@ -71,30 +70,32 @@ namespace Lazy
         HRESULT drawPrimitiveUP(dx::PTType type, size_t num, const void *stream, size_t stride);
 
 
-        ///重置设备
-        bool resetDevice();
-
         void setMaterial(const D3DMATERIAL9 & material){ m_material = material; }
         const D3DMATERIAL9 & getMaterial() const{ return m_material; }
 
-    protected:
+    private:
+
+        bool resetDevice();
 
         void fillPresentParameter();
 
     private:
         HWND        m_hWnd;
         HINSTANCE   m_hInstance;
-        dx::Device  *m_device;
-        bool        m_isLost;
-        bool        m_fullScreen;
-        int         m_windowWidth;
-        int         m_windowHeight;
+        dx::Device* m_device;
 
-        DWORD       m_oldStyle;
-        RECT        m_oldRect;
-        D3DPRESENT_PARAMETERS m_d3dpp;
-        D3DDISPLAYMODE m_d3dmm;
-        D3DCAPS9    m_d3dcaps;
+        BOOL        m_isLost;
+        BOOL        m_isFullScreen;
+        BOOL        m_isRendering;
+
+        int         m_backBuffWidth;
+        int         m_backBuffHeight;
+        D3DFORMAT   m_backBuffFormat;
+
+        D3DPRESENT_PARAMETERS   m_d3dpp;
+        D3DDISPLAYMODE          m_d3dmm;
+        D3DCAPS9                m_d3dcaps;
+
         D3DMATERIAL9  m_material;
 
         std::vector<std::pair<DWORD, DWORD>>  m_rsStack;

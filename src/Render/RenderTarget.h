@@ -13,6 +13,14 @@ namespace Lazy
         RenderTarget();
         ~RenderTarget();
 
+        bool valid() const { return m_pRenderSurface != nullptr; }
+
+    private:
+
+        virtual void onCloseDevice();
+        virtual void onLostDevice();
+        virtual void onResetDevice();
+
     private:
         dx::Surface * m_pRenderSurface;
         dx::Surface * m_pDepthSurface;

@@ -11,14 +11,6 @@
 
 namespace Lazy
 {
-    namespace LoadingType
-    {
-        const int None = 0;
-        const int Initialize = 1;
-        const int SpaceChange = 2;
-    }
-
-
     /** 应用程序类。可以从此类派生，定制自己的游戏。*/
     class LZDLL_API CApp : public IBase, public IEventReceiver
     {
@@ -63,7 +55,6 @@ namespace Lazy
         /** 释放游戏资源。*/
         virtual void clear(void) ;
 
-    public:
         /** 退出游戏*/
         void quitGame(void);
 
@@ -71,6 +62,15 @@ namespace Lazy
         *   返回false，表示程序退出。
         */
         bool processMessage();
+
+        /** 改变窗口尺寸*/
+        bool changeWindowSize(int width, int height);
+
+        /** 改变窗口客户区大小*/
+        bool changeClientSize(int width, int height);
+
+        /** 改变全屏*/
+        bool changeFullScreen(bool fullScreen);
 
     protected:
 
@@ -120,7 +120,7 @@ namespace Lazy
         ///获得窗口高度
         int getHeight(void) const { return m_nHeight; }
 
-        bool isFullScreen(void) const { return m_bFullScreen; }
+        BOOL isFullScreen(void) const { return m_bFullScreen; }
 
         HWND getHWnd(void) const { return m_hWnd; }
 
@@ -156,17 +156,6 @@ namespace Lazy
         CPoint  getCursorPos(void);
         void    setCursorPos(CPoint pt);
 
-    public:
-
-        //多线程Loading
-
-        bool isGameLoading() const { return m_isLoading; }
-        virtual void startGameLoading(int type);
-        virtual void stopGameLoading() { m_isLoading = false; }
-
-        bool isGameLoadingOK() const { return m_isLoadingOK; }
-        bool setGameLoadingStatus(bool ok) { m_isLoadingOK = ok; }
-
     protected:
         dx::Device *        m_pd3dDevice;      //Direct3D设备对象
         HINSTANCE			m_hInstance;		//应用程序实例对象
@@ -178,13 +167,13 @@ namespace Lazy
         float               m_timeScale;
         Fps                 m_fps;
 
-        bool	            m_bFullScreen;		//是否全屏
-        bool                m_bMsgHooked;
+        BOOL	            m_bFullScreen;		//是否全屏
+        BOOL                m_bWindowMinimized;
+        BOOL                m_bWindowResized;
+        DWORD               m_oldWindowStyle;
+        CRect               m_oldWindowRect;
 
-        bool                m_isLoading;
-        bool                m_isLoadingOK;
-        int                 m_loadingType;
-        float               m_loadingElapse;
+        bool                m_bMsgHooked;
 
         //公共资源
         RenderTaskPtr       m_pRenderTaskMgr;   //< 渲染队列

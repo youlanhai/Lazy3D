@@ -31,7 +31,7 @@ namespace Lazy
     }
 
     //////////////////////////////////////////////////////////////////////////
-    LRESULT CALLBACK app_defWndProc_(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    static LRESULT CALLBACK defaultWindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
         if (msg == WM_DESTROY)
         {
@@ -47,19 +47,18 @@ namespace Lazy
 
     ///////////////////class CApp start/////////////////////////
     CApp::CApp()
-        : m_isLoading(false)
-        , m_isLoadingOK(false)
-        , m_loadingElapse(0.0f)
-        , m_loadingType(LoadingType::None)
-        , m_timeScale(1.0f)
+        : m_timeScale(1.0f)
         , m_pd3dDevice(nullptr)
         , m_hWnd(nullptr)
         , m_hInstance(nullptr)
         , m_bFullScreen(false)
+        , m_bWindowMinimized(false)
         , m_nWidth(640)
         , m_nHeight(480)
         , m_bMsgHooked(false)
         , m_fElapse(0.0f)
+        , m_oldWindowStyle(0)
+        , m_oldWindowRect(0, 0, 640, 480)
     {
         g_pApp = this;
 
@@ -101,8 +100,8 @@ namespace Lazy
                       int nWidth, int nHeight, bool bFullScr)
     {
         m_hInstance = hInstance;
-        m_nWidth = nWidth;
-        m_nHeight = nHeight;
+        m_nWidth = nWidth + ::GetSystemMetrics(SM_CXBORDER) * 2;
+        m_nHeight = nHeight + ::GetSystemMetrics(SM_CYBORDER) + ::GetSystemMetrics(SM_CYCAPTION);
         m_bFullScreen = bFullScr;
         m_caption = caption;
 
@@ -130,6 +129,7 @@ namespace Lazy
         m_hWnd = hWnd;
         m_nWidth = nWidth;
         m_nHeight = nHeight;
+
         m_bFullScreen = bFullSrcreen;
         m_caption = strCaption;
 
@@ -152,92 +152,10 @@ namespace Lazy
         return true;
     }
 
-
-    void CApp::mainLoop(void)
-    {
-        LOG_INFO(_T("start game loop."));
-        static MSG msg = {0};
-        while(msg.message != WM_QUIT)
-        {
-            if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-            else
-            {
-                if(GetActiveWindow() != getHWnd())
-                {
-                    Sleep(100);
-                }
-                run();
-            }
-        }
-        LOG_INFO(_T("game loop end."));
-
-        clear();//释放资源
-    }
-
-    ///处理消息。返回false，表示程序退出。
-    bool CApp::processMessage()
-    {
-        static MSG msg = {0};
-        while(msg.message != WM_QUIT)
-        {
-            if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-            {
-                TranslateMessage(&msg);
-                DispatchMessage(&msg);
-            }
-            else break;
-        }
-
-        return msg.message != WM_QUIT;
-    }
-
-    /**运行*/
-    void CApp::run(void)
-    {
-        DWORD curTime = timeGetTime();
-        static DWORD oldUpdateTime = curTime;
-        m_fElapse = (curTime - oldUpdateTime) * 0.001f;
-        m_fElapse *= m_timeScale;
-
-        //防止时间为0，引发浮点数除0。
-        if (m_fElapse < 0.00001f) return;
-        m_fps.update();
-
-        oldUpdateTime = curTime;
-
-        update();//更新逻辑
-
-        rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 100), 1.0f, 0);
-        if (rcDevice()->beginScene())
-        {
-            render();//渲染画面
-            rcDevice()->endScene();
-        }
-        else
-        {
-            LOG_DEBUG(_T("ERROR: Render scene failed!(m_pd3dDevice->BeginScene())"));
-            Sleep(100);
-        }
-        rcDevice()->present();
-
-        //Sleep(100);
-    }
-
-    /** 退出游戏*/
-    void CApp::quitGame(void)
-    {
-        PostQuitMessage(0);
-    }
-
-
     //初始化Direct3D对象及设备对象
     bool CApp::createDevice()
     {
-        if (!rcDevice()->create(m_hWnd, m_hInstance, m_bFullScreen))
+        if (!rcDevice()->create(m_hWnd, m_hInstance, m_bFullScreen != FALSE))
             return false;
 
         m_pd3dDevice = rcDevice()->getDevice();
@@ -261,12 +179,12 @@ namespace Lazy
         }
         else
         {
-            cs.cx = m_nWidth + ::GetSystemMetrics(SM_CXBORDER) * 2;
-            cs.cy = m_nHeight + ::GetSystemMetrics(SM_CYBORDER) + ::GetSystemMetrics(SM_CYCAPTION);
+            cs.cx = m_nWidth;
+            cs.cy = m_nHeight;
 
             cs.x = (GetSystemMetrics(SM_CXSCREEN) - cs.cx) / 2;
             cs.y = (GetSystemMetrics(SM_CYSCREEN) - cs.cy - 30) / 2;
-            cs.style = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
+            cs.style = WS_OVERLAPPEDWINDOW; // WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
         }
         cs.hInstance = m_hInstance;
 
@@ -303,7 +221,7 @@ namespace Lazy
         WNDCLASSEX wc;
         memset(&wc, 0, sizeof(wc));
         wc.cbSize = sizeof(wc);
-        wc.lpfnWndProc = (WNDPROC)app_defWndProc_;
+        wc.lpfnWndProc = (WNDPROC) defaultWindowProc;
         wc.hInstance = m_hInstance;
         wc.lpszClassName = CLASS_NAME;
         wc.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
@@ -321,6 +239,28 @@ namespace Lazy
         RegisterClassEx(&wc);
     }
 
+    /** 退出游戏*/
+    void CApp::quitGame(void)
+    {
+        PostQuitMessage(0);
+    }
+
+    ///处理消息。返回false，表示程序退出。
+    bool CApp::processMessage()
+    {
+        static MSG msg = { 0 };
+        while (msg.message != WM_QUIT)
+        {
+            if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+            else break;
+        }
+
+        return msg.message != WM_QUIT;
+    }
 
     /**游戏初始化*/
     bool CApp::init(void)
@@ -340,6 +280,79 @@ namespace Lazy
         addDrawTickTask(EntityMgr::instance());
 
         return true;
+    }
+
+    void CApp::mainLoop(void)
+    {
+        LOG_INFO(_T("start game loop."));
+        static MSG msg = { 0 };
+        while (msg.message != WM_QUIT)
+        {
+            if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+            {
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
+            }
+            else
+            {
+                if (GetActiveWindow() != getHWnd())
+                {
+                    Sleep(100);
+                }
+                run();
+            }
+        }
+        LOG_INFO(_T("game loop end."));
+
+        clear();//释放资源
+    }
+
+
+    /**运行*/
+    void CApp::run(void)
+    {
+        DWORD curTime = timeGetTime();
+        static DWORD oldUpdateTime = curTime;
+        m_fElapse = (curTime - oldUpdateTime) * 0.001f;
+        m_fElapse *= m_timeScale;
+
+        //防止时间为0，引发浮点数除0。
+        if (m_fElapse < 0.00001f)
+        {
+            Sleep(1);
+            return;
+        }
+
+        if (m_bWindowResized)
+        {
+            m_bWindowResized = false;
+            rcDevice()->resetDeviceSafely();
+        }
+
+        m_fps.update();
+
+        oldUpdateTime = curTime;
+
+        update();//更新逻辑
+
+        if (m_bWindowMinimized)
+        {
+            Sleep(100);
+        }
+        else
+        {
+            rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 100), 1.0f, 0);
+            if (rcDevice()->beginScene())
+            {
+                render();//渲染画面
+                rcDevice()->endScene();
+                rcDevice()->present();
+            }
+            else
+            {
+                Sleep(100);
+            }
+        }
     }
 
     /**游戏更新*/
@@ -370,11 +383,43 @@ namespace Lazy
     {
         if (event.eventType == EET_KEY_EVENT)
         {
-            if (!event.keyEvent.down && event.keyEvent.key == KEY_ESCAPE)
+            if (!event.keyEvent.down)
             {
-                DestroyWindow(m_hWnd);
+                switch (event.keyEvent.key)
+                {
+                case KEY_ESCAPE:
+                    DestroyWindow(m_hWnd);
+                    break;
+                case KEY_RETURN:
+                    if (m_pKeyboard->isKeyPress(VK_MENU))
+                        changeFullScreen(!m_bFullScreen);
+                    break;
+                default:
+                    return false;
+                }
                 return true;
             }
+        }
+        else if (event.eventType == EET_SYS_EVENT)
+        {
+            switch (event.sysEvent.message)
+            {
+            case WM_SIZE:
+                if (event.sysEvent.wparam == SIZE_MINIMIZED)
+                {
+                    m_bWindowMinimized = true;
+                }
+                else
+                {
+                    m_bWindowMinimized = false;
+                    m_bWindowResized = true;
+                }
+                return false;
+
+            default:
+                return false;
+            }
+            return true;
         }
 
         return false;
@@ -451,11 +496,66 @@ namespace Lazy
         delTickTask(pObj);
     }
 
-    void CApp::startGameLoading(int type)
+
+    bool CApp::changeWindowSize(int width, int height)
     {
-        m_isLoading = true;
-        m_loadingType = type;
-        m_loadingElapse = 0.0f;
+        if (m_bFullScreen) return false;
+        if (width == m_nWidth && height == m_nHeight) return false;
+
+        m_nWidth = width;
+        m_nHeight = height;
+
+        RECT rect;
+        ::GetWindowRect(m_hWnd, &rect);
+        ::MoveWindow(m_hWnd, rect.left, rect.top, width, height, TRUE);
+
+        m_bWindowResized = true;
+        return true;
+    }
+
+    bool CApp::changeClientSize(int width, int height)
+    {
+        width += ::GetSystemMetrics(SM_CXBORDER) * 2;
+        height += ::GetSystemMetrics(SM_CYBORDER) + ::GetSystemMetrics(SM_CYCAPTION);
+
+        return changeWindowSize(width, height);
+    }
+
+    bool CApp::changeFullScreen(bool fullScreen)
+    {
+        if ((BOOL) fullScreen == m_bFullScreen) return false;
+        m_bFullScreen = fullScreen;
+
+        int x = 0;
+        int y = 0;
+        DWORD style = 0;
+        if (m_bFullScreen)
+        {
+            ::GetWindowRect(m_hWnd, &m_oldWindowRect);
+            m_oldWindowStyle = ::GetWindowLong(m_hWnd, GWL_STYLE);
+
+            m_nWidth = ::GetSystemMetrics(SM_CXSCREEN);
+            m_nHeight = ::GetSystemMetrics(SM_CYSCREEN);
+
+            style = WS_VISIBLE | WS_POPUP;
+        }
+        else
+        {
+            m_nWidth = m_oldWindowRect.width();
+            m_nHeight = m_oldWindowRect.height();
+
+            x = m_oldWindowRect.left;
+            y = m_oldWindowRect.top;
+            style = m_oldWindowStyle;
+        }
+
+        ::SetWindowLong(m_hWnd, GWL_STYLE, style);
+        ::MoveWindow(m_hWnd, x, y, m_nWidth, m_nHeight, TRUE);
+
+        LOG_DEBUG(_T("changeFullScreen fullscreen=%d size(%d, %d, %d, %d)"),
+            m_bFullScreen, x, y, m_nWidth, m_nHeight);
+
+        return rcDevice()->changeFullScreen(m_bFullScreen != FALSE);
     }
 
     ///////////////////class CApp end/////////////////////////
