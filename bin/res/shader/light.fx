@@ -28,7 +28,7 @@ sampler samplerDiffuse = sampler_state
 
 float3 LightDiffuse(float3 Normal, float3 lightDir)
 {
-    float CosTheta = max(0.0f, dot(Normal, lightDir));
+    float CosTheta = max(0.0f, dot(Normal, lightDir)) * 2.0f;
     return MaterialDiffuse.rgb * CosTheta;
 }
 
@@ -77,43 +77,20 @@ float3 LightShadowMap(
     float3 vNormal,
     float4 vPosInLight)
 {
-    // Pixel is in lit area. Find out if it's
-    // in shadow using 2x2 percentage closest filtering
     float3 vDstPos = vPosInLight.xyz / vPosInLight.w; //透视除法
 
     //将纹理坐标从渲染目标空间转换到纹理空间
     float2 ShadowTexCoord = 0.5f * vDstPos.xy + float2( 0.5f, 0.5f );
     ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
 
-    // Determine the lerp amounts           
-    float2 lerps = frac( ShadowTexCoord * SHADOW_TEXTURE_SIZE );
+    if(tex2D( samplerDiffuse, ShadowTexCoord ).r + SHADOW_EPSILON < vDstPos.z)
+		return MaterialAmbient.rgb;
 
-    float samplerDiv = 1.0f / SHADOW_TEXTURE_SIZE;
+	float3 Normal = normalize(vNormal);
+	float3 EyeNormal = normalize(g_cameraPosition - vPos.xyz);
+	float3 LightDir = normalize(g_lightPos - vPos.xyz);
 
-    //read in bilerp stamp, doing the shadow checks
-    float shadowValues[4] = {
-        ifInShadow(vDstPos.z, ShadowTexCoord),
-        ifInShadow(vDstPos.z, ShadowTexCoord + float2(samplerDiv, 0)),
-        ifInShadow(vDstPos.z, ShadowTexCoord + float2(0, samplerDiv)),
-        ifInShadow(vDstPos.z, ShadowTexCoord + float2(samplerDiv, samplerDiv)),
-    };
-    
-    // lerp between the shadow values to calculate our light amount
-    float shadowAmount = lerp(
-        lerp( shadowValues[0], shadowValues[1], lerps.x ),
-        lerp( shadowValues[2], shadowValues[3], lerps.x ),
-        lerps.y );
-
-    if(shadowAmount < 0.0001f)
-	{
-		float3 Normal = normalize(vNormal);
-		float3 EyeNormal = normalize(g_cameraPosition - vPos.xyz);
-		float3 LightDir = normalize(g_lightPos - vPos.xyz);
-
-		return MaterialAmbient.rgb + \
-			LightDiffuse(Normal, LightDir) + \
-			LightSpecularBiPhone(EyeNormal, Normal, LightDir);
-	}
-
-	return shadowAmount * MaterialAmbient.rgb;
+	return MaterialAmbient.rgb + \
+		LightDiffuse(Normal, LightDir) + \
+		LightSpecularBiPhone(EyeNormal, Normal, LightDir);
 }

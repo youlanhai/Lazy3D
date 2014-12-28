@@ -13,7 +13,9 @@ namespace Lazy
         : m_pDepthSurface(nullptr)
         , m_pRenderTexture(nullptr)
         , m_isUsing(FALSE)
-        , m_lightPosition(200.f, 200.f, 200.f)
+        , m_lightPosition(200.f, 100.f, 0.f)
+        , m_width(0)
+        , m_height(0)
     {
         m_lightDirection = m_lightPosition;
         m_lightDirection.normalize();
@@ -34,17 +36,17 @@ namespace Lazy
         HRESULT hr;
         dx::Device * pDevice = rcDevice()->getDevice();
 
-        UINT width = ShadowMap_SIZE; // pp->BackBufferWidth;
-        UINT height = ShadowMap_SIZE; // pp->BackBufferHeight;
+        m_width = pp->BackBufferWidth;
+        m_height = pp->BackBufferHeight;
 
-        hr = pDevice->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET,
+        hr = pDevice->CreateTexture(m_width, m_height, 1, D3DUSAGE_RENDERTARGET,
             D3DFMT_R32F, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);
         if (FAILED(hr))
         {
             return false;
         }
 
-        hr = pDevice->CreateDepthStencilSurface(width, height,
+        hr = pDevice->CreateDepthStencilSurface(m_width, m_height,
             pp->AutoDepthStencilFormat, D3DMULTISAMPLE_NONE, 0, TRUE, &m_pDepthSurface, NULL);
         if (FAILED(hr))
         {
@@ -138,7 +140,7 @@ namespace Lazy
             m_lightPosition, Vector3(0, 1, 0));
 
         Matrix proj;
-        proj.makePerspective(D3DX_PI / 4.0f, 1.0f, 1.0f, 10000.0f);
+        proj.makePerspective(D3DX_PI / 4.0f, float(m_width) / m_height, 1.0f, 10000.0f);
         matrix.postMultiply(proj);
     }
 

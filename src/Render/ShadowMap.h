@@ -37,6 +37,9 @@ namespace Lazy
         virtual void onResetDevice();
 
     private:
+        UINT            m_width;
+        UINT            m_height;
+
         dx::Surface *   m_pDepthSurface;
         dx::Texture *   m_pRenderTexture;
         BOOL            m_isUsing;
