@@ -615,55 +615,55 @@ namespace Lazy
 
     void TerrainChunk::renderTerrain(IDirect3DDevice9* pDevice)
     {
-        RSHolder holder(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
-
-        D3DMATERIAL9 material;
-        material.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);
-        material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
-        material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-        material.Specular = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-        material.Power = 10.f;
-        rcDevice()->setMaterial(material);
-
-        if (!m_mesh.valid() || !m_shader) return;
-
-        int maxTexIndex = -1;
-        int i = 0;
-        char buffer[64];
-        for (; i < MapConfig::MaxNbChunkLayer; ++i)
-        {
-            sprintf_s(buffer, 64, "g_texture%d", i);
-            if (m_textures[i])
-            {
-                m_shader->setTexture(buffer, m_textures[i]->getTexture());
-                maxTexIndex = i;
-            }
-            else m_shader->setTexture(buffer, NULL);
-        }
-
-        if (maxTexIndex < 0) return;
-
-        if (m_textures[i])
-            m_shader->setTexture("g_textureBlend", m_textures[i]->getTexture());
-        else
-            m_shader->setTexture("g_textureBlend", NULL);
-
-        ++i;
-        if (m_textures[i])
-            m_shader->setTexture("g_textureDiffuse", m_textures[i]->getTexture());
-        else
-            m_shader->setTexture("g_textureDiffuse", NULL);
+       if (!m_mesh.valid() || !m_shader)
+           return;
 
         if (ShadowMap::instance()->isUsing())
-            strcpy(buffer, "shadowmap");
+        {
+            if (!m_shader->setTechnique("shadowmap"))
+                return;
+        }
         else
         {
+            if (!m_shader->setTechnique("render_scene"))
+                return;
+
+            D3DMATERIAL9 material;
+            material.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);
+            material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
+            material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
+            material.Specular = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+            material.Power = 20.f;
+            rcDevice()->setMaterial(material);
+
+            char buffer[64];
+            int maxTexIndex = -1;
+            int i = 0;
+            for (; i < MapConfig::MaxNbChunkLayer; ++i)
+            {
+                sprintf(buffer, "g_texture%d", i);
+                if (m_textures[i])
+                {
+                    m_shader->setTexture(buffer, m_textures[i]->getTexture());
+                    maxTexIndex = i;
+                }
+                else m_shader->setTexture(buffer, NULL);
+            }
+
+            if (maxTexIndex < 0) 
+                return;
             m_shader->setInt("CurNumTexture", maxTexIndex);
-            strcpy(buffer, "render_scene");
+
+            if (m_textures[i])
+                m_shader->setTexture("g_textureBlend", m_textures[i]->getTexture());
+            else
+                m_shader->setTexture("g_textureBlend", NULL);
+
+            ++i;
+            m_shader->setTexture("g_textureDiffuse", ShadowMap::instance()->getTexture());
         }
 
-        if (!m_shader->setTechnique(buffer))
-            return;
+        RSHolder holder(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
 
         uint32 nPass;
         if (m_shader->begin(nPass))

@@ -3,7 +3,6 @@
 #include "skinned.fx"
 
 float4x4    mViewProj : VIEWPROJECTION;
-float3 g_cameraPosition : CAMERAPOSITION;
 
 texture g_texture;
 sampler textureSampler = sampler_state

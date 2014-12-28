@@ -2,7 +2,6 @@
 
 float4x4    mWorld : WORLD;
 float4x4    mWorldViewProj : WORLDVIEWPROJECTION;
-float3      g_cameraPosition : CAMERAPOSITION;
 
 texture g_texture;
 sampler textureSampler = sampler_state

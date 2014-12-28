@@ -2,6 +2,7 @@
 #include "EffectConstantSetter.h"
 #include "RenderDevice.h"
 #include "Effect.h"
+#include "ShadowMap.h"
 
 #include <algorithm>
 
@@ -86,16 +87,21 @@ namespace Lazy
         pConst->bindValue(cr);
     }
 
-    void effectApplyOmitLight(EffectConstant *pConst)
+    void effectApplyLightDirection(EffectConstant *pConst)
     {
+        pConst->bindValue(ShadowMap::instance()->getLightDirection());
     }
 
-    void effectApplyDirLight(EffectConstant *pConst)
+    void effectApplyLightPosition(EffectConstant *pConst)
     {
+        pConst->bindValue(ShadowMap::instance()->getLightPosition());
     }
 
-    void effectApplySpotLight(EffectConstant *pConst)
+    void effectApplyShadowMapMatrix(EffectConstant *pConst)
     {
+        Matrix matrix;
+        ShadowMap::instance()->genLightMatrix(matrix);
+        pConst->bindValue(matrix);
     }
     
     //////////////////////////////////////////////////////////////////
@@ -144,9 +150,9 @@ namespace Lazy
         REG_EFFECT_CONST_FACTORY("materialambient", effectApplyMaterialAmbient);
         REG_EFFECT_CONST_FACTORY("materialdiffuse", effectApplyMaterialDiffuse);
         REG_EFFECT_CONST_FACTORY("materialspecular", effectApplyMaterialSpecular);
-        REG_EFFECT_CONST_FACTORY("omitlight", effectApplyOmitLight);
-        REG_EFFECT_CONST_FACTORY("dirlight", effectApplyDirLight);
-        REG_EFFECT_CONST_FACTORY("spotlight", effectApplySpotLight);
+        REG_EFFECT_CONST_FACTORY("lightdirection", effectApplyLightDirection);
+        REG_EFFECT_CONST_FACTORY("lightposition", effectApplyLightPosition);
+        REG_EFFECT_CONST_FACTORY("shadowmapmatrix", effectApplyShadowMapMatrix);
         REG_EFFECT_CONST_FACTORY("cameraposition", effectApplyCameraPosition);
         
 #undef REG_EFFECT_CONST_FACTORY

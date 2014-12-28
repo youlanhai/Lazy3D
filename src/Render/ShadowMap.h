@@ -20,6 +20,14 @@ namespace Lazy
         dx::Texture * getTexture() { return m_pRenderTexture; }
         dx::Surface * getDepthSurface() { return m_pDepthSurface; }
 
+        void setLightPosition(const Vector3 & v){ m_lightPosition = v; }
+        const Vector3 & getLightPosition() const { return m_lightPosition; }
+
+        void setLightDirection(const Vector3 & v){ m_lightDirection = v; }
+        const Vector3 & getLightDirection() const { return m_lightDirection; }
+
+        void genLightMatrix(Matrix & matrix);
+
     private:
         bool create();
 
@@ -35,6 +43,9 @@ namespace Lazy
 
         dx::Surface *   m_pOldDepthSurface;
         dx::Surface *   m_pOldRenderSurface;
+
+        Vector3         m_lightPosition;
+        Vector3         m_lightDirection;
     };
 
 } // end namespace Lazy

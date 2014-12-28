@@ -3,6 +3,8 @@
 
 #include "RenderDevice.h"
 
+#define ShadowMap_SIZE 512
+
 namespace Lazy
 {
     IMPLEMENT_SINGLETON(ShadowMap);
@@ -11,7 +13,10 @@ namespace Lazy
         : m_pDepthSurface(nullptr)
         , m_pRenderTexture(nullptr)
         , m_isUsing(FALSE)
+        , m_lightPosition(200.f, 200.f, 200.f)
     {
+        m_lightDirection = m_lightPosition;
+        m_lightDirection.normalize();
     }
 
     ShadowMap::~ShadowMap()
@@ -29,15 +34,18 @@ namespace Lazy
         HRESULT hr;
         dx::Device * pDevice = rcDevice()->getDevice();
 
-        hr = pDevice->CreateTexture(pp->BackBufferWidth, pp->BackBufferHeight, 1, D3DUSAGE_RENDERTARGET,
-            D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);
+        UINT width = ShadowMap_SIZE; // pp->BackBufferWidth;
+        UINT height = ShadowMap_SIZE; // pp->BackBufferHeight;
+
+        hr = pDevice->CreateTexture(width, height, 1, D3DUSAGE_RENDERTARGET,
+            D3DFMT_R32F, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);
         if (FAILED(hr))
         {
             return false;
         }
 
-        hr = pDevice->CreateDepthStencilSurface(pp->BackBufferWidth, pp->BackBufferHeight, 
-            pp->AutoDepthStencilFormat, D3DMULTISAMPLE_NONE, 0, FALSE, &m_pDepthSurface, NULL);
+        hr = pDevice->CreateDepthStencilSurface(width, height,
+            pp->AutoDepthStencilFormat, D3DMULTISAMPLE_NONE, 0, TRUE, &m_pDepthSurface, NULL);
         if (FAILED(hr))
         {
             return false;
@@ -122,6 +130,16 @@ namespace Lazy
 
         SafeRelease(m_pOldRenderSurface);
         SafeRelease(m_pOldDepthSurface);
+    }
+
+    void ShadowMap::genLightMatrix(Matrix & matrix)
+    {
+        matrix.makeLookAt(m_lightPosition - m_lightDirection * 100.0f,
+            m_lightPosition, Vector3(0, 1, 0));
+
+        Matrix proj;
+        proj.makePerspective(D3DX_PI / 4.0f, 1.0f, 1.0f, 10000.0f);
+        matrix.postMultiply(proj);
     }
 
 } // end namespace Lazy

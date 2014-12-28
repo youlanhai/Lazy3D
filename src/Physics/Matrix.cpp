@@ -41,60 +41,38 @@ namespace Lazy
 
     void Matrix::makeTranslate(const Vector3 & v)
     {
-        makeIdentity();
-        setRow(3, v);
+        D3DXMatrixTranslation(this, v.x, v.y, v.z);
     }
 
     void Matrix::makeTranslate(float x, float y, float z)
     {
-        makeIdentity();
-        _41 = x;
-        _42 = y;
-        _43 = z;
+        D3DXMatrixTranslation(this, x, y, z);
     }
 
     void Matrix::makeScale(const Vector3 & v)
     {
-        makeScale(v.x, v.y, v.z);
+        D3DXMatrixScaling(this, v.x, v.y, v.z);
     }
 
     void Matrix::makeScale(float x, float y, float z)
     {
-        makeIdentity();
-        _11 = x;
-        _22 = y;
-        _33 = z;
+        D3DXMatrixScaling(this, x, y, z);
     }
 
 
     void Matrix::makeRatateX(float angle)
     {
-        makeIdentity();
-        float sina = sinf(angle);
-        float cosa = cosf(angle);
-
-        _22 = cosa;     _23 = sina;
-        _32 = -sina;    _33 = cosa;
+        D3DXMatrixRotationX(this, angle);
     }
 
     void Matrix::makeRatateY(float angle)
     {
-        makeIdentity();
-        float sina = sinf(angle);
-        float cosa = cosf(angle);
-
-        _11 = cosa;    _13 = sina;
-        _31 = sina;    _33 = cosa;
+        D3DXMatrixRotationY(this, angle);
     }
 
     void Matrix::makeRatateZ(float angle)
     {
-        makeIdentity();
-        float sina = sinf(angle);
-        float cosa = cosf(angle);
-
-        _11 = cosa;     _12 = sina;
-        _21 = -sina;    _22 = cosa;
+        D3DXMatrixRotationZ(this, angle);
     }
 
     void Matrix::makeRatateYawPitchRoll(float yaw, float pitch, float roll)
@@ -109,24 +87,7 @@ namespace Lazy
 
     void Matrix::makeLookAt(const Vector3 & target, const Vector3 & position, const Vector3 & up)
     {
-        Vector3 N = target - position;
-        N.normalize();
-
-        Vector3 U = up.cross(N);
-        U.normalize();
-
-        Vector3 V = N.cross(U);
-        N.normalize();
-
-        setCol(0, U);
-        setCol(1, V);
-        setCol(2, N);
-        setCol(3, MathConst::vec3Zero);
-
-        _41 = -position.dot(U);
-        _42 = -position.dot(V);
-        _43 = -position.dot(N);
-        _44 = 1.0f;
+        D3DXMatrixLookAtLH(this, &position, &target, &up);
     }
 
     void Matrix::setRotationQuaternion(const Quaternion & q)
