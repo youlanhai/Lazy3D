@@ -408,24 +408,9 @@ void CGame::render()
     rcDevice()->applyView();
     rcDevice()->applyProj();
 
-    {
-        LightHelper light;
-        D3DXVECTOR3 dir(-1, -1, -1);
-        D3DXVec3Normalize(&dir, &dir);
-        light.SetDirectionLight(m_pd3dDevice, dir, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-    }
-
-    //设置材质
-    Material::setMaterial(m_pd3dDevice, D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f));
-
-    //设置纹理
-    m_pd3dDevice->SetTexture(0, NULL);
-    m_pd3dDevice->SetTransform(D3DTS_WORLD, &matIdentity);
-
     m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, 
         m_bUseLineMode ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
     
-
     //if (cPick::instance()->isIntersectWithTerrain())
     {
         AABB aabb;

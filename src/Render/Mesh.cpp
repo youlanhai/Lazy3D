@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "RenderDevice.h"
 #include "EffectConstant.h"
+#include "ShadowMap.h"
 
 namespace Lazy
 {
@@ -339,14 +340,6 @@ namespace Lazy
         , m_bone(nullptr)
         , m_dwTrangleCnt(0)
     {
-        static bool firstTime = true;
-        if (firstTime)
-        {
-            firstTime = false;
-            s_skinnedEffect = EffectMgr::instance()->get(_T("shader/skinned_mesh.fx"));
-            s_noskinnedEffect = EffectMgr::instance()->get(_T("shader/noskinned.fx"));
-        }
-
         m_aabb.min.set(-1.0f, 0, -1.0f);
         m_aabb.max.set(1.0f, 1.0f, 1.0f);
     }
@@ -685,6 +678,25 @@ namespace Lazy
             }
         }
         m_dwTrangleCnt += pMeshContainer->MeshData.pMesh->GetNumFaces();
+    }
+
+    bool Mesh::initShaders()
+    {
+        if (!s_skinnedEffect)
+        {
+            s_skinnedEffect = EffectMgr::instance()->get(_T("shader/skinned_mesh.fx"));
+            s_noskinnedEffect = EffectMgr::instance()->get(_T("shader/noskinned.fx"));
+        }
+        return s_skinnedEffect != NULL;
+    }
+
+    void Mesh::selectTechnique(const char * name)
+    {
+        if (s_noskinnedEffect) 
+            s_noskinnedEffect->setTechnique(name);
+
+        if (s_skinnedEffect)
+            s_skinnedEffect->setTechnique(name);
     }
 
 }//end namespace Lazy

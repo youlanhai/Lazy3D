@@ -1,6 +1,4 @@
 
-#include "light.fx"
-
 float4x4 g_world : WORLD;
 float4x4 g_worldViewProj : WORLDVIEWPROJECTION;
 
@@ -38,15 +36,9 @@ struct VS_INPUT
     float2 uv2 : TEXCOORD1;
 };
 
-struct VS_OUTPUT
-{
-    float4 pos  : POSITION;
-    float4 uv   : TEXCOORD0;
-    float4 vPos : TEXCOORD1;
-    float3 vNml : TEXCOORD2;
-    float4 vPosInLight : TEXCOORD3;
-};
-
+#include "light_shadowmap.fx"
+#include "light_vs_shadowmap.fx"
+#include "light_ps.ps"
 //////////////////////////////////////////////////
 ///
 //////////////////////////////////////////////////
@@ -98,26 +90,8 @@ PixelShader psArray[4] = {
 //////////////////////////////////////////////////
 ///
 //////////////////////////////////////////////////
-void vsShadowMap(float4 position : POSITION,
-    out float4 oPos  : POSITION,
-    out float2 depth : TEXCOORD0)
-{
-    oPos = mul(position, g_world);
-    oPos = mul(oPos, g_shadowMapMatrix);
-    depth.xy = oPos.zw;
-}
 
-void psShadowMap(float2 depth : TEXCOORD0,
-    out float4 color : COLOR0)
-{
-    color = depth.x / depth.y;
-}
-
-//////////////////////////////////////////////////
-///
-//////////////////////////////////////////////////
-
-technique shadowmap
+technique tech_shadowmap
 {
     pass p0
     {
@@ -126,7 +100,7 @@ technique shadowmap
     }
 }
 
-technique render_scene
+technique tech_default
 {
     pass p0
     {

@@ -48,6 +48,9 @@ namespace Lazy
 
         dx::AnimController* getAnimationContrl() const { return m_pAnimController; }
 
+        static bool initShaders();
+        static void selectTechnique(const char * name);
+
     private:
         BoneFrame*              m_bone;		///< 根骨节点
         int		                m_dwTrangleCnt; ///< 渲染的三角形数量

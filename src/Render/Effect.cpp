@@ -64,6 +64,11 @@ namespace Lazy
             return false;
         }
 
+        // 使用默认的技术
+        D3DXHANDLE defaultTechnique = m_pEffect->GetTechniqueByName("tech_default");
+        if (defaultTechnique != NULL)
+            m_pEffect->SetTechnique(defaultTechnique);
+
         D3DXEFFECT_DESC desc;
         m_pEffect->GetDesc(&desc);
         for (UINT i = 0; i < desc.Parameters; ++i)

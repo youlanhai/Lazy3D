@@ -620,12 +620,12 @@ namespace Lazy
 
         if (ShadowMap::instance()->isUsing())
         {
-            if (!m_shader->setTechnique("shadowmap"))
+            if (!m_shader->setTechnique("tech_shadowmap"))
                 return;
         }
         else
         {
-            if (!m_shader->setTechnique("render_scene"))
+            if (!m_shader->setTechnique("tech_default"))
                 return;
 
             D3DMATERIAL9 material;

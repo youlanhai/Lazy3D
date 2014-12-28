@@ -25,7 +25,7 @@ float4 psMain( VS_OUTPUT input) : COLOR0
 }
 
 
-technique
+technique tech_default
 {
     pass P0
     {

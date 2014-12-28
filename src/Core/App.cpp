@@ -12,6 +12,8 @@
 #include "../Render/Texture.h"
 #include "../Render/Font.h"
 #include "../Render/RenderDevice.h"
+#include "../Render/ShadowMap.h"
+#include "../Render/Mesh.h"
 
 //#pragma comment(lib, "d3d9.lib")
 //#pragma comment(lib, "d3dx9.lib")
@@ -365,6 +367,28 @@ namespace Lazy
     /**渲染*/
     void CApp::render(void)
     {
+
+#ifdef USE_SHADOW_MAP
+        if (ShadowMap::instance()->begin())
+        {
+            Mesh::selectTechnique("shadowmap");
+            rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
+                D3DXCOLOR(0, 0, 0, 0), 1, 0);
+
+            m_pRenderTaskMgr->render(m_pd3dDevice);
+            ShadowMap::instance()->end();
+
+            static bool isFirst = true;
+            if (isFirst)
+            {
+                isFirst = false;
+                D3DXSaveTextureToFile(L"test.bmp", D3DXIFF_BMP,
+                    ShadowMap::instance()->getTexture(), NULL);
+            }
+        }
+#endif
+        Mesh::selectTechnique("default");
+
         m_pRenderTaskMgr->render(m_pd3dDevice);
     }
 

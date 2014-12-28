@@ -1,26 +1,53 @@
 
+#ifndef USE_SHADOW_MAP
+
 struct VS_OUTPUT
 {
-    float4  Pos     : POSITION;
-    float2  Tex0    : TEXCOORD0;
-    float4  Normal  : TEXCOORD1;
-    float4  EyeNml  : TEXCOORD2;
+    float4  pos     : POSITION;
+    float2  uv      : TEXCOORD0;
+    float4  vPos    : TEXCOORD1;
+    float4  vNml    : TEXCOORD2;
 };
 
 float4 psVertexLight(
-    float4  Diffuse : COLOR0,
-    float2  Tex0    : TEXCOORD0) : COLOR
+    float4  diffuse : COLOR0,
+    float2  uv    : TEXCOORD0) : COLOR
 {
-    return tex2D(textureSampler, Tex0) * Diffuse;
+    return tex2D(textureSampler, uv) * diffuse;
 }
 
 float4 psPixelLight(
-    float2  Tex0    : TEXCOORD0,
-    float4  Normal  : TEXCOORD1,
-    float4  EyeNml  : TEXCOORD2) : COLOR
+    float2  uv      : TEXCOORD0,
+    float3  vPos    : TEXCOORD1;
+    float3  vNml    : TEXCOORD2) : COLOR
 {
-    float4 Diffuse;
-    Diffuse.rgb = Light(normalize(EyeNml.xyz), normalize(Normal.xyz));
-    Diffuse.a = 1.0f;
-    return tex2D(textureSampler, Tex0) * Diffuse;
+    float4 diffuse = Light(vPos, vNml);
+    diffuse.a = 1.0f;
+
+    return tex2D(textureSampler, uv) * diffuse;
 }
+
+#else
+
+struct VS_OUTPUT
+{
+    float4 pos  : POSITION;
+    float4 uv   : TEXCOORD0;
+    float4 vPos : TEXCOORD1;
+    float3 vNml : TEXCOORD2;
+    float4 vPosInLight : TEXCOORD3;
+};
+
+float4 psPixelLight(
+    float2 uv   : TEXCOORD0,
+    float4 vPos : TEXCOORD1,
+    float3 vNml : TEXCOORD2,
+    float4 vPosInLight : TEXCOORD3) : COLOR
+{
+    float4 diffuse = LightShadowMap(vPos, vNml, vPosInLight);
+    diffuse.a = 1.0f;
+    return tex2D(textureSampler, uv) * diffuse;
+}
+
+#endif
+

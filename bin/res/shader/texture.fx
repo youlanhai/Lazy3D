@@ -33,7 +33,7 @@ float4 psMain(VS_OUTPUT In) : COLOR0
     return tex2D(textureSampler, In.uv) * In.color;
 }
 
-technique
+technique tech_default
 {
     pass p0
     {

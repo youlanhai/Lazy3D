@@ -8,6 +8,7 @@
 
 #include "TerrainMap.h"
 
+#include "../Render/Mesh.h"
 #include "../Render/Texture.h"
 #include "../Render/RenderDevice.h"
 #include "../Render/ShadowMap.h"
@@ -416,24 +417,6 @@ namespace Lazy
         if (!m_usefull || !MapConfig::ShowTerrain || !m_root)
             return;
 
-#if 1
-        if (ShadowMap::instance()->begin())
-        {
-            rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
-                D3DXCOLOR(0, 0, 0, 0), 1, 0);
-
-            m_root->render(pDevice);
-            ShadowMap::instance()->end();
-
-            static bool isFirst = true;
-            if (isFirst)
-            {
-                isFirst = false;
-                D3DXSaveTextureToFile(L"test.bmp", D3DXIFF_BMP,
-                    ShadowMap::instance()->getTexture(), NULL);
-            }
-        }
-#endif
         m_root->render(pDevice);
 
 #if 0

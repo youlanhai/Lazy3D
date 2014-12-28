@@ -4,9 +4,10 @@
 #include "Device.h"
 #include "../utility/Singleton.h"
 
+#define USE_SHADOW_MAP
+
 namespace Lazy
 {
-
     class ShadowMap : public IDevice, public Singleton<ShadowMap>
     {
     public:

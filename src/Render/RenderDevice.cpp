@@ -220,6 +220,7 @@ namespace Lazy
         EffectMgr::instance()->setResFacotry(factory);
         EffectConstantSetter::init();
 
+        Mesh::initShaders();
         return true;
     }
 
