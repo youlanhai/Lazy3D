@@ -632,7 +632,7 @@ namespace Lazy
             material.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.0f);
             material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
             material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
-            material.Specular = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
+            material.Specular = D3DXCOLOR(0.8f, 0.8f, 0.8f, 1.0f);
             material.Power = 30.f;
             rcDevice()->setMaterial(material);
 

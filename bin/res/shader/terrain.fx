@@ -130,7 +130,7 @@ technique render_scene
 {
     pass p0
     {
-        VertexShader = compile vs_3_0 vsMain();
+        VertexShader = compile vs_2_0 vsMain();
         PixelShader = psArray[CurNumTexture];
     }
 }
