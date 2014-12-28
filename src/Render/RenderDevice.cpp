@@ -8,6 +8,7 @@
 #include "Texture.h"
 #include "Mesh.h"
 #include "EffectConstantSetter.h"
+#include "ShadowMap.h"
 
 #include "../Core/App.h"
 
@@ -80,6 +81,7 @@ namespace Lazy
         pushWorld(matIdentity);
 
         DeviceMgr::initInstance();
+        ShadowMap::initInstance();
     }
 
     RenderDevice::~RenderDevice()
@@ -87,6 +89,7 @@ namespace Lazy
         destroy();
 
         DeviceMgr::finiInstance();
+        ShadowMap::finiInstance();
     }
 
     void RenderDevice::fillPresentParameter()
@@ -316,7 +319,12 @@ namespace Lazy
         return resetDevice();
     }
 
-    bool RenderDevice::changeFullScreen(bool fullScreen)
+    void RenderDevice::onWindowResize(int width, int height)
+    {
+        resetDeviceSafely();
+    }
+
+    bool RenderDevice::onChangeFullScreen(bool fullScreen)
     {
         m_isFullScreen = fullScreen;
         return resetDeviceSafely();

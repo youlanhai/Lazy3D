@@ -14,7 +14,7 @@ namespace Lazy
         ~RenderDevice();
 
         ///创建dx设备
-        bool create(HWND hWnd, HINSTANCE hInstance, bool fullSrc = false);
+        bool create(HWND hWnd, HINSTANCE hInstance, bool fullScreen = false);
         void destroy();
 
         ///设备是否丢失
@@ -26,7 +26,8 @@ namespace Lazy
         void present();
 
         bool resetDeviceSafely();
-        bool changeFullScreen(bool fullScreen);
+        void onWindowResize(int width, int height);
+        bool onChangeFullScreen(bool fullScreen);
 
         int         getBackBufferWidth() const { return m_backBuffWidth; }
         int         getBackBufferHeight() const { return m_backBuffHeight; }
@@ -34,6 +35,7 @@ namespace Lazy
 
         dx::Device *getDevice() { return m_device; }
         const D3DCAPS9 *getCaps() const { return &m_d3dcaps; }
+        const D3DPRESENT_PARAMETERS * getPresentParameter() const { return &m_d3dpp; }
 
         ///设置渲染参数
         void  setRenderState(dx::RSType type, DWORD value);

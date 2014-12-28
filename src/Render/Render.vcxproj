@@ -86,10 +86,10 @@
     <ClInclude Include="FontTextrue.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderDevice.h" />
-    <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="ResFactory.h" />
     <ClInclude Include="ResMgr.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="ShadowMap.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextTexture.h" />
@@ -104,10 +104,10 @@
     <ClCompile Include="FontTextrue.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="RenderDevice.cpp" />
-    <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="ResFactory.cpp" />
     <ClCompile Include="ResMgr.cpp" />
     <ClCompile Include="Resource.cpp" />
+    <ClCompile Include="ShadowMap.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

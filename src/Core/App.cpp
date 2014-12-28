@@ -326,7 +326,7 @@ namespace Lazy
         if (m_bWindowResized)
         {
             m_bWindowResized = false;
-            rcDevice()->resetDeviceSafely();
+            rcDevice()->onWindowResize(m_nWidth, m_nHeight);
         }
 
         m_fps.update();
@@ -555,7 +555,7 @@ namespace Lazy
         LOG_DEBUG(_T("changeFullScreen fullscreen=%d size(%d, %d, %d, %d)"),
             m_bFullScreen, x, y, m_nWidth, m_nHeight);
 
-        return rcDevice()->changeFullScreen(m_bFullScreen != FALSE);
+        return rcDevice()->onChangeFullScreen(m_bFullScreen != FALSE);
     }
 
     ///////////////////class CApp end/////////////////////////
