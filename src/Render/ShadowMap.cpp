@@ -36,8 +36,8 @@ namespace Lazy
         HRESULT hr;
         dx::Device * pDevice = rcDevice()->getDevice();
 
-        m_width = pp->BackBufferWidth;
-        m_height = pp->BackBufferHeight;
+        m_width = ShadowMap_SIZE;// pp->BackBufferWidth;
+        m_height = ShadowMap_SIZE;// pp->BackBufferHeight;
 
         hr = pDevice->CreateTexture(m_width, m_height, 1, D3DUSAGE_RENDERTARGET,
             D3DFMT_R32F, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);

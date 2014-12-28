@@ -48,7 +48,7 @@ struct VS_OUTPUT
 };
 
 //////////////////////////////////////////////////
-/// vertex shader
+///
 //////////////////////////////////////////////////
 VS_OUTPUT vsMain(VS_INPUT input)
 {
@@ -61,21 +61,19 @@ VS_OUTPUT vsMain(VS_INPUT input)
     return output;
 }
 
-//////////////////////////////////////////////////
-/// pixel shader
-//////////////////////////////////////////////////
-
 float4 psMain_0(VS_OUTPUT input) : COLOR0
 { 
     float4 color = tex2D(g_samplers[0], input.uv.xy);
-    float3 crDiffuse = LightShadowMap(input.vPos, input.vNml, input.vPosInLight);
-    return color * float4(crDiffuse, 1.0f);
+    float4 diffuse = LightShadowMap(input.vPos, input.vNml, input.vPosInLight);
+    diffuse.a = 1.0f;
+    return color * diffuse;
 }
 
 float4 psMain_n(VS_OUTPUT input,
     uniform int NumTextures) : COLOR0
 {
-    float3 crDiffuse = {1.0f, 1.0f, 1.0f}; //LightShadowMap(input.vPos, input.vNml, input.vPosInLight);
+    float4 diffuse = LightShadowMap(input.vPos, input.vNml, input.vPosInLight);
+    diffuse.a = 1.0f;
 
     float4 crBlend = tex2D(samplerBlend, input.uv.zw);
     float  weights[4] = (float[4]) crBlend;
@@ -86,15 +84,15 @@ float4 psMain_n(VS_OUTPUT input,
     }
 
     color.a = 1.0;
-    return color * float4(crDiffuse, 1.0f);
+    return color * diffuse;
 }
 
 int CurNumTexture = 0;
 PixelShader psArray[4] = {
-    compile ps_2_0 psMain_0(), 
-    compile ps_2_0 psMain_n(2),
-    compile ps_2_0 psMain_n(3),
-    compile ps_2_0 psMain_n(4)
+    compile ps_3_0 psMain_0(), 
+    compile ps_3_0 psMain_n(2),
+    compile ps_3_0 psMain_n(3),
+    compile ps_3_0 psMain_n(4)
 };
 
 //////////////////////////////////////////////////
@@ -132,7 +130,7 @@ technique render_scene
 {
     pass p0
     {
-        VertexShader = compile vs_2_0 vsMain();
+        VertexShader = compile vs_3_0 vsMain();
         PixelShader = psArray[CurNumTexture];
     }
 }

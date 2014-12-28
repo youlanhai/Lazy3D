@@ -7,7 +7,6 @@ float4 MaterialAmbient : MATERIALAMBIENT;
 float4 MaterialDiffuse : MATERIALDIFFUSE;
 float4 MaterialSpecular : MATERIALSPECULAR;
 
-
 #define SHADOW_EPSILON          0.00005f
 #define SHADOW_TEXTURE_SIZE     512
 
@@ -18,62 +17,54 @@ texture g_textureDiffuse;
 sampler samplerDiffuse = sampler_state
 {
     Texture = <g_textureDiffuse>;
-    MipFilter = LINEAR;
-    MinFilter = LINEAR;
-    MagFilter = LINEAR;
-    AddressU  = WRAP;
-    AddressV  = WRAP;
+    MipFilter = Point;
+    MinFilter = Point;
+    MagFilter = Point;
+    AddressU  = Clamp;
+    AddressV  = Clamp;
 };
 
 
-float3 LightDiffuse(float3 Normal, float3 lightDir)
+float4 LightDiffuse(float3 Normal, float3 lightDir)
 {
-    float CosTheta = max(0.0f, dot(Normal, lightDir)) * 2.0f;
-    return MaterialDiffuse.rgb * CosTheta;
+    float CosTheta = max(0.0f, dot(Normal, lightDir)) * 1.2f;
+    return MaterialDiffuse * CosTheta;
 }
 
-float3 LightSpecularPhone(float3 EyeNormal, float3 Normal, float3 lightDir)
+float4 LightSpecularPhone(float3 EyeNormal, float3 Normal, float3 lightDir)
 {
-	float3 specular = {0.0f, 0.0f, 0.0f};
 	if(dot(lightDir, Normal) > 0.0f)
 	{
 		float3 reflectNormal = normalize(reflect(-lightDir, Normal));
-		float cosTheta = max(0.0f, dot(reflectNormal, EyeNormal));
-		float theta = pow(cosTheta, MaterialSpecular.a);
-		specular = MaterialSpecular.rgb * theta;
+		float theta = max(0.0f, dot(reflectNormal, EyeNormal));
+		theta = pow(theta, MaterialSpecular.a);
+		return MaterialSpecular * theta;
 	}
-	return specular;
+	return (float4) 0;
 }
 
-float3 LightSpecularBiPhone(float3 EyeNormal, float3 Normal, float3 lightDir)
+float4 LightSpecularBiPhone(float3 EyeNormal, float3 Normal, float3 lightDir)
 {
-	float3 specular = {0.0f, 0.0f, 0.0f};
 	if(dot(lightDir, Normal) > 0.0f)
 	{
 		float3 halfNormal = normalize(lightDir + EyeNormal);
-		float cosTheta = max(0.0f, dot(Normal, halfNormal));
-		float theta = pow(cosTheta, MaterialSpecular.a);
-		specular = MaterialSpecular.rgb * theta;
+		float theta = max(0.0f, dot(Normal, halfNormal));
+		theta = pow(theta, MaterialSpecular.a);
+		return MaterialSpecular * theta;
 	}
-	return specular;
+	return (float4) 0;
 }
 
 
-float3 Light(float3 EyeNormal, float3 Normal)
+float4 Light(float3 EyeNormal, float3 Normal)
 {
-	return MaterialAmbient.rgb + \
+	return MaterialAmbient + \
 		LightDiffuse(Normal, g_lightDir) + \
 		LightSpecularBiPhone(EyeNormal, Normal, g_lightDir);
 }
 
-
-float ifInShadow(float z, float2 ShadowTexCoord)
-{
-    return step(z, tex2D( samplerDiffuse, ShadowTexCoord ) + SHADOW_EPSILON);
-}
-
-float3 LightShadowMap(
-    float4 vPos,
+float4 LightShadowMap(
+    float3 vPos,
     float3 vNormal,
     float4 vPosInLight)
 {
@@ -83,14 +74,28 @@ float3 LightShadowMap(
     float2 ShadowTexCoord = 0.5f * vDstPos.xy + float2( 0.5f, 0.5f );
     ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
 
-    if(tex2D( samplerDiffuse, ShadowTexCoord ).r + SHADOW_EPSILON < vDstPos.z)
-		return MaterialAmbient.rgb;
+    // Determine the lerp amounts           
+    float2 lerps = frac( SHADOW_TEXTURE_SIZE * ShadowTexCoord );
+
+	float samplediv = 1.0f / SHADOW_TEXTURE_SIZE;
+
+    //read in bilerp stamp, doing the shadow checks
+    float4 sourcevals;
+    sourcevals.x = step(vDstPos.z, SHADOW_EPSILON + tex2D( samplerDiffuse, ShadowTexCoord ).r);
+    sourcevals.y = step(vDstPos.z, SHADOW_EPSILON + tex2D( samplerDiffuse, ShadowTexCoord + float2(samplediv, 0) ).r);
+    sourcevals.z = step(vDstPos.z, SHADOW_EPSILON + tex2D( samplerDiffuse, ShadowTexCoord + float2(0, samplediv) ).r);
+    sourcevals.w = step(vDstPos.z, SHADOW_EPSILON + tex2D( samplerDiffuse, ShadowTexCoord + float2(samplediv, samplediv) ).r);
+    
+    // lerp between the shadow values to calculate our light amount
+    float LightAmount = lerp( lerp( sourcevals.x, sourcevals.y, lerps.x ),
+                              lerp( sourcevals.z, sourcevals.w, lerps.x ),
+                              lerps.y );
 
 	float3 Normal = normalize(vNormal);
-	float3 EyeNormal = normalize(g_cameraPosition - vPos.xyz);
-	float3 LightDir = normalize(g_lightPos - vPos.xyz);
+	float3 EyeNormal = normalize(g_cameraPosition - vPos);
+	float3 LightDir = normalize(g_lightPos - vPos);
 
-	return MaterialAmbient.rgb + \
-		LightDiffuse(Normal, LightDir) + \
-		LightSpecularBiPhone(EyeNormal, Normal, LightDir);
+	return MaterialAmbient + \
+	 	LightDiffuse(Normal, LightDir) * LightAmount +\
+	 	LightSpecularBiPhone(EyeNormal, Normal, LightDir) * LightAmount;
 }

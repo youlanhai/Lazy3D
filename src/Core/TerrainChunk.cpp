@@ -633,7 +633,7 @@ namespace Lazy
             material.Emissive = D3DXCOLOR(0.0f, 0.0f, 0.0f, 1.0f);
             material.Diffuse = D3DXCOLOR(1.0f, 1.0f, 1.0f, 1.0f);
             material.Specular = D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.0f);
-            material.Power = 20.f;
+            material.Power = 30.f;
             rcDevice()->setMaterial(material);
 
             char buffer[64];
