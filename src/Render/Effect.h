@@ -33,6 +33,7 @@ namespace Lazy
         bool setTechnique(D3DXHANDLE name);
         void setTexture(D3DXHANDLE name, dx::Texture *pTexture);
         void setMatrix(D3DXHANDLE name, const Matrix & mat);
+        void setInt(D3DXHANDLE name, int value);
 
         EffectConstant* getConstant(const std::string & name);
 

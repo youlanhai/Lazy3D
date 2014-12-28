@@ -30,7 +30,7 @@ namespace Lazy
         dx::Device * pDevice = rcDevice()->getDevice();
 
         hr = pDevice->CreateTexture(pp->BackBufferWidth, pp->BackBufferHeight, 1, D3DUSAGE_RENDERTARGET,
-            D3DFMT_A8, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);
+            D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);
         if (FAILED(hr))
         {
             return false;
@@ -61,10 +61,7 @@ namespace Lazy
 
     void ShadowMap::onLostDevice()
     {
-        assert(!m_isUsing);
-
-        SAFE_RELEASE(m_pDepthSurface);
-        SAFE_RELEASE(m_pRenderTexture);
+        onCloseDevice();
     }
 
     void ShadowMap::onResetDevice()
@@ -109,7 +106,7 @@ namespace Lazy
         pDevice->SetDepthStencilSurface(m_pOldDepthSurface);
 
         SafeRelease(m_pOldRenderSurface);
-        SafeRelease(m_pOldRenderSurface);
+        SafeRelease(m_pOldDepthSurface);
         SafeRelease(pRenderSurface);
         return false;
     }
@@ -124,7 +121,7 @@ namespace Lazy
         pDevice->SetDepthStencilSurface(m_pOldDepthSurface);
 
         SafeRelease(m_pOldRenderSurface);
-        SafeRelease(m_pOldRenderSurface);
+        SafeRelease(m_pOldDepthSurface);
     }
 
 } // end namespace Lazy

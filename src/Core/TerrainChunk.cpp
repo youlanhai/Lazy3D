@@ -7,6 +7,7 @@
 #include "TerrainMap.h"
 #include "SceneNodeFactory.h"
 
+#include "../Render/ShadowMap.h"
 #include "../Physics/Physics.h"
 
 #include <sstream>
@@ -653,7 +654,14 @@ namespace Lazy
         else
             m_shader->setTexture("g_textureDiffuse", NULL);
 
-        sprintf_s(buffer, 64, "tech_%d", maxTexIndex);
+        if (ShadowMap::instance()->isUsing())
+            strcpy(buffer, "shadowmap");
+        else
+        {
+            m_shader->setInt("CurNumTexture", maxTexIndex);
+            strcpy(buffer, "render_scene");
+        }
+
         if (!m_shader->setTechnique(buffer))
             return;
 

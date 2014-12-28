@@ -16,6 +16,7 @@ namespace Lazy
         bool begin();
         void end();
 
+        bool isUsing() const { return m_isUsing != FALSE; }
         dx::Texture * getTexture() { return m_pRenderTexture; }
         dx::Surface * getDepthSurface() { return m_pDepthSurface; }
 

@@ -158,6 +158,11 @@ namespace Lazy
         m_pEffect->SetTexture(name, pTexture);
     }
 
+    void Effect::setInt(D3DXHANDLE name, int value)
+    {
+        m_pEffect->SetInt(name, value);
+    }
+
     void Effect::setMatrix(D3DXHANDLE name, const Matrix & mat)
     {
         m_pEffect->SetMatrix(name, &mat);

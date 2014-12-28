@@ -10,6 +10,7 @@
 
 #include "../Render/Texture.h"
 #include "../Render/RenderDevice.h"
+#include "../Render/ShadowMap.h"
 
 namespace Lazy
 {
@@ -415,7 +416,27 @@ namespace Lazy
         if (!m_usefull || !MapConfig::ShowTerrain || !m_root)
             return;
 
+#if 0
+        if (ShadowMap::instance()->begin())
+        {
+            rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
+                D3DXCOLOR(0, 0, 0, 1), 1, 0);
+
+            m_root->render(pDevice);
+            ShadowMap::instance()->end();
+
+            static bool isFirst = true;
+            if (isFirst)
+            {
+                isFirst = false;
+                D3DXSaveTextureToFile(L"test.bmp", D3DXIFF_BMP,
+                    ShadowMap::instance()->getTexture(), NULL);
+            }
+        }
+#else
         m_root->render(pDevice);
+#endif
+
 #if 0
 
         Matrix matWorld;
