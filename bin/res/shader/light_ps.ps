@@ -4,9 +4,9 @@
 struct VS_OUTPUT
 {
     float4  pos     : POSITION;
-    float2  uv      : TEXCOORD0;
+    float4  uv      : TEXCOORD0;
     float4  vPos    : TEXCOORD1;
-    float4  vNml    : TEXCOORD2;
+    float3  vNml    : TEXCOORD2;
 };
 
 float4 psVertexLight(
@@ -18,7 +18,7 @@ float4 psVertexLight(
 
 float4 psPixelLight(
     float2  uv      : TEXCOORD0,
-    float3  vPos    : TEXCOORD1;
+    float3  vPos    : TEXCOORD1,
     float3  vNml    : TEXCOORD2) : COLOR
 {
     float4 diffuse = Light(vPos, vNml);
@@ -40,13 +40,19 @@ struct VS_OUTPUT
 
 float4 psPixelLight(
     float2 uv   : TEXCOORD0,
-    float4 vPos : TEXCOORD1,
+    float3 vPos : TEXCOORD1,
     float3 vNml : TEXCOORD2,
     float4 vPosInLight : TEXCOORD3) : COLOR
 {
     float4 diffuse = LightShadowMap(vPos, vNml, vPosInLight);
     diffuse.a = 1.0f;
     return tex2D(textureSampler, uv) * diffuse;
+}
+
+float4 psShadowMap(
+    float2 depth : TEXCOORD0) : COLOR0
+{
+    return depth.x / depth.y;
 }
 
 #endif

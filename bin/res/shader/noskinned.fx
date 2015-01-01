@@ -12,7 +12,6 @@ sampler textureSampler = sampler_state
 };
 
 #include "light_shadowmap.fx"
-#include "light_vs_shadowmap.fx"
 #include "light_ps.ps"
 
 //////////////////////////////////////////////////
@@ -42,6 +41,32 @@ VS_OUTPUT vsPixelLight(VS_INPUT input)
     return output;
 }
 
+
+//////////////////////////////////////
+//
+//////////////////////////////////////
+
+#ifdef USE_SHADOW_MAP
+
+void vsShadowMap(float4 position : POSITION,
+    out float4 oPos  : POSITION,
+    out float2 depth : TEXCOORD0)
+{
+    oPos = mul(position, g_world);
+    oPos = mul(oPos, g_shadowMapMatrix);
+    depth.xy = oPos.zw;
+}
+
+technique tech_shadowmap
+{
+    pass p0
+    {
+        VertexShader = compile vs_2_0 vsShadowMap();
+        PixelShader  = compile ps_2_0 psShadowMap();
+    }
+}
+
+#endif
 //////////////////////////////////////
 // Techniques specs follow
 //////////////////////////////////////
@@ -52,14 +77,5 @@ technique tech_default
     {
         VertexShader = compile vs_2_0 vsPixelLight();
         PixelShader  = compile ps_2_0 psPixelLight();
-    }
-}
-
-technique tech_shadowmap
-{
-    pass p0
-    {
-        VertexShader = compile vs_2_0 vsShadowMap();
-        PixelShader  = compile ps_2_0 psShadowMap();
     }
 }

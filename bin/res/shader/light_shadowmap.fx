@@ -1,5 +1,5 @@
 
-#define USE_SHADOW_MAP
+//#define USE_SHADOW_MAP
 
 #include "light.fx"
 

@@ -401,6 +401,7 @@ void CGame::updateCamera(float fEla)
 void CGame::render()
 {
     //添加渲染代码
+    rcDevice()->setWorld(matIdentity);
     rcDevice()->setView(m_pCamera->getViewMatrix());
     rcDevice()->setProj(m_projection.getProjection());
 
