@@ -14,7 +14,7 @@ items
 		type = 1
 		rotation = 0 0 0 1
 		scale = 0.01 0.01 0.01
-		position = 1 70 1
+		position = 1 30 1
 		bb = -2694.94 -2366.96 -2006.85 2664.18 2992.16 3352.27
 		resource = model/arena/Arena.x
 	}

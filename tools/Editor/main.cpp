@@ -4,6 +4,7 @@
 
 #include "main.h"
 #include "Physics/PhysicsDebug.h"
+#include "Render/ShadowMap.h"
 
 #include "resource.h"
 
@@ -283,7 +284,7 @@ bool CGame::init(void)
     m_projection.setPerspective(D3DX_PI / 4.0f, float(m_nWidth) / m_nHeight, 1.0f, 1000.0f);
 
     m_pSkyBox = new SkyBox();
-    addDrawTask(m_pSkyBox.get());
+    addTickTask(m_pSkyBox.get());
     m_pSkyBox->setSource(m_pCamera.get());
     m_pSkyBox->setSkyImage(ptrRoot->readString(L"sky"));
     m_pSkyBox->setSkyRange(Vector3(-200, -200, -200), Vector3(200, 200, 200));
@@ -409,6 +410,11 @@ void CGame::render()
     rcDevice()->applyView();
     rcDevice()->applyProj();
 
+    Vector3 lightDir(2, 1, 0);
+    lightDir.normalize();
+    //ShadowMap::instance()->setLightDirection(lightDir);
+    //ShadowMap::instance()->setLightPosition(g_player->getPosition() + lightDir * 150);
+
     m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, 
         m_bUseLineMode ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
     
@@ -428,6 +434,7 @@ void CGame::render()
     }
 
     CApp::render();
+    m_pSkyBox->render(m_pd3dDevice);
     m_guimgr->render(m_pd3dDevice);
 }
 

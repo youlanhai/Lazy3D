@@ -13,7 +13,7 @@ namespace Lazy
         : m_pDepthSurface(nullptr)
         , m_pRenderTexture(nullptr)
         , m_isUsing(FALSE)
-        , m_lightPosition(100.f, 100.f, 0.f)
+        , m_lightPosition(200.f, 100.f, 0.f)
         , m_width(0)
         , m_height(0)
     {
