@@ -3,7 +3,7 @@
 
 #include "RenderDevice.h"
 
-#define ShadowMap_SIZE 512
+#define ShadowMap_SIZE 1024
 
 namespace Lazy
 {
@@ -13,7 +13,7 @@ namespace Lazy
         : m_pDepthSurface(nullptr)
         , m_pRenderTexture(nullptr)
         , m_isUsing(FALSE)
-        , m_lightPosition(200.f, 100.f, 0.f)
+        , m_lightPosition(100.f, 100.f, 0.f)
         , m_width(0)
         , m_height(0)
     {
@@ -140,7 +140,7 @@ namespace Lazy
             m_lightPosition, Vector3(0, 1, 0));
 
         Matrix proj;
-        proj.makePerspective(D3DX_PI / 4.0f, float(m_width) / m_height, 1.0f, 10000.0f);
+        proj.makePerspective(D3DX_PI / 2.0f, float(m_width) / m_height, 1.0f, 10000.0f);
         matrix.postMultiply(proj);
     }
 

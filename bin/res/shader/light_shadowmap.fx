@@ -1,10 +1,10 @@
 
-//#define USE_SHADOW_MAP
+#define USE_SHADOW_MAP
 
 #include "light.fx"
 
 #define SHADOW_EPSILON          0.00005f
-#define SHADOW_TEXTURE_SIZE     512
+#define SHADOW_TEXTURE_SIZE     1024
 
 
 float4x4 g_shadowMapMatrix : SHADOWMAPMATRIX;

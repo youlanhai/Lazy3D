@@ -371,23 +371,21 @@ namespace Lazy
 #ifdef USE_SHADOW_MAP
         if (ShadowMap::instance()->begin())
         {
-            Mesh::selectTechnique("shadowmap");
+            Mesh::selectTechnique("tech_shadowmap");
             rcDevice()->clear(D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER,
                 D3DXCOLOR(0, 0, 0, 0), 1, 0);
 
             m_pRenderTaskMgr->render(m_pd3dDevice);
             ShadowMap::instance()->end();
 
-            static bool isFirst = true;
-            if (isFirst)
+            if (m_pKeyboard->isKeyUp(VK_F10))
             {
-                isFirst = false;
                 D3DXSaveTextureToFile(L"test.bmp", D3DXIFF_BMP,
                     ShadowMap::instance()->getTexture(), NULL);
             }
         }
 #endif
-        Mesh::selectTechnique("default");
+        Mesh::selectTechnique("tech_default");
 
         m_pRenderTaskMgr->render(m_pd3dDevice);
     }

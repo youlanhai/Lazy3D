@@ -1,6 +1,6 @@
 
 float4x4 g_world;
-float4x4 g_viewProj : WORLDVIEWPROJECTION;
+float4x4 g_viewProj : VIEWPROJECTION;
 
 texture g_texture;
 sampler textureSampler = sampler_state
@@ -35,7 +35,7 @@ VS_OUTPUT vsMain(VS_INPUT i, uniform int NumBones)
     o.vNml = normalize(Normal);
 
     o.pos = mul(o.vPos, g_viewProj);
-    o.uv.xy = float4(i.Tex0.xy, o.vPos.zw);
+    o.uv = float4(i.Tex0.xy, o.vPos.zw);
 
 #ifdef USE_SHADOW_MAP
     o.vPosInLight = mul(o.vPos, g_shadowMapMatrix);
@@ -51,19 +51,36 @@ VertexShader vsArray[4] = {
     compile vs_2_0 vsMain(4)
 };
 
+//////////////////////////////////////
+//
+//////////////////////////////////////
 #ifdef USE_SHADOW_MAP
-float4 psShadowMap2(
-    float4 depth : TEXCOORD0) : COLOR0
+
+void vsShadowMap(VS_INPUT i,
+    out float4 oPos     : POSITION,
+    out float2 oDepth   : TEXCOORD0,
+    uniform int NumBones)
 {
-    return depth.z / depth.w;
+    float3 Pos, Normal;
+    skinTransform(i.Pos, i.Normal, NumBones, i.BlendWeights, i.BlendIndices, Pos, Normal);
+
+    oPos = mul(float4(Pos, 1.0f), g_shadowMapMatrix);
+    oDepth.xy = oPos.zw;
 }
+
+VertexShader vsShadowMapArray[4] = {
+    compile vs_2_0 vsShadowMap(1), 
+    compile vs_2_0 vsShadowMap(2),
+    compile vs_2_0 vsShadowMap(3),
+    compile vs_2_0 vsShadowMap(4)
+};
 
 technique tech_shadowmap
 {
     pass p0
     {
-        VertexShader = (vsArray[CurNumBones]);
-        PixelShader  = compile ps_2_0 psShadowMap2();
+        VertexShader = (vsShadowMapArray[CurNumBones]);
+        PixelShader  = compile ps_2_0 psShadowMap();
     }
 }
 #endif
