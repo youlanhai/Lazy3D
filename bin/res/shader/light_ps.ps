@@ -21,7 +21,7 @@ float4 psPixelLight(
     float3  vPos    : TEXCOORD1,
     float3  vNml    : TEXCOORD2) : COLOR
 {
-    float4 diffuse = Light(vPos, vNml);
+    float4 diffuse = DirectionLight(vPos, vNml);
     diffuse.a = 1.0f;
 
     return tex2D(textureSampler, uv) * diffuse;

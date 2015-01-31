@@ -40,11 +40,22 @@ float4 LightSpecularBiPhone(float3 EyeNormal, float3 Normal, float3 lightDir)
 }
 
 
-float4 Light(float3 vPos, float3 vNormal)
+float4 PointLight(float3 vPos, float3 vNormal)
 {
 	float3 Normal = normalize(vNormal);
 	float3 EyeNormal = normalize(g_cameraPosition - vPos);
 	float3 LightDir = normalize(g_lightPosition - vPos);
+
+	return MaterialAmbient + \
+		LightDiffuse(Normal, LightDir) + \
+		LightSpecularBiPhone(EyeNormal, Normal, LightDir);
+}
+
+float4 DirectionLight(float3 vPos, float3 vNormal)
+{
+	float3 Normal = normalize(vNormal);
+	float3 EyeNormal = normalize(g_cameraPosition - vPos);
+	float3 LightDir = normalize(g_lightDirection);
 
 	return MaterialAmbient + \
 		LightDiffuse(Normal, LightDir) + \

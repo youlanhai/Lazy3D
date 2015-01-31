@@ -49,9 +49,12 @@ float4 LightShadowMap(
                               lerp( sourcevals.z, sourcevals.w, lerps.x ),
                               lerps.y );
 
+    if(LightAmount < 0.001f)
+        return MaterialAmbient;
+
 	float3 Normal = normalize(vNormal);
 	float3 EyeNormal = normalize(g_cameraPosition - vPos);
-	float3 LightDir = normalize(g_lightPosition - vPos);
+	float3 LightDir = normalize(g_lightDirection);
 
 	return MaterialAmbient + \
 	 	LightDiffuse(Normal, LightDir) * LightAmount +\

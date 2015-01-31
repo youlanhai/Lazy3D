@@ -73,7 +73,7 @@ float4 psMain_0(VS_OUTPUT input) : COLOR0
 #ifdef USE_SHADOW_MAP
     float4 diffuse = LightShadowMap(input.vPos, input.vNml, input.vPosInLight);
 #else
-    float4 diffuse = Light(input.vPos, input.vNml);
+    float4 diffuse = DirectionLight(input.vPos, input.vNml);
 #endif
     diffuse.a = 1.0f;
     return color * diffuse;
@@ -85,7 +85,7 @@ float4 psMain_n(VS_OUTPUT input,
 #ifdef USE_SHADOW_MAP
     float4 diffuse = LightShadowMap(input.vPos, input.vNml, input.vPosInLight);
 #else
-    float4 diffuse = Light(input.vPos, input.vNml);
+    float4 diffuse = DirectionLight(input.vPos, input.vNml);
 #endif
     diffuse.a = 1.0f;
 
