@@ -3,7 +3,7 @@
 
 #include "RenderDevice.h"
 
-#define ShadowMap_SIZE 1024
+#define SHADOWMAP_SIZE 1024
 
 namespace Lazy
 {
@@ -36,8 +36,8 @@ namespace Lazy
         HRESULT hr;
         dx::Device * pDevice = rcDevice()->getDevice();
 
-        m_width = ShadowMap_SIZE;// pp->BackBufferWidth;
-        m_height = ShadowMap_SIZE;// pp->BackBufferHeight;
+        m_width = SHADOWMAP_SIZE;// pp->BackBufferWidth;
+        m_height = SHADOWMAP_SIZE;// pp->BackBufferHeight;
 
         hr = pDevice->CreateTexture(m_width, m_height, 1, D3DUSAGE_RENDERTARGET,
             D3DFMT_R32F, D3DPOOL_DEFAULT, &m_pRenderTexture, NULL);
@@ -139,8 +139,8 @@ namespace Lazy
         matrix.makeLookAt(m_lightPosition - m_lightDirection * 100.0f,
             m_lightPosition, Vector3(0, 1, 0));
 
-        float halfWidth = 100;// m_width * 0.5f;
-        float halfHeight = 100; // m_height * 0.5f;
+        float halfWidth = 50;// m_width * 0.5f;
+        float halfHeight = 50; // m_height * 0.5f;
 
         Matrix proj;
         //proj.makePerspective(D3DX_PI / 2.0f, float(m_width) / m_height, 1.0f, 10000.0f);

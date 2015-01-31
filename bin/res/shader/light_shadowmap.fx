@@ -3,7 +3,7 @@
 
 #ifdef USE_SHADOW_MAP
 
-#define SHADOW_EPSILON          0.00005f
+#define SHADOW_EPSILON          0.00001f
 #define SHADOW_TEXTURE_SIZE     1024
 
 

@@ -412,8 +412,8 @@ void CGame::render()
 
     Vector3 lightDir(2, 1, 0);
     lightDir.normalize();
-    //ShadowMap::instance()->setLightDirection(lightDir);
-    //ShadowMap::instance()->setLightPosition(g_player->getPosition() + lightDir * 150);
+    ShadowMap::instance()->setLightDirection(lightDir);
+    ShadowMap::instance()->setLightPosition(g_player->getPosition() + lightDir * 150);
 
     m_pd3dDevice->SetRenderState(D3DRS_FILLMODE, 
         m_bUseLineMode ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
@@ -434,6 +434,7 @@ void CGame::render()
     }
 
     CApp::render();
+
     m_pSkyBox->render(m_pd3dDevice);
     m_guimgr->render(m_pd3dDevice);
 }

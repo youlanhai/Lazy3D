@@ -663,7 +663,7 @@ namespace Lazy
             m_shader->setTexture("g_textureDiffuse", ShadowMap::instance()->getTexture());
         }
 
-        RSHolder holder(pDevice, D3DRS_CULLMODE, D3DCULL_CCW);
+        RSHolder holder(pDevice, D3DRS_CULLMODE, ShadowMap::instance()->isUsing() ? D3DCULL_NONE : D3DCULL_CCW);
 
         uint32 nPass;
         if (m_shader->begin(nPass))
