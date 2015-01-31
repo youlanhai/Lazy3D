@@ -1,6 +1,6 @@
 
 float4x4 g_world;
-float4x4 g_viewProj : VIEWPROJECTION;
+float4x4 g_viewProj : VIEW_PROJECTION;
 
 texture g_texture;
 sampler textureSampler = sampler_state

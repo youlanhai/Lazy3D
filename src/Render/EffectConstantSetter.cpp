@@ -122,12 +122,11 @@ namespace Lazy
 
     /*static*/ EffectConstantSetter * EffectConstantSetter::get(const std::string & name)
     {
-        std::string tempName = name;
-        std::transform(tempName.begin(), tempName.end(), tempName.begin(), tolower);
-
-        auto it = s_autoConstMap.find(tempName);
-        if (it != s_autoConstMap.end()) return it->second;
-
+        auto it = s_autoConstMap.find(name);
+        if (it != s_autoConstMap.end())
+        {
+            return it->second;
+        }
         return nullptr;
     }
 
@@ -141,19 +140,19 @@ namespace Lazy
 #define REG_EFFECT_CONST_FACTORY(TYPE, FACTORY) \
     EffectConstantSetter::set(TYPE, new EffectConstantProxy(FACTORY))
         
-        REG_EFFECT_CONST_FACTORY("world", effectApplyWorld);
-        REG_EFFECT_CONST_FACTORY("view", effectApplyView);
-        REG_EFFECT_CONST_FACTORY("projection", effectApplyProj);
-        REG_EFFECT_CONST_FACTORY("viewprojection", effectApplyViewProj);
-        REG_EFFECT_CONST_FACTORY("worldview", effectApplyWorldView);
-        REG_EFFECT_CONST_FACTORY("worldviewprojection", effectApplyWorldViewProj);
-        REG_EFFECT_CONST_FACTORY("materialambient", effectApplyMaterialAmbient);
-        REG_EFFECT_CONST_FACTORY("materialdiffuse", effectApplyMaterialDiffuse);
-        REG_EFFECT_CONST_FACTORY("materialspecular", effectApplyMaterialSpecular);
-        REG_EFFECT_CONST_FACTORY("lightdirection", effectApplyLightDirection);
-        REG_EFFECT_CONST_FACTORY("lightposition", effectApplyLightPosition);
-        REG_EFFECT_CONST_FACTORY("shadowmapmatrix", effectApplyShadowMapMatrix);
-        REG_EFFECT_CONST_FACTORY("cameraposition", effectApplyCameraPosition);
+        REG_EFFECT_CONST_FACTORY("WORLD", effectApplyWorld);
+        REG_EFFECT_CONST_FACTORY("VIEW", effectApplyView);
+        REG_EFFECT_CONST_FACTORY("PROJECTION", effectApplyProj);
+        REG_EFFECT_CONST_FACTORY("VIEW_PROJECTION", effectApplyViewProj);
+        REG_EFFECT_CONST_FACTORY("WORLD_VIEW", effectApplyWorldView);
+        REG_EFFECT_CONST_FACTORY("WORLD_VIEW_PROJECTION", effectApplyWorldViewProj);
+        REG_EFFECT_CONST_FACTORY("MATERIAL_AMBIENT", effectApplyMaterialAmbient);
+        REG_EFFECT_CONST_FACTORY("MATERIAL_DIFFUSE", effectApplyMaterialDiffuse);
+        REG_EFFECT_CONST_FACTORY("MATERIAL_SPECULAR", effectApplyMaterialSpecular);
+        REG_EFFECT_CONST_FACTORY("LIGHT_DIRECTION", effectApplyLightDirection);
+        REG_EFFECT_CONST_FACTORY("LIGHT_POSITION", effectApplyLightPosition);
+        REG_EFFECT_CONST_FACTORY("SHADOWMAP_MATRIX", effectApplyShadowMapMatrix);
+        REG_EFFECT_CONST_FACTORY("CAMERA_POSITION", effectApplyCameraPosition);
         
 #undef REG_EFFECT_CONST_FACTORY
     }

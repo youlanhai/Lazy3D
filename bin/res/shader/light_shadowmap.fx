@@ -7,7 +7,7 @@
 #define SHADOW_TEXTURE_SIZE     1024
 
 
-float4x4 g_shadowMapMatrix : SHADOWMAPMATRIX;
+float4x4 g_shadowMapMatrix : SHADOWMAP_MATRIX;
 
 texture g_textureDiffuse;
 sampler samplerDiffuse = sampler_state

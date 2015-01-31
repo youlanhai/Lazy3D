@@ -139,8 +139,12 @@ namespace Lazy
         matrix.makeLookAt(m_lightPosition - m_lightDirection * 100.0f,
             m_lightPosition, Vector3(0, 1, 0));
 
+        float halfWidth = 100;// m_width * 0.5f;
+        float halfHeight = 100; // m_height * 0.5f;
+
         Matrix proj;
-        proj.makePerspective(D3DX_PI / 2.0f, float(m_width) / m_height, 1.0f, 10000.0f);
+        //proj.makePerspective(D3DX_PI / 2.0f, float(m_width) / m_height, 1.0f, 10000.0f);
+        proj.makeOrthoOffCenter(-halfWidth, halfWidth, -halfHeight, halfHeight, 1.0f, 10000.0f);
         matrix.postMultiply(proj);
     }
 

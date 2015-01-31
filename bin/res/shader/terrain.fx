@@ -1,6 +1,6 @@
 
 float4x4 g_world : WORLD;
-float4x4 g_worldViewProj : WORLDVIEWPROJECTION;
+float4x4 g_worldViewProj : WORLD_VIEW_PROJECTION;
 
 #include "light_shadowmap.fx"
 

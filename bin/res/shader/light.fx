@@ -1,11 +1,12 @@
 
-float3 g_lightPosition : LIGHTPOSITION;
+float3 g_lightPosition : LIGHT_POSITION;
+float3 g_lightDirection : LIGHT_DIRECTION;
 
-float4 MaterialAmbient : MATERIALAMBIENT;
-float4 MaterialDiffuse : MATERIALDIFFUSE;
-float4 MaterialSpecular : MATERIALSPECULAR;
+float4 MaterialAmbient : MATERIAL_AMBIENT;
+float4 MaterialDiffuse : MATERIAL_DIFFUSE;
+float4 MaterialSpecular : MATERIAL_SPECULAR;
 
-float3 g_cameraPosition : CAMERAPOSITION;
+float3 g_cameraPosition : CAMERA_POSITION;
 
 
 float4 LightDiffuse(float3 Normal, float3 lightDir)
