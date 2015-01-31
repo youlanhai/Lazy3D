@@ -685,7 +685,7 @@ namespace Lazy
         if (!s_skinnedEffect)
         {
             s_skinnedEffect = EffectMgr::instance()->get(_T("shader/skinned_mesh.fx"));
-            s_noskinnedEffect = EffectMgr::instance()->get(_T("shader/noskinned.fx"));
+            s_noskinnedEffect = EffectMgr::instance()->get(_T("shader/static_mesh.fx"));
         }
         return s_skinnedEffect != NULL;
     }
