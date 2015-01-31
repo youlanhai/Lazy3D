@@ -1,7 +1,7 @@
 
-#define USE_SHADOW_MAP
-
 #include "light.fx"
+
+#ifdef USE_SHADOW_MAP
 
 #define SHADOW_EPSILON          0.00005f
 #define SHADOW_TEXTURE_SIZE     1024
@@ -65,3 +65,4 @@ float4 LightShadowMap(
 //////////////////////////////////////////////////
 ///
 //////////////////////////////////////////////////
+#endif //USE_SHADOW_MAP

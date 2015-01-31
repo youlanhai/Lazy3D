@@ -6,6 +6,8 @@
 #include "EffectConstant.h"
 #include "EffectConstantSetter.h"
 
+#include "ShadowMap.h"
+
 namespace Lazy
 {
     static Effect *s_pCurrentEffect = nullptr;
@@ -47,9 +49,21 @@ namespace Lazy
             return false;
         }
 
+        std::vector<D3DXMACRO> macros;
+
+        D3DXMACRO macro;
+#ifdef USE_SHADOW_MAP
+        macro.Name = "USE_SHADOW_MAP";
+        macro.Definition = "\\\n";
+        macros.push_back(macro);
+#endif
+        macro.Definition = nullptr;
+        macro.Name = nullptr;
+        macros.push_back(macro);
+
         LPD3DXBUFFER pError = nullptr;
         HRESULT hr = D3DXCreateEffectFromFile(rcDevice()->getDevice(),
-            realPath.c_str(), nullptr, nullptr, 0, nullptr, &m_pEffect, &pError);
+            realPath.c_str(), macros.data(), nullptr, 0, nullptr, &m_pEffect, &pError);
 
         if (pError)
         {
