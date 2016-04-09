@@ -4,7 +4,7 @@
 #include "Device.h"
 #include "../utility/Singleton.h"
 
-//#define USE_SHADOW_MAP
+#define USE_SHADOW_MAP
 
 namespace Lazy
 {

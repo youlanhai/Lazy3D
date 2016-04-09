@@ -11032,7 +11032,7 @@ Frame Bip01 {
  }
 }
 
-AnimationSet walk1 {
+AnimationSet walk {
  
 
  Animation Anim-PAL3--SOFTSTAR_sh-20c5a18_obj {
@@ -12961,7 +12961,7 @@ AnimationSet walk1 {
  }
 }
 
-AnimationSet walk {
+AnimationSet run {
  
 
  Animation Anim-PAL3--SOFTSTAR_sh-20c5a18_obj {

@@ -523,7 +523,7 @@ namespace Lazy
         }
         else if (m_state == PS_MOVE || m_state == PS_JUMP)
         {
-            model->playAction("walk", true);
+            model->playAction("run", true);
         }
 
     }

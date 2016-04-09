@@ -13,14 +13,23 @@
 *.a
 
 *.log
+
 *.opensdf
 *.sdf
 *.user
 *.suo
+*.apg
+*.exe
+*.lib
+*.obj
+
+*.svn
+*.git
+
 *.pyc
 *.sublime*
 __pycache__
-ipch
+ipch/
 [Dd]ebug/
 [Rr]elease/
 Debug_Script/
